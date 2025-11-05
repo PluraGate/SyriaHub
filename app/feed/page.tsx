@@ -28,27 +28,27 @@ export default function FeedPage() {
     })
 
     // Fetch posts
-    fetchPosts()
-  }, [])
+    const loadPosts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('posts')
+          .select('*')
+          .order('created_at', { ascending: false })
 
-  const fetchPosts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Error fetching posts:', error)
-      } else {
-        setPosts(data || [])
+        if (error) {
+          console.error('Error fetching posts:', error)
+        } else {
+          setPosts(data || [])
+        }
+      } catch (error) {
+        console.error('Error:', error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setLoading(false)
     }
-  }
+    
+    loadPosts()
+  }, [supabase])
 
   const allTags = Array.from(
     new Set(posts.flatMap(post => post.tags || []))
@@ -166,7 +166,7 @@ export default function FeedPage() {
                     <h2 className="text-xl font-semibold text-gray-900 mb-2">
                       {post.title}
                     </h2>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+                    <p className="text-gray-600 mb-4 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
                       {post.content}
                     </p>
                     <div className="flex flex-wrap gap-2 mb-3">
