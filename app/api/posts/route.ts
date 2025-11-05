@@ -1,0 +1,121 @@
+// Posts API - List and Create posts
+import { NextResponse } from 'next/server'
+import { createServerClient, getCurrentUser, verifyAuth } from '@/lib/supabaseClient'
+import {
+  successResponse,
+  errorResponse,
+  handleSupabaseError,
+  parseRequestBody,
+  validateRequiredFields,
+  getQueryParams,
+  withErrorHandling,
+  unauthorizedResponse,
+} from '@/lib/apiUtils'
+import type { CreatePostInput } from '@/types'
+
+/**
+ * GET /api/posts
+ * List posts with optional filtering
+ * Query params: tag, author_id, limit, offset
+ */
+async function handleGetPosts(request: Request): Promise<NextResponse> {
+  const supabase = await createServerClient()
+  const params = getQueryParams(request)
+  
+  // Get query parameters
+  const tag = params.get('tag')
+  const authorId = params.get('author_id')
+  const limit = parseInt(params.get('limit') || '10', 10)
+  const offset = parseInt(params.get('offset') || '0', 10)
+  const search = params.get('search')
+
+  // Build query
+  let query = supabase
+    .from('posts')
+    .select(`
+      *,
+      author:users!posts_author_id_fkey(id, name, email, affiliation)
+    `)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
+
+  // Apply filters
+  if (tag) {
+    query = query.contains('tags', [tag])
+  }
+
+  if (authorId) {
+    query = query.eq('author_id', authorId)
+  }
+
+  if (search) {
+    query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`)
+  }
+
+  const { data, error, count } = await query
+
+  if (error) {
+    return handleSupabaseError(error)
+  }
+
+  return successResponse({
+    posts: data || [],
+    pagination: {
+      limit,
+      offset,
+      total: count || data?.length || 0,
+    },
+  })
+}
+
+/**
+ * POST /api/posts
+ * Create a new post (authenticated users only)
+ */
+async function handleCreatePost(request: Request): Promise<NextResponse> {
+  // Verify authentication
+  const user = await verifyAuth()
+
+  const supabase = await createServerClient()
+  
+  // Parse request body
+  const body = await parseRequestBody<CreatePostInput>(request)
+  
+  // Validate required fields
+  validateRequiredFields(body, ['title', 'content'])
+  
+  const { title, content, tags } = body
+
+  // Validate title and content length
+  if (title.length < 3) {
+    return errorResponse('Title must be at least 3 characters long', 422)
+  }
+
+  if (content.length < 10) {
+    return errorResponse('Content must be at least 10 characters long', 422)
+  }
+
+  // Create post
+  const { data, error } = await supabase
+    .from('posts')
+    .insert({
+      title,
+      content,
+      tags: tags || [],
+      author_id: user.id,
+    })
+    .select(`
+      *,
+      author:users!posts_author_id_fkey(id, name, email, affiliation)
+    `)
+    .single()
+
+  if (error) {
+    return handleSupabaseError(error)
+  }
+
+  return successResponse(data, 201)
+}
+
+export const GET = withErrorHandling(handleGetPosts)
+export const POST = withErrorHandling(handleCreatePost)
