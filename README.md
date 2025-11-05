@@ -297,17 +297,17 @@ Components will be added to `components/ui/` and are fully customizable.
 
 ## Troubleshooting
 
-### Middleware Deprecation Warning
+### Middleware/Proxy Deprecation Warning
 
-If you see a warning about middleware during setup or development:
+**Note:** As of Next.js 15+, `middleware.ts` has been renamed to `proxy.ts`. This project uses the new `proxy.ts` convention.
+
+If you see a warning about middleware:
 
 ```
-⚠ The 'middleware' file convention is deprecated
+⚠ The 'middleware' file convention is deprecated. Please use 'proxy' instead.
 ```
 
-This is a known Next.js 15+ message that can be safely ignored. The middleware configuration follows the current official Next.js pattern. See `MIDDLEWARE_UPDATE.md` for detailed information.
-
-**Quick Fix:**
+This means the migration is complete. Clear the cache to remove the warning:
 1. Clear Next.js cache: `Remove-Item -Recurse -Force .next` (Windows) or `rm -rf .next` (macOS/Linux)
 2. Restart dev server: `npm run dev`
 

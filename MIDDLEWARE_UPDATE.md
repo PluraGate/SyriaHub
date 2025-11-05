@@ -1,12 +1,25 @@
-# Middleware Configuration Update
+# Proxy Configuration Update (Formerly Middleware)
+
+## Important Change: Middleware → Proxy
+
+As of Next.js 15+, the `middleware.ts` file has been **renamed to `proxy.ts`** and the function has been renamed from `middleware()` to `proxy()`.
+
+### Why the Change?
+
+Next.js renamed this feature because:
+1. **Clarity**: The term "middleware" was often confused with Express.js middleware
+2. **Purpose**: "Proxy" better represents the network boundary functionality
+3. **Best Practice**: Next.js recommends using proxy as a last resort, encouraging better-designed APIs
 
 ## Changes Made
 
-The middleware configuration has been updated to be compatible with Next.js 15+ and Next.js 16.
+The configuration has been migrated from `middleware.ts` to `proxy.ts` to be compatible with Next.js 15+ and Next.js 16.
 
 ### What Changed
 
-1. **Improved Matcher Pattern**: 
+1. **File Renamed**: `middleware.ts` → `proxy.ts`
+2. **Function Renamed**: `export async function middleware()` → `export async function proxy()`
+3. **Improved Matcher Pattern**: 
    - Now excludes `api/` routes from middleware processing
    - Added exclusions for `robots.txt` and `sitemap.xml`
    - Improved pattern efficiency
@@ -18,6 +31,11 @@ The middleware configuration has been updated to be compatible with Next.js 15+ 
 ### Current Configuration
 
 ```typescript
+// proxy.ts (formerly middleware.ts)
+export async function proxy(request: NextRequest) {
+  return await updateSession(request)
+}
+
 export const config = {
   matcher: [
     '/((?!api/|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
@@ -31,27 +49,36 @@ This pattern ensures that:
 - ✅ Static assets are excluded for performance
 - ✅ Common files like robots.txt are excluded
 
-## About the Deprecation Warning
+## About the Migration
 
-If you're seeing a deprecation warning about middleware, it's likely one of these scenarios:
+### Why "Proxy" Instead of "Middleware"?
 
-### 1. False Positive Warning
-Next.js 15+ sometimes shows middleware warnings during development that can be safely ignored if your middleware follows the correct pattern (which it now does).
+The Next.js team chose "proxy" because:
+- It clarifies the network boundary nature of this feature
+- It runs at the Edge Runtime, closer to clients
+- It reduces confusion with Express.js-style middleware
+- It encourages using it as a last resort
 
-### 2. Next.js 16 Changes
-Next.js 16 introduced some changes to middleware behavior, but the `export const config` pattern is still the official way to configure middleware according to the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/routing/middleware).
+### How to Migrate (Already Done!)
 
-## How Middleware Works in This Project
+The migration from `middleware.ts` to `proxy.ts` has been completed:
+
+1. ✅ File renamed: `middleware.ts` → `proxy.ts`
+2. ✅ Function renamed: `middleware()` → `proxy()`
+3. ✅ Configuration updated for Next.js 16
+4. ✅ Documentation updated
+
+## How Proxy Works in This Project
 
 ```
 User Request
     ↓
-middleware.ts → updateSession() → Supabase Auth Check
+proxy.ts → updateSession() → Supabase Auth Check
     ↓
 Route Handler (with valid session)
 ```
 
-The middleware:
+The proxy:
 1. Intercepts all non-static requests
 2. Calls Supabase to validate/refresh the session
 3. Updates cookies with new session data
@@ -61,7 +88,9 @@ This ensures users stay authenticated across page navigations.
 
 ## Troubleshooting
 
-### If you still see the warning:
+### If the deprecation warning persists:
+
+The migration is complete. If you still see a warning about `middleware.ts`, it's likely a caching issue:
 
 1. **Clear Next.js cache**:
    ```powershell
@@ -69,17 +98,20 @@ This ensures users stay authenticated across page navigations.
    npm run dev
    ```
 
-2. **Check Next.js version**:
+2. **Verify migration**:
    ```powershell
-   npm list next
+   # Check that middleware.ts is gone
+   Test-Path middleware.ts  # Should return False
+   
+   # Check that proxy.ts exists
+   Test-Path proxy.ts  # Should return True
    ```
-   Should show: `next@^16.0.1`
 
-3. **Verify middleware placement**:
-   - File must be at project root: `middleware.ts`
+3. **Verify proxy placement**:
+   - File must be at project root: `proxy.ts`
    - Not inside `/app` or `/pages` directory
 
-### If middleware isn't working:
+### If proxy isn't working:
 
 1. Check environment variables in `.env.local`:
    ```
@@ -101,17 +133,18 @@ This ensures users stay authenticated across page navigations.
 
 ## Performance Notes
 
-Excluding API routes from middleware is important because:
+Excluding API routes from proxy is important because:
 - API routes handle their own authentication
-- Reduces middleware overhead
+- Reduces proxy overhead
 - Prevents double auth checks
 
 The current configuration is optimized for both security and performance.
 
 ## Next Steps
 
-1. ✅ Middleware updated to Next.js 15+ best practices
-2. ✅ Matcher pattern optimized
-3. ✅ Documentation added
+1. ✅ Migrated from middleware.ts to proxy.ts
+2. ✅ Function renamed to proxy()
+3. ✅ Matcher pattern optimized
+4. ✅ Documentation updated
 
-The middleware is now fully compatible with Next.js 16 and follows all recommended patterns.
+The proxy is now fully compatible with Next.js 16 and follows all recommended patterns. The deprecation warning should no longer appear.
