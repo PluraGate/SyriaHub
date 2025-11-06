@@ -17,6 +17,7 @@ A minimalist, mobile-first research platform built with Next.js 14, Tailwind CSS
 - 🔒 **Secure API** - RESTful API with JWT authentication and authorization (NEW!)
 - 💬 **Comments System** - Threaded discussions on posts (NEW!)
 - 🚩 **Content Moderation** - Report system for community safety (NEW!)
+- 🤖 **AI Moderation** - Automated content scanning with OpenAI/Perspective API (NEW!)
 - 🔗 **Citations** - Academic post-to-post referencing (NEW!)
 
 ## Tech Stack
@@ -62,7 +63,10 @@ Edit `.env.local` and add your Supabase credentials:
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+OPENAI_API_KEY=sk-your-openai-api-key  # For AI moderation
 ```
+
+See `.env.example` for all available configuration options.
 
 4. Set up the database:
 
@@ -336,6 +340,7 @@ This means the migration is complete. Clear the cache to remove the warning:
 For more detailed troubleshooting, see the documentation files:
 - `MIDDLEWARE_UPDATE.md` - Middleware configuration
 - `API_DOCUMENTATION.md` - API usage and errors
+- `MODERATION_DOCUMENTATION.md` - AI moderation setup and troubleshooting
 - `supabase/README.md` - Database setup issues
 
 ## Contributing
