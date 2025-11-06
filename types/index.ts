@@ -33,10 +33,16 @@ export interface Comment {
 
 export interface Report {
   id: string
-  post_id: string
+  post_id: string | null
+  comment_id: string | null
   reporter_id: string
   reason: string
   status: ReportStatus
+  content_type: 'post' | 'comment'
+  content_snapshot?: Record<string, any>
+  moderation_data?: Record<string, any>
+  reviewed_by?: string
+  reviewed_at?: string
   created_at: string
 }
 
@@ -76,8 +82,46 @@ export interface CommentWithUser extends Comment {
 }
 
 export interface ReportWithDetails extends Report {
-  post: Post
+  post?: Post
+  comment?: Comment
   reporter: User
+  reviewer?: User
+}
+
+// Moderation types
+export interface ModerationCategory {
+  hate?: boolean
+  'hate/threatening'?: boolean
+  harassment?: boolean
+  'harassment/threatening'?: boolean
+  'self-harm'?: boolean
+  'self-harm/intent'?: boolean
+  'self-harm/instructions'?: boolean
+  sexual?: boolean
+  'sexual/minors'?: boolean
+  violence?: boolean
+  'violence/graphic'?: boolean
+}
+
+export interface ModerationResult {
+  flagged: boolean
+  categories: ModerationCategory
+  categoryScores: Record<string, number>
+  details?: string[]
+}
+
+export interface PlagiarismCheckResult {
+  isPlagiarized: boolean
+  similarityScore: number
+  sources?: string[]
+  details?: string
+}
+
+export interface ContentCheckResult {
+  moderation: ModerationResult
+  plagiarism: PlagiarismCheckResult
+  shouldBlock: boolean
+  warnings: string[]
 }
 
 // Form types
@@ -99,8 +143,17 @@ export interface CreateCommentInput {
 }
 
 export interface CreateReportInput {
-  post_id: string
+  post_id?: string
+  comment_id?: string
+  content_type?: 'post' | 'comment'
+  content_id?: string
   reason: string
+}
+
+export interface UpdateReportInput {
+  status: ReportStatus
+  action?: 'delete_content' | 'warn_user' | 'none'
+  notes?: string
 }
 
 export interface UpdateUserProfileInput {

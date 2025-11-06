@@ -24,8 +24,12 @@ This directory contains the PostgreSQL database schema for SyriaHub, a research 
 
 4. **reports** - Content moderation reports
    - `id` (PK), `reason`, `status`
-   - `post_id` (FK to posts), `reporter_id` (FK to users)
+   - `post_id` (FK to posts, nullable), `comment_id` (FK to comments, nullable)
+   - `content_type` (enum: 'post', 'comment')
+   - `reporter_id` (FK to users), `reviewed_by` (FK to users, nullable)
+   - `content_snapshot` (JSONB), `moderation_data` (JSONB)
    - Status: pending, reviewing, resolved, dismissed
+   - Timestamps: `created_at`, `reviewed_at`
 
 5. **roles** - Role definitions with JSONB permissions
    - `id` (PK), `name`, `permissions` (JSONB)
@@ -101,6 +105,17 @@ supabase start
 
 ### 2. Run Migrations
 
+**Automated (Recommended)**:
+```bash
+# Windows
+.\migrate-moderation.ps1
+
+# macOS/Linux
+chmod +x migrate-moderation.sh
+./migrate-moderation.sh
+```
+
+**Manual**:
 ```bash
 # Apply migrations
 supabase db push
@@ -108,6 +123,11 @@ supabase db push
 # Or for local development
 supabase db reset
 ```
+
+**Migration Files**:
+- `20250101000000_initial_schema.sql` - Base schema
+- `20250101000001_seed_data.sql` - Sample data
+- `20250106000000_add_moderation_fields.sql` - AI moderation fields
 
 ### 3. Enable Auth
 

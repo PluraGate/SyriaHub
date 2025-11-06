@@ -1,6 +1,6 @@
 // Reports API - Update report status (moderators only)
 import { NextResponse } from 'next/server'
-import { createServerClient, verifyRole } from '@/lib/supabaseClient'
+import { createServerClient, verifyRole, getCurrentUser } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,
@@ -14,6 +14,8 @@ import type { ReportStatus } from '@/types'
 
 interface UpdateReportInput {
   status: ReportStatus
+  action?: 'delete_content' | 'warn_user' | 'none'
+  notes?: string
 }
 
 /**
@@ -28,7 +30,7 @@ async function handleUpdateReport(
   const reportId = extractIdFromParams({ id })
   
   // Verify user is moderator or admin
-  await verifyRole(['moderator', 'admin'])
+  const user = await verifyRole(['moderator', 'admin'])
   
   const supabase = await createServerClient()
 
@@ -48,7 +50,7 @@ async function handleUpdateReport(
   // Check if report exists
   const { data: report, error: fetchError } = await supabase
     .from('reports')
-    .select('id')
+    .select('*, post:posts(id, author_id), comment:comments(id, user_id)')
     .eq('id', reportId)
     .single()
 
@@ -59,15 +61,44 @@ async function handleUpdateReport(
     return handleSupabaseError(fetchError)
   }
 
+  // Handle actions if specified
+  if (body.action === 'delete_content') {
+    if (report.content_type === 'post' && report.post_id) {
+      const { error: deleteError } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', report.post_id)
+
+      if (deleteError) {
+        console.error('Failed to delete reported post:', deleteError)
+      }
+    } else if (report.content_type === 'comment' && report.comment_id) {
+      const { error: deleteError } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', report.comment_id)
+
+      if (deleteError) {
+        console.error('Failed to delete reported comment:', deleteError)
+      }
+    }
+  }
+
   // Update report status
   const { data, error } = await supabase
     .from('reports')
-    .update({ status: body.status })
+    .update({
+      status: body.status,
+      reviewed_by: user.id,
+      reviewed_at: new Date().toISOString(),
+    })
     .eq('id', reportId)
     .select(`
       *,
       post:posts!reports_post_id_fkey(id, title),
-      reporter:users!reports_reporter_id_fkey(id, name, email)
+      comment:comments!reports_comment_id_fkey(id, content),
+      reporter:users!reports_reporter_id_fkey(id, name, email),
+      reviewer:users!reports_reviewed_by_fkey(id, name, email)
     `)
     .single()
 

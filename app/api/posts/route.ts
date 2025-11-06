@@ -11,6 +11,7 @@ import {
   withErrorHandling,
   unauthorizedResponse,
 } from '@/lib/apiUtils'
+import { checkContent } from '@/lib/moderation'
 import type { CreatePostInput } from '@/types'
 
 /**
@@ -95,6 +96,43 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
     return errorResponse('Content must be at least 10 characters long', 422)
   }
 
+  // Run AI moderation on the content
+  const contentCheck = await checkContent(`${title}\n\n${content}`, title)
+
+  // If content is flagged, create a report and reject the post
+  if (contentCheck.shouldBlock) {
+    // Create a report for moderation review
+    const { error: reportError } = await supabase.from('reports').insert({
+      post_id: null, // No post ID yet since we're blocking creation
+      reporter_id: user.id,
+      reason: `AI Moderation Auto-Report: ${contentCheck.warnings.join('; ')}`,
+      status: 'pending',
+      content_type: 'post',
+      content_snapshot: JSON.stringify({ title, content, tags }),
+      moderation_data: JSON.stringify({
+        moderation: contentCheck.moderation,
+        plagiarism: contentCheck.plagiarism,
+      }),
+    })
+
+    if (reportError) {
+      console.error('Failed to create auto-report:', reportError)
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: contentCheck.warnings[0] || 'Content violates community guidelines',
+        warnings: contentCheck.warnings,
+        categories: contentCheck.moderation.details,
+      },
+      { status: 422 }
+    )
+  }
+
+  // If flagged but not severe enough to block, show warnings but allow
+  const hasWarnings = contentCheck.warnings.length > 0
+
   // Create post
   const { data, error } = await supabase
     .from('posts')
@@ -112,6 +150,18 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
 
   if (error) {
     return handleSupabaseError(error)
+  }
+
+  // Return success with optional warnings
+  if (hasWarnings) {
+    return NextResponse.json(
+      {
+        success: true,
+        data,
+        warnings: contentCheck.warnings,
+      },
+      { status: 201 }
+    )
   }
 
   return successResponse(data, 201)
