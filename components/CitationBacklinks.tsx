@@ -1,11 +1,16 @@
 import Link from 'next/link'
 import { Link2 } from 'lucide-react'
 
+interface CitationAuthor {
+  name?: string | null
+  email?: string | null
+}
+
 interface CitationBacklink {
   id: string
   title: string
-  author_email?: string
   created_at: string
+  author?: CitationAuthor | null
 }
 
 interface CitationBacklinksProps {
@@ -35,7 +40,7 @@ export function CitationBacklinks({ citations }: CitationBacklinksProps) {
               {citation.title}
             </h4>
             <p className="text-xs text-text-light dark:text-dark-text-muted">
-              By {citation.author_email?.split('@')[0] || 'Anonymous'}
+              By {citation.author?.name || citation.author?.email?.split('@')[0] || 'Anonymous'}
             </p>
           </Link>
         ))}

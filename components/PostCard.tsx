@@ -2,16 +2,24 @@ import Link from 'next/link'
 import { Clock, User } from 'lucide-react'
 import { TagChip } from './TagChip'
 
+interface PostAuthor {
+  id?: string
+  name?: string | null
+  email?: string | null
+}
+
+interface PostCardData {
+  id: string
+  title: string
+  content: string
+  created_at: string
+  author_id?: string
+  tags?: string[]
+  author?: PostAuthor | null
+}
+
 interface PostCardProps {
-  post: {
-    id: string
-    title: string
-    content: string
-    created_at: string
-    author_email?: string
-    author_id: string
-    tags?: string[]
-  }
+  post: PostCardData
   showAuthor?: boolean
 }
 
@@ -46,6 +54,11 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
     if (content.length <= maxLength) return content
     return content.substring(0, maxLength).trim() + '...'
   }
+
+  const displayAuthor =
+    post.author?.name ||
+    post.author?.email?.split('@')[0] ||
+    'Anonymous'
 
   return (
     <article className="card card-hover p-6 group">
@@ -85,7 +98,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
             <div className="flex items-center gap-1.5">
               <User className="w-4 h-4" aria-hidden="true" />
               <span className="hover:text-primary dark:hover:text-accent-light transition-colors">
-                {post.author_email?.split('@')[0] || 'Anonymous'}
+                {displayAuthor}
               </span>
             </div>
           )}

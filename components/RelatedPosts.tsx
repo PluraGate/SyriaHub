@@ -2,12 +2,17 @@ import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
 import { TagChip } from './TagChip'
 
+interface RelatedPostAuthor {
+  name?: string | null
+  email?: string | null
+}
+
 interface RelatedPost {
   id: string
   title: string
   tags?: string[]
   created_at: string
-  author_email?: string
+  author?: RelatedPostAuthor | null
 }
 
 interface RelatedPostsProps {
@@ -47,7 +52,7 @@ export function RelatedPosts({ posts, title = 'Related Research' }: RelatedPosts
             )}
 
             <p className="text-xs text-text-light dark:text-dark-text-muted">
-              {post.author_email?.split('@')[0] || 'Anonymous'} •{' '}
+              {post.author?.name || post.author?.email?.split('@')[0] || 'Anonymous'} •{' '}
               {new Date(post.created_at).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

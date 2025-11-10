@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Globe, Calendar, FileText, ArrowLeft } from 'lucide-react'
+import { Calendar, FileText, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar, PostCard } from '@/components'
 
@@ -16,9 +16,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   
   // Fetch profile data
   const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', params.id)
+    .from('users')
+    .select('id, name, email, bio, affiliation, created_at')
+    .eq('id', params.id)
     .single()
 
   if (profileError || !profile) {
@@ -30,7 +30,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     .from('posts')
     .select('*')
     .eq('author_id', params.id)
-    .eq('published', true)
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
 
   const isOwnProfile = user?.id === params.id
@@ -58,7 +58,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           <div className="flex flex-col md:flex-row items-start gap-8">
             {/* Avatar */}
             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light flex items-center justify-center text-4xl font-display font-bold text-white flex-shrink-0">
-              {(profile.username?.[0] || 'U').toUpperCase()}
+              {(profile.name?.[0] || profile.email?.[0] || 'U').toUpperCase()}
             </div>
 
             {/* Profile Info */}
@@ -66,7 +66,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h1 className="text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                    {profile.username || 'Anonymous User'}
+                    {profile.name || 'Anonymous User'}
                   </h1>
                   {profile.affiliation && (
                     <p className="text-lg text-text-light dark:text-dark-text-muted">
@@ -84,25 +84,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
               {/* Meta Information */}
               <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted">
-                {profile.location && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>{profile.location}</span>
-                  </div>
-                )}
-                {profile.website && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    <a
-                      href={profile.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary dark:hover:text-accent-light transition-colors"
-                    >
-                      {profile.website.replace(/^https?:\/\//, '')}
-                    </a>
-                  </div>
-                )}
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   <span>
@@ -140,7 +121,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           <div className="card p-12 text-center">
             <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
             <p className="text-lg text-text-light dark:text-dark-text-muted mb-4">
-              {isOwnProfile ? 'You haven\'t published any posts yet.' : 'No published posts yet.'}
+              {isOwnProfile ? "You haven't published any posts yet." : 'No published posts yet.'}
             </p>
             {isOwnProfile && (
               <Link href="/editor" className="btn btn-primary">

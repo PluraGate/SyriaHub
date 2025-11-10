@@ -108,7 +108,7 @@ export default function EditorPage() {
             content: content.trim(),
             tags: tagArray,
             author_id: user.id,
-            published: publish,
+            status: publish ? 'published' : 'draft',
           })
           .select('id')
           .single()

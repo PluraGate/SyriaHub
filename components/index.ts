@@ -10,6 +10,8 @@ export { SearchBar } from './SearchBar'
 export { TagsCloud } from './TagsCloud'
 export { RelatedPosts } from './RelatedPosts'
 export { CitationBacklinks } from './CitationBacklinks'
+export { CommentsSection } from './CommentsSection'
+export { ReportButton } from './ReportButton'
 
 // UI Components (Shadcn UI)
 export { Button } from './ui/button'

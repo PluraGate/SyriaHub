@@ -13,9 +13,13 @@ interface SearchFilters {
 interface SearchResult {
   id: string
   title: string
-  author_email?: string
-  tags?: string[]
   content: string
+  tags?: string[]
+  author?: {
+    id?: string
+    name?: string | null
+    email?: string | null
+  } | null
 }
 
 export function SearchBar() {
@@ -48,21 +52,58 @@ export function SearchBar() {
 
       setLoading(true)
       try {
-        let query = supabase.from('posts').select('*').eq('published', true)
-
-        if (filters.type === 'title' || filters.type === 'all') {
-          query = query.ilike('title', `%${filters.query}%`)
+        const queryText = filters.query.trim()
+        if (!queryText) {
+          setResults([])
+          return
         }
 
-        if (filters.type === 'author') {
-          query = query.ilike('author_email', `%${filters.query}%`)
-        }
+        const baseQuery = supabase
+          .from('posts')
+          .select(
+            `
+            *,
+            author:users!posts_author_id_fkey(id, name, email)
+          `
+          )
+          .eq('status', 'published')
+          .order('created_at', { ascending: false })
+          .limit(10)
+
+        let finalQuery = baseQuery
 
         if (filters.type === 'tag') {
-          query = query.contains('tags', [filters.query])
+          finalQuery = finalQuery.contains('tags', [queryText])
+        } else if (filters.type === 'author') {
+          const { data: authors, error: authorError } = await supabase
+            .from('users')
+            .select('id')
+            .or(`name.ilike.%${queryText}%,email.ilike.%${queryText}%`)
+            .limit(10)
+
+          if (authorError) {
+            console.error('Author search error:', authorError)
+            setResults([])
+            return
+          }
+
+          const authorIds = authors?.map((author) => author.id).filter(Boolean) || []
+
+          if (authorIds.length === 0) {
+            setResults([])
+            return
+          }
+
+          finalQuery = finalQuery.in('author_id', authorIds)
+        } else if (filters.type === 'title') {
+          finalQuery = finalQuery.ilike('title', `%${queryText}%`)
+        } else {
+          finalQuery = finalQuery.or(
+            `title.ilike.%${queryText}%,content.ilike.%${queryText}%`
+          )
         }
 
-        const { data, error } = await query.limit(10)
+        const { data, error } = await finalQuery
 
         if (!error && data) {
           setResults(data)
@@ -152,6 +193,11 @@ export function SearchBar() {
                   }}
                 >
                   <h4 className="font-medium text-text dark:text-dark-text mb-1">{result.title}</h4>
+                  {result.author && (
+                    <p className="text-xs text-gray-500 dark:text-dark-text-muted mb-1">
+                      {result.author.name || result.author.email?.split('@')[0] || 'Anonymous'}
+                    </p>
+                  )}
                   <p className="text-sm text-gray-500 dark:text-dark-text-muted line-clamp-1">
                     {result.content}
                   </p>
