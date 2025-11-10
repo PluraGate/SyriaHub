@@ -96,5 +96,10 @@ async function handleCreateTag(request: Request): Promise<NextResponse> {
   return successResponse(data, 201)
 }
 
-export const GET = withErrorHandling(handleGetTags)
+export const GET = withErrorHandling(handleGetTags, {
+  cache: {
+    maxAge: 300,
+    staleWhileRevalidate: 900,
+  },
+})
 export const POST = withErrorHandling(handleCreateTag)

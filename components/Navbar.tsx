@@ -14,27 +14,37 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [hasResolvedTheme, setHasResolvedTheme] = useState(false)
 
   useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDarkMode(true)
-      document.documentElement.classList.add('dark')
+    if (typeof window === 'undefined') {
+      return
     }
+
+    const savedTheme = window.localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark
+
+    setIsDarkMode(shouldUseDark)
+    setHasResolvedTheme(true)
   }, [])
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    } else {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
+  useEffect(() => {
+    if (!hasResolvedTheme || typeof document === 'undefined') {
+      return
     }
+
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+      window.localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      window.localStorage.setItem('theme', 'light')
+    }
+  }, [hasResolvedTheme, isDarkMode])
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => !prev)
   }
 
   const toggleMenu = () => {
@@ -66,6 +76,12 @@ export function Navbar({ user }: NavbarProps) {
               className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
             >
               Feed
+            </Link>
+            <Link
+              href="/explore"
+              className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
+            >
+              Explore
             </Link>
             
             {user ? (
@@ -149,6 +165,13 @@ export function Navbar({ user }: NavbarProps) {
               onClick={() => setIsMenuOpen(false)}
             >
               Feed
+            </Link>
+            <Link
+              href="/explore"
+              className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Explore
             </Link>
             
             {user ? (

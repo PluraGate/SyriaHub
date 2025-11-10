@@ -137,11 +137,40 @@ export function validateRequiredFields<T extends Record<string, any>>(
  * Wrap async route handler with error handling
  */
 export function withErrorHandling(
-  handler: (request: Request, context?: any) => Promise<NextResponse>
+  handler: (request: Request, context?: any) => Promise<NextResponse>,
+  options?: {
+    cache?: {
+      enabled?: boolean
+      maxAge?: number
+      staleWhileRevalidate?: number
+      vary?: string[]
+    }
+  }
 ) {
   return async (request: Request, context?: any): Promise<NextResponse> => {
     try {
-      return await handler(request, context)
+      const response = await handler(request, context)
+
+      const cacheOptions = options?.cache
+      if (cacheOptions && cacheOptions.enabled !== false && request.method === 'GET') {
+        if (!response.headers.has('Cache-Control')) {
+          const maxAge = cacheOptions.maxAge ?? 60
+          const stale = cacheOptions.staleWhileRevalidate ?? 300
+          response.headers.set('Cache-Control', `s-maxage=${maxAge}, stale-while-revalidate=${stale}`)
+        }
+
+        const varyHeaders = cacheOptions.vary ?? ['Authorization', 'Cookie']
+        if (varyHeaders.length > 0) {
+          const existing = response.headers.get('Vary')
+          const current = existing
+            ? existing.split(',').map(header => header.trim()).filter(Boolean)
+            : []
+          const merged = Array.from(new Set([...current, ...varyHeaders]))
+          response.headers.set('Vary', merged.join(', '))
+        }
+      }
+
+      return response
     } catch (error) {
       console.error('API Error:', error)
       

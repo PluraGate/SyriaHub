@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+  "build": "next build",
+  "start": "next start",
+  "lint": "eslint . --max-warnings=0",
+  "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "keywords": [
     "nextjs",
@@ -30,6 +31,7 @@
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@vercel/analytics": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.552.0",
