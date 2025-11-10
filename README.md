@@ -32,6 +32,19 @@ A minimalist, mobile-first research platform built with Next.js 14, Tailwind CSS
 - **Node Version**: 20+
 - **Deployment**: Vercel-ready (Edge Runtime compatible)
 
+## Environment Variables
+
+Configure the same variables locally and in Vercel. The `.env.example` file lists every supported flag.
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ | Supabase project URL (Project Settings → API) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | Supabase anon/public key |
+| `OPENAI_API_KEY` | ⚠️ | Enables AI-powered moderation (leave unset to disable) |
+| `PERSPECTIVE_API_KEY` | optional | Alternative moderation provider |
+
+When deploying to Vercel, add the same variables in **Project Settings → Environment Variables** for the `Development`, `Preview`, and `Production` environments.
+
 ## Getting Started
 
 ### Prerequisites
@@ -213,28 +226,35 @@ For complete API documentation with examples:
 
 ## Deployment on Vercel
 
-1. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Initial Syrealize setup"
-   git push origin main
-   ```
+### 1. Connect the GitHub repository
+- Push your work to GitHub (`git remote add origin` if needed).
+- In Vercel, click **New Project → Import Git Repository**, choose `lAvArt/SyriaHub`, and grant access.
 
-2. **Import to Vercel**:
-   - Go to [vercel.com](https://vercel.com) and sign in
-   - Click "New Project" and import your GitHub repository
-   - Vercel will auto-detect Next.js settings
+### 2. Configure environment variables
+- In **Settings → Environment Variables**, add the variables listed in the [Environment Variables](#environment-variables) table.
+- Repeat the setup for `Development`, `Preview`, and `Production` scopes so preview builds behave the same way as production.
 
-3. **Configure Environment Variables** in Vercel dashboard:
-   - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon/public key
+### 3. Enable preview deployments
+- Vercel automatically builds a preview for every pull request/branch once the repo is linked.
+- Branch protection tip: require the **CI** workflow (lint + typecheck) to pass before merging.
 
-4. **Deploy**: Click "Deploy" and Vercel will build and deploy automatically
+### 4. Enable analytics & caching
+- Vercel Analytics runs automatically thanks to `@vercel/analytics` in `app/layout.tsx`.
+- CDN caching headers are managed via `vercel.json` and API helpers so static assets and selected `/api` responses are cached safely.
 
-5. **Custom Domain** (optional): Add your custom domain in Vercel project settings
+### 5. Verify API routes
+- The **API Smoke Test** workflow (`.github/workflows/api-smoke-test.yml`) runs whenever Vercel reports a successful deployment and pings `/api/health`.
+- You can run the same check locally with PowerShell: `Invoke-WebRequest https://<your-domain>/api/health | Select-Object -Expand Content`.
 
-### Continuous Deployment
-Every push to `main` branch will trigger automatic redeployment on Vercel.
+### 6. Trigger a deployment
+- Push to `main` for production or any branch for a preview deployment—Vercel handles the rest.
+- Optional: attach a custom domain in **Settings → Domains** after the first deploy.
+
+## Continuous Integration
+
+- **Lint & Type Check**: `.github/workflows/ci.yml` runs `npm run lint` and `npm run typecheck` on pushes to `main` and `feature/**` branches and on every pull request.
+- **API Smoke Test**: `.github/workflows/api-smoke-test.yml` curls the deployed `/api/health` endpoint after Vercel reports a successful deployment.
+- Local parity: run `npm ci && npm run lint && npm run typecheck` before committing to match CI behaviour.
 
 ## Project Structure
 
@@ -345,7 +365,10 @@ For more detailed troubleshooting, see the documentation files:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Read `CONTRIBUTING.md` for branching, commit, and code-style conventions.
+- Run `npm run lint` and `npm run typecheck` before opening a pull request so CI succeeds on the first try.
+- Use the provided `test-api.ps1` / `test-api.sh` scripts to spot-check critical endpoints against a deployed environment.
+- Open an issue for larger changes so we can plan the database and Supabase migrations together.
 
 ## License
 

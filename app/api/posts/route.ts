@@ -167,5 +167,10 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
   return successResponse(data, 201)
 }
 
-export const GET = withErrorHandling(handleGetPosts)
+export const GET = withErrorHandling(handleGetPosts, {
+  cache: {
+    maxAge: 60,
+    staleWhileRevalidate: 300,
+  },
+})
 export const POST = withErrorHandling(handleCreatePost)

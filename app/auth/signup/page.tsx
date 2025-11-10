@@ -92,7 +92,7 @@ export default async function SignupPage({
                 </h3>
                 <div className="mt-2 text-sm text-green-700">
                   <p>
-                    We've sent you an email with a confirmation link. Please check your inbox and click the link to verify your account.
+                    We&apos;ve sent you an email with a confirmation link. Please check your inbox and click the link to verify your account.
                   </p>
                 </div>
               </div>

@@ -135,5 +135,10 @@ async function handleCreateCitation(request: Request): Promise<NextResponse> {
   return successResponse(data, 201)
 }
 
-export const GET = withErrorHandling(handleGetCitations)
+export const GET = withErrorHandling(handleGetCitations, {
+  cache: {
+    maxAge: 300,
+    staleWhileRevalidate: 900,
+  },
+})
 export const POST = withErrorHandling(handleCreateCitation)

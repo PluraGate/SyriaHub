@@ -169,6 +169,11 @@ async function handleDeletePost(
   return successResponse({ message: 'Post deleted successfully' })
 }
 
-export const GET = withErrorHandling(handleGetPost)
+export const GET = withErrorHandling(handleGetPost, {
+  cache: {
+    maxAge: 120,
+    staleWhileRevalidate: 600,
+  },
+})
 export const PUT = withErrorHandling(handleUpdatePost)
 export const DELETE = withErrorHandling(handleDeletePost)

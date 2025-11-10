@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Globe } from 'lucide-react'
+import { MapPin, Globe, Calendar, FileText, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { Navbar, PostCard } from '@/components'
 
 interface ProfilePageProps {
   params: {
@@ -11,6 +12,7 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   
   // Fetch profile data
   const { data: profile, error: profileError } = await supabase
@@ -31,46 +33,57 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     .eq('published', true)
     .order('created_at', { ascending: false })
 
+  const isOwnProfile = user?.id === params.id
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              Syrealize
-            </Link>
-            <Link
-              href="/feed"
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Feed
-            </Link>
-          </div>
+    <div className="min-h-screen bg-background dark:bg-dark-bg">
+      <Navbar user={user} />
+
+      {/* Back Navigation */}
+      <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
+        <div className="container-custom max-w-6xl py-4">
+          <Link
+            href="/feed"
+            className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Feed
+          </Link>
         </div>
-      </nav>
+      </div>
 
       {/* Profile Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-start gap-8">
+      <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
+        <div className="container-custom max-w-6xl py-12">
+          <div className="flex flex-col md:flex-row items-start gap-8">
             {/* Avatar */}
-            <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-600">
-              {profile.username?.[0]?.toUpperCase() || 'U'}
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light flex items-center justify-center text-4xl font-display font-bold text-white flex-shrink-0">
+              {(profile.username?.[0] || 'U').toUpperCase()}
             </div>
 
             {/* Profile Info */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {profile.username || 'Anonymous User'}
-              </h1>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text mb-2">
+                    {profile.username || 'Anonymous User'}
+                  </h1>
+                  {profile.affiliation && (
+                    <p className="text-lg text-text-light dark:text-dark-text-muted">
+                      {profile.affiliation}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               {profile.bio && (
-                <p className="text-gray-600 mb-4 max-w-2xl">
+                <p className="text-text dark:text-dark-text mb-6 max-w-3xl leading-relaxed">
                   {profile.bio}
                 </p>
               )}
-              <div className="flex flex-wrap gap-4 text-gray-600">
+
+              {/* Meta Information */}
+              <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted">
                 {profile.location && (
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
@@ -84,12 +97,21 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                       href={profile.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-blue-600 transition-colors"
+                      className="hover:text-primary dark:hover:text-accent-light transition-colors"
                     >
-                      {profile.website}
+                      {profile.website.replace(/^https?:\/\//, '')}
                     </a>
                   </div>
                 )}
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    Joined {new Date(profile.created_at).toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -97,38 +119,34 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       </div>
 
       {/* User's Posts */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Published Posts ({posts?.length || 0})
-        </h2>
+      <main className="container-custom max-w-6xl py-12">
+        <div className="flex items-center gap-3 mb-8">
+          <FileText className="w-6 h-6 text-primary dark:text-accent-light" />
+          <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
+            Published Research
+          </h2>
+          <span className="px-3 py-1 bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light rounded-full text-sm font-medium">
+            {posts?.length || 0}
+          </span>
+        </div>
         
         {posts && posts.length > 0 ? (
-          <div className="grid gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/post/${post.id}`}
-                className="block bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
-              >
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {post.content}
-                </p>
-                <time className="text-sm text-gray-500">
-                  {new Date(post.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-              </Link>
+              <PostCard key={post.id} post={post} showAuthor={false} />
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-600">No published posts yet.</p>
+          <div className="card p-12 text-center">
+            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+            <p className="text-lg text-text-light dark:text-dark-text-muted mb-4">
+              {isOwnProfile ? 'You haven\'t published any posts yet.' : 'No published posts yet.'}
+            </p>
+            {isOwnProfile && (
+              <Link href="/editor" className="btn btn-primary">
+                Create Your First Post
+              </Link>
+            )}
           </div>
         )}
       </main>
