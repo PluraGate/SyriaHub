@@ -30,7 +30,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     .from('posts')
     .select('*')
     .eq('author_id', params.id)
-    .eq('status', 'published')
     .order('created_at', { ascending: false })
 
   const isOwnProfile = user?.id === params.id

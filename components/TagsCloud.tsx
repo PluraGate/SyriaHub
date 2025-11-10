@@ -20,7 +20,6 @@ export function TagsCloud() {
         const { data: posts } = await supabase
           .from('posts')
           .select('tags')
-          .eq('status', 'published')
 
         if (posts) {
           const tagMap: Record<string, number> = {}

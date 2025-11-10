@@ -56,7 +56,6 @@ function ExplorePageContent() {
       const { data } = await supabase
         .from('posts')
         .select('tags')
-        .eq('status', 'published')
 
       if (data) {
         const tagsSet = new Set<string>()
@@ -82,7 +81,6 @@ function ExplorePageContent() {
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
-          .eq('status', 'published')
           .order('created_at', { ascending: false })
 
         if (selectedTag) {

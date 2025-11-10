@@ -20,7 +20,6 @@ export default async function Home() {
         *,
         author:users!posts_author_id_fkey(id, name, email)
       `)
-      .eq('status', 'published')
       .order('created_at', { ascending: false })
       .limit(6)
     
