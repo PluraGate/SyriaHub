@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -22,6 +22,14 @@ interface Post {
 }
 
 export default function ExplorePage() {
+  return (
+    <Suspense fallback={<ExploreFallback />}>
+      <ExplorePageContent />
+    </Suspense>
+  )
+}
+
+function ExplorePageContent() {
   const searchParams = useSearchParams()
   const initialTag = searchParams.get('tag')
   
@@ -252,6 +260,21 @@ export default function ExplorePage() {
               </div>
             )}
           </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function ExploreFallback() {
+  return (
+    <div className="min-h-screen bg-background dark:bg-dark-bg">
+      <Navbar />
+      <main className="container-custom max-w-7xl py-8 md:py-12">
+        <div className="grid gap-6 md:grid-cols-2">
+          {[...Array(6)].map((_, i) => (
+            <PostCardSkeleton key={i} />
+          ))}
         </div>
       </main>
     </div>

@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
-import { Navbar, useToast, Skeleton } from '@/components'
+import { Navbar } from '@/components/Navbar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useToast } from '@/components/ui/toast'
 import { Shield, Users, FileText, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
 
 interface Report {
