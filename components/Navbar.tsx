@@ -25,8 +25,12 @@ export function Navbar({ user }: NavbarProps) {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark
 
-    setIsDarkMode(shouldUseDark)
-    setHasResolvedTheme(true)
+    const frame = window.requestAnimationFrame(() => {
+      setIsDarkMode(shouldUseDark)
+      setHasResolvedTheme(true)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
   }, [])
 
   useEffect(() => {

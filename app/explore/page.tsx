@@ -16,9 +16,13 @@ interface Post {
   title: string
   content: string
   created_at: string
-  author_email?: string
   author_id: string
   tags?: string[]
+  author?: {
+    id?: string
+    name?: string | null
+    email?: string | null
+  } | null
 }
 
 export default function ExplorePage() {
@@ -52,7 +56,7 @@ function ExplorePageContent() {
       const { data } = await supabase
         .from('posts')
         .select('tags')
-        .eq('published', true)
+        .eq('status', 'published')
 
       if (data) {
         const tagsSet = new Set<string>()
@@ -74,8 +78,11 @@ function ExplorePageContent() {
       try {
         let query = supabase
           .from('posts')
-          .select('*')
-          .eq('published', true)
+          .select(`
+            *,
+            author:users!posts_author_id_fkey(id, name, email)
+          `)
+          .eq('status', 'published')
           .order('created_at', { ascending: false })
 
         if (selectedTag) {

@@ -12,12 +12,15 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Fetch recent posts for feed preview (for logged-in users)
-  let recentPosts = []
+  let recentPosts: any[] = []
   if (user) {
     const { data } = await supabase
       .from('posts')
-      .select('*')
-      .eq('published', true)
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email)
+      `)
+      .eq('status', 'published')
       .order('created_at', { ascending: false })
       .limit(6)
     

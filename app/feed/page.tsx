@@ -3,15 +3,23 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
+
+interface PostAuthor {
+  id?: string
+  name?: string | null
+  email?: string | null
+}
 
 interface Post {
   id: string
   title: string
   content: string
   created_at: string
-  author_email: string
   tags: string[]
+  author?: PostAuthor | null
 }
 
 export default function FeedPage() {
@@ -32,7 +40,11 @@ export default function FeedPage() {
       try {
         const { data, error } = await supabase
           .from('posts')
-          .select('*')
+          .select(`
+            *,
+            author:users!posts_author_id_fkey(id, name, email)
+          `)
+          .eq('status', 'published')
           .order('created_at', { ascending: false })
 
         if (error) {
@@ -59,55 +71,22 @@ export default function FeedPage() {
     : posts
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              Syrealize
-            </Link>
-            <div className="flex gap-4">
-              <Link
-                href="/feed"
-                className="px-4 py-2 text-blue-600 font-medium"
-              >
-                Feed
-              </Link>
-              {user && (
-                <Link
-                  href="/editor"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Write
-                </Link>
-              )}
-              {!user && (
-                <Link
-                  href="/auth/login"
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  Sign In
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
+      <Navbar user={user} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 container-custom max-w-7xl py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Tags */}
           <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Tags</h2>
+            <div className="card p-4">
+              <h2 className="text-lg font-semibold text-primary dark:text-dark-text mb-4">Tags</h2>
               <div className="space-y-2">
                 <button
                   onClick={() => setSelectedTag(null)}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                     selectedTag === null
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+                      : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border'
                   }`}
                 >
                   All Posts
@@ -118,8 +97,8 @@ export default function FeedPage() {
                     onClick={() => setSelectedTag(tag)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       selectedTag === tag
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+                        : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border'
                     }`}
                   >
                     {tag}
@@ -131,18 +110,18 @@ export default function FeedPage() {
 
           {/* Main Content - Posts */}
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-6">
               {selectedTag ? `Posts tagged with "${selectedTag}"` : 'Latest Posts'}
             </h1>
 
             {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p className="mt-4 text-gray-600">Loading posts...</p>
+              <div className="card p-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-accent-light"></div>
+                <p className="mt-4 text-text-light dark:text-dark-text-muted">Loading posts...</p>
               </div>
             ) : filteredPosts.length === 0 ? (
-              <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-                <p className="text-gray-600">
+              <div className="card p-8 text-center">
+                <p className="text-text-light dark:text-dark-text-muted">
                   {selectedTag
                     ? `No posts found with tag "${selectedTag}"`
                     : 'No posts yet. Be the first to create one!'}
@@ -150,7 +129,7 @@ export default function FeedPage() {
                 {user && (
                   <Link
                     href="/editor"
-                    className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-block mt-4 btn btn-primary"
                   >
                     Create Post
                   </Link>
@@ -161,26 +140,29 @@ export default function FeedPage() {
                 {filteredPosts.map(post => (
                   <article
                     key={post.id}
-                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                    className="card p-6 hover:shadow-soft-lg transition-shadow"
                   >
-                    <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h2 className="text-xl font-display font-semibold text-primary dark:text-dark-text mb-2">
                       {post.title}
                     </h2>
-                    <p className="text-gray-600 mb-4 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
+                    <p
+                      className="text-text-light dark:text-dark-text-muted mb-4 overflow-hidden"
+                      style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}
+                    >
                       {post.content}
                     </p>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {post.tags?.map(tag => (
                         <span
                           key={tag}
-                          className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
+                          className="inline-block px-3 py-1 bg-primary/5 text-primary dark:bg-primary-light/20 dark:text-primary-light text-xs rounded-full"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>{post.author_email}</span>
+                    <div className="flex items-center justify-between text-sm text-text-light dark:text-dark-text-muted">
+                      <span>{post.author?.name || post.author?.email?.split('@')[0] || 'Anonymous'}</span>
                       <time dateTime={post.created_at}>
                         {new Date(post.created_at).toLocaleDateString()}
                       </time>
@@ -192,6 +174,8 @@ export default function FeedPage() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   )
 }

@@ -20,7 +20,7 @@ export function TagsCloud() {
         const { data: posts } = await supabase
           .from('posts')
           .select('tags')
-          .eq('published', true)
+          .eq('status', 'published')
 
         if (posts) {
           const tagMap: Record<string, number> = {}
@@ -66,7 +66,7 @@ export function TagsCloud() {
     return 'text-base'
   }
 
-  const maxCount = Math.max(...tags.map((t) => t.count))
+  const maxCount = tags.length > 0 ? Math.max(...tags.map((t) => t.count)) : 1
 
   return (
     <div className="flex flex-wrap gap-3 justify-center items-center">
