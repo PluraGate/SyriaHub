@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import { Eye, FileText, Save } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Navbar, useToast } from '@/components'
+import { Navbar } from '@/components/Navbar'
+import { useToast } from '@/components/ui/toast'
 
 type EditorErrors = {
   title?: string
