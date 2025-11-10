@@ -21,8 +21,10 @@ interface AdminDashboardClientProps {
   initialUserId: string
 }
 
+type NavbarUser = { id: string; email?: string }
+
 export default function AdminDashboardClient({ initialUserId }: AdminDashboardClientProps) {
-  const [navbarUser, setNavbarUser] = useState<{ id: string; email?: string | null } | null>(
+  const [navbarUser, setNavbarUser] = useState<NavbarUser | null>(
     initialUserId ? { id: initialUserId } : null
   )
   const [loading, setLoading] = useState(true)
@@ -70,7 +72,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
       if (data.user) {
         setNavbarUser({
           id: data.user.id,
-          email: data.user.email,
+          email: data.user.email ?? undefined,
         })
       }
     })
