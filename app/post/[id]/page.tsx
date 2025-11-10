@@ -44,7 +44,6 @@ export default async function PostPage({ params }: PostPageProps) {
           author:users!posts_author_id_fkey(name, email)
         `
       )
-      .eq('status', 'published')
       .neq('id', params.id)
       .overlaps('tags', post.tags)
       .limit(5)
