@@ -1,0 +1,67 @@
+{
+    "Common": {
+        "appTitle": "Syrealize",
+        "tagline": "Research platform for collaborative knowledge sharing",
+        "primaryCta": "Get started",
+        "secondaryCta": "Explore research",
+        "languageSwitcher": "Language",
+        "english": "English",
+        "arabic": "Arabic"
+    },
+    "Navigation": {
+        "feed": "Feed",
+        "explore": "Explore",
+        "groups": "Groups",
+        "profile": "Profile",
+        "login": "Sign In",
+        "logout": "Sign Out"
+    },
+    "Post": {
+        "edit": "Edit",
+        "history": "History",
+        "report": "Report",
+        "question": "Question",
+        "article": "Article",
+        "answerThis": "Answer this",
+        "answers": "Answers",
+        "yourAnswer": "Your Answer",
+        "postAnswer": "Post Answer",
+        "acceptAnswer": "Accept Answer",
+        "accepted": "Accepted Answer"
+    },
+    "Landing": {
+        "heroTitle": "Research Made Simple",
+        "heroSubtitle": "A minimalist platform for collaborative knowledge sharing. Create, discover, and organize research with clarity and focus.",
+        "getStarted": "Get Started",
+        "browsePosts": "Browse Posts",
+        "featuresTitle": "Built for Clarity",
+        "featuresSubtitle": "Everything you need to share and discover research, without the clutter.",
+        "feature1Title": "Clean Writing",
+        "feature1Desc": "Distraction-free editor focused on your ideas, not formatting.",
+        "feature2Title": "Easy Discovery",
+        "feature2Desc": "Find relevant research with intuitive tagging and search.",
+        "feature3Title": "Collaboration",
+        "feature3Desc": "Share knowledge and connect with researchers worldwide.",
+        "ctaTitle": "Ready to start sharing?",
+        "ctaDesc": "Join our community of researchers and start contributing to collaborative knowledge.",
+        "createAccount": "Create Your Account",
+        "recentResearch": "Recent Research",
+        "viewAll": "View All",
+        "popularTopics": "Popular Topics",
+        "noPosts": "No posts yet. Be the first to contribute!",
+        "createPost": "Create a Post",
+        "badge": "Minimalist Research Platform"
+    },
+    "Footer": {
+        "description": "A minimalist research platform for collaborative knowledge sharing. Create, discover, and organize research with clarity and focus.",
+        "quickLinks": "Quick Links",
+        "browseFeed": "Browse Feed",
+        "writePost": "Write a Post",
+        "getStarted": "Get Started",
+        "resources": "Resources",
+        "github": "GitHub",
+        "about": "About",
+        "privacy": "Privacy",
+        "copyright": "© {year} Syrealize. A minimalist research platform."
+    }
+}

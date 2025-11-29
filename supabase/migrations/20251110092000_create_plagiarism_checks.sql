@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS plagiarism_checks (
-COMMENT ON COLUMN plagiarism_checks.score IS 'Provider-specific plagiarism score (0-100).';
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   post_version_id UUID NOT NULL REFERENCES post_versions(id) ON DELETE CASCADE,
   provider TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed')),

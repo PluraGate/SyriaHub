@@ -12,7 +12,7 @@
 
 -- Uncomment and update the following after creating users through Auth:
 
-/*
+
 -- Sample Post 1: Humanitarian Aid
 INSERT INTO posts (title, content, tags, author_id) VALUES
 (
@@ -61,7 +61,7 @@ INSERT INTO posts (title, content, tags, author_id) VALUES
 -- Sample Comments (add after posts are created)
 -- Uncomment and update with actual post_id and user_id values:
 
-/*
+
 INSERT INTO comments (content, post_id, user_id) VALUES
 (
   'Excellent research. Have you considered collaborating with UN agencies on implementation?',
@@ -82,14 +82,14 @@ INSERT INTO comments (content, post_id, user_id) VALUES
   'POST_ID_HERE',
   'USER_ID_HERE'
 );
-*/
+
 
 -- Sample Citations (link posts that reference each other)
 -- Uncomment and update with actual post IDs:
 
-/*
+
 INSERT INTO citations (source_post_id, target_post_id) VALUES
 ('SOURCE_POST_ID', 'TARGET_POST_ID');
-*/
 
-*/
+
+
