@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { Menu, X, Moon, Sun, PenSquare } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 interface NavbarProps {
   user?: {
@@ -12,6 +14,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ user }: NavbarProps) {
+  const t = useTranslations('Navigation')
+  const tCommon = useTranslations('Common')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [hasResolvedTheme, setHasResolvedTheme] = useState(false)
@@ -60,16 +64,16 @@ export function Navbar({ user }: NavbarProps) {
       <div className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="flex items-center space-x-2 group focus-ring rounded-lg px-2 py-1 -ml-2"
-            aria-label="Syrealize Home"
+            aria-label={tCommon('appTitle')}
           >
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
               <span className="text-white font-display font-bold text-lg">S</span>
             </div>
             <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-accent dark:group-hover:text-accent-light transition-colors">
-              Syrealize
+              {tCommon('appTitle')}
             </span>
           </Link>
 
@@ -79,15 +83,15 @@ export function Navbar({ user }: NavbarProps) {
               href="/feed"
               className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
             >
-              Feed
+              {t('feed')}
             </Link>
             <Link
               href="/explore"
               className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
             >
-              Explore
+              {t('explore')}
             </Link>
-            
+
             {user ? (
               <>
                 <Link
@@ -101,14 +105,14 @@ export function Navbar({ user }: NavbarProps) {
                   href={`/profile/${user.id}`}
                   className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
                 >
-                  Profile
+                  {t('profile')}
                 </Link>
                 <form action="/auth/signout" method="post" className="ml-2">
                   <button
                     type="submit"
                     className="px-4 py-2 text-text dark:text-dark-text hover:text-accent dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
                   >
-                    Sign Out
+                    {t('logout')}
                   </button>
                 </form>
               </>
@@ -118,16 +122,19 @@ export function Navbar({ user }: NavbarProps) {
                   href="/auth/login"
                   className="px-4 py-2 text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-border rounded-lg transition-all focus-ring font-medium"
                 >
-                  Sign In
+                  {t('login')}
                 </Link>
                 <Link
                   href="/auth/signup"
                   className="btn-primary ml-2"
                 >
-                  Get Started
+                  {tCommon('primaryCta')}
                 </Link>
               </>
             )}
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Dark Mode Toggle */}
             <button
@@ -141,6 +148,7 @@ export function Navbar({ user }: NavbarProps) {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
             <button
               onClick={toggleDarkMode}
               className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all focus-ring"
@@ -148,7 +156,7 @@ export function Navbar({ user }: NavbarProps) {
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            
+
             <button
               onClick={toggleMenu}
               className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all focus-ring"
@@ -168,16 +176,16 @@ export function Navbar({ user }: NavbarProps) {
               className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              Feed
+              {t('feed')}
             </Link>
             <Link
               href="/explore"
               className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              Explore
+              {t('explore')}
             </Link>
-            
+
             {user ? (
               <>
                 <Link
@@ -193,14 +201,14 @@ export function Navbar({ user }: NavbarProps) {
                   className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Profile
+                  {t('profile')}
                 </Link>
                 <form action="/auth/signout" method="post">
                   <button
                     type="submit"
                     className="w-full text-left px-4 py-3 text-accent dark:text-accent-light hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
                   >
-                    Sign Out
+                    {t('logout')}
                   </button>
                 </form>
               </>
@@ -211,14 +219,14 @@ export function Navbar({ user }: NavbarProps) {
                   className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign In
+                  {t('login')}
                 </Link>
                 <Link
                   href="/auth/signup"
                   className="block px-4 py-3 bg-primary text-white hover:bg-primary-dark rounded-lg transition-all font-medium text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Get Started
+                  {tCommon('primaryCta')}
                 </Link>
               </>
             )}

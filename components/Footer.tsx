@@ -1,7 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import { Github, Twitter, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export function Footer() {
+  const t = useTranslations('Footer')
   const currentYear = new Date().getFullYear()
 
   return (
@@ -11,8 +15,8 @@ export function Footer() {
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Brand Section */}
           <div className="md:col-span-2">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-flex items-center space-x-2 group focus-ring rounded-lg p-1 -ml-1"
               aria-label="Syrealize Home"
             >
@@ -24,39 +28,38 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-text-light dark:text-dark-text-muted max-w-md leading-relaxed">
-              A minimalist research platform for collaborative knowledge sharing. 
-              Create, discover, and organize research with clarity and focus.
+              {t('description')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="font-display font-semibold text-primary dark:text-dark-text mb-4">
-              Quick Links
+              {t('quickLinks')}
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link 
-                  href="/feed" 
+                <Link
+                  href="/feed"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  Browse Feed
+                  {t('browseFeed')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/editor" 
+                <Link
+                  href="/editor"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  Write a Post
+                  {t('writePost')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/auth/signup" 
+                <Link
+                  href="/auth/signup"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  Get Started
+                  {t('getStarted')}
                 </Link>
               </li>
             </ul>
@@ -65,33 +68,33 @@ export function Footer() {
           {/* Resources */}
           <div>
             <h3 className="font-display font-semibold text-primary dark:text-dark-text mb-4">
-              Resources
+              {t('resources')}
             </h3>
             <ul className="space-y-3">
               <li>
-                <a 
-                  href="https://github.com/lAvArt/SyriaHub" 
+                <a
+                  href="https://github.com/lAvArt/SyriaHub"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  GitHub
+                  {t('github')}
                 </a>
               </li>
               <li>
-                <Link 
-                  href="/about" 
+                <Link
+                  href="/about"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  About
+                  {t('about')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/privacy" 
+                <Link
+                  href="/privacy"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
                 >
-                  Privacy
+                  {t('privacy')}
                 </Link>
               </li>
             </ul>
@@ -101,7 +104,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="py-6 border-t border-gray-200 dark:border-dark-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-text-light dark:text-dark-text-muted text-sm">
-            &copy; {currentYear} Syrealize. A minimalist research platform.
+            {t('copyright', { year: currentYear })}
           </p>
 
           {/* Social Links */}

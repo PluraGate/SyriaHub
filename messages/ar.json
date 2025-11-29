@@ -1,0 +1,67 @@
+{
+    "Common": {
+        "appTitle": "Syrealize",
+        "tagline": "منصة بحث للتعاون وتبادل المعرفة",
+        "primaryCta": "ابدأ الآن",
+        "secondaryCta": "استكشف الأبحاث",
+        "languageSwitcher": "اللغة",
+        "english": "الإنجليزية",
+        "arabic": "العربية"
+    },
+    "Navigation": {
+        "feed": "الرئيسية",
+        "explore": "استكشاف",
+        "groups": "المجموعات",
+        "profile": "الملف الشخصي",
+        "login": "تسجيل الدخول",
+        "logout": "تسجيل الخروج"
+    },
+    "Post": {
+        "edit": "تعديل",
+        "history": "السجل",
+        "report": "إبلاغ",
+        "question": "سؤال",
+        "article": "مقال",
+        "answerThis": "أجب على هذا",
+        "answers": "إجابات",
+        "yourAnswer": "إجابتك",
+        "postAnswer": "نشر الإجابة",
+        "acceptAnswer": "قبول الإجابة",
+        "accepted": "إجابة مقبولة"
+    },
+    "Landing": {
+        "heroTitle": "البحث أصبح بسيطاً",
+        "heroSubtitle": "منصة بسيطة للتعاون وتبادل المعرفة. أنشئ واكتشف ونظم الأبحاث بوضوح وتركيز.",
+        "getStarted": "ابدأ الآن",
+        "browsePosts": "تصفح المنشورات",
+        "featuresTitle": "بنيت للوضوح",
+        "featuresSubtitle": "كل ما تحتاجه لمشاركة واكتشاف الأبحاث، بدون فوضى.",
+        "feature1Title": "كتابة نظيفة",
+        "feature1Desc": "محرر خالٍ من التشتت يركز على أفكارك، وليس التنسيق.",
+        "feature2Title": "اكتشاف سهل",
+        "feature2Desc": "اعثر على الأبحاث ذات الصلة باستخدام الوسوم والبحث الذكي.",
+        "feature3Title": "تعاون",
+        "feature3Desc": "شارك المعرفة وتواصل مع الباحثين حول العالم.",
+        "ctaTitle": "جاهز للمشاركة؟",
+        "ctaDesc": "انضم إلى مجتمع الباحثين وابدأ في المساهمة في المعرفة التعاونية.",
+        "createAccount": "أنشئ حسابك",
+        "recentResearch": "أحدث الأبحاث",
+        "viewAll": "عرض الكل",
+        "popularTopics": "مواضيع شائعة",
+        "noPosts": "لا توجد منشورات بعد. كن أول من يساهم!",
+        "createPost": "أنشئ منشوراً",
+        "badge": "منصة بحث بسيطة"
+    },
+    "Footer": {
+        "description": "منصة بسيطة للتعاون وتبادل المعرفة. أنشئ واكتشف ونظم الأبحاث بوضوح وتركيز.",
+        "quickLinks": "روابط سريعة",
+        "browseFeed": "تصفح المنشورات",
+        "writePost": "اكتب منشوراً",
+        "getStarted": "ابدأ الآن",
+        "resources": "المصادر",
+        "github": "جيت هب",
+        "about": "حول",
+        "privacy": "الخصوصية",
+        "copyright": "© {year} Syrealize. منصة بحث بسيطة."
+    }
+}

@@ -5,11 +5,10 @@ export type ReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed'
 
 export interface User {
   id: string
-  name: string
+  full_name: string
   email: string
   role: UserRole
-  bio?: string
-  affiliation?: string
+  user_id: string
   created_at: string
 }
 
@@ -17,10 +16,48 @@ export interface Post {
   id: string
   title: string
   content: string
-  tags: string[]
+  tags?: string[]
   author_id: string
   created_at: string
   updated_at: string
+
+  // Forum & Workflow fields
+  content_type: 'article' | 'question' | 'answer'
+  status: 'draft' | 'queued' | 'published' | 'archived'
+  parent_id?: string | null
+  group_id?: string | null
+  is_accepted?: boolean
+
+  // Stats
+  view_count?: number
+  vote_count?: number
+  comment_count?: number
+
+  // Optional relations
+  author?: User
+}
+
+
+
+export interface PostVersion {
+  id: string
+  post_id: string
+  version_number: number
+  title: string
+  content: string
+  tags: string[]
+  author_id: string | null
+  editor_id: string | null
+  metadata: Record<string, any>
+  created_at: string
+}
+
+export interface PostVote {
+  id: string
+  post_id: string
+  voter_id: string
+  value: 1 | -1
+  created_at: string
 }
 
 export interface Comment {

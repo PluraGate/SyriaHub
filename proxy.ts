@@ -1,31 +1,28 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import createMiddleware from 'next-intl/middleware';
+import { updateSession } from '@/lib/supabase/middleware';
+import { NextRequest } from 'next/server';
 
-/**
- * Proxy for Supabase Auth session management
- * Runs on all routes except static assets and API routes
- * 
- * Note: Renamed from middleware.ts to proxy.ts in Next.js 15+
- * The term "proxy" better represents the network boundary functionality.
- */
+const intlMiddleware = createMiddleware({
+    // A list of all locales that are supported
+    locales: ['en', 'ar'],
+
+    // Used when no locale matches
+    defaultLocale: 'en'
+});
+
 export async function proxy(request: NextRequest) {
-  return await updateSession(request)
+    // 1. Run next-intl middleware to get the localized response (redirects, etc.)
+    const response = intlMiddleware(request);
+
+    // 2. Pass the response to Supabase middleware to handle auth session
+    // Note: updateSession now accepts an optional response object
+    return await updateSession(request, response);
 }
 
-/**
- * Next.js 15+ proxy configuration
- * Excludes static files, images, and API routes from proxy processing
- */
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, robots.txt, sitemap.xml
-     * - api routes (handled by route handlers)
-     * - static image files
-     */
-    '/((?!api/|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
-  ],
-}
+    // Match only internationalized pathnames
+    // We exclude api, static files, etc.
+    matcher: [
+        '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'
+    ]
+};
