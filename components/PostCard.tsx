@@ -1,55 +1,22 @@
 import Link from 'next/link'
-import { Clock, User } from 'lucide-react'
+import { MessageSquare, Quote, Calendar, User, Tag, GitFork } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
-
-interface PostAuthor {
-  id?: string
-  name?: string | null
-  email?: string | null
-}
-
-interface PostCardData {
-  id: string
-  title: string
-  content: string
-  created_at: string
-  author_id?: string
-  tags?: string[]
-  author?: PostAuthor | null
-}
+import { ReportButton } from '@/components/ReportButton'
+import { Post } from '@/types'
 
 interface PostCardProps {
-  post: PostCardData
+  post: Post & {
+    author?: {
+      name?: string
+      full_name?: string
+      email?: string
+    } | null
+  }
   showAuthor?: boolean
 }
 
 export function PostCard({ post, showAuthor = true }: PostCardProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInMs = now.getTime() - date.getTime()
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
-
-    if (diffInDays === 0) {
-      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60))
-      if (diffInHours === 0) {
-        const diffInMinutes = Math.floor(diffInMs / (1000 * 60))
-        return diffInMinutes <= 1 ? 'Just now' : `${diffInMinutes}m ago`
-      }
-      return `${diffInHours}h ago`
-    } else if (diffInDays === 1) {
-      return 'Yesterday'
-    } else if (diffInDays < 7) {
-      return `${diffInDays}d ago`
-    } else {
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
-      })
-    }
-  }
-
   const getExcerpt = (content: string, maxLength: number = 150) => {
     if (content.length <= maxLength) return content
     return content.substring(0, maxLength).trim() + '...'
@@ -57,20 +24,34 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
 
   const displayAuthor =
     post.author?.name ||
+    post.author?.full_name ||
     post.author?.email?.split('@')[0] ||
     'Anonymous'
 
   return (
     <article className="card card-hover p-6 group">
-      <Link 
+      <Link
         href={`/post/${post.id}`}
-        className="focus-ring rounded-lg"
+        className="focus-ring rounded-lg block"
       >
         {/* Post Header */}
         <div className="flex items-start justify-between gap-4 mb-3">
-          <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-accent dark:group-hover:text-accent-light transition-colors line-clamp-2">
-            {post.title}
-          </h3>
+          <div>
+            {post.forked_from_id && (
+              <span className="text-xs text-text-light dark:text-dark-text-muted flex items-center gap-1 mb-1">
+                <GitFork className="w-3 h-3" />
+                Forked
+              </span>
+            )}
+            <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-accent dark:group-hover:text-accent-light transition-colors line-clamp-2">
+              {post.title}
+            </h3>
+          </div>
+          {post.license && (
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted border border-gray-200 dark:border-dark-border whitespace-nowrap">
+              {post.license}
+            </span>
+          )}
         </div>
 
         {/* Post Content Preview */}
@@ -93,7 +74,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
         )}
 
         {/* Post Meta */}
-        <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
+        <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted mb-4">
           {showAuthor && (
             <div className="flex items-center gap-1.5">
               <User className="w-4 h-4" aria-hidden="true" />
@@ -102,15 +83,33 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
               </span>
             </div>
           )}
-          
+
           <div className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4" aria-hidden="true" />
+            <Calendar className="w-4 h-4" aria-hidden="true" />
             <time dateTime={post.created_at}>
-              {formatDate(post.created_at)}
+              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
             </time>
           </div>
         </div>
       </Link>
+
+      <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-dark-border">
+        <div className="flex items-center gap-4">
+          <Link
+            href={`/post/${post.id}`}
+            className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>{post.comment_count || 0} Comments</span>
+          </Link>
+          <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted">
+            <Quote className="w-4 h-4" />
+            <span>{post.citation_count || 0} Citations</span>
+          </div>
+        </div>
+
+        <ReportButton postId={post.id} />
+      </div>
     </article>
   )
 }

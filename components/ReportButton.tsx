@@ -1,117 +1,129 @@
 'use client'
 
 import { useState } from 'react'
-import { Flag, X } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/toast'
+import { Flag, Loader2 } from 'lucide-react'
 
 interface ReportButtonProps {
-  contentId: string
-  contentType: 'post' | 'comment'
-  label?: string
+  postId?: string
+  commentId?: string
   className?: string
+  asMenuItem?: boolean
 }
 
-export function ReportButton({
-  contentId,
-  contentType,
-  label = 'Report',
-  className = '',
-}: ReportButtonProps) {
-  const { showToast } = useToast()
+export function ReportButton({ postId, commentId, className, asMenuItem }: ReportButtonProps) {
   const [open, setOpen] = useState(false)
-  const [reason, setReason] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [reason, setReason] = useState('spam')
+  const [details, setDetails] = useState('')
 
-  const handleSubmit = async () => {
-    const trimmed = reason.trim()
-    if (trimmed.length < 10) {
-      showToast('Please provide at least 10 characters.', 'warning')
-      return
-    }
+  const supabase = createClient()
+  const { showToast } = useToast()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!postId && !commentId) return
+    setLoading(true)
 
     try {
-      setSubmitting(true)
-      const response = await fetch('/api/report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content_type: contentType,
-          content_id: contentId,
-          reason: trimmed,
-        }),
-      })
+      const { data: { user } } = await supabase.auth.getUser()
 
-      const payload = await response.json()
-
-      if (!response.ok || !payload.success) {
-        showToast(payload.error || 'Unable to submit report.', 'error')
+      if (!user) {
+        showToast('You must be logged in to report content.', 'error')
         return
       }
 
-      showToast('Report submitted. Thank you for keeping the hub safe.', 'success')
-      setReason('')
+      const { error } = await supabase
+        .from('reports')
+        .insert({
+          post_id: postId,
+          comment_id: commentId,
+          reporter_id: user.id,
+          reason: details ? `${reason}: ${details}` : reason,
+          status: 'pending'
+        })
+
+      if (error) throw error
+
+      showToast('Report submitted. Thank you for helping keep our community safe.', 'success')
       setOpen(false)
+      setDetails('')
+      setReason('spam')
     } catch (error) {
-      console.error('Report error:', error)
-      showToast('Something went wrong while submitting the report.', 'error')
+      console.error('Error submitting report:', error)
+      showToast('Failed to submit report. Please try again.', 'error')
     } finally {
-      setSubmitting(false)
+      setLoading(false)
     }
   }
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={`inline-flex items-center gap-1.5 text-xs font-medium text-text-light hover:text-accent dark:text-dark-text-muted dark:hover:text-accent-light transition-colors ${className}`}
-      >
-        <Flag className="w-3.5 h-3.5" />
-        {label}
-      </button>
-    )
-  }
-
   return (
-    <div className={`border border-gray-200 dark:border-dark-border rounded-lg p-3 bg-white dark:bg-dark-surface ${className}`}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2 text-sm font-medium text-text dark:text-dark-text">
-          <Flag className="w-4 h-4 text-accent dark:text-accent-light" />
-          Report {contentType}
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            setOpen(false)
-            setReason('')
-          }}
-          className="text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text transition-colors"
-          aria-label="Close report form"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-      <textarea
-        value={reason}
-        onChange={(event) => setReason(event.target.value)}
-        placeholder="Describe the issue. This will be reviewed by moderators."
-        className="w-full rounded-lg border border-gray-200 dark:border-dark-border bg-background-white dark:bg-dark-bg text-sm text-text dark:text-dark-text p-2 focus:outline-none focus:ring-2 focus:ring-accent/40"
-        rows={3}
-        maxLength={1000}
-      />
-      <div className="mt-2 flex items-center justify-between">
-        <span className="text-xs text-text-light dark:text-dark-text-muted">
-          {reason.length}/1000
-        </span>
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="px-3 py-1.5 text-xs font-medium bg-accent text-white rounded-lg hover:bg-accent-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-        >
-          {submitting ? 'Sending...' : 'Submit'}
-        </button>
-      </div>
-    </div>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {asMenuItem ? (
+          <div className={`flex items-center gap-2 w-full ${className}`}>
+            <Flag className="w-4 h-4" />
+            <span>Report Content</span>
+          </div>
+        ) : (
+          <Button variant="ghost" size="sm" className={`text-text-light dark:text-dark-text-muted hover:text-red-500 dark:hover:text-red-400 ${className}`}>
+            <Flag className="w-4 h-4 mr-2" />
+            Report
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Report Content</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          <div className="space-y-3">
+            <Label>Why are you reporting this?</Label>
+            <RadioGroup value={reason} onValueChange={setReason}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="spam" id="spam" />
+                <Label htmlFor="spam">Spam or unwanted commercial content</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="harassment" id="harassment" />
+                <Label htmlFor="harassment">Harassment or hate speech</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="misinformation" id="misinformation" />
+                <Label htmlFor="misinformation">Misinformation or fake news</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="other" id="other" />
+                <Label htmlFor="other">Other</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="details">Additional Details (Optional)</Label>
+            <Textarea
+              id="details"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="Please provide more context..."
+              className="resize-none"
+            />
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <Button type="submit" variant="destructive" disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Submit Report
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

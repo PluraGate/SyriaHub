@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Calendar, FileText, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
-import { PostCard } from '@/components/PostCard'
+import { ProfileHeader } from '@/components/ProfileHeader'
+import { UserActivityFeed } from '@/components/UserActivityFeed'
 
 interface ProfilePageProps {
   params: Promise<{
@@ -19,7 +20,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   // Fetch profile data
   const { data: profile, error: profileError } = await supabase
     .from('users')
-    .select('id, name, email, bio, affiliation, created_at')
+    .select('id, name, email, role, bio, affiliation, location, website, research_interests, avatar_url, created_at')
     .eq('id', params.id)
     .single()
 
@@ -27,12 +28,36 @@ export default async function ProfilePage(props: ProfilePageProps) {
     notFound()
   }
 
+  // Fetch user stats
+  const { data: stats } = await supabase
+    .rpc('get_user_stats', { user_uuid: params.id })
+    .single()
+
   // Fetch user's posts
   const { data: posts } = await supabase
     .from('posts')
     .select('*')
     .eq('author_id', params.id)
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
+
+  // Fetch user's groups
+  const { data: groupMembers } = await supabase
+    .from('group_members')
+    .select('group_id')
+    .eq('user_id', params.id)
+
+  let groups: any[] = []
+  if (groupMembers && groupMembers.length > 0) {
+    const groupIds = groupMembers.map(gm => gm.group_id)
+    const { data: groupsData } = await supabase
+      .from('groups')
+      .select('*')
+      .in('id', groupIds)
+      .eq('visibility', 'public') // Only show public groups on profile
+
+    groups = groupsData || []
+  }
 
   const isOwnProfile = user?.id === params.id
 
@@ -53,84 +78,17 @@ export default async function ProfilePage(props: ProfilePageProps) {
         </div>
       </div>
 
-      {/* Profile Header */}
-      <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
-        <div className="container-custom max-w-6xl py-12">
-          <div className="flex flex-col md:flex-row items-start gap-8">
-            {/* Avatar */}
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light flex items-center justify-center text-4xl font-display font-bold text-white flex-shrink-0">
-              {(profile.name?.[0] || profile.email?.[0] || 'U').toUpperCase()}
-            </div>
+      <main className="container-custom max-w-6xl py-8">
+        <ProfileHeader
+          profile={profile}
+          stats={stats}
+          isOwnProfile={isOwnProfile}
+        />
 
-            {/* Profile Info */}
-            <div className="flex-1">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                    {profile.name || 'Anonymous User'}
-                  </h1>
-                  {profile.affiliation && (
-                    <p className="text-lg text-text-light dark:text-dark-text-muted">
-                      {profile.affiliation}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {profile.bio && (
-                <p className="text-text dark:text-dark-text mb-6 max-w-3xl leading-relaxed">
-                  {profile.bio}
-                </p>
-              )}
-
-              {/* Meta Information */}
-              <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    Joined {new Date(profile.created_at).toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* User's Posts */}
-      <main className="container-custom max-w-6xl py-12">
-        <div className="flex items-center gap-3 mb-8">
-          <FileText className="w-6 h-6 text-primary dark:text-accent-light" />
-          <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-            Published Research
-          </h2>
-          <span className="px-3 py-1 bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light rounded-full text-sm font-medium">
-            {posts?.length || 0}
-          </span>
-        </div>
-
-        {posts && posts.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} showAuthor={false} />
-            ))}
-          </div>
-        ) : (
-          <div className="card p-12 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-            <p className="text-lg text-text-light dark:text-dark-text-muted mb-4">
-              {isOwnProfile ? "You haven't published any posts yet." : 'No published posts yet.'}
-            </p>
-            {isOwnProfile && (
-              <Link href="/editor" className="btn btn-primary">
-                Create Your First Post
-              </Link>
-            )}
-          </div>
-        )}
+        <UserActivityFeed
+          posts={posts || []}
+          groups={groups}
+        />
       </main>
     </div>
   )

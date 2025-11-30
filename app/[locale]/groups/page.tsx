@@ -163,7 +163,7 @@ export default async function GroupsPage() {
                         ) : (
                             <div className="card p-8 text-center bg-gray-50 dark:bg-dark-surface/50 border-dashed">
                                 <p className="text-text-light dark:text-dark-text-muted mb-4">
-                                    You haven't joined any groups yet.
+                                    You haven&apos;t joined any groups yet.
                                 </p>
                                 <Link href="/groups/create" className="text-primary hover:underline font-medium">
                                     Create one

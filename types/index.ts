@@ -5,10 +5,12 @@ export type ReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed'
 
 export interface User {
   id: string
-  full_name: string
+  name: string
   email: string
   role: UserRole
-  user_id: string
+  bio?: string
+  affiliation?: string
+  avatar_url?: string
   created_at: string
 }
 
@@ -25,13 +27,16 @@ export interface Post {
   content_type: 'article' | 'question' | 'answer'
   status: 'draft' | 'queued' | 'published' | 'archived'
   parent_id?: string | null
+  forked_from_id?: string | null
   group_id?: string | null
   is_accepted?: boolean
+  license?: string | null
 
   // Stats
   view_count?: number
   vote_count?: number
   comment_count?: number
+  citation_count?: number
 
   // Optional relations
   author?: User

@@ -21,17 +21,19 @@ const supabase = createClient(apiUrl, supabaseServiceKey)
 async function testVersioning() {
     console.log('🔍 Testing Content Versioning...')
 
-    // 1. Sign in
-    const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
-        email: 'forum_tester@syrealize.org',
-        password: 'password123'
+    // 1. Create a test user
+    const { data: user, error: userError } = await supabase.auth.admin.createUser({
+        email: `version_tester_${Date.now()}@test.com`,
+        password: 'password123',
+        email_confirm: true
     })
 
-    if (authError || !user) {
-        console.error('❌ Auth failed:', authError)
+    if (userError) {
+        console.error('❌ User creation failed:', userError)
         return
     }
-    console.log('✅ Signed in as:', user.email)
+    console.log('✅ Created test user:', user.user.id)
+    const userId = user.user.id
 
     // 2. Create a post
     const { data: post, error: createError } = await supabase
@@ -40,7 +42,7 @@ async function testVersioning() {
             title: 'Version Test Post',
             content: 'Original content',
             content_type: 'article',
-            author_id: user.id
+            author_id: userId
         })
         .select()
         .single()
@@ -101,6 +103,7 @@ async function testVersioning() {
 
     // Cleanup
     await supabase.from('posts').delete().eq('id', post.id)
+    await supabase.auth.admin.deleteUser(userId)
     console.log('🧹 Cleanup done')
 }
 

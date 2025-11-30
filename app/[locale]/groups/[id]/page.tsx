@@ -4,6 +4,7 @@ import { Settings, Users, Lock, Globe, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { GroupActions } from '@/components/GroupActions'
+import { GroupChat } from '@/components/GroupChat'
 
 import { PostCard } from '@/components/PostCard'
 
@@ -180,6 +181,10 @@ export default async function GroupPage(props: GroupPageProps) {
                                 </div>
                             )}
                         </div>
+
+                        {isMember && user && (
+                            <GroupChat groupId={group.id} currentUserId={user.id} />
+                        )}
                     </aside>
                 </div>
             </main>
