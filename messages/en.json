@@ -14,7 +14,9 @@
         "groups": "Groups",
         "profile": "Profile",
         "login": "Sign In",
-        "logout": "Sign Out"
+        "logout": "Sign Out",
+        "resources": "Resources",
+        "events": "Events"
     },
     "Post": {
         "edit": "Edit",

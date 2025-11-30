@@ -124,7 +124,7 @@ export function AnswerCard({ answer, userVote: initialUserVote, isQuestionAuthor
                             >
                                 <UserIcon className="w-4 h-4" />
                                 <span className="font-medium">
-                                    {answer.author?.full_name || answer.author?.email?.split('@')[0] || 'Anonymous'}
+                                    {answer.author?.name || 'Anonymous'}
                                 </span>
                             </Link>
                             <span>•</span>

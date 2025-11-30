@@ -11,6 +11,7 @@ interface CitationBacklink {
   title: string
   created_at: string
   author?: CitationAuthor | null
+  quote_content?: string | null
 }
 
 interface CitationBacklinksProps {
@@ -39,6 +40,11 @@ export function CitationBacklinks({ citations }: CitationBacklinksProps) {
             <h4 className="font-medium text-sm text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-accent-light transition-colors mb-1 line-clamp-2">
               {citation.title}
             </h4>
+            {citation.quote_content && (
+              <blockquote className="text-xs text-text-light dark:text-dark-text-muted italic border-l-2 border-gray-300 dark:border-dark-border pl-2 my-2 line-clamp-3">
+                &quot;{citation.quote_content}&quot;
+              </blockquote>
+            )}
             <p className="text-xs text-text-light dark:text-dark-text-muted">
               By {citation.author?.name || citation.author?.email?.split('@')[0] || 'Anonymous'}
             </p>

@@ -3,6 +3,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Inter, Outfit } from 'next/font/google'
 import { ToastProvider } from '@/components/ui/toast'
+import { NotificationsProvider } from '@/components/NotificationsProvider'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -33,11 +34,13 @@ export default async function RootLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir}>
-      <body className={`${inter.variable} ${outfit.variable} font-sans bg-background text-text`}>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
+      <body className={`${inter.variable} ${outfit.variable} font-sans bg-background text-text`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
-            {children}
+            <NotificationsProvider>
+              {children}
+            </NotificationsProvider>
           </ToastProvider>
         </NextIntlClientProvider>
       </body>

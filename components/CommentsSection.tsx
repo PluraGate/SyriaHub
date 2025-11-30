@@ -178,9 +178,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
                 </div>
                 {viewerId && viewerId !== comment.user?.id && (
                   <ReportButton
-                    contentId={comment.id}
-                    contentType="comment"
-                    label="Report"
+                    commentId={comment.id}
                     className="text-right"
                   />
                 )}

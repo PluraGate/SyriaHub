@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { History, X, ChevronLeft, ChevronRight, User as UserIcon, FileDiff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -17,36 +17,36 @@ interface PostHistoryDialogProps {
 }
 
 export function PostHistoryDialog({ postId, isOpen, onClose }: PostHistoryDialogProps) {
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
     const [versions, setVersions] = useState<PostVersion[]>([])
     const [loading, setLoading] = useState(true)
     const [selectedVersion, setSelectedVersion] = useState<PostVersion | null>(null)
     const [showDiff, setShowDiff] = useState(false)
 
     useEffect(() => {
+        async function loadVersions() {
+            setLoading(true)
+            const { data, error } = await supabase
+                .from('post_versions')
+                .select('*')
+                .eq('post_id', postId)
+                .order('version_number', { ascending: false })
+
+            if (error) {
+                console.error('Error loading versions:', error)
+            } else {
+                setVersions(data || [])
+                if (data && data.length > 0) {
+                    setSelectedVersion(data[0])
+                }
+            }
+            setLoading(false)
+        }
+
         if (isOpen && postId) {
             loadVersions()
         }
-    }, [isOpen, postId])
-
-    async function loadVersions() {
-        setLoading(true)
-        const { data, error } = await supabase
-            .from('post_versions')
-            .select('*')
-            .eq('post_id', postId)
-            .order('version_number', { ascending: false })
-
-        if (error) {
-            console.error('Error loading versions:', error)
-        } else {
-            setVersions(data || [])
-            if (data && data.length > 0) {
-                setSelectedVersion(data[0])
-            }
-        }
-        setLoading(false)
-    }
+    }, [isOpen, postId, supabase])
 
     const renderDiff = () => {
         if (!selectedVersion) return null

@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { Navbar } from '@/components/Navbar'
@@ -12,21 +13,7 @@ import { SearchBar } from '@/components/SearchBar'
 import { PostCardSkeleton } from '@/components/ui/skeleton'
 import { Filter, X, ArrowUpDown, Users as UsersIcon } from 'lucide-react'
 
-interface Post {
-  id: string
-  title: string
-  content: string
-  created_at: string
-  author_id: string
-  tags?: string[]
-  author?: {
-    id?: string
-    name?: string | null
-    email?: string | null
-  } | null
-  comment_count?: number
-  citation_count?: number
-}
+import { Post } from '@/types'
 
 type SortOption = 'recent' | 'trending' | 'cited'
 
@@ -77,70 +64,35 @@ function ExplorePageContent() {
     loadTags()
   }, [supabase])
 
-  const [groups, setGroups] = useState<any[]>([])
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
+  const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
   const [profiles, setProfiles] = useState<any[]>([])
 
   useEffect(() => {
     const loadContent = async () => {
       setLoading(true)
       try {
-        // Fetch posts
-        const { data: postsData, error: postsError } = await supabase
-          .from('posts')
+        // Fetch Trending Posts
+        const { data: trendingData, error: trendingError } = await supabase
+          .rpc('get_trending_posts')
           .select(`
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
-          .order('created_at', { ascending: false })
 
-        if (postsError) throw postsError
+        if (trendingError) console.error('Error fetching trending:', trendingError)
+        else setTrendingPosts(trendingData as Post[] || [])
 
-        // Fetch stats
-        const { data: statsData, error: statsError } = await supabase
-          .from('post_stats')
-          .select('id, comment_count, citation_count')
-
-        if (statsError) throw statsError
-
-        // Merge posts
-        let mergedPosts = postsData.map(post => {
-          const stat = statsData.find(s => s.id === post.id)
-          return {
-            ...post,
-            comment_count: stat?.comment_count || 0,
-            citation_count: stat?.citation_count || 0
-          }
-        })
-
-        // Filter by tag if needed (client side for now)
-        if (selectedTag) {
-          mergedPosts = mergedPosts.filter(post => post.tags && post.tags.includes(selectedTag))
-        }
-
-        // Sort posts
-        if (sortBy === 'trending') {
-          mergedPosts.sort((a, b) => (b.comment_count || 0) - (a.comment_count || 0))
-        } else if (sortBy === 'cited') {
-          mergedPosts.sort((a, b) => (b.citation_count || 0) - (a.citation_count || 0))
-        } else {
-          // Default recent
-          mergedPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        }
-
-        setPosts(mergedPosts)
-
-        // Fetch Groups (Public only)
+        // Fetch Recommended Groups
         const { data: groupsData, error: groupsError } = await supabase
-          .from('groups')
-          .select('id, name, description, visibility')
-          .eq('visibility', 'public')
-          .limit(6)
+          .rpc('get_recommended_groups')
+          .select('*')
 
-        if (groupsError) throw groupsError
+        if (groupsError) console.error('Error fetching groups:', groupsError)
 
-        // Fetch group member counts
+        // Fetch group member counts for recommended groups
         if (groupsData && groupsData.length > 0) {
-          const groupIds = groupsData.map(g => g.id)
+          const groupIds = groupsData.map((g: any) => g.id)
           const { data: counts } = await supabase
             .from('group_members')
             .select('group_id')
@@ -151,14 +103,32 @@ function ExplorePageContent() {
             countMap.set(c.group_id, (countMap.get(c.group_id) || 0) + 1)
           })
 
-          const groupsWithCounts = groupsData.map(g => ({
+          const groupsWithCounts = groupsData.map((g: any) => ({
             ...g,
             member_count: countMap.get(g.id) || 0
           }))
-          setGroups(groupsWithCounts)
+          setRecommendedGroups(groupsWithCounts)
         } else {
-          setGroups([])
+          setRecommendedGroups([])
         }
+
+        // Fetch Main Feed Posts (Latest)
+        let query = supabase
+          .from('posts')
+          .select(`
+            *,
+            author:users!posts_author_id_fkey(id, name, email)
+          `)
+          .order('created_at', { ascending: false })
+
+        if (selectedTag) {
+          query = query.contains('tags', [selectedTag])
+        }
+
+        const { data: postsData, error: postsError } = await query
+
+        if (postsError) throw postsError
+        setPosts(postsData as Post[] || [])
 
         // Fetch Profiles (Researchers)
         const { data: profilesData, error: profilesError } = await supabase
@@ -178,7 +148,7 @@ function ExplorePageContent() {
     }
 
     loadContent()
-  }, [selectedTag, sortBy, supabase])
+  }, [selectedTag, supabase])
 
   const disciplines = [
     'Computer Science',
@@ -329,16 +299,32 @@ function ExplorePageContent() {
               </div>
             )}
 
+            {/* Trending Posts Section */}
+            {!selectedTag && trendingPosts.length > 0 && (
+              <section className="mb-12">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
+                    Trending Research
+                  </h2>
+                </div>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {trendingPosts.slice(0, 3).map((post) => (
+                    <PostCard key={`trending-${post.id}`} post={post} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Groups Section */}
             {!selectedTag && (
               <section className="mb-12">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                    Featured Groups
+                    Recommended Groups
                   </h2>
-                  <a href="/groups" className="text-sm font-medium text-primary hover:underline">
+                  <Link href="/groups" className="text-sm font-medium text-primary hover:underline">
                     View all groups
-                  </a>
+                  </Link>
                 </div>
 
                 {loading ? (
@@ -347,9 +333,9 @@ function ExplorePageContent() {
                       <div key={i} className="h-48 rounded-xl bg-gray-100 dark:bg-dark-surface animate-pulse" />
                     ))}
                   </div>
-                ) : groups.length > 0 ? (
+                ) : recommendedGroups.length > 0 ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {groups.map((group) => (
+                    {recommendedGroups.map((group) => (
                       <GroupCard key={group.id} group={group} />
                     ))}
                   </div>

@@ -1,17 +1,22 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, User as UserIcon } from 'lucide-react'
+import { ArrowLeft, Calendar, User as UserIcon, PenSquare, GitPullRequest } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { TagChip } from '@/components/TagChip'
 import { RelatedPosts } from '@/components/RelatedPosts'
 import { CitationBacklinks } from '@/components/CitationBacklinks'
 import { CommentsSection } from '@/components/CommentsSection'
-import { ReportButton } from '@/components/ReportButton'
-import { PostHistoryButton } from '@/components/PostHistoryButton'
 import { AnswerList } from '@/components/AnswerList'
 import { AnswerForm } from '@/components/AnswerForm'
+import { ForkButton } from '@/components/ForkButton'
+import { SuggestionDialog } from '@/components/SuggestionDialog'
+import { KnowledgeGraph } from '@/components/KnowledgeGraph'
+import { PostMoreOptions } from '@/components/PostMoreOptions'
+import { TextSelectionHandler } from '@/components/TextSelectionHandler'
+import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { Button } from '@/components/ui/button'
 
 interface PostPageProps {
   params: Promise<{
@@ -32,13 +37,15 @@ export default async function PostPage(props: PostPageProps) {
     .select(
       `
         *,
-        author:users!posts_author_id_fkey(id, name, email, bio, affiliation)
+        author:users!posts_author_id_fkey(id, name, email, bio, affiliation),
+        forked_from:posts!forked_from_id(id, title)
       `
     )
     .eq('id', id)
     .single()
 
   if (error || !post) {
+    console.error('Error fetching post:', error)
     notFound()
   }
 
@@ -67,6 +74,7 @@ export default async function PostPage(props: PostPageProps) {
     .select(
       `
         source_post_id,
+        quote_content,
         posts!citations_source_post_id_fkey (
           id,
           title,
@@ -78,7 +86,10 @@ export default async function PostPage(props: PostPageProps) {
     .eq('target_post_id', id)
 
   const citationBacklinks =
-    citationData?.map((c: any) => c.posts).filter(Boolean) || []
+    citationData?.map((c: any) => ({
+      ...c.posts,
+      quote_content: c.quote_content
+    })).filter((c: any) => c.id) || []
 
   const authorDisplay =
     post.author?.name || post.author?.email?.split('@')[0] || 'Anonymous'
@@ -151,6 +162,16 @@ export default async function PostPage(props: PostPageProps) {
                   {post.title}
                 </h1>
 
+                {post.forked_from && (
+                  <div className="flex items-center gap-2 mb-6 text-sm text-text-light dark:text-dark-text-muted bg-gray-50 dark:bg-dark-surface p-2 rounded-lg border border-gray-100 dark:border-dark-border w-fit">
+                    <GitFork className="w-4 h-4" />
+                    <span>Remixed from</span>
+                    <Link href={`/post/${post.forked_from.id}`} className="font-medium text-primary dark:text-accent-light hover:underline">
+                      {post.forked_from.title}
+                    </Link>
+                  </div>
+                )}
+
                 {post.tags && post.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-6">
                     {post.tags.map((tag: string) => (
@@ -180,23 +201,53 @@ export default async function PostPage(props: PostPageProps) {
                       </time>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {user && user.id === post.author_id && (
-                      <Link
-                        href={`/editor?id=${post.id}`}
-                        className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
-                      >
-                        Edit
+                  {post.license && (
+                    <div className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted border border-gray-200 dark:border-dark-border">
+                      License: {post.license}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100 dark:border-dark-border">
+                  {user && user.id === post.author_id ? (
+                    <>
+                      <Link href={`/editor?id=${post.id}`}>
+                        <Button className="gap-2">
+                          <PenSquare className="w-4 h-4" />
+                          Edit Post
+                        </Button>
                       </Link>
-                    )}
-                    <PostHistoryButton postId={post.id} />
-                    <ReportButton contentId={post.id} contentType="post" />
-                  </div>
+                      <Link href={`/post/${post.id}/suggestions`}>
+                        <Button variant="outline" className="gap-2">
+                          <GitPullRequest className="w-4 h-4" />
+                          Review Suggestions
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <ForkButton
+                        postId={post.id}
+                        postTitle={post.title}
+                        postContent={post.content}
+                        postTags={post.tags || []}
+                      />
+                      <SuggestionDialog
+                        postId={post.id}
+                        currentContent={post.content}
+                      />
+                    </>
+                  )}
+
+                  <div className="flex-1" />
+
+                  <PostMoreOptions postId={post.id} />
                 </div>
               </header>
 
               <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-display prose-headings:text-primary dark:prose-headings:text-dark-text prose-a:text-accent dark:prose-a:text-accent-light prose-strong:text-primary dark:prose-strong:text-dark-text prose-code:text-accent dark:prose-code:text-accent-light">
-                <ReactMarkdown>{post.content || ''}</ReactMarkdown>
+                <TextSelectionHandler postId={post.id}>
+                  <ReactMarkdown>{post.content || ''}</ReactMarkdown>
+                </TextSelectionHandler>
               </div>
             </div>
 
@@ -243,6 +294,13 @@ export default async function PostPage(props: PostPageProps) {
               <CitationBacklinks citations={citationBacklinks} />
             )}
 
+            <div className="card p-4">
+              <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text mb-4">
+                Knowledge Graph
+              </h3>
+              <KnowledgeGraph centerPostId={post.id} />
+            </div>
+
             <div className="card p-6">
               <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text mb-4">
                 About the Author
@@ -266,7 +324,7 @@ export default async function PostPage(props: PostPageProps) {
             </div>
           </aside>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }

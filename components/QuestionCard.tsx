@@ -112,7 +112,7 @@ export function QuestionCard({ post, userVote: initialUserVote, onVote }: Questi
                             Question
                         </span>
                         <span className="text-sm text-text-light dark:text-dark-text-muted">
-                            Posted by {post.author?.full_name || post.author?.email?.split('@')[0] || 'Anonymous'} • {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                            Posted by {post.author?.name || 'Anonymous'} • {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                         </span>
                     </div>
 
@@ -150,8 +150,8 @@ export function QuestionCard({ post, userVote: initialUserVote, onVote }: Questi
                             <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     )
 }

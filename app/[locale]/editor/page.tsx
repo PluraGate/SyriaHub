@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { Eye, FileText, Save, HelpCircle, BookOpen, Users } from 'lucide-react'
+import { Eye, FileText, Save, HelpCircle, BookOpen, Users, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { useToast } from '@/components/ui/toast'
@@ -27,6 +27,8 @@ export default function EditorPage() {
   const searchParams = useSearchParams()
   const groupIdParam = searchParams.get('groupId')
   const postIdParam = searchParams.get('id')
+  const critiqueOfParam = searchParams.get('critique_of')
+  const quoteParam = searchParams.get('quote')
   const { showToast } = useToast()
 
   const [user, setUser] = useState<User | null>(null)
@@ -36,7 +38,9 @@ export default function EditorPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
+  const [citations, setCitations] = useState<string[]>([])
   const [contentType, setContentType] = useState<'article' | 'question'>('article')
+  const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
   const [group, setGroup] = useState<any>(null)
 
@@ -53,6 +57,24 @@ export default function EditorPage() {
         })
     }
   }, [groupIdParam, supabase])
+
+  // Handle critique_of param and quote param
+  useEffect(() => {
+    if (critiqueOfParam) {
+      setCitations([critiqueOfParam])
+      // Optionally fetch the post title to pre-fill title or show a badge
+      supabase.from('posts').select('title').eq('id', critiqueOfParam).single().then(({ data }) => {
+        if (data) {
+          setTitle(`Critique of: ${data.title}`)
+          setTags('critique, review')
+
+          if (quoteParam) {
+            setContent(`> ${decodeURIComponent(quoteParam)}\n\n`)
+          }
+        }
+      })
+    }
+  }, [critiqueOfParam, quoteParam, supabase])
 
   // Fetch post details if postId is present (Editing mode)
   useEffect(() => {
@@ -79,6 +101,7 @@ export default function EditorPage() {
           setContent(data.content)
           setTags(data.tags ? data.tags.join(', ') : '')
           setContentType(data.content_type as 'article' | 'question')
+          setLicense(data.license || 'CC-BY-4.0')
 
           if (data.group_id) {
             const { data: groupData } = await supabase
@@ -176,7 +199,8 @@ export default function EditorPage() {
           author_id: user.id,
           content_type: contentType,
           status: publish ? 'published' : 'draft',
-          group_id: group?.id || null
+          group_id: group?.id || null,
+          license: license
         }
 
         let result;
@@ -204,6 +228,22 @@ export default function EditorPage() {
           throw error
         }
 
+        // Save citations
+        if (citations.length > 0) {
+          const citationInserts = citations.map(targetId => ({
+            source_post_id: data.id,
+            target_post_id: targetId,
+            quote_content: quoteParam ? decodeURIComponent(quoteParam) : null
+          }))
+
+          // Delete existing citations if updating (simple approach: delete all and re-insert)
+          if (postIdParam) {
+            await supabase.from('citations').delete().eq('source_post_id', data.id)
+          }
+
+          await supabase.from('citations').insert(citationInserts)
+        }
+
         showToast(
           publish ? 'Post published successfully.' : 'Draft saved successfully.',
           'success'
@@ -217,7 +257,7 @@ export default function EditorPage() {
         setSaving(false)
       }
     },
-    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam]
+    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam]
   )
 
   const handleSubmit = useCallback(
@@ -369,14 +409,68 @@ export default function EditorPage() {
                   >
                     Content
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewActive(current => !current)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
-                  >
-                    <Eye className="h-4 w-4" />
-                    {previewActive ? 'Hide preview' : 'Show preview'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewActive(current => !current)}
+                      className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {previewActive ? 'Hide preview' : 'Show preview'}
+                    </button>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="image-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                          const file = e.target.files?.[0]
+                          if (!file || !user) return
+
+                          // Check size (2MB limit)
+                          if (file.size > 2 * 1024 * 1024) {
+                            showToast('Image must be smaller than 2MB', 'error')
+                            return
+                          }
+
+                          const toastId = showToast('Uploading image...', 'loading' as any)
+
+                          try {
+                            const fileExt = file.name.split('.').pop()
+                            const fileName = `${user.id}/${Math.random().toString(36).substring(2)}.${fileExt}`
+
+                            const { error: uploadError } = await supabase.storage
+                              .from('post_images')
+                              .upload(fileName, file)
+
+                            if (uploadError) throw uploadError
+
+                            const { data: { publicUrl } } = supabase.storage
+                              .from('post_images')
+                              .getPublicUrl(fileName)
+
+                            // Insert markdown at cursor position or end
+                            const imageMarkdown = `\n![${file.name}](${publicUrl})\n`
+                            setContent(prev => prev + imageMarkdown)
+
+                            showToast('Image uploaded and inserted!', 'success')
+                          } catch (error) {
+                            console.error('Upload failed:', error)
+                            showToast('Failed to upload image', 'error')
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('image-upload')?.click()}
+                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        Insert Image
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <textarea
                   id="content"
@@ -437,6 +531,30 @@ export default function EditorPage() {
                 )}
               </div>
 
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="license"
+                  className="text-sm font-medium text-text dark:text-dark-text"
+                >
+                  License
+                </label>
+                <select
+                  id="license"
+                  value={license}
+                  onChange={e => setLicense(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
+                >
+                  <option value="CC-BY-4.0">CC BY 4.0 (Attribution)</option>
+                  <option value="CC-BY-SA-4.0">CC BY-SA 4.0 (ShareAlike)</option>
+                  <option value="CC0-1.0">CC0 1.0 (Public Domain)</option>
+                  <option value="MIT">MIT License</option>
+                  <option value="All Rights Reserved">All Rights Reserved</option>
+                </select>
+                <p className="text-xs text-text-light dark:text-dark-text-muted">
+                  Choose how others can use your work.
+                </p>
+              </div>
+
               <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
                 <button
                   type="submit"
@@ -494,7 +612,7 @@ export default function EditorPage() {
             </div>
           </aside>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }

@@ -20,11 +20,22 @@ export default function FeedPage() {
   const [filter, setFilter] = useState<'all' | 'article' | 'question'>('all')
   const supabase = createClient()
 
+  const [officialTags, setOfficialTags] = useState<string[]>([])
+
   useEffect(() => {
     // Get user
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
     })
+
+    // Fetch official tags
+    const loadTags = async () => {
+      const { data } = await supabase.from('tags').select('label').order('label')
+      if (data) {
+        setOfficialTags(data.map(t => t.label))
+      }
+    }
+    loadTags()
 
     // Fetch posts
     const loadPosts = async () => {
@@ -58,10 +69,6 @@ export default function FeedPage() {
     loadPosts()
   }, [supabase, filter])
 
-  const allTags = Array.from(
-    new Set(posts.flatMap(post => post.tags || []))
-  ).sort()
-
   const filteredPosts = selectedTag
     ? posts.filter(post => post.tags?.includes(selectedTag))
     : posts
@@ -86,7 +93,7 @@ export default function FeedPage() {
                 >
                   All Posts
                 </button>
-                {allTags.map(tag => (
+                {officialTags.map(tag => (
                   <button
                     key={tag}
                     onClick={() => setSelectedTag(tag)}
