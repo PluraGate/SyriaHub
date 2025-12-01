@@ -7,15 +7,19 @@ import fs from 'fs'
 // Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
     console.error('Missing Supabase credentials')
     process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
+const supabase = createClient(url, serviceKey)
 
 async function testStorage() {
     console.log('🔍 Testing Storage Operations...')
@@ -42,7 +46,13 @@ async function testStorage() {
         })
         if (sessionError) throw sessionError
 
-        const userClient = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        if (!anonKey) {
+            console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+            return
+        }
+
+        const userClient = createClient(url, anonKey, {
             global: { headers: { Authorization: `Bearer ${sessionData.session.access_token}` } }
         })
 

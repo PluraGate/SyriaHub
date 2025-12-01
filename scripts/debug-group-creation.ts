@@ -13,9 +13,13 @@ if (!supabaseUrl || !supabaseServiceKey) {
     process.exit(1)
 }
 
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
 // Use service key to bypass Auth for initial setup, but we want to test AS A USER.
 // So we need to sign in as a user.
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const supabase = createClient(url, serviceKey)
 
 async function debugGroupCreation() {
     console.log('🔍 Debugging Group Creation...')
@@ -38,7 +42,13 @@ async function debugGroupCreation() {
     // Yes, usually. Let's verify.
 
     // Actually, better to create a new client with the user's access token to be sure we are testing RLS.
-    const userClient = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!anonKey) {
+        console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+        return
+    }
+
+    const userClient = createClient(url, anonKey, {
         global: {
             headers: {
                 Authorization: `Bearer ${session.access_token}`

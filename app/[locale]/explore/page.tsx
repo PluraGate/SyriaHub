@@ -12,6 +12,7 @@ import { ProfileCard } from '@/components/ProfileCard'
 import { SearchBar } from '@/components/SearchBar'
 import { PostCardSkeleton } from '@/components/ui/skeleton'
 import { Filter, X, ArrowUpDown, Users as UsersIcon } from 'lucide-react'
+import SectorGrid from '@/components/SectorGrid'
 
 import { Post } from '@/types'
 
@@ -72,21 +73,26 @@ function ExplorePageContent() {
     const loadContent = async () => {
       setLoading(true)
       try {
-        // Fetch Trending Posts
+        // Fetch Trending Posts (Fallback to recent published posts)
         const { data: trendingData, error: trendingError } = await supabase
-          .rpc('get_trending_posts')
+          .from('posts')
           .select(`
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
+          .eq('status', 'published')
+          .order('created_at', { ascending: false })
+          .limit(6)
 
         if (trendingError) console.error('Error fetching trending:', trendingError)
         else setTrendingPosts(trendingData as Post[] || [])
 
-        // Fetch Recommended Groups
+        // Fetch Recommended Groups (Fallback to public groups)
         const { data: groupsData, error: groupsError } = await supabase
-          .rpc('get_recommended_groups')
+          .from('groups')
           .select('*')
+          .eq('visibility', 'public')
+          .limit(6)
 
         if (groupsError) console.error('Error fetching groups:', groupsError)
 
@@ -203,6 +209,12 @@ function ExplorePageContent() {
         <div className="mb-8 flex justify-center">
           <SearchBar />
         </div>
+
+        <SectorGrid
+          sectors={disciplines}
+          onSelect={setSelectedTag}
+          selectedSector={selectedTag}
+        />
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}

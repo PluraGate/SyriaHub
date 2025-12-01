@@ -13,7 +13,11 @@ if (!supabaseUrl || !supabaseServiceKey) {
     process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
+const supabase = createClient(url, serviceKey)
 
 async function verifyProfileEdit() {
     console.log('👤 Verifying Profile Editing...')
@@ -47,7 +51,13 @@ async function verifyProfileEdit() {
     }
 
     // Create client acting as user
-    const userClient = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!anonKey) {
+        console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+        return
+    }
+
+    const userClient = createClient(url, anonKey, {
         global: {
             headers: {
                 Authorization: `Bearer ${session.access_token}`

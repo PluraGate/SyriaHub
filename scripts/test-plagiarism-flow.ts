@@ -6,15 +6,19 @@ import path from 'path'
 // Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
     console.error('Missing Supabase credentials')
     process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
+const supabase = createClient(url, serviceKey)
 
 async function testPlagiarismFlow() {
     console.log('🔍 Testing Plagiarism Detection Flow (DB Schema & RLS)...')
@@ -71,7 +75,13 @@ async function testPlagiarismFlow() {
         console.log('✅ Found Version:', versionId)
 
         // 4. Insert Plagiarism Check (Simulate API logic)
-        const modClient = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        if (!anonKey) {
+            console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+            return
+        }
+
+        const modClient = createClient(url, anonKey, {
             global: { headers: { Authorization: `Bearer ${(await supabase.auth.signInWithPassword({ email: modUser.user.email!, password: 'password123' })).data.session?.access_token}` } }
         })
 

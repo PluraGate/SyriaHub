@@ -12,7 +12,11 @@ if (!supabaseUrl || !supabaseServiceKey) {
     process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
+const supabase = createClient(url, serviceKey)
 
 async function listPosts() {
     console.log('Listing posts...')
@@ -34,9 +38,11 @@ async function listPosts() {
     posts.forEach(post => {
         console.log(`- ${post.title} (${post.id})`)
         console.log(`  Author ID: ${post.author_id}`)
-        console.log(`  Author Found: ${post.author ? 'Yes' : 'NO'}`)
-        if (post.author) {
-            console.log(`  Author Name: ${post.author.name}`)
+        // Author is returned as an array, get first element
+        const authorData = Array.isArray(post.author) ? post.author[0] : post.author
+        console.log(`  Author Found: ${authorData ? 'Yes' : 'NO'}`)
+        if (authorData) {
+            console.log(`  Author Name: ${authorData.name}`)
         }
     })
 }
