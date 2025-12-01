@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { MessageSquare, ThumbsUp, ThumbsDown, ArrowRight } from 'lucide-react'
+import { MessageSquare, ThumbsUp, ThumbsDown, ArrowRight, CheckCircle } from 'lucide-react'
 import { Post } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -111,6 +111,12 @@ export function QuestionCard({ post, userVote: initialUserVote, onVote }: Questi
                         <span className="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium">
                             Question
                         </span>
+                        {post.accepted_answer_id && (
+                            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium">
+                                <CheckCircle className="w-3 h-3" />
+                                Solved
+                            </span>
+                        )}
                         <span className="text-sm text-text-light dark:text-dark-text-muted">
                             Posted by {post.author?.name || 'Anonymous'} • {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                         </span>

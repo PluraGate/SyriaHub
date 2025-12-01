@@ -3,10 +3,19 @@ import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('Missing Supabase credentials')
+    process.exit(1)
+}
+
+// TypeScript type narrowing: assert these are strings after the check
+const url: string = supabaseUrl
+const serviceKey: string = supabaseServiceKey
+
+const supabase = createClient(url, serviceKey)
 
 async function testProfile() {
     console.log('--- Testing User Profiles ---')
@@ -29,7 +38,7 @@ async function testProfile() {
     }
 
     // 2. Update Profile
-    console.log('\nUpdating profile...')
+    console.log('\\nUpdating profile...')
     const { error: updateError } = await supabase
         .from('users')
         .update({
@@ -47,7 +56,7 @@ async function testProfile() {
     }
 
     // 3. Fetch Profile and Stats
-    console.log('\nFetching profile and stats...')
+    console.log('\\nFetching profile and stats...')
     const { data: profile, error: fetchError } = await supabase
         .from('users')
         .select('*')
@@ -78,7 +87,9 @@ async function testProfile() {
         console.error('Failed to fetch stats', statsError)
     } else {
         console.log('User Stats:', stats)
-        if (stats.post_count === 0 && stats.group_count === 0) {
+        // Type assertion for stats object
+        const userStats = stats as { post_count: number; group_count: number }
+        if (userStats.post_count === 0 && userStats.group_count === 0) {
             console.log('SUCCESS: Stats verified (empty)')
         }
     }

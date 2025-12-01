@@ -20,7 +20,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   // Fetch profile data
   const { data: profile, error: profileError } = await supabase
     .from('users')
-    .select('id, name, email, role, bio, affiliation, location, website, research_interests, avatar_url, created_at')
+    .select('id, name, email, role, bio, affiliation, location, website, research_interests, avatar_url, reputation, created_at')
     .eq('id', params.id)
     .single()
 
@@ -32,6 +32,12 @@ export default async function ProfilePage(props: ProfilePageProps) {
   const { data: stats } = await supabase
     .rpc('get_user_stats', { user_uuid: params.id })
     .single()
+
+  // Fetch user badges
+  const { data: userBadges } = await supabase
+    .from('user_badges')
+    .select('*, badge:badges(*)')
+    .eq('user_id', params.id)
 
   // Fetch user's posts
   const { data: posts } = await supabase
@@ -82,6 +88,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
         <ProfileHeader
           profile={profile}
           stats={stats}
+          badges={userBadges || []}
           isOwnProfile={isOwnProfile}
         />
 

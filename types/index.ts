@@ -11,6 +11,7 @@ export interface User {
   bio?: string
   affiliation?: string
   avatar_url?: string
+  reputation?: number
   created_at: string
 }
 
@@ -30,6 +31,7 @@ export interface Post {
   forked_from_id?: string | null
   group_id?: string | null
   is_accepted?: boolean
+  accepted_answer_id?: string | null
   license?: string | null
 
   // Stats
@@ -106,6 +108,23 @@ export interface Tag {
   label: string
   discipline?: string
   color: string
+}
+
+export interface Badge {
+  id: string
+  name: string
+  description: string
+  icon_url: string
+  criteria: Record<string, any>
+  created_at: string
+}
+
+export interface UserBadge {
+  id: string
+  user_id: string
+  badge_id: string
+  awarded_at: string
+  badge?: Badge
 }
 
 // Extended types with relations

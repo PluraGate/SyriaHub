@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { User as UserIcon, Building2 } from 'lucide-react'
 import { User } from '@/types'
+import ReputationScore from './ReputationScore'
 
 interface ProfileCardProps {
     profile: User
@@ -21,6 +22,12 @@ export function ProfileCard({ profile }: ProfileCardProps) {
             <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text mb-1 group-hover:text-accent dark:group-hover:text-accent-light transition-colors">
                 {profile.name}
             </h3>
+
+            {profile.reputation !== undefined && profile.reputation > 0 && (
+                <div className="mb-2">
+                    <ReputationScore score={profile.reputation} size="sm" />
+                </div>
+            )}
 
             {profile.affiliation && (
                 <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted mb-3">

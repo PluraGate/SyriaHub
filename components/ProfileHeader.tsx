@@ -1,15 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { EditProfileDialog } from './EditProfileDialog'
+import BadgeDisplay from './BadgeDisplay'
+import ReputationScore from './ReputationScore'
 import { MapPin, Link as LinkIcon, Building2, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface ProfileHeaderProps {
     profile: any
     stats: any
+    badges: any[]
     isOwnProfile: boolean
 }
 
-export function ProfileHeader({ profile, stats, isOwnProfile }: ProfileHeaderProps) {
+export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileHeaderProps) {
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 md:p-8 mb-8">
             <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -27,12 +30,20 @@ export function ProfileHeader({ profile, stats, isOwnProfile }: ProfileHeaderPro
                 <div className="flex-1 w-full">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                         <div>
-                            <h1 className="text-3xl font-display font-bold text-text dark:text-dark-text">
-                                {profile.name}
-                            </h1>
-                            <p className="text-lg text-text-light dark:text-dark-text-muted">
-                                {profile.role === 'researcher' ? 'Researcher' : profile.role}
-                            </p>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-3xl font-display font-bold text-text dark:text-dark-text">
+                                    {profile.name}
+                                </h1>
+                                {profile.reputation > 0 && (
+                                    <ReputationScore score={profile.reputation} size="lg" />
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                                <p className="text-lg text-text-light dark:text-dark-text-muted">
+                                    {profile.role === 'researcher' ? 'Researcher' : profile.role}
+                                </p>
+                                <BadgeDisplay badges={badges} size="sm" />
+                            </div>
                         </div>
                         {isOwnProfile && <EditProfileDialog profile={profile} />}
                     </div>
