@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils'
 
-interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-gray-200 dark:bg-dark-border',
+        'skeleton rounded-md', // Uses shimmer animation from globals.css
         className
       )}
       {...props}

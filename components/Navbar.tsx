@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Link } from '@/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
@@ -100,10 +100,10 @@ export function Navbar({ user }: NavbarProps) {
             className="flex items-center space-x-2 group focus-ring rounded-lg px-2 py-1 -ml-2"
             aria-label={tCommon('appTitle')}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
               <span className="text-white font-display font-bold text-lg">S</span>
             </div>
-            <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-accent dark:group-hover:text-accent-light transition-colors">
+            <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors">
               {tCommon('appTitle')}
             </span>
           </Link>
@@ -171,6 +171,12 @@ export function Navbar({ user }: NavbarProps) {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link href="/saved" className="cursor-pointer w-full flex items-center">
+                          <Bookmark className="mr-2 h-4 w-4" />
+                          <span>Saved</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link href="/settings" className="cursor-pointer w-full flex items-center">
                           <Settings className="mr-2 h-4 w-4" />
                           <span>Settings</span>
@@ -179,7 +185,7 @@ export function Navbar({ user }: NavbarProps) {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <form action="/auth/signout" method="post" className="w-full">
-                          <button type="submit" className="w-full flex items-center text-red-600 dark:text-red-400">
+                          <button type="submit" className="w-full flex items-center text-accent dark:text-accent-light">
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>{t('logout')}</span>
                           </button>
@@ -288,7 +294,7 @@ export function Navbar({ user }: NavbarProps) {
                   <form action="/auth/signout" method="post">
                     <button
                       type="submit"
-                      className="w-full flex items-center gap-2 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-all font-medium"
+                      className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
                     >
                       <LogOut className="w-4 h-4" />
                       {t('logout')}
