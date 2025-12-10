@@ -10,6 +10,8 @@ import { QuestionCard } from '@/components/QuestionCard'
 import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { FeedCardSkeletonCompact } from '@/components/ui/skeleton'
 import { Post } from '@/types'
 import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
 
@@ -274,36 +276,33 @@ export default function FeedPage() {
           )}
 
           {/* Content */}
+          {/* Content */}
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary dark:border-primary-light mb-4"></div>
-                <p className="text-text-light dark:text-dark-text-muted">Loading posts...</p>
-              </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <FeedCardSkeletonCompact key={i} />
+              ))}
             </div>
           ) : filteredPosts.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-text-light dark:text-dark-text-muted" />
-              </div>
-              <h3 className="text-xl font-semibold text-text dark:text-dark-text mb-2">No posts yet</h3>
-              <p className="text-text-light dark:text-dark-text-muted mb-6 max-w-md mx-auto">
-                {feedTab === 'following' && followingIds.length === 0
-                  ? 'Follow researchers to see their posts here.'
+            <EmptyState
+              variant={feedTab === 'following' && followingIds.length === 0 ? 'no-followers' : 'no-posts'}
+              title={
+                feedTab === 'following' && followingIds.length === 0
+                  ? 'No one to follow yet'
                   : selectedTag
-                    ? `No posts found with tag "${selectedTag}"`
-                    : 'Be the first to share your research with the community!'}
-              </p>
-              {user && (
-                <Link
-                  href="/editor"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all"
-                >
-                  <PenSquare className="w-5 h-5" />
-                  Create Post
-                </Link>
-              )}
-            </div>
+                    ? `No posts found for "${selectedTag}"`
+                    : 'No posts yet'
+              }
+              description={
+                feedTab === 'following' && followingIds.length === 0
+                  ? 'Follow researchers to see their posts in your feed. Explore the community to find interesting people!'
+                  : selectedTag
+                    ? 'Try a different topic or clear the filter to see more content.'
+                    : 'Be the first to share your research with the community!'
+              }
+              actionLabel={user ? 'Create Post' : undefined}
+              actionHref={user ? '/editor' : undefined}
+            />
           ) : (
             <>
               {/* Featured Posts - Bento Grid */}

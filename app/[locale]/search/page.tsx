@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { SearchFilters } from '@/components/SearchFilters'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { Search, FileText, Users, Globe } from 'lucide-react'
+import { FileText, Users, Globe } from 'lucide-react'
 
 type SearchResult = {
     id: string
@@ -62,13 +63,16 @@ export default async function SearchPage({
 
                         <div className="space-y-6">
                             {results.length === 0 ? (
-                                <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border">
-                                    <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                    <h3 className="text-lg font-medium text-text dark:text-dark-text">No results found</h3>
-                                    <p className="text-text-light dark:text-dark-text-muted">
-                                        Try adjusting your search terms or filters.
-                                    </p>
+                                <div className="bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border">
+                                    <EmptyState
+                                        variant="no-results"
+                                        title="No results found"
+                                        description={`We couldn't find anything matching "${q}". Try different keywords or adjust your filters.`}
+                                        actionLabel="Clear Search"
+                                        actionHref="/search"
+                                    />
                                 </div>
+
                             ) : (
                                 results.map((result) => (
                                     <Link

@@ -116,17 +116,32 @@ export function NotificationBell() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={toggleDropdown}
-                className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-surface-hover transition-colors text-text-light dark:text-dark-text-muted"
+                className={cn(
+                    "relative p-2 rounded-full transition-all duration-200",
+                    "hover:bg-gray-100 dark:hover:bg-dark-border",
+                    "text-text-light dark:text-dark-text-muted",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    isOpen && "bg-gray-100 dark:bg-dark-border"
+                )}
                 aria-label="Notifications"
             >
-                <Bell className="w-5 h-5" />
+                <Bell className={cn("w-5 h-5", unreadCount > 0 && "animate-bounce-subtle")} />
                 {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-dark-bg"></span>
+                    <span className={cn(
+                        "absolute top-0.5 right-0.5 min-w-[18px] h-[18px]",
+                        "flex items-center justify-center",
+                        "text-[10px] font-bold text-white",
+                        "bg-accent rounded-full",
+                        "border-2 border-white dark:border-dark-bg",
+                        "animate-notification-pulse"
+                    )}>
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
                 )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 z-50">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 z-50 animate-dropdown-enter">
                     <NotificationList onClose={() => setIsOpen(false)} />
                 </div>
             )}

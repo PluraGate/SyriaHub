@@ -956,3 +956,134 @@
   transform: scaleX(1);
   transform-origin: left;
 }
+
+/* ============================================ */
+/* DARK MODE POLISH & GLOW EFFECTS            */
+/* ============================================ */
+
+/* Accent glow for dark mode */
+.dark .glow-primary {
+  box-shadow: 0 0 20px rgba(42, 85, 88, 0.3),
+    0 0 40px rgba(42, 85, 88, 0.1);
+}
+
+.dark .glow-accent {
+  box-shadow: 0 0 20px rgba(224, 67, 96, 0.3),
+    0 0 40px rgba(224, 67, 96, 0.1);
+}
+
+.dark .glow-secondary {
+  box-shadow: 0 0 20px rgba(74, 163, 165, 0.3),
+    0 0 40px rgba(74, 163, 165, 0.1);
+}
+
+/* Subtle text glow in dark mode */
+.dark .text-glow {
+  text-shadow: 0 0 20px currentColor;
+}
+
+/* Notification pulse animation */
+@keyframes notification-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.4);
+  }
+
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(196, 30, 58, 0);
+  }
+}
+
+.animate-notification-pulse {
+  animation: notification-pulse 2s ease-in-out infinite;
+}
+
+/* Unread indicator glow */
+.unread-indicator {
+  @apply relative;
+}
+
+.unread-indicator::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--color-accent);
+  filter: blur(6px);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.dark .unread-indicator::after {
+  opacity: 0.7;
+}
+
+/* Card hover glow in dark mode */
+.dark .card-hover-glow:hover {
+  box-shadow: 0 4px 20px rgba(42, 85, 88, 0.15),
+    0 0 0 1px rgba(42, 85, 88, 0.1);
+}
+
+/* Button glow on focus in dark mode */
+.dark .btn-primary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(42, 85, 88, 0.5),
+    0 0 20px rgba(42, 85, 88, 0.2);
+}
+
+/* Dropdown panel shadow for dark mode */
+.dark .dropdown-shadow {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Skeleton improved dark mode */
+.dark .skeleton-enhanced {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Smooth dropdown animation */
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown-enter {
+  animation: dropdown-enter 0.2s ease-out;
+  transform-origin: top;
+}
+
+/* Mobile touch feedback */
+@media (hover: none) {
+  .touch-feedback:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}
+
+/* Better scrollbar for dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: #0A1B1D;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #243A3D;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #2A5558;
+}
