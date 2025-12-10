@@ -23,7 +23,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
-    
+
     // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields')
@@ -160,7 +160,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
             <div className="text-right">
               <Link
                 href="/auth/reset-password"
-                className="text-sm text-primary dark:text-primary-light hover:text-accent dark:hover:text-accent-light transition-colors focus-ring rounded px-1"
+                className="text-sm text-primary dark:text-primary-light hover:text-secondary dark:hover:text-secondary-light transition-colors focus-ring rounded px-1"
               >
                 Forgot password?
               </Link>
@@ -200,7 +200,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
         <div className="text-center">
           <Link
             href={isLogin ? '/auth/signup' : '/auth/login'}
-            className="text-primary dark:text-primary-light hover:text-accent dark:hover:text-accent-light font-medium transition-colors focus-ring rounded px-2 py-1"
+            className="text-primary dark:text-primary-light hover:text-secondary dark:hover:text-secondary-light font-medium transition-colors focus-ring rounded px-2 py-1"
           >
             {isLogin ? 'Create an account' : 'Sign in instead'}
           </Link>

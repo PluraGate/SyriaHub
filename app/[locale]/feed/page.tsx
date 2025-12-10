@@ -6,11 +6,15 @@ import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { PostCard } from '@/components/PostCard'
 import { QuestionCard } from '@/components/QuestionCard'
+import { MagazineCard } from '@/components/MagazineCard'
+import { FeaturedPost } from '@/components/FeaturedPost'
+import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { Post } from '@/types'
+import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
 
-
+type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
+type FeedTab = 'all' | 'following'
 
 export default function FeedPage() {
   const [user, setUser] = useState<User | null>(null)
@@ -18,15 +22,32 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'article' | 'question'>('all')
+  const [sortBy, setSortBy] = useState<SortOption>('new')
+  const [feedTab, setFeedTab] = useState<FeedTab>('all')
+  const [followingIds, setFollowingIds] = useState<string[]>([])
   const supabase = createClient()
 
   const [officialTags, setOfficialTags] = useState<string[]>([])
 
   useEffect(() => {
-    // Get user
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    // Get user and their following list
+    const initUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-    })
+
+      if (user) {
+        // Get list of users this user follows
+        const { data: follows } = await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', user.id)
+
+        if (follows) {
+          setFollowingIds(follows.map(f => f.following_id))
+        }
+      }
+    }
+    initUser()
 
     // Fetch official tags
     const loadTags = async () => {
@@ -36,9 +57,12 @@ export default function FeedPage() {
       }
     }
     loadTags()
+  }, [supabase])
 
-    // Fetch posts
+  // Fetch posts when filters change
+  useEffect(() => {
     const loadPosts = async () => {
+      setLoading(true)
       try {
         let query = supabase
           .from('posts')
@@ -46,16 +70,49 @@ export default function FeedPage() {
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
-          .order('created_at', { ascending: false })
+          .eq('status', 'published')
 
+        // Content type filter
         if (filter !== 'all') {
           query = query.eq('content_type', filter)
         }
 
-        const { data, error } = await query
+        // Following filter
+        if (feedTab === 'following' && followingIds.length > 0) {
+          query = query.in('author_id', followingIds)
+        }
+
+        // Sort by
+        if (sortBy === 'new') {
+          query = query.order('created_at', { ascending: false })
+        } else if (sortBy === 'hot') {
+          query = query.order('vote_count', { ascending: false, nullsFirst: false })
+            .order('created_at', { ascending: false })
+        } else if (sortBy.startsWith('top-')) {
+          const now = new Date()
+          let since: Date
+
+          if (sortBy === 'top-week') {
+            since = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+          } else if (sortBy === 'top-month') {
+            since = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+          } else {
+            since = new Date(0)
+          }
+
+          query = query
+            .gte('created_at', since.toISOString())
+            .order('vote_count', { ascending: false, nullsFirst: false })
+        }
+
+        const { data, error } = await query.limit(50)
 
         if (error) {
-          console.error('Error fetching posts:', error)
+          // Only log if there's meaningful error info
+          if (error.message || error.code) {
+            console.error('Error fetching posts:', error.message || error.code)
+          }
+          setPosts([])
         } else {
           setPosts(data || [])
         }
@@ -67,104 +124,255 @@ export default function FeedPage() {
     }
 
     loadPosts()
-  }, [supabase, filter])
+  }, [supabase, filter, sortBy, feedTab, followingIds])
 
   const filteredPosts = selectedTag
     ? posts.filter(post => post.tags?.includes(selectedTag))
     : posts
 
+  // Split posts for featured section
+  const featuredPosts = filteredPosts.slice(0, 4)
+  const remainingPosts = filteredPosts.slice(4)
+
+  const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+    { value: 'new', label: 'New' },
+    { value: 'hot', label: 'Hot' },
+    { value: 'top-week', label: 'Top (Week)' },
+    { value: 'top-month', label: 'Top (Month)' },
+    { value: 'top-all', label: 'Top (All)' },
+  ]
+
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
       <Navbar user={user} />
 
-      <main className="flex-1 container-custom max-w-7xl py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Tags */}
-          <aside className="lg:w-64 flex-shrink-0">
-            <div className="card p-4">
-              <h2 className="text-lg font-semibold text-primary dark:text-dark-text mb-4">Tags</h2>
-              <div className="space-y-2">
+      <main className="flex-1">
+        {/* Hero Header */}
+        <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
+          <div className="container-custom max-w-7xl py-8 md:py-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-text-light dark:text-dark-text-muted">
+                    Live Feed
+                  </span>
+                </div>
+                <h1 className="text-4xl md:text-5xl font-bold text-text dark:text-dark-text tracking-tight">
+                  Your Feed
+                </h1>
+                <p className="mt-2 text-lg text-text-light dark:text-dark-text-muted">
+                  Discover the latest research from the community
+                </p>
+              </div>
+
+              {user && (
+                <Link
+                  href="/editor"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+                >
+                  <PenSquare className="w-5 h-5" />
+                  Write Post
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="container-custom max-w-7xl py-8">
+          {/* Feed Tabs + Sort */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            {/* All / Following Tabs */}
+            {user && (
+              <div className="flex gap-1 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl">
                 <button
-                  onClick={() => setSelectedTag(null)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedTag === null
-                    ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
-                    : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border'
+                  onClick={() => setFeedTab('all')}
+                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'all'
+                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
+                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
+                  <Sparkles className="w-4 h-4 inline mr-2" />
                   All Posts
                 </button>
-                {officialTags.map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => setSelectedTag(tag)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedTag === tag
-                      ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
-                      : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border'
-                      }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setFeedTab('following')}
+                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'following'
+                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
+                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                    }`}
+                >
+                  Following
+                  {followingIds.length > 0 && (
+                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
+                      {followingIds.length}
+                    </span>
+                  )}
+                </button>
               </div>
-            </div>
-          </aside>
+            )}
 
-          {/* Main Content - Posts */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
-                {selectedTag ? `Posts tagged with "${selectedTag}"` : 'Latest Posts'}
-              </h1>
+            {/* Sort + Filter */}
+            <div className="flex items-center gap-3">
+              {/* Sort Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  {SORT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
+              </div>
 
-              <div className="flex bg-gray-100 dark:bg-dark-surface rounded-lg p-1">
+              {/* Type Filter */}
+              <div className="flex bg-gray-100 dark:bg-dark-surface rounded-xl p-1">
                 {(['all', 'article', 'question'] as const).map((type) => (
                   <button
                     key={type}
                     onClick={() => setFilter(type)}
-                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${filter === type
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === type
                       ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
                       : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                       }`}
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1) + (type === 'all' ? '' : 's')}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </button>
                 ))}
               </div>
             </div>
-
-            {loading ? (
-              <div className="card p-8 text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-accent-light"></div>
-                <p className="mt-4 text-text-light dark:text-dark-text-muted">Loading posts...</p>
-              </div>
-            ) : filteredPosts.length === 0 ? (
-              <div className="card p-8 text-center">
-                <p className="text-text-light dark:text-dark-text-muted">
-                  {selectedTag
-                    ? `No posts found with tag "${selectedTag}"`
-                    : 'No posts yet. Be the first to create one!'}
-                </p>
-                {user && (
-                  <Link
-                    href="/editor"
-                    className="inline-block mt-4 btn btn-primary"
-                  >
-                    Create Post
-                  </Link>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {filteredPosts.map(post => (
-                  post.content_type === 'question' ? (
-                    <QuestionCard key={post.id} post={post} />
-                  ) : (
-                    <PostCard key={post.id} post={post} />
-                  )
-                ))}
-              </div>
-            )}
           </div>
+
+          {/* Tags Pills */}
+          {officialTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              <button
+                onClick={() => setSelectedTag(null)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === null
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
+                  }`}
+              >
+                All Topics
+              </button>
+              {officialTags.slice(0, 8).map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => setSelectedTag(tag)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === tag
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
+                    }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Content */}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary dark:border-primary-light mb-4"></div>
+                <p className="text-text-light dark:text-dark-text-muted">Loading posts...</p>
+              </div>
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-text-light dark:text-dark-text-muted" />
+              </div>
+              <h3 className="text-xl font-semibold text-text dark:text-dark-text mb-2">No posts yet</h3>
+              <p className="text-text-light dark:text-dark-text-muted mb-6 max-w-md mx-auto">
+                {feedTab === 'following' && followingIds.length === 0
+                  ? 'Follow researchers to see their posts here.'
+                  : selectedTag
+                    ? `No posts found with tag "${selectedTag}"`
+                    : 'Be the first to share your research with the community!'}
+              </p>
+              {user && (
+                <Link
+                  href="/editor"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all"
+                >
+                  <PenSquare className="w-5 h-5" />
+                  Create Post
+                </Link>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Featured Posts - Bento Grid */}
+              {featuredPosts.length > 0 && !selectedTag && (
+                <section className="mb-12">
+                  <div className="flex items-center gap-3 mb-6">
+                    <TrendingUp className="w-5 h-5 text-accent" />
+                    <h2 className="text-2xl font-bold text-text dark:text-dark-text">Featured</h2>
+                  </div>
+
+                  <BentoGrid columns={4} gap="md">
+                    {featuredPosts[0] && (
+                      <BentoGridItem size="2x2">
+                        <FeaturedPost post={featuredPosts[0]} size="large" showTrending />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[1] && (
+                      <BentoGridItem size="1x1">
+                        <FeaturedPost post={featuredPosts[1]} size="small" accentColor="secondary" />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[2] && (
+                      <BentoGridItem size="1x1">
+                        <FeaturedPost post={featuredPosts[2]} size="small" accentColor="accent" />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[3] && (
+                      <BentoGridItem size="2x1">
+                        <MagazineCard post={featuredPosts[3]} variant="horizontal" className="h-full" />
+                      </BentoGridItem>
+                    )}
+                  </BentoGrid>
+                </section>
+              )}
+
+              {/* Remaining Posts - Magazine Cards Grid */}
+              {remainingPosts.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-6">
+                    Latest Research
+                  </h2>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {remainingPosts.map(post => (
+                      post.content_type === 'question' ? (
+                        <QuestionCard key={post.id} post={post} />
+                      ) : (
+                        <MagazineCard key={post.id} post={post} variant="standard" />
+                      )
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* If only featured posts and no remaining */}
+              {remainingPosts.length === 0 && selectedTag && (
+                <section>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredPosts.map(post => (
+                      post.content_type === 'question' ? (
+                        <QuestionCard key={post.id} post={post} />
+                      ) : (
+                        <MagazineCard key={post.id} post={post} variant="standard" />
+                      )
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
         </div>
       </main>
 

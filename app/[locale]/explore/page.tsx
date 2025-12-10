@@ -6,13 +6,14 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { Navbar } from '@/components/Navbar'
-import { PostCard } from '@/components/PostCard'
+import { Footer } from '@/components/Footer'
+import { MagazineCard } from '@/components/MagazineCard'
+import { FeaturedPost } from '@/components/FeaturedPost'
+import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
 import { SearchBar } from '@/components/SearchBar'
-import { PostCardSkeleton } from '@/components/ui/skeleton'
-import { Filter, X, ArrowUpDown, Users as UsersIcon } from 'lucide-react'
-import SectorGrid from '@/components/SectorGrid'
+import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X } from 'lucide-react'
 
 import { Post } from '@/types'
 
@@ -36,8 +37,11 @@ function ExplorePageContent() {
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag)
   const [sortBy, setSortBy] = useState<SortOption>('recent')
   const [allTags, setAllTags] = useState<string[]>([])
-  const [showFilters, setShowFilters] = useState(false)
   const supabase = createClient()
+
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
+  const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
+  const [profiles, setProfiles] = useState<any[]>([])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -65,16 +69,12 @@ function ExplorePageContent() {
     loadTags()
   }, [supabase])
 
-  const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
-  const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
-  const [profiles, setProfiles] = useState<any[]>([])
-
   useEffect(() => {
     const loadContent = async () => {
       setLoading(true)
       try {
-        // Fetch Trending Posts (Fallback to recent published posts)
-        const { data: trendingData, error: trendingError } = await supabase
+        // Fetch Trending Posts
+        const { data: trendingData } = await supabase
           .from('posts')
           .select(`
             *,
@@ -84,19 +84,15 @@ function ExplorePageContent() {
           .order('created_at', { ascending: false })
           .limit(6)
 
-        if (trendingError) console.error('Error fetching trending:', trendingError)
-        else setTrendingPosts(trendingData as Post[] || [])
+        setTrendingPosts(trendingData as Post[] || [])
 
-        // Fetch Recommended Groups (Fallback to public groups)
-        const { data: groupsData, error: groupsError } = await supabase
+        // Fetch Recommended Groups
+        const { data: groupsData } = await supabase
           .from('groups')
           .select('*')
           .eq('visibility', 'public')
           .limit(6)
 
-        if (groupsError) console.error('Error fetching groups:', groupsError)
-
-        // Fetch group member counts for recommended groups
         if (groupsData && groupsData.length > 0) {
           const groupIds = groupsData.map((g: any) => g.id)
           const { data: counts } = await supabase
@@ -114,11 +110,9 @@ function ExplorePageContent() {
             member_count: countMap.get(g.id) || 0
           }))
           setRecommendedGroups(groupsWithCounts)
-        } else {
-          setRecommendedGroups([])
         }
 
-        // Fetch Main Feed Posts (Latest)
+        // Fetch Main Feed Posts
         let query = supabase
           .from('posts')
           .select(`
@@ -131,19 +125,16 @@ function ExplorePageContent() {
           query = query.contains('tags', [selectedTag])
         }
 
-        const { data: postsData, error: postsError } = await query
-
-        if (postsError) throw postsError
+        const { data: postsData } = await query
         setPosts(postsData as Post[] || [])
 
-        // Fetch Profiles (Researchers)
-        const { data: profilesData, error: profilesError } = await supabase
+        // Fetch Profiles
+        const { data: profilesData } = await supabase
           .from('users')
           .select('id, name, role, bio, affiliation')
           .eq('role', 'researcher')
           .limit(4)
 
-        if (profilesError) throw profilesError
         setProfiles(profilesData || [])
 
       } catch (error) {
@@ -157,264 +148,241 @@ function ExplorePageContent() {
   }, [selectedTag, supabase])
 
   const disciplines = [
-    'Computer Science',
-    'Mathematics',
-    'Physics',
-    'Biology',
-    'Chemistry',
-    'Medicine',
-    'Engineering',
-    'Psychology',
-    'Sociology',
-    'Economics',
-    'Philosophy',
-    'History',
+    'Computer Science', 'Mathematics', 'Physics', 'Biology',
+    'Chemistry', 'Medicine', 'Engineering', 'Psychology',
+    'Sociology', 'Economics', 'Philosophy', 'History',
   ]
 
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-bg">
+    <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
       <Navbar user={user} />
 
-      <main className="container-custom max-w-7xl py-8 md:py-12">
-        {/* Page Header */}
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-display font-bold text-primary dark:text-dark-text mb-4">
-              Explore Research
-            </h1>
-            <p className="text-lg text-text-light dark:text-dark-text-muted">
-              Discover research by topic, tag, or discipline
-            </p>
+      <main className="flex-1">
+        {/* Hero Header */}
+        <div className="relative bg-gradient-to-br from-primary via-primary-dark to-primary overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-text-light dark:text-dark-text-muted">Sort by:</span>
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="appearance-none bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg py-2 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-accent-light"
-              >
-                <option value="recent">Most Recent</option>
-                <option value="trending">Trending</option>
-                <option value="cited">Most Cited</option>
-              </select>
-              <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <div className="container-custom max-w-7xl relative z-10 py-16 md:py-24">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2 mb-4">
+                <Compass className="w-5 h-5 text-white/80" />
+                <span className="text-sm font-semibold uppercase tracking-wider text-white/80">
+                  Discover
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
+                Explore Research
+              </h1>
+              <p className="text-xl text-white/80 mb-8">
+                Discover groundbreaking research by topic, discipline, or researcher
+              </p>
+
+              {/* Search */}
+              <div className="max-w-xl">
+                <SearchBar />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8 flex justify-center">
-          <SearchBar />
-        </div>
-
-        <SectorGrid
-          sectors={disciplines}
-          onSelect={setSelectedTag}
-          selectedSector={selectedTag}
-        />
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0">
-            <div className="sticky top-24">
-              {/* Mobile Filter Toggle */}
+        <div className="container-custom max-w-7xl py-12">
+          {/* Discipline Pills */}
+          <div className="mb-12">
+            <div className="flex flex-wrap gap-3">
               <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden w-full mb-4 flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg"
+                onClick={() => setSelectedTag(null)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === null
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
+                  }`}
               >
-                <Filter className="w-5 h-5" />
-                <span className="font-medium">Filters</span>
+                All Topics
               </button>
+              {disciplines.map((discipline) => (
+                <button
+                  key={discipline}
+                  onClick={() => setSelectedTag(discipline)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === discipline
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
+                    }`}
+                >
+                  {discipline}
+                </button>
+              ))}
+            </div>
+          </div>
 
-              {/* Filters */}
-              <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
-                <div className="card p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text">
-                      Filters
-                    </h3>
-                    {selectedTag && (
-                      <button
-                        onClick={() => setSelectedTag(null)}
-                        className="text-sm text-accent dark:text-accent-light hover:underline"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Disciplines */}
-                  <div className="mb-6">
-                    <h4 className="font-medium text-sm text-text dark:text-dark-text mb-3">
-                      Disciplines
-                    </h4>
-                    <div className="space-y-2">
-                      {disciplines.map((discipline) => (
-                        <button
-                          key={discipline}
-                          onClick={() => setSelectedTag(discipline)}
-                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedTag === discipline
-                            ? 'bg-primary dark:bg-accent-light text-white'
-                            : 'hover:bg-gray-100 dark:hover:bg-dark-border text-text dark:text-dark-text'
-                            }`}
-                        >
-                          {discipline}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Popular Tags */}
-                  <div>
-                    <h4 className="font-medium text-sm text-text dark:text-dark-text mb-3">
-                      Popular Tags
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {allTags.slice(0, 20).map((tag) => (
-                        <button
-                          key={tag}
-                          onClick={() => setSelectedTag(tag)}
-                          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${selectedTag === tag
-                            ? 'bg-primary dark:bg-accent-light text-white'
-                            : 'bg-gray-100 dark:bg-dark-border text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+          {/* Active Filter */}
+          {selectedTag && (
+            <div className="mb-8 flex items-center gap-3">
+              <span className="text-text-light dark:text-dark-text-muted">Filtering by:</span>
+              <div className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full">
+                <span className="font-semibold">{selectedTag}</span>
+                <button
+                  onClick={() => setSelectedTag(null)}
+                  className="hover:bg-white/20 rounded-full p-1 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             </div>
-          </aside>
+          )}
 
-          {/* Posts Grid */}
-          <div className="flex-1">
-            {/* Active Filter Display */}
-            {selectedTag && (
-              <div className="mb-6 flex items-center gap-3">
-                <span className="text-text-light dark:text-dark-text-muted">Filtering by:</span>
-                <div className="flex items-center gap-2 px-4 py-2 bg-primary dark:bg-accent-light text-white rounded-full">
-                  <span className="font-medium">{selectedTag}</span>
-                  <button
-                    onClick={() => setSelectedTag(null)}
-                    className="hover:bg-white/20 rounded-full p-1 transition-colors"
-                    aria-label="Remove filter"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                <p className="text-text-light dark:text-dark-text-muted">Loading content...</p>
               </div>
-            )}
+            </div>
+          ) : (
+            <>
+              {/* Trending Posts - Bento Grid */}
+              {!selectedTag && trendingPosts.length > 0 && (
+                <section className="mb-16">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">Trending Now</h2>
+                      <p className="text-sm text-text-light dark:text-dark-text-muted">Hot research this week</p>
+                    </div>
+                  </div>
 
-            {/* Trending Posts Section */}
-            {!selectedTag && trendingPosts.length > 0 && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                    Trending Research
-                  </h2>
-                </div>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {trendingPosts.slice(0, 3).map((post) => (
-                    <PostCard key={`trending-${post.id}`} post={post} />
-                  ))}
-                </div>
-              </section>
-            )}
+                  <BentoGrid columns={4} gap="lg">
+                    {trendingPosts[0] && (
+                      <BentoGridItem size="2x2">
+                        <FeaturedPost post={trendingPosts[0]} size="large" showTrending />
+                      </BentoGridItem>
+                    )}
+                    {trendingPosts[1] && (
+                      <BentoGridItem size="1x2">
+                        <FeaturedPost post={trendingPosts[1]} size="medium" accentColor="secondary" />
+                      </BentoGridItem>
+                    )}
+                    {trendingPosts[2] && (
+                      <BentoGridItem size="1x1">
+                        <MagazineCard post={trendingPosts[2]} variant="compact" className="h-full" />
+                      </BentoGridItem>
+                    )}
+                    {trendingPosts[3] && (
+                      <BentoGridItem size="1x1">
+                        <MagazineCard post={trendingPosts[3]} variant="compact" className="h-full" />
+                      </BentoGridItem>
+                    )}
+                  </BentoGrid>
+                </section>
+              )}
 
-            {/* Groups Section */}
-            {!selectedTag && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                    Recommended Groups
-                  </h2>
-                  <Link href="/groups" className="text-sm font-medium text-primary hover:underline">
-                    View all groups
-                  </Link>
-                </div>
+              {/* Featured Researchers */}
+              {!selectedTag && profiles.length > 0 && (
+                <section className="mb-16">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 bg-secondary/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-secondary-dark" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">Featured Researchers</h2>
+                      <p className="text-sm text-text-light dark:text-dark-text-muted">Connect with leading minds</p>
+                    </div>
+                  </div>
 
-                {loading ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-48 rounded-xl bg-gray-100 dark:bg-dark-surface animate-pulse" />
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    {profiles.map((profile) => (
+                      <ProfileCard key={profile.id} profile={profile} />
                     ))}
                   </div>
-                ) : recommendedGroups.length > 0 ? (
+                </section>
+              )}
+
+              {/* Research Groups */}
+              {!selectedTag && recommendedGroups.length > 0 && (
+                <section className="mb-16">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-text dark:text-dark-text">Research Groups</h2>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted">Join collaborative communities</p>
+                      </div>
+                    </div>
+                    <Link
+                      href="/groups"
+                      className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
+                    >
+                      View all →
+                    </Link>
+                  </div>
+
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {recommendedGroups.map((group) => (
+                    {recommendedGroups.slice(0, 3).map((group) => (
                       <GroupCard key={group.id} group={group} />
                     ))}
                   </div>
+                </section>
+              )}
+
+              {/* All Research */}
+              <section>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-dark-surface rounded-xl flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">
+                        {selectedTag ? `${selectedTag} Research` : 'Latest Research'}
+                      </h2>
+                      <p className="text-sm text-text-light dark:text-dark-text-muted">
+                        {posts.length} publications
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Sort */}
+                  <div className="relative">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as SortOption)}
+                      className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer"
+                    >
+                      <option value="recent">Most Recent</option>
+                      <option value="trending">Trending</option>
+                      <option value="cited">Most Cited</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
+                  </div>
+                </div>
+
+                {posts.length > 0 ? (
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {posts.map((post) => (
+                      <MagazineCard key={post.id} post={post} variant="standard" />
+                    ))}
+                  </div>
                 ) : (
-                  <div className="card p-8 text-center bg-gray-50 dark:bg-dark-surface/50 border-dashed">
+                  <div className="text-center py-16 bg-gray-50 dark:bg-dark-surface rounded-2xl">
+                    <BookOpen className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
+                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No research found</h3>
                     <p className="text-text-light dark:text-dark-text-muted">
-                      No public groups found yet.
+                      {selectedTag ? `No posts found for "${selectedTag}"` : 'No posts available yet.'}
                     </p>
                   </div>
                 )}
               </section>
-            )}
-
-            {/* Profiles Section */}
-            {!selectedTag && profiles.length > 0 && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                    Featured Researchers
-                  </h2>
-                </div>
-
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                  {profiles.map((profile) => (
-                    <ProfileCard key={profile.id} profile={profile} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            <div className="mb-6">
-              <h2 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                Latest Research
-              </h2>
-            </div>
-
-            {/* Posts */}
-            {loading ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                {[...Array(6)].map((_, i) => (
-                  <PostCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : posts.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                {posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
-            ) : (
-              <div className="card p-12 text-center">
-                <p className="text-lg text-text-light dark:text-dark-text-muted mb-4">
-                  No posts found{selectedTag ? ` for "${selectedTag}"` : ''}.
-                </p>
-                {selectedTag && (
-                  <button
-                    onClick={() => setSelectedTag(null)}
-                    className="btn btn-outline"
-                  >
-                    Clear Filter
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </main>
+
+      <Footer />
     </div>
   )
 }
@@ -423,13 +391,16 @@ function ExploreFallback() {
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg">
       <Navbar />
-      <main className="container-custom max-w-7xl py-8 md:py-12">
-        <div className="grid gap-6 md:grid-cols-2">
-          {[...Array(6)].map((_, i) => (
-            <PostCardSkeleton key={i} />
-          ))}
+      <div className="container-custom max-w-7xl py-12">
+        <div className="animate-pulse">
+          <div className="h-64 bg-gray-200 dark:bg-dark-surface rounded-2xl mb-12" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-64 bg-gray-200 dark:bg-dark-surface rounded-xl" />
+            ))}
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

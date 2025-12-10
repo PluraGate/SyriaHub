@@ -20,7 +20,7 @@ export function Footer() {
               className="inline-flex items-center space-x-2 group focus-ring rounded-lg p-1 -ml-1"
               aria-label="Syrealize Home"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <span className="text-white font-display font-bold text-lg">S</span>
               </div>
               <span className="font-display font-bold text-xl text-primary dark:text-dark-text">

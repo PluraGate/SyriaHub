@@ -10,52 +10,72 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Syrealize Brand Colors
+        // Syrian Identity Derivative Palette
+        // Inspired by syrianidentity.sy but using softer derivatives
         primary: {
-          DEFAULT: '#10282A',
-          dark: '#0A1B1D',
-          light: '#1A3A3D',
+          DEFAULT: '#1A3D40',      // Deep Teal - derived from #10282A
+          dark: '#0F2A2C',         // Darker teal
+          light: '#2A5558',        // Lighter teal
         },
         accent: {
-          DEFAULT: '#d91636',
-          dark: '#B01229',
-          light: '#E6385A',
+          DEFAULT: '#C41E3A',      // Heritage Red - derived from #D91636
+          dark: '#A01830',         // Deeper red
+          light: '#E04360',        // Softer red
+        },
+        secondary: {
+          DEFAULT: '#4AA3A5',      // Sage Teal - derived from #3E9798
+          dark: '#3A8385',         // Darker sage
+          light: '#7ABFC0',        // Lighter sage (derived from #7AA8A1)
         },
         text: {
-          DEFAULT: '#3D4D55',
-          light: '#6B7B83',
-          dark: '#2A3A42',
+          DEFAULT: '#2A3A42',      // Deep slate - derived from #3D4D55
+          light: '#5A6A72',        // Medium gray
+          muted: '#8899A6',        // Muted gray
         },
         background: {
-          DEFAULT: '#f7f7f7',
-          white: '#ffffff',
-          light: '#fafafa',
+          DEFAULT: '#F5F5F3',      // Warm off-white - from identity
+          white: '#FFFFFF',
+          warm: '#F2F0E6',         // Warmer background - from identity
         },
-        // Gray scale for borders and backgrounds
+        surface: {
+          DEFAULT: '#FFFFFF',
+          elevated: '#FAFAFA',
+        },
+        border: {
+          DEFAULT: '#E5E5E5',
+          light: '#F0F0F0',
+        },
+        // Syrian identity grayscale
         gray: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+          50: '#FAFAFA',
+          100: '#F5F5F3',
+          200: '#E5E5E5',
+          300: '#D4D4D4',
+          400: '#A3A3A3',
+          500: '#6B7B83',          // From identity #6B7B83
+          600: '#5A6A72',
+          700: '#3D4D55',          // From identity
+          800: '#2A3A42',          // From identity
+          900: '#1A3D40',
         },
-        // Dark mode colors
+        // Dark mode colors - Syrian teal tones
         dark: {
-          bg: '#0F1419',
-          surface: '#1A1F26',
-          border: '#2A3139',
-          text: '#E1E8ED',
-          'text-muted': '#8899A6',
+          bg: '#0A1B1D',           // Very dark teal - from identity
+          surface: '#142628',     // Dark teal surface
+          border: '#243A3D',      // Teal border
+          text: '#E8EDEE',        // Light text
+          'text-muted': '#8A9EA3', // Muted text
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Manrope', 'system-ui', 'sans-serif'],
-        display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Georgia', 'Cambria', 'serif'],
+      },
+      fontSize: {
+        'display-xl': ['4rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        'display-lg': ['3rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
+        'display': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
       },
       spacing: {
         '18': '4.5rem',
@@ -63,12 +83,18 @@ const config: Config = {
         '128': '32rem',
       },
       borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.25rem',
+        '3xl': '1.5rem',
         '4xl': '2rem',
+        'pill': '9999px',
       },
       boxShadow: {
-        'soft': '0 2px 8px rgba(16, 40, 42, 0.08)',
-        'soft-lg': '0 4px 16px rgba(16, 40, 42, 0.12)',
-        'soft-xl': '0 8px 32px rgba(16, 40, 42, 0.16)',
+        'soft': '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)',
+        'soft-md': '0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02)',
+        'soft-lg': '0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.02)',
+        'soft-xl': '0 20px 25px rgba(0, 0, 0, 0.06), 0 8px 10px rgba(0, 0, 0, 0.02)',
+        'glow-coral': '0 0 20px rgba(222, 95, 67, 0.15)',
       },
     },
   },

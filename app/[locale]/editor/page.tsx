@@ -2,12 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { Eye, FileText, Save, HelpCircle, BookOpen, Users, Image as ImageIcon } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { useToast } from '@/components/ui/toast'
+import { CoverImageUpload } from '@/components/CoverImageUpload'
+
+// Dynamic import for RichEditor to avoid SSR issues
+const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
 
 type EditorErrors = {
   title?: string
@@ -34,7 +40,6 @@ export default function EditorPage() {
   const [user, setUser] = useState<User | null>(null)
   const [initializing, setInitializing] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [previewActive, setPreviewActive] = useState(false)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
@@ -43,6 +48,8 @@ export default function EditorPage() {
   const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
   const [group, setGroup] = useState<any>(null)
+  const [coverImage, setCoverImage] = useState<string | null>(null)
+  const [useRichEditor, setUseRichEditor] = useState(true)
 
   // Fetch group details if groupId is present
   useEffect(() => {
@@ -62,12 +69,10 @@ export default function EditorPage() {
   useEffect(() => {
     if (critiqueOfParam) {
       setCitations([critiqueOfParam])
-      // Optionally fetch the post title to pre-fill title or show a badge
       supabase.from('posts').select('title').eq('id', critiqueOfParam).single().then(({ data }) => {
         if (data) {
           setTitle(`Critique of: ${data.title}`)
           setTags('critique, review')
-
           if (quoteParam) {
             setContent(`> ${decodeURIComponent(quoteParam)}\n\n`)
           }
@@ -101,6 +106,7 @@ export default function EditorPage() {
           setContent(data.content)
           setTags(data.tags ? data.tags.join(', ') : '')
           setContentType(data.content_type as 'article' | 'question')
+          setCoverImage(data.cover_image_url || null)
           setLicense(data.license || 'CC-BY-4.0')
 
           if (data.group_id) {
@@ -128,9 +134,7 @@ export default function EditorPage() {
 
     async function hydrateUser() {
       const { data, error } = await supabase.auth.getUser()
-      if (!mounted) {
-        return
-      }
+      if (!mounted) return
 
       if (error) {
         console.error('Failed to load user session', error)
@@ -147,30 +151,19 @@ export default function EditorPage() {
       }
 
       setUser(data.user)
-      // Only set initializing to false if we are NOT loading a post
       if (!postIdParam) {
         setInitializing(false)
       }
     }
 
     hydrateUser()
-
-    return () => {
-      mounted = false
-    }
+    return () => { mounted = false }
   }, [router, showToast, supabase, postIdParam])
 
   const validate = useCallback((): boolean => {
     const nextErrors: EditorErrors = {}
-
-    if (!title.trim()) {
-      nextErrors.title = 'Give your post a descriptive title.'
-    }
-
-    if (!content.trim()) {
-      nextErrors.content = 'Add some content before publishing.'
-    }
-
+    if (!title.trim()) nextErrors.title = 'Give your post a descriptive title.'
+    if (!content.trim()) nextErrors.content = 'Add some content before publishing.'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }, [content, title])
@@ -192,7 +185,7 @@ export default function EditorPage() {
 
       try {
         const tagArray = parseTags(tags)
-        const postData = {
+        const postData: Record<string, unknown> = {
           title: title.trim(),
           content: content.trim(),
           tags: tagArray,
@@ -200,55 +193,40 @@ export default function EditorPage() {
           content_type: contentType,
           status: publish ? 'published' : 'draft',
           group_id: group?.id || null,
-          license: license
+          license: license,
         }
 
-        let result;
+        // Only include cover_image_url if set (column may not exist in DB yet)
+        if (coverImage) {
+          postData.cover_image_url = coverImage
+        }
 
+        console.log('Saving post with data:', postData)
+
+        let result;
         if (postIdParam) {
-          // Update existing post
-          result = await supabase
-            .from('posts')
-            .update(postData)
-            .eq('id', postIdParam)
-            .select('id')
-            .single()
+          result = await supabase.from('posts').update(postData).eq('id', postIdParam).select('id').single()
         } else {
-          // Create new post
-          result = await supabase
-            .from('posts')
-            .insert(postData)
-            .select('id')
-            .single()
+          result = await supabase.from('posts').insert(postData).select('id').single()
         }
 
         const { data, error } = result
+        if (error) throw error
 
-        if (error) {
-          throw error
-        }
-
-        // Save citations
         if (citations.length > 0) {
           const citationInserts = citations.map(targetId => ({
             source_post_id: data.id,
             target_post_id: targetId,
             quote_content: quoteParam ? decodeURIComponent(quoteParam) : null
           }))
-
-          // Delete existing citations if updating (simple approach: delete all and re-insert)
           if (postIdParam) {
             await supabase.from('citations').delete().eq('source_post_id', data.id)
           }
-
           await supabase.from('citations').insert(citationInserts)
         }
 
-        showToast(
-          publish ? 'Post published successfully.' : 'Draft saved successfully.',
-          'success'
-        )
-
+        showToast(publish ? 'Post published successfully!' : 'Draft saved successfully.', 'success')
+        await new Promise(resolve => setTimeout(resolve, 1500))
         router.push(publish ? (group ? `/groups/${group.id}` : `/post/${data.id}`) : '/feed')
       } catch (error) {
         console.error('Failed to store post', error)
@@ -260,34 +238,23 @@ export default function EditorPage() {
     [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam]
   )
 
-  const handleSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-      await persistPost(true)
-    },
-    [persistPost]
-  )
+  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    await persistPost(true)
+  }, [persistPost])
 
   const handleDraft = useCallback(async () => {
     await persistPost(false)
   }, [persistPost])
 
   const tagList = useMemo(() => parseTags(tags), [tags])
-  const contentParagraphs = useMemo(
-    () =>
-      content
-        .split('\n')
-        .map(line => line.trim())
-        .filter(Boolean),
-    [content]
-  )
 
   if (initializing) {
     return (
       <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
         <Navbar />
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary dark:border-accent" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary dark:border-primary-light" />
         </div>
       </div>
     )
@@ -298,20 +265,22 @@ export default function EditorPage() {
       <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
         <Navbar />
         <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
-          <FileText className="h-12 w-12 text-primary dark:text-accent-light" />
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+            <FileText className="h-10 w-10 text-primary" />
+          </div>
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold text-text dark:text-dark-text">
-              Let&apos;s get you signed in
+            <h1 className="text-2xl font-bold text-text dark:text-dark-text">
+              Sign in to write
             </h1>
-            <p className="text-sm text-text-light dark:text-dark-text-muted">
-              You need an account before you can craft a new research note.
+            <p className="text-text-light dark:text-dark-text-muted max-w-md">
+              You need an account to share your research with the community.
             </p>
           </div>
           <Link
             href="/auth/login"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all"
           >
-            Go to login
+            Sign In
           </Link>
         </main>
       </div>
@@ -319,48 +288,68 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-bg">
+    <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
       <Navbar user={user} />
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-10">
-        <header className="space-y-3 border-b border-gray-200 pb-6 dark:border-dark-border">
-          <div className="flex items-center gap-3 text-primary dark:text-accent-light">
-            <FileText className="h-6 w-6" />
-            <h1 className="text-3xl font-semibold text-primary dark:text-dark-text">
-              {contentType === 'question' ? 'Ask a Question' : 'Craft a new research note'}
-            </h1>
-          </div>
-          <p className="text-sm text-text-light dark:text-dark-text-muted">
-            Share your latest findings, methodologies, or reflections. Keep titles focused and add
-            tags so peers can discover your work quickly.
-          </p>
-        </header>
 
-        {group && (
-          <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg text-primary dark:text-accent-light">
-            <Users className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              Posting to group: <strong>{group.name}</strong>
-            </span>
-            <button
-              type="button"
-              onClick={() => setGroup(null)}
-              className="ml-auto text-xs hover:underline opacity-70 hover:opacity-100"
-            >
-              Remove
-            </button>
-          </div>
-        )}
+      {/* Header */}
+      <header className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
+        <div className="container-custom max-w-5xl py-6">
+          <Link
+            href="/feed"
+            className="inline-flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Feed
+          </Link>
 
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              {contentType === 'question' ? (
+                <HelpCircle className="w-6 h-6 text-white" />
+              ) : (
+                <FileText className="w-6 h-6 text-white" />
+              )}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-text dark:text-dark-text">
+                {postIdParam ? 'Edit Post' : contentType === 'question' ? 'Ask a Question' : 'Write New Post'}
+              </h1>
+              <p className="text-sm text-text-light dark:text-dark-text-muted">
+                Share your research with the community
+              </p>
+            </div>
+          </div>
+
+          {group && (
+            <div className="flex items-center gap-2 mt-4 px-4 py-3 bg-secondary/10 border border-secondary/20 rounded-xl text-secondary-dark dark:text-secondary">
+              <Users className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Posting to: <strong>{group.name}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => setGroup(null)}
+                className="ml-auto text-xs hover:underline opacity-70 hover:opacity-100"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="flex-1 container-custom max-w-5xl py-8">
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-dark-border dark:bg-dark-surface">
+          {/* Editor Form */}
+          <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6 md:p-8">
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
 
-              {/* Content Type Selector */}
-              <div className="flex gap-4 p-1 bg-gray-100 dark:bg-dark-bg rounded-lg w-fit">
+              {/* Content Type Toggle */}
+              <div className="flex gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
                 <button
                   type="button"
                   onClick={() => setContentType('article')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${contentType === 'article'
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
                     ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
                     : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
@@ -371,7 +360,7 @@ export default function EditorPage() {
                 <button
                   type="button"
                   onClick={() => setContentType('question')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${contentType === 'question'
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
                     ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
                     : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
@@ -381,11 +370,23 @@ export default function EditorPage() {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="title"
-                  className="text-sm font-medium text-text dark:text-dark-text"
-                >
+              {/* Cover Image */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-text dark:text-dark-text">
+                  Cover Image
+                </label>
+                {user && (
+                  <CoverImageUpload
+                    value={coverImage}
+                    onChange={setCoverImage}
+                    userId={user.id}
+                  />
+                )}
+              </div>
+
+              {/* Title */}
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-semibold text-text dark:text-dark-text">
                   Title
                 </label>
                 <input
@@ -396,116 +397,55 @@ export default function EditorPage() {
                   placeholder={contentType === 'question' ? "What's your question?" : "What are you researching today?"}
                   value={title}
                   onChange={event => setTitle(event.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
+                  className="w-full px-4 py-3.5 text-lg rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                 />
-                {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
+                {errors.title && <p className="text-sm text-accent">{errors.title}</p>}
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between gap-4">
-                  <label
-                    htmlFor="content"
-                    className="text-sm font-medium text-text dark:text-dark-text"
-                  >
+              {/* Content */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="content" className="text-sm font-semibold text-text dark:text-dark-text">
                     Content
                   </label>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setPreviewActive(current => !current)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
+                      onClick={() => setUseRichEditor(!useRichEditor)}
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${useRichEditor
+                        ? 'bg-primary text-white border-primary'
+                        : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary'
+                        }`}
                     >
-                      <Eye className="h-4 w-4" />
-                      {previewActive ? 'Hide preview' : 'Show preview'}
+                      <Type className="h-3.5 w-3.5" />
+                      Visual Editor
                     </button>
-                    <div className="relative">
-                      <input
-                        type="file"
-                        id="image-upload"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
-                          const file = e.target.files?.[0]
-                          if (!file || !user) return
-
-                          // Check size (2MB limit)
-                          if (file.size > 2 * 1024 * 1024) {
-                            showToast('Image must be smaller than 2MB', 'error')
-                            return
-                          }
-
-                          const toastId = showToast('Uploading image...', 'loading' as any)
-
-                          try {
-                            const fileExt = file.name.split('.').pop()
-                            const fileName = `${user.id}/${Math.random().toString(36).substring(2)}.${fileExt}`
-
-                            const { error: uploadError } = await supabase.storage
-                              .from('post_images')
-                              .upload(fileName, file)
-
-                            if (uploadError) throw uploadError
-
-                            const { data: { publicUrl } } = supabase.storage
-                              .from('post_images')
-                              .getPublicUrl(fileName)
-
-                            // Insert markdown at cursor position or end
-                            const imageMarkdown = `\n![${file.name}](${publicUrl})\n`
-                            setContent(prev => prev + imageMarkdown)
-
-                            showToast('Image uploaded and inserted!', 'success')
-                          } catch (error) {
-                            console.error('Upload failed:', error)
-                            showToast('Failed to upload image', 'error')
-                          }
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => document.getElementById('image-upload')?.click()}
-                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
-                      >
-                        <ImageIcon className="h-4 w-4" />
-                        Insert Image
-                      </button>
-                    </div>
                   </div>
                 </div>
-                <textarea
-                  id="content"
-                  name="content"
-                  value={content}
-                  onChange={event => setContent(event.target.value)}
-                  placeholder="Write in clear paragraphs. Use blank lines between sections."
-                  className="min-h-[16rem] w-full resize-y rounded-lg border border-gray-300 px-4 py-3 text-base leading-relaxed shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
-                />
-                {errors.content && <p className="text-sm text-red-500">{errors.content}</p>}
-                {previewActive && (
-                  <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 dark:border-dark-border dark:bg-dark-surface">
-                    <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-text-light dark:text-dark-text-muted">
-                      Preview
-                    </h2>
-                    {contentParagraphs.length > 0 ? (
-                      <div className="space-y-3 text-sm text-text dark:text-dark-text">
-                        {contentParagraphs.map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">
-                        Start typing to see a live preview of your post.
-                      </p>
-                    )}
-                  </div>
+
+                {useRichEditor ? (
+                  <RichEditor
+                    value={content}
+                    onChange={setContent}
+                    placeholder="Write your content here..."
+                    userId={user?.id}
+                  />
+                ) : (
+                  <textarea
+                    id="content"
+                    name="content"
+                    value={content}
+                    onChange={event => setContent(event.target.value)}
+                    placeholder="Write your content here. Markdown is supported..."
+                    className="min-h-[20rem] w-full px-4 py-4 text-base leading-relaxed rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all resize-y"
+                  />
                 )}
+                {errors.content && <p className="text-sm text-accent">{errors.content}</p>}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="tags"
-                  className="text-sm font-medium text-text dark:text-dark-text"
-                >
+              {/* Tags */}
+              <div className="space-y-2">
+                <label htmlFor="tags" className="text-sm font-semibold text-text dark:text-dark-text">
                   Tags
                 </label>
                 <input
@@ -514,15 +454,15 @@ export default function EditorPage() {
                   type="text"
                   value={tags}
                   onChange={event => setTags(event.target.value)}
-                  placeholder="Separate tags with commas (e.g. methodology, ethics, syria)"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
+                  placeholder="methodology, ethics, syria"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                 />
                 {tagList.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {tagList.map(tag => (
                       <span
                         key={tag}
-                        className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-accent-light/10 dark:text-accent-light"
+                        className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary dark:bg-primary-light/10 dark:text-primary-light rounded-full"
                       >
                         #{tag}
                       </span>
@@ -531,18 +471,16 @@ export default function EditorPage() {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="license"
-                  className="text-sm font-medium text-text dark:text-dark-text"
-                >
+              {/* License */}
+              <div className="space-y-2">
+                <label htmlFor="license" className="text-sm font-semibold text-text dark:text-dark-text">
                   License
                 </label>
                 <select
                   id="license"
                   value={license}
                   onChange={e => setLicense(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                 >
                   <option value="CC-BY-4.0">CC BY 4.0 (Attribution)</option>
                   <option value="CC-BY-SA-4.0">CC BY-SA 4.0 (ShareAlike)</option>
@@ -555,64 +493,77 @@ export default function EditorPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-accent dark:hover:bg-accent/90"
-                >
-                  <Save className="h-4 w-4" />
-                  {saving ? 'Saving…' : 'Publish post'}
-                </button>
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-dark-border">
                 <button
                   type="button"
                   disabled={saving}
                   onClick={handleDraft}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-5 py-2 text-sm font-semibold text-text transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-70 dark:border-dark-border dark:text-dark-text dark:hover:border-accent-light"
+                  className="flex-1 sm:flex-none px-6 py-3 text-sm font-semibold rounded-xl border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary hover:text-primary transition-all disabled:opacity-50"
                 >
-                  Save draft
+                  Save Draft
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
+                >
+                  <Save className="h-4 w-4" />
+                  {saving ? 'Publishing...' : 'Publish'}
                 </button>
               </div>
             </form>
-          </section>
+          </div>
 
+          {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-dark-border dark:bg-dark-surface">
-              <h2 className="mb-3 text-base font-semibold text-text dark:text-dark-text">
-                Writing tips
-              </h2>
+            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-secondary-dark" />
+                </div>
+                <h2 className="font-semibold text-text dark:text-dark-text">Writing Tips</h2>
+              </div>
               <ul className="space-y-3 text-sm text-text-light dark:text-dark-text-muted">
-                <li>Lead with a clear thesis or summary in your opening paragraph.</li>
-                <li>Use tags to highlight disciplines, regions, and methods.</li>
-                <li>Preview your post to ensure citations and formatting look correct.</li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                  Lead with a clear thesis or summary
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                  Use tags to help discovery
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                  Preview before publishing
+                </li>
               </ul>
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-dark-border dark:bg-dark-surface">
-              <h2 className="mb-3 text-base font-semibold text-text dark:text-dark-text">
-                Need inspiration?
-              </h2>
-              <p className="mb-4 text-sm text-text-light dark:text-dark-text-muted">
-                Explore recent research in the{' '}
-                <Link className="text-primary dark:text-accent-light" href="/feed">
-                  feed
-                </Link>{' '}
-                or discover trending topics on the{' '}
-                <Link className="text-primary dark:text-accent-light" href="/explore">
-                  explore
-                </Link>{' '}
-                page.
+            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+              <h2 className="font-semibold text-text dark:text-dark-text mb-3">Need Inspiration?</h2>
+              <p className="text-sm text-text-light dark:text-dark-text-muted mb-4">
+                Explore recent research in the feed or discover trending topics.
               </p>
               <Link
                 href="/feed"
-                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-accent-light dark:text-accent-light dark:hover:bg-accent-light/10"
+                className="inline-flex items-center justify-center w-full px-4 py-2.5 text-sm font-semibold rounded-xl border border-primary text-primary hover:bg-primary/5 transition-all"
               >
-                Browse recent posts
+                Browse Posts
               </Link>
+            </div>
+
+            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl border border-primary/10 p-6">
+              <h3 className="font-semibold text-text dark:text-dark-text mb-2">Markdown Supported</h3>
+              <p className="text-xs text-text-light dark:text-dark-text-muted">
+                Use **bold**, *italic*, # headings, - lists, and `code` in your content.
+              </p>
             </div>
           </aside>
         </div>
-      </main >
-    </div >
+      </main>
+
+      <Footer />
+    </div>
   )
 }

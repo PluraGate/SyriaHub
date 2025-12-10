@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
+import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen } from 'lucide-react'
 
 export default async function SignupPage({
   searchParams,
@@ -44,126 +47,177 @@ export default async function SignupPage({
       redirect(`/auth/signup?error=${error.message}`)
     }
 
-    // Check if email confirmation is required
     if (data.user && !data.session) {
-      // Email confirmation required
       redirect('/auth/signup?success=check-email')
     }
 
-    // If we have a session, user can login immediately
     if (data.session) {
       redirect('/feed')
     }
 
-    // Fallback
     redirect('/auth/signup?success=check-email')
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <Link href="/" className="flex justify-center text-3xl font-bold text-gray-900">
-            Syrealize
-          </Link>
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
-              sign in to existing account
+    <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
+      <Navbar user={null} />
+
+      <main className="flex-1 flex">
+        {/* Left - Branding Panel */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary-dark to-primary relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl" />
+            <div className="absolute bottom-20 left-20 w-96 h-96 bg-secondary rounded-full blur-3xl" />
+          </div>
+
+          <div className="relative z-10 flex flex-col justify-center px-16 py-12">
+            <Link href="/" className="flex items-center gap-3 mb-12">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-2xl">S</span>
+              </div>
+              <span className="font-bold text-2xl text-white">Syrealize</span>
             </Link>
-          </p>
+
+            <h1 className="text-4xl font-bold text-white mb-4">
+              Join the Research Community
+            </h1>
+            <p className="text-xl text-white/80 mb-12 max-w-md">
+              Connect with researchers, share your work, and discover groundbreaking insights.
+            </p>
+
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">Share Research</h3>
+                  <p className="text-sm text-white/70">Publish articles and get feedback from peers</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">Join Groups</h3>
+                  <p className="text-sm text-white/70">Collaborate with researchers in your field</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">Build Reputation</h3>
+                  <p className="text-sm text-white/70">Earn recognition for your contributions</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Success Message */}
-        {params.success === 'check-email' && (
-          <div className="rounded-lg bg-green-50 p-4 border border-green-200">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
-                  Check your email
-                </h3>
-                <div className="mt-2 text-sm text-green-700">
-                  <p>
-                    We&apos;ve sent you an email with a confirmation link. Please check your inbox and click the link to verify your account.
-                  </p>
+        {/* Right - Form Panel */}
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-md">
+            {/* Mobile Logo */}
+            <div className="text-center mb-8 lg:hidden">
+              <Link href="/" className="inline-flex items-center gap-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">S</span>
+                </div>
+                <span className="font-bold text-2xl text-text dark:text-dark-text">Syrealize</span>
+              </Link>
+            </div>
+
+            {/* Success Message */}
+            {params.success === 'check-email' && (
+              <div className="mb-6 p-4 rounded-2xl bg-secondary/10 border border-secondary/20">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-secondary-dark mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-text dark:text-dark-text">Check your email</h3>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                      We've sent you a confirmation link. Please check your inbox to verify your account.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Error Message */}
-        {params.error && (
-          <div className="rounded-lg bg-red-50 p-4 border border-red-200">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
-                  Error
-                </h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>{params.error}</p>
+            {/* Error Message */}
+            {params.error && (
+              <div className="mb-6 p-4 rounded-2xl bg-accent/10 border border-accent/20">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-accent mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-text dark:text-dark-text">Error</h3>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{params.error}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        <form className="mt-8 space-y-6" action={handleSignup}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={6}
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password (min 6 characters)"
-              />
-            </div>
-          </div>
+            {/* Form Card */}
+            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-8">
+              <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
+                Create your account
+              </h2>
+              <p className="text-text-light dark:text-dark-text-muted mb-8">
+                Already have an account?{' '}
+                <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-dark transition-colors">
+                  Sign in
+                </Link>
+              </p>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Sign up
-            </button>
+              <form className="space-y-5" action={handleSignup}>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    minLength={6}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+                >
+                  Create Account
+                </button>
+              </form>
+
+              <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
+                By signing up, you agree to our terms of service and privacy policy.
+              </p>
+            </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }

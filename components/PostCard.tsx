@@ -3,6 +3,7 @@ import { MessageSquare, Quote, Calendar, User, Tag, GitFork } from 'lucide-react
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
+import { BookmarkButton } from '@/components/BookmarkButton'
 import { Post } from '@/types'
 
 interface PostCardProps {
@@ -29,7 +30,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
     'Anonymous'
 
   return (
-    <article className="card card-hover p-6 group">
+    <article className="card card-premium card-glow card-hover p-6 group">
       <Link
         href={`/post/${post.id}`}
         className="focus-ring rounded-lg block"
@@ -43,7 +44,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
                 Forked
               </span>
             )}
-            <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-accent dark:group-hover:text-accent-light transition-colors line-clamp-2">
+            <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors line-clamp-2">
               {post.title}
             </h3>
           </div>
@@ -108,7 +109,10 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
           </div>
         </div>
 
-        <ReportButton postId={post.id} />
+        <div className="flex items-center gap-1">
+          <BookmarkButton postId={post.id} />
+          <ReportButton postId={post.id} />
+        </div>
       </div>
     </article>
   )

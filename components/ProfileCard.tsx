@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { User as UserIcon, Building2 } from 'lucide-react'
+import { User as UserIcon, Building2, ArrowUpRight } from 'lucide-react'
 import { User } from '@/types'
 import ReputationScore from './ReputationScore'
 
@@ -8,46 +8,70 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ profile }: ProfileCardProps) {
+    // Generate a gradient based on name
+    const gradients = [
+        'from-primary to-secondary',
+        'from-secondary to-primary',
+        'from-primary to-primary-dark',
+        'from-secondary to-secondary-dark',
+    ]
+    const gradientIndex = profile.name.charCodeAt(0) % gradients.length
+    const gradient = gradients[gradientIndex]
+
     return (
         <Link
             href={`/profile/${profile.id}`}
-            className="card card-hover p-6 flex flex-col h-full items-center text-center group"
+            className="group relative flex flex-col h-full bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300"
         >
-            <div className="w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <span className="font-display font-bold text-2xl text-primary dark:text-primary-light">
-                    {profile.name.charAt(0).toUpperCase()}
-                </span>
+            {/* Header Gradient */}
+            <div className={`h-16 bg-gradient-to-br ${gradient} relative`}>
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                    <div className="w-16 h-16 rounded-xl bg-white dark:bg-dark-surface border-4 border-white dark:border-dark-surface shadow-soft-md flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <span className={`font-bold text-xl bg-gradient-to-br ${gradient} bg-clip-text text-transparent`}>
+                            {profile.name.charAt(0).toUpperCase()}
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text mb-1 group-hover:text-accent dark:group-hover:text-accent-light transition-colors">
-                {profile.name}
-            </h3>
+            {/* Content */}
+            <div className="flex flex-col items-center text-center pt-12 pb-6 px-4 flex-grow">
+                <h3 className="font-bold text-lg text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors mb-1">
+                    {profile.name}
+                </h3>
 
-            {profile.reputation !== undefined && profile.reputation > 0 && (
-                <div className="mb-2">
-                    <ReputationScore score={profile.reputation} size="sm" />
-                </div>
-            )}
+                {profile.reputation !== undefined && profile.reputation > 0 && (
+                    <div className="mb-2">
+                        <ReputationScore score={profile.reputation} size="sm" />
+                    </div>
+                )}
 
-            {profile.affiliation && (
-                <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted mb-3">
-                    <Building2 className="w-3.5 h-3.5" />
-                    <span className="line-clamp-1">{profile.affiliation}</span>
-                </div>
-            )}
+                {profile.affiliation ? (
+                    <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted mb-3">
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span className="line-clamp-1">{profile.affiliation}</span>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted mb-3">
+                        <UserIcon className="w-3.5 h-3.5" />
+                        <span className="capitalize">{profile.role}</span>
+                    </div>
+                )}
 
-            {!profile.affiliation && (
-                <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted mb-3">
-                    <UserIcon className="w-3.5 h-3.5" />
-                    <span className="capitalize">{profile.role}</span>
-                </div>
-            )}
+                {profile.bio && (
+                    <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-auto">
+                        {profile.bio}
+                    </p>
+                )}
+            </div>
 
-            {profile.bio && (
-                <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mb-4">
-                    {profile.bio}
-                </p>
-            )}
+            {/* Footer */}
+            <div className="px-4 py-3 border-t border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-bg flex items-center justify-center">
+                <span className="text-sm font-medium text-primary dark:text-primary-light group-hover:underline">
+                    View Profile
+                </span>
+                <ArrowUpRight className="w-4 h-4 ml-1 text-primary dark:text-primary-light" />
+            </div>
         </Link>
     )
 }
