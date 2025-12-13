@@ -13,6 +13,7 @@ import { AnswerForm } from '@/components/AnswerForm'
 import { ForkButton } from '@/components/ForkButton'
 import { SuggestionDialog } from '@/components/SuggestionDialog'
 import { KnowledgeGraph } from '@/components/KnowledgeGraph'
+import { CitationContextBar } from '@/components/CitationContextBar'
 import { PostMoreOptions } from '@/components/PostMoreOptions'
 import { TextSelectionHandler } from '@/components/TextSelectionHandler'
 import { BookmarkButton } from '@/components/BookmarkButton'
@@ -513,6 +514,9 @@ export default async function PostPage(props: PostPageProps) {
           </aside>
         </div>
       </main>
+
+      {/* Citation Context Bar */}
+      <CitationContextBar postId={post.id} currentTags={post.tags || []} />
 
       <Footer />
     </div>

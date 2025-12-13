@@ -5,6 +5,9 @@ import { Inter, Outfit } from 'next/font/google'
 import { ToastProvider } from '@/components/ui/toast'
 import { NotificationsProvider } from '@/components/NotificationsProvider'
 import { AppErrorBoundary } from '@/components/AppErrorBoundary'
+import { PreferencesProvider } from '@/contexts/PreferencesContext'
+import { SkipNavLink, SkipNavContent } from '@/components/accessibility'
+import { createClient } from '@/lib/supabase/server'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -29,6 +32,10 @@ export default async function RootLayout({
     notFound();
   }
 
+  // Get user for preferences
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
@@ -37,13 +44,18 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} font-sans bg-background text-text`} suppressHydrationWarning>
+        <SkipNavLink />
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
-            <NotificationsProvider>
-              <AppErrorBoundary>
-                {children}
-              </AppErrorBoundary>
-            </NotificationsProvider>
+            <PreferencesProvider userId={user?.id}>
+              <NotificationsProvider>
+                <AppErrorBoundary>
+                  <SkipNavContent>
+                    {children}
+                  </SkipNavContent>
+                </AppErrorBoundary>
+              </NotificationsProvider>
+            </PreferencesProvider>
           </ToastProvider>
         </NextIntlClientProvider>
       </body>
@@ -54,3 +66,4 @@ export default async function RootLayout({
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'ar' }];
 }
+

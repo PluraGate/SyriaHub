@@ -4,6 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
 import { BookmarkButton } from '@/components/BookmarkButton'
+import { ReviewBadgeInline } from '@/components/ReviewBadge'
+import { PlagiarismDetails } from '@/components/PlagiarismDetails'
 import { Post } from '@/types'
 
 interface PostCardProps {
@@ -12,7 +14,10 @@ interface PostCardProps {
       name?: string
       full_name?: string
       email?: string
+      is_verified_author?: boolean
     } | null
+    approval_status?: 'pending' | 'approved' | 'flagged' | 'rejected'
+    approved_by_role?: 'moderator' | 'admin' | null
   }
   showAuthor?: boolean
 }
@@ -44,9 +49,16 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
                 Forked
               </span>
             )}
-            <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors line-clamp-2">
-              {post.title}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-display font-semibold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors line-clamp-2">
+                {post.title}
+              </h3>
+              <ReviewBadgeInline
+                status={post.approval_status}
+                approverRole={post.approved_by_role}
+                isVerifiedAuthor={post.author?.is_verified_author}
+              />
+            </div>
           </div>
           {post.license && (
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted border border-gray-200 dark:border-dark-border whitespace-nowrap">
