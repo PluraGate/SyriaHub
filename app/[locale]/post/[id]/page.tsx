@@ -16,14 +16,78 @@ import { KnowledgeGraph } from '@/components/KnowledgeGraph'
 import { PostMoreOptions } from '@/components/PostMoreOptions'
 import { TextSelectionHandler } from '@/components/TextSelectionHandler'
 import { BookmarkButton } from '@/components/BookmarkButton'
+import { EditButton } from '@/components/EditButton'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Button } from '@/components/ui/button'
+import { Metadata } from 'next'
 
 interface PostPageProps {
   params: Promise<{
     id: string
   }>
+}
+
+// Generate dynamic metadata for SEO
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: post } = await supabase
+    .from('posts')
+    .select(`
+      id,
+      title,
+      content,
+      tags,
+      content_type,
+      author:users!posts_author_id_fkey(name, email)
+    `)
+    .eq('id', id)
+    .single()
+
+  if (!post) {
+    return {
+      title: 'Post Not Found | Syrealize',
+      description: 'The requested post could not be found.',
+    }
+  }
+
+  const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
+  const description = post.content.replace(/[#*_`\[\]]/g, '').substring(0, 155) + '...'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
+  const ogImageUrl = `${siteUrl}/api/og?id=${post.id}`
+
+  return {
+    title: `${post.title} | Syrealize`,
+    description,
+    authors: [{ name: authorName }],
+    keywords: post.tags || [],
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      url: `${siteUrl}/post/${post.id}`,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      siteName: 'Syrealize',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: `${siteUrl}/post/${post.id}`,
+    },
+  }
 }
 
 // Reading time calculator
@@ -260,12 +324,11 @@ export default async function PostPage(props: PostPageProps) {
             <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-100 dark:border-dark-border">
               {user && user.id === post.author_id ? (
                 <>
-                  <Link href={`/editor?id=${post.id}`}>
-                    <Button className="gap-2">
-                      <PenSquare className="w-4 h-4" />
-                      Edit
-                    </Button>
-                  </Link>
+                  <EditButton
+                    postId={post.id}
+                    postCreatedAt={post.created_at}
+                    isAuthor={true}
+                  />
                   <Link href={`/post/${post.id}/suggestions`}>
                     <Button variant="outline" className="gap-2">
                       <GitPullRequest className="w-4 h-4" />

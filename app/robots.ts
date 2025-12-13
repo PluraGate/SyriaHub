@@ -1,0 +1,28 @@
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
+
+    return {
+        rules: [
+            {
+                userAgent: '*',
+                allow: '/',
+                disallow: [
+                    '/api/',
+                    '/admin/',
+                    '/auth/',
+                    '/editor',
+                    '/settings',
+                    '/_next/',
+                ],
+            },
+            {
+                userAgent: 'Googlebot',
+                allow: '/',
+                disallow: ['/api/', '/admin/', '/auth/'],
+            },
+        ],
+        sitemap: `${siteUrl}/sitemap.xml`,
+    }
+}
