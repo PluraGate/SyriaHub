@@ -65,5 +65,57 @@
         "about": "About",
         "privacy": "Privacy",
         "copyright": "© {year} Syrealize. A minimalist research platform."
+    },
+    "Resources": {
+        "title": "Resource Library",
+        "subtitle": "Access datasets, reports, tools, and materials shared by the community.",
+        "uploadResource": "Upload Resource",
+        "noResources": "No resources yet",
+        "noResourcesDesc": "Be the first to share a resource with the community!",
+        "noResults": "No resources match your filters",
+        "noResultsDesc": "Try adjusting your filters or search terms to find what you're looking for.",
+        "showingResults": "Showing {count} result(s)",
+        "searchPlaceholder": "Search resources...",
+        "filters": "Filters",
+        "clearFilters": "Clear All Filters",
+        "resourceType": "Resource Type",
+        "discipline": "Discipline",
+        "license": "License",
+        "allLicenses": "All Licenses",
+        "sortBy": "Sort By",
+        "sortNewest": "Newest First",
+        "sortDownloads": "Most Downloads",
+        "sortTitle": "Title A-Z",
+        "types": {
+            "dataset": "Dataset",
+            "paper": "Paper/Report",
+            "tool": "Tool/Software",
+            "media": "Media",
+            "template": "Template"
+        },
+        "typeDescriptions": {
+            "dataset": "CSV, Excel, JSON data files",
+            "paper": "Research papers, reports, documents",
+            "tool": "Scripts, applications, utilities",
+            "media": "Images, videos, audio files",
+            "template": "Forms, formats, frameworks"
+        },
+        "upload": {
+            "title": "Upload Resource",
+            "selectFile": "Click or drag file to upload",
+            "fileTypes": "PDF, Documents, Datasets, Media (Max 50MB)",
+            "typeRequired": "Resource Type",
+            "titleLabel": "Title",
+            "titlePlaceholder": "e.g. 2024 Humanitarian Aid Report",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Describe what this resource contains...",
+            "tagsLabel": "Disciplines & Tags",
+            "tagsHint": "Select the disciplines and topics that apply to this resource",
+            "licenseLabel": "License",
+            "submitButton": "Upload Resource",
+            "uploading": "Uploading..."
+        },
+        "usedInPosts": "Used in {count} post(s)",
+        "downloads": "{count} Downloads"
     }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/toast'
@@ -10,19 +10,78 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Loader2, UploadCloud, FileText } from 'lucide-react'
+import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X } from 'lucide-react'
+
+const RESOURCE_TYPES = [
+    { value: 'dataset', label: 'Dataset', icon: Database, description: 'CSV, Excel, JSON data files' },
+    { value: 'paper', label: 'Paper/Report', icon: FileType, description: 'Research papers, reports, documents' },
+    { value: 'tool', label: 'Tool/Software', icon: Wrench, description: 'Scripts, applications, utilities' },
+    { value: 'media', label: 'Media', icon: Film, description: 'Images, videos, audio files' },
+    { value: 'template', label: 'Template', icon: FileSpreadsheet, description: 'Forms, formats, frameworks' },
+]
+
+const LICENSES = [
+    { value: 'CC-BY-4.0', label: 'CC BY 4.0 (Attribution)' },
+    { value: 'CC-BY-SA-4.0', label: 'CC BY-SA 4.0 (ShareAlike)' },
+    { value: 'CC-BY-NC-4.0', label: 'CC BY-NC 4.0 (NonCommercial)' },
+    { value: 'CC0-1.0', label: 'CC0 1.0 (Public Domain)' },
+    { value: 'MIT', label: 'MIT License' },
+    { value: 'Apache-2.0', label: 'Apache 2.0' },
+    { value: 'Copyright', label: 'All Rights Reserved' },
+    { value: 'Other', label: 'Other' },
+]
+
+interface Tag {
+    id: string
+    label: string
+    discipline: string | null
+    color: string
+}
 
 export default function UploadResourcePage() {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [tags, setTags] = useState('')
+    const [resourceType, setResourceType] = useState<string>('')
+    const [selectedTags, setSelectedTags] = useState<string[]>([])
+    const [availableTags, setAvailableTags] = useState<Tag[]>([])
     const [license, setLicense] = useState('CC-BY-4.0')
     const [file, setFile] = useState<File | null>(null)
     const [uploading, setUploading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     const supabase = createClient()
     const router = useRouter()
     const { showToast } = useToast()
+
+    // Check authentication on mount
+    useEffect(() => {
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) {
+                showToast('Please sign in to upload resources.', 'error')
+                router.push('/auth/login?redirect=/resources/upload')
+                return
+            }
+            setIsLoading(false)
+        }
+        checkAuth()
+    }, [supabase, router, showToast])
+
+    // Fetch available tags from database
+    useEffect(() => {
+        async function fetchTags() {
+            const { data } = await supabase
+                .from('tags')
+                .select('*')
+                .order('discipline', { ascending: true })
+                .order('label', { ascending: true })
+
+            if (data) {
+                setAvailableTags(data)
+            }
+        }
+        fetchTags()
+    }, [supabase])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -30,10 +89,30 @@ export default function UploadResourcePage() {
         }
     }
 
+    const toggleTag = (tagLabel: string) => {
+        setSelectedTags(prev =>
+            prev.includes(tagLabel)
+                ? prev.filter(t => t !== tagLabel)
+                : [...prev, tagLabel]
+        )
+    }
+
+    // Group tags by discipline
+    const tagsByDiscipline = availableTags.reduce<Record<string, Tag[]>>((acc, tag) => {
+        const discipline = tag.discipline || 'Other'
+        if (!acc[discipline]) acc[discipline] = []
+        acc[discipline].push(tag)
+        return acc
+    }, {})
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!file) {
             showToast('Please select a file to upload.', 'error')
+            return
+        }
+        if (!resourceType) {
+            showToast('Please select a resource type.', 'error')
             return
         }
 
@@ -64,14 +143,12 @@ export default function UploadResourcePage() {
                 .getPublicUrl(filePath)
 
             // 2. Create Post
-            const tagsArray = tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
-
             const { data, error: postError } = await supabase
                 .from('posts')
                 .insert({
                     title,
                     content: description,
-                    tags: tagsArray,
+                    tags: selectedTags,
                     content_type: 'resource',
                     author_id: user.id,
                     status: 'published',
@@ -81,7 +158,8 @@ export default function UploadResourcePage() {
                         mime_type: file.type,
                         original_name: file.name,
                         downloads: 0,
-                        license: license
+                        license: license,
+                        resource_type: resourceType
                     }
                 })
                 .select()
@@ -98,6 +176,19 @@ export default function UploadResourcePage() {
         } finally {
             setUploading(false)
         }
+    }
+
+    // Show loading while checking auth
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
+                <Navbar />
+                <main className="flex-1 container-custom max-w-3xl py-12 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </main>
+                <Footer />
+            </div>
+        )
     }
 
     return (
@@ -117,7 +208,7 @@ export default function UploadResourcePage() {
                             type="file"
                             onChange={handleFileChange}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.json,.png,.jpg,.jpeg,.mp4,.mp3"
                         />
                         <div className="flex flex-col items-center gap-2 pointer-events-none">
                             {file ? (
@@ -135,15 +226,45 @@ export default function UploadResourcePage() {
                                         Click or drag file to upload
                                     </p>
                                     <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                        PDF, Documents, Datasets (Max 50MB)
+                                        PDF, Documents, Datasets, Media (Max 50MB)
                                     </p>
                                 </>
                             )}
                         </div>
                     </div>
 
+                    {/* Resource Type Selection */}
+                    <div className="space-y-3">
+                        <Label>Resource Type <span className="text-red-500">*</span></Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {RESOURCE_TYPES.map((type) => {
+                                const Icon = type.icon
+                                const isSelected = resourceType === type.value
+                                return (
+                                    <button
+                                        key={type.value}
+                                        type="button"
+                                        onClick={() => setResourceType(type.value)}
+                                        className={`p-4 rounded-lg border-2 transition-all text-left ${isSelected
+                                            ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                                            : 'border-gray-200 dark:border-dark-border hover:border-primary/50'
+                                            }`}
+                                    >
+                                        <Icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-primary' : 'text-text-light dark:text-dark-text-muted'}`} />
+                                        <p className={`font-medium ${isSelected ? 'text-primary' : 'text-text dark:text-dark-text'}`}>
+                                            {type.label}
+                                        </p>
+                                        <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">
+                                            {type.description}
+                                        </p>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
+
                     <div className="space-y-2">
-                        <Label htmlFor="title">Title</Label>
+                        <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
                         <Input
                             id="title"
                             value={title}
@@ -154,7 +275,7 @@ export default function UploadResourcePage() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Description <span className="text-red-500">*</span></Label>
                         <Textarea
                             id="description"
                             value={description}
@@ -165,14 +286,59 @@ export default function UploadResourcePage() {
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="tags">Tags</Label>
-                        <Input
-                            id="tags"
-                            value={tags}
-                            onChange={(e) => setTags(e.target.value)}
-                            placeholder="e.g. report, data, humanitarian (comma separated)"
-                        />
+                    {/* Discipline Tags */}
+                    <div className="space-y-3">
+                        <Label>Disciplines & Tags</Label>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            Select the disciplines and topics that apply to this resource
+                        </p>
+
+                        {/* Selected Tags */}
+                        {selectedTags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-dark-surface-hover rounded-lg">
+                                {selectedTags.map(tagLabel => {
+                                    const tag = availableTags.find(t => t.label === tagLabel)
+                                    return (
+                                        <button
+                                            key={tagLabel}
+                                            type="button"
+                                            onClick={() => toggleTag(tagLabel)}
+                                            className="flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium bg-primary text-white"
+                                        >
+                                            {tagLabel}
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        )}
+
+                        {/* Available Tags by Discipline */}
+                        <div className="space-y-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-dark-border rounded-lg p-4">
+                            {Object.entries(tagsByDiscipline).map(([discipline, tags]) => (
+                                <div key={discipline}>
+                                    <p className="text-xs font-medium text-text-light dark:text-dark-text-muted mb-2 uppercase tracking-wide">
+                                        {discipline}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {tags.map(tag => (
+                                            <button
+                                                key={tag.id}
+                                                type="button"
+                                                onClick={() => toggleTag(tag.label)}
+                                                className={`px-3 py-1 rounded-full text-sm transition-colors ${selectedTags.includes(tag.label)
+                                                    ? 'bg-primary text-white'
+                                                    : 'bg-gray-100 dark:bg-dark-surface-hover text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
+                                                    }`}
+                                                style={!selectedTags.includes(tag.label) ? { borderLeft: `3px solid ${tag.color}` } : {}}
+                                            >
+                                                {tag.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -181,21 +347,18 @@ export default function UploadResourcePage() {
                             id="license"
                             value={license}
                             onChange={(e) => setLicense(e.target.value)}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 py-2 text-sm text-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
-                            <option value="CC-BY-4.0">CC BY 4.0 (Attribution)</option>
-                            <option value="CC-BY-SA-4.0">CC BY-SA 4.0 (ShareAlike)</option>
-                            <option value="CC-BY-NC-4.0">CC BY-NC 4.0 (NonCommercial)</option>
-                            <option value="CC0-1.0">CC0 1.0 (Public Domain)</option>
-                            <option value="MIT">MIT License</option>
-                            <option value="Apache-2.0">Apache 2.0</option>
-                            <option value="Copyright">All Rights Reserved</option>
-                            <option value="Other">Other</option>
+                            {LICENSES.map(license => (
+                                <option key={license.value} value={license.value}>
+                                    {license.label}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
                     <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={uploading || !file} size="lg">
+                        <Button type="submit" disabled={uploading || !file || !resourceType} size="lg">
                             {uploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                             {uploading ? 'Uploading...' : 'Upload Resource'}
                         </Button>
@@ -204,6 +367,6 @@ export default function UploadResourcePage() {
             </main>
 
             <Footer />
-        </div >
+        </div>
     )
 }
