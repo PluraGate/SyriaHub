@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/toast'
-import { Pencil, Loader2 } from 'lucide-react'
+import { Pencil, Loader2, User, Building2, MapPin, Globe, Sparkles, ImageIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ImageUpload } from '@/components/ImageUpload'
+import { CoverImageUpload } from '@/components/CoverImageUpload'
 
 interface Profile {
     id: string
@@ -21,6 +22,7 @@ interface Profile {
     website: string | null
     research_interests: string[] | null
     avatar_url: string | null
+    cover_image_url: string | null
 }
 
 interface EditProfileDialogProps {
@@ -37,7 +39,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
         location: profile.location || '',
         website: profile.website || '',
         research_interests: profile.research_interests?.join(', ') || '',
-        avatar_url: profile.avatar_url || ''
+        avatar_url: profile.avatar_url || '',
+        cover_image_url: profile.cover_image_url || ''
     })
 
     const supabase = createClient()
@@ -63,7 +66,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     location: formData.location,
                     website: formData.website,
                     research_interests: interestsArray,
-                    avatar_url: formData.avatar_url
+                    avatar_url: formData.avatar_url,
+                    cover_image_url: formData.cover_image_url || null
                 })
                 .eq('id', profile.id)
 
@@ -81,6 +85,12 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
         }
     }
 
+    // Parse interests for preview
+    const interestsList = formData.research_interests
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -89,53 +99,100 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     Edit Profile
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>Edit Profile</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="flex justify-center mb-6">
-                        <ImageUpload
-                            bucket="avatars"
-                            path={profile.id}
-                            currentImage={formData.avatar_url}
-                            onUploadComplete={(url) => setFormData({ ...formData, avatar_url: url })}
+            <DialogContent className="sm:max-w-[540px] p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+                {/* Cover Image Section */}
+                <div className="relative">
+                    {formData.cover_image_url ? (
+                        <div
+                            className="h-32 bg-cover bg-center"
+                            style={{ backgroundImage: `url(${formData.cover_image_url})` }}
+                        />
+                    ) : (
+                        <div className="h-32 bg-gradient-to-br from-primary via-primary-dark to-secondary" />
+                    )}
+
+                    {/* Always visible cover edit button - positioned left to avoid dialog X */}
+                    <div className="absolute top-3 left-3">
+                        <CoverImageUpload
+                            value={formData.cover_image_url}
+                            onChange={(url) => setFormData({ ...formData, cover_image_url: url || '' })}
+                            userId={profile.id}
+                            compact
                         />
                     </div>
 
+                    {/* Header text overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                        <DialogHeader>
+                            <DialogTitle className="text-white text-xl font-bold">Edit Profile</DialogTitle>
+                            <p className="text-white/70 text-sm">Update your profile information</p>
+                        </DialogHeader>
+                    </div>
+                </div>
+
+                {/* Avatar - overlapping header */}
+                <div className="relative -mt-10 flex justify-center mb-2">
+                    <ImageUpload
+                        bucket="avatars"
+                        path={profile.id}
+                        currentImage={formData.avatar_url}
+                        onUploadComplete={(url) => setFormData({ ...formData, avatar_url: url })}
+                    />
+                </div>
+
+                <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-5">
+                    {/* Name field - prominent */}
                     <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
+                            <User className="w-4 h-4 text-primary" />
+                            Display Name
+                        </Label>
                         <Input
                             id="name"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             required
+                            className="h-11 text-base font-medium"
+                            placeholder="Your full name"
                         />
                     </div>
 
+                    {/* Bio field */}
                     <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
+                        <Label htmlFor="bio" className="text-sm font-semibold">
+                            Bio
+                        </Label>
                         <Textarea
                             id="bio"
                             value={formData.bio}
                             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                            placeholder="Tell us about yourself..."
+                            placeholder="Share a little about yourself and your research focus..."
                             className="resize-none h-24"
                         />
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">
+                            {formData.bio.length}/300 characters
+                        </p>
                     </div>
 
+                    {/* Two-column layout */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="affiliation">Affiliation</Label>
+                            <Label htmlFor="affiliation" className="text-sm font-semibold flex items-center gap-2">
+                                <Building2 className="w-4 h-4 text-secondary" />
+                                Affiliation
+                            </Label>
                             <Input
                                 id="affiliation"
                                 value={formData.affiliation}
                                 onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
-                                placeholder="University / Organization"
+                                placeholder="University / Org"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="location">Location</Label>
+                            <Label htmlFor="location" className="text-sm font-semibold flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-accent" />
+                                Location
+                            </Label>
                             <Input
                                 id="location"
                                 value={formData.location}
@@ -145,31 +202,66 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                         </div>
                     </div>
 
+                    {/* Website */}
                     <div className="space-y-2">
-                        <Label htmlFor="website">Website</Label>
+                        <Label htmlFor="website" className="text-sm font-semibold flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-primary" />
+                            Website
+                        </Label>
                         <Input
                             id="website"
                             type="url"
                             value={formData.website}
                             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                            placeholder="https://..."
+                            placeholder="https://yourwebsite.com"
                         />
                     </div>
 
+                    {/* Research Interests */}
                     <div className="space-y-2">
-                        <Label htmlFor="interests">Research Interests (comma separated)</Label>
+                        <Label htmlFor="interests" className="text-sm font-semibold flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-secondary" />
+                            Research Interests
+                        </Label>
                         <Input
                             id="interests"
                             value={formData.research_interests}
                             onChange={(e) => setFormData({ ...formData, research_interests: e.target.value })}
-                            placeholder="e.g. Humanitarian Aid, Public Health, Migration"
+                            placeholder="e.g. Public Health, Migration, Policy"
                         />
+                        {interestsList.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {interestsList.map((interest, i) => (
+                                    <span
+                                        key={i}
+                                        className="px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary dark:bg-primary-light/10 dark:text-primary-light rounded-full"
+                                    >
+                                        {interest}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
-                    <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={loading}>
-                            {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Save Changes
+                    {/* Actions */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-dark-border">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setOpen(false)}
+                            className="text-text-light dark:text-dark-text-muted"
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={loading} className="min-w-[120px]">
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                'Save Changes'
+                            )}
                         </Button>
                     </div>
                 </form>

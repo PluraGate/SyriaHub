@@ -1,24 +1,25 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { ImagePlus, X, Upload, Loader2 } from 'lucide-react'
+import { useState, useCallback, useRef } from 'react'
+import { ImagePlus, X, Loader2, Camera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
+import { Button } from '@/components/ui/button'
 
 interface CoverImageUploadProps {
     value: string | null
     onChange: (url: string | null) => void
     userId: string
+    compact?: boolean
 }
 
-export function CoverImageUpload({ value, onChange, userId }: CoverImageUploadProps) {
+export function CoverImageUpload({ value, onChange, userId, compact = false }: CoverImageUploadProps) {
     const [uploading, setUploading] = useState(false)
     const supabase = createClient()
     const { showToast } = useToast()
+    const inputRef = useRef<HTMLInputElement>(null)
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
-        const file = acceptedFiles[0]
+    const handleUpload = useCallback(async (file: File) => {
         if (!file) return
 
         // Validate file type
@@ -59,19 +60,56 @@ export function CoverImageUpload({ value, onChange, userId }: CoverImageUploadPr
         }
     }, [supabase, userId, onChange, showToast])
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: {
-            'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp']
-        },
-        maxFiles: 1,
-        disabled: uploading
-    })
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) handleUpload(file)
+    }
 
     const removeCover = () => {
         onChange(null)
     }
 
+    // Compact mode - just a button for corner placement
+    if (compact) {
+        return (
+            <div className="flex gap-2">
+                <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                />
+                <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => inputRef.current?.click()}
+                    disabled={uploading}
+                    className="bg-black/60 hover:bg-black/80 text-white shadow-md gap-2 backdrop-blur-sm"
+                >
+                    {uploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Camera className="w-4 h-4" />
+                    )}
+                    {value ? 'Change Cover' : 'Add Cover'}
+                </Button>
+                {value && (
+                    <Button
+                        type="button"
+                        size="sm"
+                        onClick={removeCover}
+                        disabled={uploading}
+                        className="bg-red-500/90 hover:bg-red-500 text-white shadow-md"
+                    >
+                        <X className="w-4 h-4" />
+                    </Button>
+                )}
+            </div>
+        )
+    }
+
+    // Full mode with preview
     if (value) {
         return (
             <div className="relative group">
@@ -81,15 +119,30 @@ export function CoverImageUpload({ value, onChange, userId }: CoverImageUploadPr
                         alt="Cover preview"
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                        <input
+                            ref={inputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                        <Button
+                            type="button"
+                            onClick={() => inputRef.current?.click()}
+                            className="bg-white text-gray-900 hover:bg-gray-100"
+                        >
+                            <Camera className="w-4 h-4 mr-2" />
+                            Change
+                        </Button>
+                        <Button
                             type="button"
                             onClick={removeCover}
-                            className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                            variant="destructive"
                         >
-                            <X className="w-4 h-4" />
-                            Remove Cover
-                        </button>
+                            <X className="w-4 h-4 mr-2" />
+                            Remove
+                        </Button>
                     </div>
                 </div>
                 <p className="text-xs text-text-light dark:text-dark-text-muted mt-2 text-center">
@@ -99,21 +152,19 @@ export function CoverImageUpload({ value, onChange, userId }: CoverImageUploadPr
         )
     }
 
+    // Empty state - dropzone style
     return (
         <div
-            {...getRootProps()}
-            className={`
-        relative aspect-[21/9] rounded-2xl border-2 border-dashed cursor-pointer
-        transition-all duration-200
-        ${isDragActive
-                    ? 'border-primary bg-primary/5 dark:border-primary-light dark:bg-primary-light/5'
-                    : 'border-gray-300 dark:border-dark-border hover:border-primary dark:hover:border-primary-light'
-                }
-        ${uploading ? 'opacity-50 cursor-not-allowed' : ''}
-      `}
+            onClick={() => inputRef.current?.click()}
+            className="relative aspect-[21/9] rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-200 border-gray-300 dark:border-dark-border hover:border-primary dark:hover:border-primary-light"
         >
-            <input {...getInputProps()} />
-
+            <input
+                ref={inputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+            />
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                 {uploading ? (
                     <>
@@ -122,31 +173,18 @@ export function CoverImageUpload({ value, onChange, userId }: CoverImageUploadPr
                     </>
                 ) : (
                     <>
-                        <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-dark-surface flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                            {isDragActive ? (
-                                <Upload className="w-7 h-7 text-primary" />
-                            ) : (
-                                <ImagePlus className="w-7 h-7 text-text-light dark:text-dark-text-muted" />
-                            )}
+                        <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-dark-surface flex items-center justify-center mb-4">
+                            <ImagePlus className="w-7 h-7 text-text-light dark:text-dark-text-muted" />
                         </div>
-
-                        {isDragActive ? (
-                            <p className="text-sm font-medium text-primary dark:text-primary-light">
-                                Drop image here
-                            </p>
-                        ) : (
-                            <>
-                                <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
-                                    Add a cover image
-                                </p>
-                                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                    Drag & drop or click to upload
-                                </p>
-                                <p className="text-xs text-text-muted mt-2">
-                                    PNG, JPG, GIF, WEBP • Max 5MB
-                                </p>
-                            </>
-                        )}
+                        <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
+                            Add a cover image
+                        </p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">
+                            Click to upload
+                        </p>
+                        <p className="text-xs text-text-muted mt-2">
+                            PNG, JPG, GIF, WEBP • Max 5MB
+                        </p>
                     </>
                 )}
             </div>

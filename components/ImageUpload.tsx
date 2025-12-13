@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react'
+import { Upload, Loader2, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
-import Image from 'next/image'
+import { ImageCropModal } from './ImageCropModal'
 
 interface ImageUploadProps {
     bucket: 'avatars' | 'post_images'
@@ -13,11 +13,21 @@ interface ImageUploadProps {
     onUploadComplete: (url: string) => void
     currentImage?: string | null
     className?: string
+    enableCrop?: boolean
 }
 
-export function ImageUpload({ bucket, path = '', onUploadComplete, currentImage, className = '' }: ImageUploadProps) {
+export function ImageUpload({
+    bucket,
+    path = '',
+    onUploadComplete,
+    currentImage,
+    className = '',
+    enableCrop = true
+}: ImageUploadProps) {
     const [uploading, setUploading] = useState(false)
     const [preview, setPreview] = useState<string | null>(currentImage || null)
+    const [cropModalOpen, setCropModalOpen] = useState(false)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { showToast } = useToast()
     const supabase = createClient()
@@ -28,15 +38,37 @@ export function ImageUpload({ bucket, path = '', onUploadComplete, currentImage,
         }
 
         const file = e.target.files[0]
-        const fileExt = file.name.split('.').pop()
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showToast('Please select an image file', 'error')
+            return
+        }
+
+        // Create object URL for cropping
+        const objectUrl = URL.createObjectURL(file)
+
+        if (enableCrop) {
+            // Open crop modal
+            setSelectedImage(objectUrl)
+            setCropModalOpen(true)
+        } else {
+            // Upload directly without cropping
+            await uploadImage(file)
+        }
+
+        // Reset input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
+    const uploadImage = async (file: File | Blob) => {
+        const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg'
         const fileName = `${path ? path + '/' : ''}${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = fileName
 
         setUploading(true)
-
-        // Create local preview
-        const objectUrl = URL.createObjectURL(file)
-        setPreview(objectUrl)
 
         try {
             const { error: uploadError } = await supabase.storage
@@ -51,14 +83,34 @@ export function ImageUpload({ bucket, path = '', onUploadComplete, currentImage,
                 .from(bucket)
                 .getPublicUrl(filePath)
 
+            setPreview(publicUrl)
             onUploadComplete(publicUrl)
             showToast('Image uploaded successfully', 'success')
         } catch (error: any) {
             console.error('Error uploading image:', error)
             showToast('Error uploading image', 'error')
-            setPreview(currentImage || null) // Revert preview on error
+            setPreview(currentImage || null)
         } finally {
             setUploading(false)
+        }
+    }
+
+    const handleCropComplete = async (croppedBlob: Blob) => {
+        // Upload the cropped image
+        await uploadImage(croppedBlob)
+
+        // Clean up
+        if (selectedImage) {
+            URL.revokeObjectURL(selectedImage)
+            setSelectedImage(null)
+        }
+    }
+
+    const handleCropModalClose = () => {
+        setCropModalOpen(false)
+        if (selectedImage) {
+            URL.revokeObjectURL(selectedImage)
+            setSelectedImage(null)
         }
     }
 
@@ -71,67 +123,81 @@ export function ImageUpload({ bucket, path = '', onUploadComplete, currentImage,
     }
 
     return (
-        <div className={`flex flex-col items-center gap-4 ${className}`}>
-            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                {preview ? (
-                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 dark:border-dark-border">
-                        <Image
-                            src={preview}
-                            alt="Upload preview"
-                            fill
-                            className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Upload className="w-6 h-6 text-white" />
+        <>
+            <div className={`flex flex-col items-center gap-4 ${className}`}>
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                    {preview ? (
+                        <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 dark:border-dark-border bg-gray-100">
+                            <img
+                                src={preview}
+                                alt="Upload preview"
+                                className="w-full h-full object-cover object-center"
+                            />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Upload className="w-6 h-6 text-white" />
+                            </div>
                         </div>
-                    </div>
-                ) : (
-                    <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-dark-surface flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-dark-border hover:border-primary dark:hover:border-primary transition-colors">
-                        <ImageIcon className="w-8 h-8 text-gray-400" />
-                    </div>
-                )}
+                    ) : (
+                        <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-dark-surface flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-dark-border hover:border-primary dark:hover:border-primary transition-colors">
+                            <ImageIcon className="w-8 h-8 text-gray-400" />
+                        </div>
+                    )}
 
-                {uploading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-bg/80 rounded-full">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                    </div>
-                )}
-            </div>
+                    {uploading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-bg/80 rounded-full">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        </div>
+                    )}
+                </div>
 
-            <div className="flex gap-2">
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                >
-                    {preview ? 'Change Image' : 'Upload Image'}
-                </Button>
-                {preview && (
+                <div className="flex gap-2 justify-center">
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant="default"
                         size="sm"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            handleRemove()
-                        }}
+                        onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="bg-primary text-white hover:bg-primary-dark"
                     >
-                        Remove
+                        {preview ? 'Change Image' : 'Upload Image'}
                     </Button>
-                )}
+                    {preview && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleRemove()
+                            }}
+                            disabled={uploading}
+                            className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30"
+                        >
+                            Remove
+                        </Button>
+                    )}
+                </div>
+
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                />
             </div>
 
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-            />
-        </div>
+            {/* Crop Modal */}
+            {selectedImage && (
+                <ImageCropModal
+                    open={cropModalOpen}
+                    onClose={handleCropModalClose}
+                    imageSrc={selectedImage}
+                    onCropComplete={handleCropComplete}
+                    aspectRatio={1}
+                    cropShape="round"
+                />
+            )}
+        </>
     )
 }

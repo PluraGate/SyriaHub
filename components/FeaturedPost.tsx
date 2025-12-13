@@ -128,9 +128,9 @@ export function FeaturedPost({
 
                         {/* Trending badge */}
                         {showTrending && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-accent/90 rounded-full">
-                                <TrendingUp className="w-3.5 h-3.5 text-accent-dark" />
-                                <span className="text-xs font-bold text-accent-dark uppercase tracking-wider">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-full shadow-sm">
+                                <TrendingUp className="w-3.5 h-3.5 text-white" />
+                                <span className="text-xs font-bold text-white uppercase tracking-wider">
                                     Trending
                                 </span>
                             </div>
@@ -204,10 +204,10 @@ export function FeaturedPost({
             >
                 {/* Background */}
                 <div className="absolute inset-0">
-                    {post.cover_image ? (
+                    {post.cover_image_url ? (
                         <div
                             className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                            style={{ backgroundImage: `url(${post.cover_image})` }}
+                            style={{ backgroundImage: `url(${post.cover_image_url})` }}
                         />
                     ) : (
                         <div className={cn('absolute inset-0', colors.bgLight)} />

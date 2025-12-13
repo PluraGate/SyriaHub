@@ -57,8 +57,8 @@ function StatItem({
 }
 
 export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileHeaderProps) {
-    // Default cover gradient if no cover_url
-    const hasCoverImage = profile.cover_url
+    // Default cover gradient if no cover_image_url
+    const hasCoverImage = profile.cover_image_url
 
     return (
         <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden mb-8">
@@ -71,7 +71,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
             >
                 {hasCoverImage && (
                     <img
-                        src={profile.cover_url}
+                        src={profile.cover_image_url}
                         alt="Profile cover"
                         className="w-full h-full object-cover"
                     />

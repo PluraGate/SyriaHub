@@ -65,5 +65,57 @@
         "about": "حول",
         "privacy": "الخصوصية",
         "copyright": "© {year} Syrealize. منصة بحث بسيطة."
+    },
+    "Resources": {
+        "title": "مكتبة الموارد",
+        "subtitle": "الوصول إلى مجموعات البيانات والتقارير والأدوات والمواد التي يشاركها المجتمع.",
+        "uploadResource": "رفع مورد",
+        "noResources": "لا توجد موارد بعد",
+        "noResourcesDesc": "كن أول من يشارك مورداً مع المجتمع!",
+        "noResults": "لا توجد موارد تطابق معايير البحث",
+        "noResultsDesc": "جرب تعديل معايير البحث أو الفلاتر للعثور على ما تبحث عنه.",
+        "showingResults": "عرض {count} نتيجة",
+        "searchPlaceholder": "البحث في الموارد...",
+        "filters": "الفلاتر",
+        "clearFilters": "مسح جميع الفلاتر",
+        "resourceType": "نوع المورد",
+        "discipline": "التخصص",
+        "license": "الترخيص",
+        "allLicenses": "جميع التراخيص",
+        "sortBy": "ترتيب حسب",
+        "sortNewest": "الأحدث أولاً",
+        "sortDownloads": "الأكثر تحميلاً",
+        "sortTitle": "العنوان أ-ي",
+        "types": {
+            "dataset": "مجموعة بيانات",
+            "paper": "ورقة/تقرير",
+            "tool": "أداة/برنامج",
+            "media": "وسائط",
+            "template": "قالب"
+        },
+        "typeDescriptions": {
+            "dataset": "ملفات بيانات CSV، Excel، JSON",
+            "paper": "أوراق بحثية، تقارير، مستندات",
+            "tool": "نصوص برمجية، تطبيقات، أدوات",
+            "media": "صور، فيديوهات، ملفات صوتية",
+            "template": "نماذج، تنسيقات، أطر عمل"
+        },
+        "upload": {
+            "title": "رفع مورد",
+            "selectFile": "انقر أو اسحب الملف للرفع",
+            "fileTypes": "PDF، مستندات، بيانات، وسائط (الحد الأقصى 50 ميجابايت)",
+            "typeRequired": "نوع المورد",
+            "titleLabel": "العنوان",
+            "titlePlaceholder": "مثال: تقرير المساعدات الإنسانية 2024",
+            "descriptionLabel": "الوصف",
+            "descriptionPlaceholder": "صف ما يحتويه هذا المورد...",
+            "tagsLabel": "التخصصات والوسوم",
+            "tagsHint": "اختر التخصصات والمواضيع التي تنطبق على هذا المورد",
+            "licenseLabel": "الترخيص",
+            "submitButton": "رفع المورد",
+            "uploading": "جارٍ الرفع..."
+        },
+        "usedInPosts": "مستخدم في {count} منشور",
+        "downloads": "{count} تحميل"
     }
 }

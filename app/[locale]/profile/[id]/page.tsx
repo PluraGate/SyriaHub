@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { ProfileHeader } from '@/components/ProfileHeader'
+import { EndorsementSection } from '@/components/EndorsementSection'
 import { UserActivityFeed } from '@/components/UserActivityFeed'
 
 interface ProfilePageProps {
@@ -92,6 +93,14 @@ export default async function ProfilePage(props: ProfilePageProps) {
           isOwnProfile={isOwnProfile}
         />
 
+        {/* Skills & Endorsements Section */}
+        <div className="mb-8">
+          <EndorsementSection
+            userId={params.id}
+            isOwnProfile={isOwnProfile}
+          />
+        </div>
+
         <UserActivityFeed
           posts={posts || []}
           groups={groups}
@@ -100,3 +109,4 @@ export default async function ProfilePage(props: ProfilePageProps) {
     </div>
   )
 }
+

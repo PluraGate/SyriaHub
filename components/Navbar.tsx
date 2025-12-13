@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Link } from '@/navigation'
+import { Link, usePathname } from '@/navigation'
+import { useRouter } from 'next/navigation'
 import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
 import { SearchBar } from './SearchBar'
+import { createClient } from '@/lib/supabase/client'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,9 +44,21 @@ const NavLink = ({ href, children }: { href: string, children: React.ReactNode }
 export function Navbar({ user }: NavbarProps) {
   const t = useTranslations('Navigation')
   const tCommon = useTranslations('Common')
+  const pathname = usePathname()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [hasResolvedTheme, setHasResolvedTheme] = useState(false)
+
+  // Extract locale from pathname (first segment after /)
+  const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
 
   // Safe access to user name/avatar since the user object structure might vary
   // depending on whether it comes from auth.getUser() or a custom query
@@ -183,13 +197,9 @@ export function Navbar({ user }: NavbarProps) {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <form action="/auth/signout" method="post" className="w-full">
-                          <button type="submit" className="w-full flex items-center text-accent dark:text-accent-light">
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>{t('logout')}</span>
-                          </button>
-                        </form>
+                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-accent dark:text-accent-light">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>{t('logout')}</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -291,15 +301,13 @@ export function Navbar({ user }: NavbarProps) {
                     {t('profile')}
                   </Link>
 
-                  <form action="/auth/signout" method="post">
-                    <button
-                      type="submit"
-                      className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      {t('logout')}
-                    </button>
-                  </form>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {t('logout')}
+                  </button>
                 </>
               ) : (
                 <div className="p-4 space-y-3">
