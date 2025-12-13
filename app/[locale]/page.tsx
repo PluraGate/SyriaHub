@@ -17,6 +17,7 @@ import { HeroEditorial } from '@/components/HeroEditorial'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
+import { TrendingPosts } from '@/components/TrendingPosts'
 
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
@@ -166,6 +167,9 @@ export default async function Home({
 
                   {/* Sidebar Column */}
                   <div className="space-y-6">
+                    {/* Trending Posts */}
+                    <TrendingPosts />
+
                     {/* Activity Feed */}
                     <ActivityFeedCompact limit={5} />
 

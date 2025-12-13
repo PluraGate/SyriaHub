@@ -3,12 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen } from 'lucide-react'
+import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen, Ticket, Gift } from 'lucide-react'
 
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; success?: string }>
+  searchParams: Promise<{ error?: string; success?: string; code?: string }>
 }) {
   const params = await searchParams
   const supabase = await createClient()
@@ -18,14 +18,42 @@ export default async function SignupPage({
     redirect('/feed')
   }
 
+  // Pre-validate invite code if provided in URL
+  let preValidatedCode = ''
+  let inviterName = ''
+  if (params.code) {
+    const { data } = await supabase.rpc('validate_invite_code', {
+      p_code: params.code.toUpperCase().trim(),
+    })
+    if (data?.valid) {
+      preValidatedCode = params.code.toUpperCase().trim()
+      // Get inviter name
+      if (data.inviter_id) {
+        const { data: inviter } = await supabase
+          .from('users')
+          .select('name, email')
+          .eq('id', data.inviter_id)
+          .single()
+        if (inviter) {
+          inviterName = inviter.name || inviter.email?.split('@')[0] || ''
+        }
+      }
+    }
+  }
+
   async function handleSignup(formData: FormData) {
     'use server'
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
+    const inviteCode = formData.get('inviteCode') as string
 
     if (!email || !password) {
       redirect('/auth/signup?error=Email and password are required')
+    }
+
+    if (!inviteCode) {
+      redirect('/auth/signup?error=Invite code is required')
     }
 
     if (password.length < 6) {
@@ -34,17 +62,39 @@ export default async function SignupPage({
 
     const supabase = await createClient()
 
+    // Validate invite code first
+    const { data: inviteValidation, error: inviteError } = await supabase.rpc('validate_invite_code', {
+      p_code: inviteCode.toUpperCase().trim(),
+    })
+
+    if (inviteError || !inviteValidation?.valid) {
+      redirect(`/auth/signup?error=${inviteValidation?.error || 'Invalid invite code'}`)
+    }
+
+    // Create the account
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+        data: {
+          invite_code: inviteCode.toUpperCase().trim(),
+          invited_by: inviteValidation.inviter_id,
+        },
       },
     })
 
     if (error) {
       console.error('Signup error:', error)
-      redirect(`/auth/signup?error=${error.message}`)
+      redirect(`/auth/signup?error=${error.message}&code=${inviteCode}`)
+    }
+
+    // Mark invite as used
+    if (data.user) {
+      await supabase.rpc('use_invite_code', {
+        p_code: inviteCode.toUpperCase().trim(),
+        p_user_id: data.user.id,
+      })
     }
 
     if (data.user && !data.session) {
@@ -79,20 +129,20 @@ export default async function SignupPage({
             </Link>
 
             <h1 className="text-4xl font-bold text-white mb-4">
-              Join the Research Community
+              Join by Invitation
             </h1>
             <p className="text-xl text-white/80 mb-12 max-w-md">
-              Connect with researchers, share your work, and discover groundbreaking insights.
+              Syrealize is currently invite-only to ensure a high-quality research community.
             </p>
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-5 h-5 text-white" />
+                  <Ticket className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Share Research</h3>
-                  <p className="text-sm text-white/70">Publish articles and get feedback from peers</p>
+                  <h3 className="font-semibold text-white">Invite Required</h3>
+                  <p className="text-sm text-white/70">Get an invite from an existing member</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -100,17 +150,17 @@ export default async function SignupPage({
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Join Groups</h3>
-                  <p className="text-sm text-white/70">Collaborate with researchers in your field</p>
+                  <h3 className="font-semibold text-white">Quality Community</h3>
+                  <p className="text-sm text-white/70">Connect with verified researchers</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-white" />
+                  <Gift className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Build Reputation</h3>
-                  <p className="text-sm text-white/70">Earn recognition for your contributions</p>
+                  <h3 className="font-semibold text-white">Pay It Forward</h3>
+                  <p className="text-sm text-white/70">Each member can invite 5 colleagues</p>
                 </div>
               </div>
             </div>
@@ -129,6 +179,18 @@ export default async function SignupPage({
                 <span className="font-bold text-2xl text-text dark:text-dark-text">Syrealize</span>
               </Link>
             </div>
+
+            {/* Invited by banner */}
+            {inviterName && (
+              <div className="mb-6 p-4 rounded-2xl bg-primary/10 border border-primary/20">
+                <div className="flex items-center gap-3">
+                  <Gift className="w-5 h-5 text-primary" />
+                  <p className="text-sm text-text dark:text-dark-text">
+                    You've been invited by <strong>{inviterName}</strong>
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Success Message */}
             {params.success === 'check-email' && (
@@ -171,6 +233,31 @@ export default async function SignupPage({
               </p>
 
               <form className="space-y-5" action={handleSignup}>
+                {/* Invite Code */}
+                <div>
+                  <label htmlFor="inviteCode" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
+                    Invite Code *
+                  </label>
+                  <input
+                    id="inviteCode"
+                    name="inviteCode"
+                    type="text"
+                    required
+                    defaultValue={preValidatedCode}
+                    placeholder="XXXX-XXXX"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all uppercase tracking-widest font-mono text-center text-lg"
+                  />
+                  <p className="text-xs text-text-light dark:text-dark-text-muted mt-1.5">
+                    Don't have a code?{' '}
+                    <Link href="/waitlist" className="text-primary hover:underline">
+                      Join the waitlist
+                    </Link>
+                  </p>
+                </div>
+
+                <hr className="border-gray-200 dark:border-dark-border" />
+
+                {/* Email */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
                     Email address
@@ -185,6 +272,8 @@ export default async function SignupPage({
                     placeholder="you@example.com"
                   />
                 </div>
+
+                {/* Password */}
                 <div>
                   <label htmlFor="password" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
                     Password
@@ -221,3 +310,4 @@ export default async function SignupPage({
     </div>
   )
 }
+

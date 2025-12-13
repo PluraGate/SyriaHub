@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
-import { SearchFilters } from '@/components/SearchFilters'
+import { AdvancedSearchFilters } from '@/components/AdvancedSearchFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { FileText, Users, Globe } from 'lucide-react'
+import { FileText, Users, Globe, Search } from 'lucide-react'
 
 type SearchResult = {
     id: string
@@ -19,9 +19,9 @@ type SearchResult = {
 export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q: string, type?: string, date?: string }>
+    searchParams: Promise<{ q?: string, type?: string, date?: string, tag?: string, sort?: string }>
 }) {
-    const { q, type, date } = await searchParams
+    const { q, type, date, tag, sort } = await searchParams
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -31,11 +31,17 @@ export default async function SearchPage({
         const { data, error } = await supabase.rpc('search_content', {
             query: q,
             filter_type: type || null,
-            filter_tag: null, // Tag filtering not implemented in UI yet
+            filter_tag: tag || null,
             filter_date: date || null
         })
         if (!error && data) {
             results = data as SearchResult[]
+
+            // Apply client-side sorting if needed
+            if (sort === 'recent') {
+                results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            }
+            // 'popular' sorting would require view counts - keeping relevance as default
         }
     }
 
@@ -46,8 +52,8 @@ export default async function SearchPage({
             <main className="container-custom max-w-6xl py-12">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar */}
-                    <aside className="w-full lg:w-64 flex-shrink-0">
-                        <SearchFilters />
+                    <aside className="w-full lg:w-72 flex-shrink-0">
+                        <AdvancedSearchFilters />
                     </aside>
 
                     {/* Main Content */}

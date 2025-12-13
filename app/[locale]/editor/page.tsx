@@ -11,6 +11,8 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { useToast } from '@/components/ui/toast'
 import { CoverImageUpload } from '@/components/CoverImageUpload'
+import { useAutosave } from '@/lib/hooks/useAutosave'
+import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecoveryBanner'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -50,6 +52,63 @@ export default function EditorPage() {
   const [group, setGroup] = useState<any>(null)
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [useRichEditor, setUseRichEditor] = useState(true)
+  const [showDraftBanner, setShowDraftBanner] = useState(false)
+
+  // Autosave hook - only active when creating new posts (not editing)
+  const {
+    hasDraft,
+    draftData,
+    lastSaved,
+    restoreDraft,
+    clearDraft,
+    saveDraft,
+  } = useAutosave({
+    key: groupIdParam ? `group_${groupIdParam}` : 'new_post',
+    enabled: !postIdParam, // Only autosave for new posts, not edits
+  })
+
+  // Check for existing draft on mount
+  useEffect(() => {
+    if (hasDraft && draftData && !postIdParam && !title && !content) {
+      setShowDraftBanner(true)
+    }
+  }, [hasDraft, draftData, postIdParam, title, content])
+
+  // Handle draft restoration
+  const handleRestoreDraft = useCallback(() => {
+    const draft = restoreDraft()
+    if (draft) {
+      setTitle(draft.title)
+      setContent(draft.content)
+      setTags(draft.tags)
+      setContentType(draft.contentType)
+      setCoverImage(draft.coverImage)
+      setLicense(draft.license)
+      setShowDraftBanner(false)
+      showToast('Draft restored successfully', 'success')
+    }
+  }, [restoreDraft, showToast])
+
+  // Handle draft discard
+  const handleDiscardDraft = useCallback(() => {
+    clearDraft()
+    setShowDraftBanner(false)
+  }, [clearDraft])
+
+  // Auto-save on content changes (debounced)
+  useEffect(() => {
+    if (postIdParam) return // Don't autosave when editing
+    if (!title && !content) return // Don't save empty
+
+    saveDraft({
+      title,
+      content,
+      tags,
+      contentType,
+      coverImage,
+      license,
+    })
+  }, [title, content, tags, contentType, coverImage, license, postIdParam, saveDraft])
 
   // Fetch group details if groupId is present
   useEffect(() => {
@@ -102,6 +161,18 @@ export default function EditorPage() {
         }
 
         if (data) {
+          // Check 24h edit window
+          const EDIT_WINDOW_HOURS = 24
+          const createdAt = new Date(data.created_at)
+          const editDeadline = new Date(createdAt.getTime() + EDIT_WINDOW_HOURS * 60 * 60 * 1000)
+          const now = new Date()
+
+          if (now > editDeadline) {
+            showToast('The 24-hour edit window has expired. This post can no longer be edited.', 'error')
+            router.push(`/post/${postIdParam}`)
+            return
+          }
+
           setTitle(data.title)
           setContent(data.content)
           setTags(data.tags ? data.tags.join(', ') : '')
@@ -226,6 +297,12 @@ export default function EditorPage() {
         }
 
         showToast(publish ? 'Post published successfully!' : 'Draft saved successfully.', 'success')
+
+        // Clear localStorage draft after successful publish
+        if (publish && !postIdParam) {
+          clearDraft()
+        }
+
         await new Promise(resolve => setTimeout(resolve, 1500))
         router.push(publish ? (group ? `/groups/${group.id}` : `/post/${data.id}`) : '/feed')
       } catch (error) {
@@ -342,6 +419,15 @@ export default function EditorPage() {
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
           {/* Editor Form */}
           <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6 md:p-8">
+            {/* Draft Recovery Banner */}
+            {showDraftBanner && draftData && (
+              <DraftRecoveryBanner
+                draftData={draftData}
+                onRestore={handleRestoreDraft}
+                onDiscard={handleDiscardDraft}
+              />
+            )}
+
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
 
               {/* Content Type Toggle */}
@@ -512,6 +598,13 @@ export default function EditorPage() {
                   {saving ? 'Publishing...' : 'Publish'}
                 </button>
               </div>
+
+              {/* Autosave Indicator */}
+              {!postIdParam && (
+                <div className="flex justify-end mt-2">
+                  <AutosaveIndicator lastSaved={lastSaved} />
+                </div>
+              )}
             </form>
           </div>
 

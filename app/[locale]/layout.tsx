@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Inter, Outfit } from 'next/font/google'
 import { ToastProvider } from '@/components/ui/toast'
 import { NotificationsProvider } from '@/components/NotificationsProvider'
+import { AppErrorBoundary } from '@/components/AppErrorBoundary'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -39,7 +40,9 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
             <NotificationsProvider>
-              {children}
+              <AppErrorBoundary>
+                {children}
+              </AppErrorBoundary>
             </NotificationsProvider>
           </ToastProvider>
         </NextIntlClientProvider>
