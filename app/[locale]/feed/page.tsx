@@ -66,12 +66,10 @@ export default function FeedPage() {
     const loadPosts = async () => {
       setLoading(true)
       try {
+        // Fetch posts without author join (workaround for schema cache issue)
         let query = supabase
           .from('posts')
-          .select(`
-            *,
-            author:users!posts_author_id_fkey(id, name, email)
-          `)
+          .select('*')
           .eq('status', 'published')
 
         // Content type filter
@@ -107,16 +105,31 @@ export default function FeedPage() {
             .order('vote_count', { ascending: false, nullsFirst: false })
         }
 
-        const { data, error } = await query.limit(50)
+        const { data: postsData, error } = await query.limit(50)
 
         if (error) {
-          // Only log if there's meaningful error info
           if (error.message || error.code) {
             console.error('Error fetching posts:', error.message || error.code)
           }
           setPosts([])
+        } else if (postsData && postsData.length > 0) {
+          // Fetch authors separately
+          const authorIds = [...new Set(postsData.map(p => p.author_id).filter(Boolean))]
+          const { data: authors } = await supabase
+            .from('users')
+            .select('id, name, email')
+            .in('id', authorIds)
+
+          // Map authors to posts
+          const authorsMap = new Map(authors?.map(a => [a.id, a]) || [])
+          const postsWithAuthors = postsData.map(post => ({
+            ...post,
+            author: authorsMap.get(post.author_id) || null
+          }))
+
+          setPosts(postsWithAuthors)
         } else {
-          setPosts(data || [])
+          setPosts([])
         }
       } catch (error) {
         console.error('Error:', error)

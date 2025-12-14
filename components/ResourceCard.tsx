@@ -46,7 +46,8 @@ export function ResourceCard({ resource }: ResourceCardProps) {
     }
 
     const displayAuthor = resource.author?.name || resource.author?.email?.split('@')[0] || 'Anonymous'
-    const resourceType = resource.metadata.resource_type
+    const metadata = resource.metadata || {}
+    const resourceType = metadata.resource_type
     const typeConfig = resourceType ? RESOURCE_TYPE_CONFIG[resourceType] : null
     const TypeIcon = typeConfig?.icon || FileText
 
@@ -74,7 +75,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
                         )}
                     </div>
                     <span className="flex-shrink-0 text-xs font-mono bg-gray-100 dark:bg-dark-surface-hover px-2 py-1 rounded text-text-light dark:text-dark-text-muted">
-                        {formatSize(resource.metadata.size)}
+                        {formatSize(metadata.size || 0)}
                     </span>
                 </div>
 
@@ -98,9 +99,9 @@ export function ResourceCard({ resource }: ResourceCardProps) {
                             <Calendar className="w-4 h-4" />
                             <span>{formatDistanceToNow(new Date(resource.created_at), { addSuffix: true })}</span>
                         </div>
-                        {resource.metadata.license && (
+                        {metadata.license && (
                             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-100 dark:bg-dark-surface-hover text-xs font-medium">
-                                <span>{resource.metadata.license}</span>
+                                <span>{metadata.license}</span>
                             </div>
                         )}
                         {(resource.linked_posts_count ?? 0) > 0 && (
@@ -113,7 +114,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
 
                     <div className="flex items-center gap-1.5 text-primary font-medium">
                         <Download className="w-4 h-4" />
-                        <span>{resource.metadata.downloads || 0} Downloads</span>
+                        <span>{metadata.downloads || 0} Downloads</span>
                     </div>
                 </div>
             </div>

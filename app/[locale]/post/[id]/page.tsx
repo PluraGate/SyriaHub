@@ -18,6 +18,7 @@ import { PostMoreOptions } from '@/components/PostMoreOptions'
 import { TextSelectionHandler } from '@/components/TextSelectionHandler'
 import { BookmarkButton } from '@/components/BookmarkButton'
 import { EditButton } from '@/components/EditButton'
+import { LinkedResourcesSection } from '@/components/LinkedResourcesSection'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Button } from '@/components/ui/button'
@@ -110,8 +111,8 @@ export default async function PostPage(props: PostPageProps) {
     .select(
       `
         *,
-        author:users!posts_author_id_fkey(id, name, email, bio, affiliation, avatar_url),
-        forked_from:posts!forked_from_id(id, title)
+        author:users!posts_author_id_fkey(id, name, email, bio, affiliation)
+        // forked_from:posts!posts_forked_from_id_fkey(id, title)
       `
     )
     .eq('id', id)
@@ -132,7 +133,7 @@ export default async function PostPage(props: PostPageProps) {
           title,
           tags,
           created_at,
-          author:users!posts_author_id_fkey(name, email)
+          author:users(name, email)
         `
       )
       .neq('id', id)
@@ -152,11 +153,12 @@ export default async function PostPage(props: PostPageProps) {
           id,
           title,
           created_at,
-          author:users!posts_author_id_fkey(name, email)
+          author:users(name, email)
         )
       `
     )
     .eq('target_post_id', id)
+
 
   const citationBacklinks =
     citationData?.map((c: any) => ({
@@ -176,7 +178,7 @@ export default async function PostPage(props: PostPageProps) {
       .from('posts')
       .select(`
         *,
-        author:users!posts_author_id_fkey(id, name, email),
+        author:users(id, name, email),
         vote_count:post_votes(value)
       `)
       .eq('parent_id', id)
@@ -185,6 +187,28 @@ export default async function PostPage(props: PostPageProps) {
       .order('created_at', { ascending: true })
 
     answers = answersData || []
+  }
+
+  // Fetch linked resources
+  let linkedResources: any[] = []
+  const { data: resourceLinksData } = await supabase
+    .from('resource_post_links')
+    .select(`
+      resource_id,
+      posts!resource_post_links_resource_id_fkey (
+        id,
+        title,
+        metadata,
+        created_at
+      )
+    `)
+    .eq('post_id', id)
+
+
+  if (resourceLinksData) {
+    linkedResources = resourceLinksData
+      .map((link: any) => link.posts)
+      .filter((r: any) => r !== null)
   }
 
   return (
@@ -503,6 +527,9 @@ export default async function PostPage(props: PostPageProps) {
                 </div>
               </div>
             )}
+
+            {/* Linked Resources */}
+            <LinkedResourcesSection resources={linkedResources} />
 
             {/* Knowledge Graph */}
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
