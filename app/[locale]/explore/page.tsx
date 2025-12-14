@@ -81,6 +81,7 @@ function ExplorePageContent() {
             author:users!posts_author_id_fkey(id, name, email)
           `)
           .eq('status', 'published')
+          .neq('approval_status', 'rejected') // Hide rejected posts
           .order('created_at', { ascending: false })
           .limit(6)
 
@@ -119,6 +120,7 @@ function ExplorePageContent() {
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
+          .neq('approval_status', 'rejected') // Hide rejected posts
           .order('created_at', { ascending: false })
 
         if (selectedTag) {
@@ -131,7 +133,7 @@ function ExplorePageContent() {
         // Fetch Profiles
         const { data: profilesData } = await supabase
           .from('users')
-          .select('id, name, role, bio, affiliation')
+          .select('id, name, role, bio, affiliation, avatar_url, cover_image_url')
           .eq('role', 'researcher')
           .limit(4)
 
@@ -195,8 +197,8 @@ function ExplorePageContent() {
               <button
                 onClick={() => setSelectedTag(null)}
                 className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === null
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                   }`}
               >
                 All Topics
@@ -206,8 +208,8 @@ function ExplorePageContent() {
                   key={discipline}
                   onClick={() => setSelectedTag(discipline)}
                   className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === discipline
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                     }`}
                 >
                   {discipline}

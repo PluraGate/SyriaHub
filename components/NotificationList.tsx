@@ -14,7 +14,7 @@ interface Notification {
     type: 'badge' | 'solution' | 'reply' | 'mention' | 'system'
     title: string
     message: string
-    link: string
+    url: string | null
     is_read: boolean
     created_at: string
 }
@@ -73,8 +73,8 @@ export function NotificationList({ onClose }: NotificationListProps) {
             await markAsRead(notification.id)
         }
         if (onClose) onClose()
-        if (notification.link) {
-            router.push(notification.link)
+        if (notification.url) {
+            router.push(notification.url)
         }
     }
 
@@ -197,6 +197,15 @@ export function NotificationList({ onClose }: NotificationListProps) {
                         </div>
                     </div>
                 ))}
+            </div>
+            <div className="p-3 border-t border-gray-200 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50">
+                <a
+                    href="/notifications"
+                    onClick={() => onClose?.()}
+                    className="block text-center text-sm font-medium text-primary hover:text-primary-dark dark:hover:text-primary-light transition-colors"
+                >
+                    View All Notifications
+                </a>
             </div>
         </div>
     )

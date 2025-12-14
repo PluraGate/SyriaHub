@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { User as UserIcon, Building2, ArrowUpRight } from 'lucide-react'
 import { User } from '@/types'
 import ReputationScore from './ReputationScore'
@@ -8,7 +9,7 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ profile }: ProfileCardProps) {
-    // Generate a gradient based on name
+    // Generate a gradient based on name (used as fallback)
     const gradients = [
         'from-primary to-secondary',
         'from-secondary to-primary',
@@ -18,18 +19,42 @@ export function ProfileCard({ profile }: ProfileCardProps) {
     const gradientIndex = profile.name.charCodeAt(0) % gradients.length
     const gradient = gradients[gradientIndex]
 
+    const hasCoverImage = !!profile.cover_image_url
+    const hasAvatar = !!profile.avatar_url
+
     return (
         <Link
             href={`/profile/${profile.id}`}
             className="group relative flex flex-col h-full bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300"
         >
-            {/* Header Gradient */}
-            <div className={`h-16 bg-gradient-to-br ${gradient} relative`}>
+            {/* Header - Cover Image or Gradient */}
+            <div className="h-16 relative">
+                {hasCoverImage ? (
+                    <Image
+                        src={profile.cover_image_url!}
+                        alt=""
+                        fill
+                        className="object-cover"
+                    />
+                ) : (
+                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+                )}
+                {/* Avatar */}
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                    <div className="w-16 h-16 rounded-xl bg-white dark:bg-dark-surface border-4 border-white dark:border-dark-surface shadow-soft-md flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <span className={`font-bold text-xl bg-gradient-to-br ${gradient} bg-clip-text text-transparent`}>
-                            {profile.name.charAt(0).toUpperCase()}
-                        </span>
+                    <div className="w-16 h-16 rounded-xl bg-white dark:bg-dark-surface border-4 border-white dark:border-dark-surface shadow-soft-md flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+                        {hasAvatar ? (
+                            <Image
+                                src={profile.avatar_url!}
+                                alt={profile.name}
+                                width={64}
+                                height={64}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <span className={`font-bold text-xl bg-gradient-to-br ${gradient} bg-clip-text text-transparent`}>
+                                {profile.name.charAt(0).toUpperCase()}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
@@ -75,3 +100,4 @@ export function ProfileCard({ profile }: ProfileCardProps) {
         </Link>
     )
 }
+

@@ -11,6 +11,7 @@ export interface User {
   bio?: string
   affiliation?: string
   avatar_url?: string
+  cover_image_url?: string
   reputation?: number
   created_at: string
 }
@@ -201,6 +202,7 @@ export interface UpdatePostInput {
 export interface CreateCommentInput {
   content: string
   post_id: string
+  parent_id?: string | null
 }
 
 export interface CreateReportInput {

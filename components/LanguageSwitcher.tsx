@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/navigation';
 import { Button } from '@/components/ui/button';
@@ -16,10 +17,24 @@ export function LanguageSwitcher() {
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleLocaleChange = (newLocale: string) => {
         router.replace(pathname, { locale: newLocale });
     };
+
+    // Prevent hydration mismatch by not rendering dropdown until client-side
+    if (!mounted) {
+        return (
+            <Button variant="ghost" size="icon" aria-label={t('languageSwitcher')}>
+                <Globe className="h-5 w-5" />
+            </Button>
+        );
+    }
 
     return (
         <DropdownMenu>

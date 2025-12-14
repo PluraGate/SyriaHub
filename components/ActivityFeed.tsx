@@ -199,6 +199,7 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
             author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
                     .eq('status', 'published')
+                    .neq('approval_status', 'rejected')
                     .order('created_at', { ascending: false })
                     .limit(limit)
 

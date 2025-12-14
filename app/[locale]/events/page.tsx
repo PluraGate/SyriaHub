@@ -19,6 +19,7 @@ export default async function EventsPage() {
     `)
         .eq('content_type', 'event')
         .eq('status', 'published')
+        .neq('approval_status', 'rejected')
         .order('metadata->>start_time', { ascending: true })
 
     // Transform for EventCard

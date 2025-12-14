@@ -8,6 +8,7 @@ import { Calendar, MapPin, Clock, Link as LinkIcon, Users } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
+import { RejectionBanner } from '@/components/RejectionBanner'
 
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -55,6 +56,16 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
                     {/* Main Content */}
                     <div className="space-y-8">
+                        {/* Rejection Banner - shown only to event authors */}
+                        <RejectionBanner
+                            postId={event.id}
+                            postTitle={event.title}
+                            rejectionReason={event.rejection_reason}
+                            approvalStatus={event.approval_status || 'approved'}
+                            isAuthor={user?.id === event.author_id}
+                            contentType="event"
+                        />
+
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
                             {/* Hero Banner Component */}
                             <div className="relative h-48 md:h-64 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center overflow-hidden">

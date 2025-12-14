@@ -21,7 +21,7 @@ import type { CreateCommentInput } from '@/types'
 async function handleGetComments(request: Request): Promise<NextResponse> {
   const supabase = await createServerClient()
   const params = getQueryParams(request)
-  
+
   // Get query parameters
   const postId = params.get('post_id')
   const userId = params.get('user_id')
@@ -73,14 +73,14 @@ async function handleCreateComment(request: Request): Promise<NextResponse> {
   const user = await verifyAuth()
 
   const supabase = await createServerClient()
-  
+
   // Parse request body
   const body = await parseRequestBody<CreateCommentInput>(request)
-  
+
   // Validate required fields
   validateRequiredFields(body, ['content', 'post_id'])
-  
-  const { content, post_id } = body
+
+  const { content, post_id, parent_id } = body
 
   // Validate content length
   if (content.length < 1) {
@@ -147,6 +147,7 @@ async function handleCreateComment(request: Request): Promise<NextResponse> {
       content,
       post_id,
       user_id: user.id,
+      parent_id: parent_id || null,
     })
     .select(`
       *,

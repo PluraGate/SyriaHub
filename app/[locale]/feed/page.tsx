@@ -72,6 +72,7 @@ export default function FeedPage() {
           .select('*')
           .eq('status', 'published')
           .neq('content_type', 'event')
+          .neq('approval_status', 'rejected') // Hide rejected posts from feed
 
         // Content type filter
         if (filter !== 'all') {

@@ -23,6 +23,7 @@ import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Button } from '@/components/ui/button'
 import { Metadata } from 'next'
+import { RejectionBanner } from '@/components/RejectionBanner'
 
 interface PostPageProps {
   params: Promise<{
@@ -401,6 +402,16 @@ export default async function PostPage(props: PostPageProps) {
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <article className="lg:col-span-2 space-y-12">
+            {/* Rejection Banner - shown only to authors of rejected posts */}
+            <RejectionBanner
+              postId={post.id}
+              postTitle={post.title}
+              rejectionReason={post.rejection_reason}
+              approvalStatus={post.approval_status || 'approved'}
+              isAuthor={user?.id === post.author_id}
+              contentType={post.content_type as 'post' | 'article' | 'question' | 'event'}
+            />
+
             {/* Article Content */}
             <div className="prose prose-lg max-w-none dark:prose-invert 
               prose-headings:font-bold prose-headings:text-text dark:prose-headings:text-dark-text 

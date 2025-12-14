@@ -57,6 +57,7 @@ export function TrendingPosts() {
           author:users!posts_author_id_fkey(id, name, email)
         `)
                 .eq('status', 'published')
+                .neq('approval_status', 'rejected')
                 .gte('created_at', since.toISOString())
                 .order('vote_count', { ascending: false, nullsFirst: false })
                 .limit(10)
@@ -156,8 +157,8 @@ export function TrendingPosts() {
                         >
                             {/* Rank Number */}
                             <span className={`w-6 h-6 flex items-center justify-center flex-shrink-0 font-semibold text-sm rounded-md ${index === 0
-                                    ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
-                                    : 'text-text-light dark:text-dark-text-muted'
+                                ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+                                : 'text-text-light dark:text-dark-text-muted'
                                 }`}>
                                 {index + 1}
                             </span>
