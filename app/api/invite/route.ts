@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Generate a random invite code in XXXX-XXXX format
+function generateInviteCode(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // Avoiding confusing chars
+    let result = ''
+    for (let i = 0; i < 8; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return `${result.slice(0, 4)}-${result.slice(4, 8)}`
+}
 // Validate an invite code
 export async function GET(request: NextRequest) {
     try {
@@ -43,24 +52,69 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const { note } = body
 
-        // Create invite code
-        const { data, error } = await supabase.rpc('create_invite_code', {
-            p_user_id: user.id,
-            p_note: note || null,
-        })
+        // Check user's active invite count (max 5)
+        const { count: activeCount, error: countError } = await supabase
+            .from('invite_codes')
+            .select('*', { count: 'exact', head: true })
+            .eq('created_by', user.id)
+            .eq('is_active', true)
+
+        if (countError) {
+            console.error('Error checking invite count:', countError)
+            return NextResponse.json({ error: 'Failed to check invite limit' }, { status: 500 })
+        }
+
+        if (activeCount !== null && activeCount >= 5) {
+            return NextResponse.json({ error: 'You have reached your invite limit (5)' }, { status: 400 })
+        }
+
+        // Create invite code - use direct insert to avoid Supabase RPC parameter ordering issues
+        const { data, error } = await supabase
+            .from('invite_codes')
+            .insert({
+                code: generateInviteCode(),
+                created_by: user.id,
+                note: note || null,
+            })
+            .select('id, code')
+            .single()
 
         if (error) {
-            if (error.message.includes('Maximum invite limit')) {
-                return NextResponse.json({ error: 'You have reached your invite limit (5)' }, { status: 400 })
-            }
             console.error('Create invite error:', error)
-            return NextResponse.json({ error: 'Failed to create invite' }, { status: 500 })
+            // Handle duplicate code (very rare, but possible)
+            if (error.code === '23505') {
+                // Retry with a new code
+                const retryData = await supabase
+                    .from('invite_codes')
+                    .insert({
+                        code: generateInviteCode(),
+                        created_by: user.id,
+                        note: note || null,
+                    })
+                    .select('id, code')
+                    .single()
+
+                if (retryData.error) {
+                    return NextResponse.json({ error: 'Failed to create invite' }, { status: 500 })
+                }
+                return NextResponse.json({
+                    success: true,
+                    code: retryData.data.code,
+                    id: retryData.data.id,
+                })
+            }
+            return NextResponse.json({ error: error.message || 'Failed to create invite' }, { status: 500 })
+        }
+
+        if (!data) {
+            console.error('Create invite returned no data')
+            return NextResponse.json({ error: 'Failed to create invite - no data returned' }, { status: 500 })
         }
 
         return NextResponse.json({
             success: true,
-            code: data[0].code,
-            id: data[0].id,
+            code: data.code,
+            id: data.id,
         })
     } catch (error) {
         console.error('Invite API error:', error)

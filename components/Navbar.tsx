@@ -9,6 +9,7 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
 import { SearchBar } from './SearchBar'
 import { createClient } from '@/lib/supabase/client'
+import { useTheme } from '@/contexts/PreferencesContext'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,11 +48,36 @@ export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [hasResolvedTheme, setHasResolvedTheme] = useState(false)
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(user?.user_metadata?.avatar_url || null)
+  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme, isDark } = useTheme()
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Extract locale from pathname (first segment after /)
   const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
+
+  // Fetch avatar_url from users table if not in user_metadata
+  useEffect(() => {
+    const fetchUserAvatar = async () => {
+      if (user?.id && !userAvatarUrl) {
+        const supabase = createClient()
+        const { data } = await supabase
+          .from('users')
+          .select('avatar_url')
+          .eq('id', user.id)
+          .single()
+
+        if (data?.avatar_url) {
+          setUserAvatarUrl(data.avatar_url)
+        }
+      }
+    }
+    fetchUserAvatar()
+  }, [user?.id, userAvatarUrl])
 
   const handleSignOut = async () => {
     const supabase = createClient()
@@ -63,41 +89,17 @@ export function Navbar({ user }: NavbarProps) {
   // Safe access to user name/avatar since the user object structure might vary
   // depending on whether it comes from auth.getUser() or a custom query
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
-  const userAvatar = user?.user_metadata?.avatar_url
+  const userAvatar = userAvatarUrl || user?.user_metadata?.avatar_url
 
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const savedTheme = window.localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark
-
-    const frame = window.requestAnimationFrame(() => {
-      setIsDarkMode(shouldUseDark)
-      setHasResolvedTheme(true)
-    })
-
-    return () => window.cancelAnimationFrame(frame)
-  }, [])
-
-  useEffect(() => {
-    if (!hasResolvedTheme || typeof document === 'undefined') {
-      return
-    }
-
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-      window.localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      window.localStorage.setItem('theme', 'light')
-    }
-  }, [hasResolvedTheme, isDarkMode])
-
+  // Toggle between light/dark/system - cycles: light -> dark -> system -> light
   const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev)
+    if (theme === 'light') {
+      setTheme('dark')
+    } else if (theme === 'dark') {
+      setTheme('system')
+    } else {
+      setTheme('light')
+    }
   }
 
   const toggleMenu = () => {
@@ -141,9 +143,9 @@ export function Navbar({ user }: NavbarProps) {
               <button
                 onClick={toggleDarkMode}
                 className="p-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light hover:bg-gray-100 dark:hover:bg-dark-border rounded-full transition-all focus-ring"
-                aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={mounted && isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {mounted && isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
 
               {user ? (
@@ -334,7 +336,7 @@ export function Navbar({ user }: NavbarProps) {
                   onClick={toggleDarkMode}
                   className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all"
                 >
-                  {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  {mounted && isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
               </div>
             </div>

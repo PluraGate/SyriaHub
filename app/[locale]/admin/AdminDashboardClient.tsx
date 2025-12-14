@@ -6,7 +6,8 @@ import { Navbar } from '@/components/Navbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/components/ui/toast'
 import { ModerationTriage } from '@/components/ModerationTriage'
-import { Shield, Users, FileText, AlertTriangle, CheckCircle, XCircle, Scale, Clock, ChevronRight } from 'lucide-react'
+import { AdminWaitlistDashboard } from '@/components/AdminWaitlistDashboard'
+import { Shield, Users, FileText, AlertTriangle, CheckCircle, XCircle, Scale, Clock, ChevronRight, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
@@ -37,7 +38,7 @@ interface AdminDashboardClientProps {
 }
 
 type NavbarUser = { id: string; email?: string }
-type ActiveTab = 'reports' | 'appeals' | 'overview'
+type ActiveTab = 'reports' | 'appeals' | 'overview' | 'waitlist'
 
 export default function AdminDashboardClient({ initialUserId }: AdminDashboardClientProps) {
   const [navbarUser, setNavbarUser] = useState<NavbarUser | null>(
@@ -53,6 +54,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
     totalReports: 0,
     pendingReports: 0,
     pendingAppeals: 0,
+    pendingWaitlist: 0,
   })
   const supabase = useMemo(() => createClient(), [])
   const { showToast } = useToast()
@@ -62,7 +64,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
 
     try {
       // Load stats
-      const [usersResult, postsResult, reportsResult, appealsResult] = await Promise.all([
+      const [usersResult, postsResult, reportsResult, appealsResult, waitlistResult] = await Promise.all([
         supabase.from('users').select('id', { count: 'exact', head: true }),
         supabase.from('posts').select('id', { count: 'exact', head: true }),
         supabase.from('reports').select('*'),
@@ -71,6 +73,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
           post:posts(id, title),
           user:users!moderation_appeals_user_id_fkey(name, email)
         `).order('created_at', { ascending: false }),
+        supabase.from('waitlist').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       ])
 
       setStats({
@@ -79,6 +82,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
         totalReports: reportsResult.data?.length || 0,
         pendingReports: reportsResult.data?.filter(r => r.status === 'pending').length || 0,
         pendingAppeals: appealsResult.data?.filter(a => a.status === 'pending').length || 0,
+        pendingWaitlist: waitlistResult.count || 0,
       })
 
       setReports(reportsResult.data || [])
@@ -225,6 +229,19 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
             </div>
             <p className="text-sm text-text-light dark:text-dark-text-muted">Pending Appeals</p>
           </div>
+
+          <div
+            className="card p-6 border-purple-200 dark:border-purple-800 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/10 transition-colors"
+            onClick={() => setActiveTab('waitlist')}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <UserPlus className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <span className="text-3xl font-display font-bold text-purple-600 dark:text-purple-400">
+                {stats.pendingWaitlist}
+              </span>
+            </div>
+            <p className="text-sm text-text-light dark:text-dark-text-muted">Waitlist Pending</p>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -259,6 +276,23 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
               {stats.pendingAppeals > 0 && (
                 <span className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs">
                   {stats.pendingAppeals}
+                </span>
+              )}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('waitlist')}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'waitlist'
+              ? 'border-primary text-primary dark:text-primary-light'
+              : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+              }`}
+          >
+            <span className="flex items-center gap-2">
+              <UserPlus className="w-4 h-4" />
+              Waitlist
+              {stats.pendingWaitlist > 0 && (
+                <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs">
+                  {stats.pendingWaitlist}
                 </span>
               )}
             </span>
@@ -352,6 +386,15 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'waitlist' && (
+          <div className="card p-6">
+            <h2 className="text-2xl font-display font-semibold text-primary dark:text-dark-text mb-6">
+              Waitlist Management
+            </h2>
+            <AdminWaitlistDashboard />
           </div>
         )}
       </main>

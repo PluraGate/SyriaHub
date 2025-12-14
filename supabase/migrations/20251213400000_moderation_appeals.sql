@@ -108,8 +108,6 @@ CREATE TRIGGER trigger_appeal_resolution
   FOR EACH ROW
   EXECUTE FUNCTION set_appeal_resolution_timestamp();
 
--- Add comments
-COMMENT ON TABLE moderation_appeals IS 'Appeals submitted by users for their flagged content';
-COMMENT ON COLUMN moderation_appeals.dispute_reason IS 'User explanation for why the flagging is incorrect';
-COMMENT ON COLUMN moderation_appeals.admin_response IS 'Response from admin when resolving the appeal';
-COMMENT ON COLUMN moderation_appeals.resolved_by IS 'Admin who resolved the appeal';
+
+-- End
+

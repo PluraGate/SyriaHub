@@ -117,8 +117,8 @@ export function TrendingPosts() {
                             key={option.value}
                             onClick={() => setTimeRange(option.value)}
                             className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${timeRange === option.value
-                                    ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
-                                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                                 }`}
                         >
                             {option.label}
@@ -154,17 +154,13 @@ export function TrendingPosts() {
                             href={`/post/${post.id}`}
                             className="flex gap-4 p-4 hover:bg-gray-50 dark:hover:bg-dark-bg transition-colors group"
                         >
-                            {/* Rank Badge */}
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm ${index === 0
-                                    ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white'
-                                    : index === 1
-                                        ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white'
-                                        : index === 2
-                                            ? 'bg-gradient-to-br from-orange-300 to-orange-400 text-white'
-                                            : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted'
+                            {/* Rank Number */}
+                            <span className={`w-6 h-6 flex items-center justify-center flex-shrink-0 font-semibold text-sm rounded-md ${index === 0
+                                    ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+                                    : 'text-text-light dark:text-dark-text-muted'
                                 }`}>
                                 {index + 1}
-                            </div>
+                            </span>
 
                             {/* Content */}
                             <div className="flex-1 min-w-0">

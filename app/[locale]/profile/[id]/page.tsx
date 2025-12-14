@@ -21,7 +21,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   // Fetch profile data
   const { data: profile, error: profileError } = await supabase
     .from('users')
-    .select('id, name, email, role, bio, affiliation, location, website, research_interests, avatar_url, reputation, created_at')
+    .select('id, name, email, role, bio, affiliation, created_at')
     .eq('id', params.id)
     .single()
 

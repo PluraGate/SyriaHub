@@ -156,23 +156,35 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
 
     // Apply theme preference
     useEffect(() => {
+        // Guard for SSR
+        if (typeof window === 'undefined') return
+
         const root = document.documentElement
 
+        // Clean up old 'theme' localStorage key from legacy Navbar logic
+        const oldTheme = localStorage.getItem('theme')
+        if (oldTheme) {
+            localStorage.removeItem('theme')
+        }
+
         if (preferences.theme === 'system') {
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+            const systemDark = mediaQuery.matches
+            console.log('[Theme] System mode - detected system prefers-dark:', systemDark)
             root.classList.toggle('dark', systemDark)
 
             // Listen for system theme changes
             const listener = (e: MediaQueryListEvent) => {
                 if (preferences.theme === 'system') {
+                    console.log('[Theme] System preference changed to:', e.matches ? 'dark' : 'light')
                     root.classList.toggle('dark', e.matches)
                 }
             }
 
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             mediaQuery.addEventListener('change', listener)
             return () => mediaQuery.removeEventListener('change', listener)
         } else {
+            console.log('[Theme] Manual mode:', preferences.theme)
             root.classList.toggle('dark', preferences.theme === 'dark')
         }
     }, [preferences.theme])
@@ -201,6 +213,7 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         key: K,
         value: UserPreferences[K]
     ) => {
+        console.log('[Preferences] Updating:', key, '=', value)
         const newPrefs = { ...preferences, [key]: value }
         setPreferences(newPrefs)
         await savePreferences(newPrefs)

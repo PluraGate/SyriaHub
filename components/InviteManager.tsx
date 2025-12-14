@@ -119,19 +119,26 @@ export function InviteManager() {
                     <Ticket className="w-5 h-5 text-primary" />
                     <h3 className="font-semibold text-text dark:text-dark-text">Your Invites</h3>
                 </div>
-                <Button
-                    onClick={createInvite}
-                    disabled={creating || (stats?.remaining_invites ?? 0) <= 0}
-                    size="sm"
-                    className="gap-2"
-                >
-                    {creating ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                        <Plus className="w-4 h-4" />
+                <div className="flex items-center gap-3">
+                    {stats && (
+                        <span className="text-sm text-text-muted dark:text-dark-text-muted">
+                            {stats.remaining_invites} remaining
+                        </span>
                     )}
-                    Create Invite
-                </Button>
+                    <Button
+                        onClick={createInvite}
+                        disabled={creating || (stats !== null && stats.remaining_invites <= 0)}
+                        size="sm"
+                        className="gap-2"
+                    >
+                        {creating ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <Plus className="w-4 h-4" />
+                        )}
+                        Create Invite
+                    </Button>
+                </div>
             </div>
 
             {/* Stats */}

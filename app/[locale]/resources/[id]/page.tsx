@@ -34,6 +34,7 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
     }
 
     const displayAuthor = resource.author?.name || resource.author?.email?.split('@')[0] || 'Anonymous'
+    const metadata = resource.metadata || {}
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
@@ -63,18 +64,18 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <HardDrive className="w-4 h-4" />
-                                        <span>{formatSize(resource.metadata.size)}</span>
+                                        <span>{formatSize(metadata.size || 0)}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Download className="w-4 h-4" />
-                                        <span>{resource.metadata.downloads || 0} Downloads</span>
+                                        <span>{metadata.downloads || 0} Downloads</span>
                                     </div>
                                     <PostHistoryButton postId={id} />
                                 </div>
                             </div>
 
                             <a
-                                href={resource.metadata.url}
+                                href={metadata.url || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn btn-primary flex items-center gap-2"

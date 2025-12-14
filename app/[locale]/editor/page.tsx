@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/toast'
 import { CoverImageUpload } from '@/components/CoverImageUpload'
 import { useAutosave } from '@/lib/hooks/useAutosave'
 import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecoveryBanner'
+import { ResourceLinker } from '@/components/ResourceLinker'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -53,6 +54,7 @@ export default function EditorPage() {
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [useRichEditor, setUseRichEditor] = useState(true)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
+  const [linkedResources, setLinkedResources] = useState<any[]>([])
 
   // Autosave hook - only active when creating new posts (not editing)
   const {
@@ -296,6 +298,21 @@ export default function EditorPage() {
           await supabase.from('citations').insert(citationInserts)
         }
 
+        // Save resource links
+        if (linkedResources.length > 0) {
+          // First, remove existing links if editing
+          if (postIdParam) {
+            await supabase.from('resource_post_links').delete().eq('post_id', data.id)
+          }
+          // Insert new resource links
+          const resourceLinks = linkedResources.map(resource => ({
+            resource_id: resource.id,
+            post_id: data.id,
+            created_by: user.id
+          }))
+          await supabase.from('resource_post_links').insert(resourceLinks)
+        }
+
         showToast(publish ? 'Post published successfully!' : 'Draft saved successfully.', 'success')
 
         // Clear localStorage draft after successful publish
@@ -312,7 +329,7 @@ export default function EditorPage() {
         setSaving(false)
       }
     },
-    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam, coverImage]
+    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam, coverImage, linkedResources, clearDraft]
   )
 
   const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
@@ -556,6 +573,13 @@ export default function EditorPage() {
                   </div>
                 )}
               </div>
+
+              {/* Linked Resources */}
+              <ResourceLinker
+                selectedResources={linkedResources}
+                onChange={setLinkedResources}
+                userId={user?.id}
+              />
 
               {/* License */}
               <div className="space-y-2">

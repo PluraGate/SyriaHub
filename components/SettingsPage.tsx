@@ -12,11 +12,13 @@ import {
     Moon,
     Monitor,
     Check,
-    RotateCcw
+    RotateCcw,
+    Ticket
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
 import { useToast } from '@/components/ui/toast'
+import { InviteManager } from '@/components/InviteManager'
 
 interface SettingsPageProps {
     user: {
@@ -28,7 +30,7 @@ interface SettingsPageProps {
 export function SettingsPage({ user }: SettingsPageProps) {
     const { preferences, updatePreference, updateNestedPreference, resetToDefaults, loading } = usePreferences()
     const { showToast } = useToast()
-    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor'>('appearance')
+    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites'>('appearance')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
@@ -64,6 +66,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
         { id: 'display', label: 'Display', icon: Eye },
         { id: 'privacy', label: 'Privacy', icon: Lock },
         { id: 'editor', label: 'Editor', icon: FileEdit },
+        { id: 'invites', label: 'Invites', icon: Ticket },
     ] as const
 
     return (
@@ -131,8 +134,8 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                                 key={option.value}
                                                 onClick={() => updatePreference('theme', option.value as UserPreferences['theme'])}
                                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
-                                                    ? 'border-primary bg-primary/10 text-primary'
-                                                    : 'border-gray-200 dark:border-dark-border hover:border-primary/50'
+                                                    ? 'border-primary bg-primary/10 text-primary dark:text-primary-light'
+                                                    : 'border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
                                                 <Icon className="w-5 h-5" />
@@ -317,6 +320,19 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                 checked={preferences.editor.line_numbers}
                                 onChange={(v) => handleUpdate('editor', 'line_numbers', v)}
                             />
+                        </div>
+                    )}
+
+                    {/* Invites */}
+                    {activeSection === 'invites' && (
+                        <div className="space-y-6">
+                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                                Invite Codes
+                            </h2>
+                            <p className="text-text-light dark:text-dark-text-muted mb-6">
+                                Share invite codes to bring new members to SyriaHub. Each code can be used once.
+                            </p>
+                            <InviteManager />
                         </div>
                     )}
                 </div>
