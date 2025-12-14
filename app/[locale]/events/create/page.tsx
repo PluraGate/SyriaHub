@@ -62,8 +62,8 @@ export default function CreateEventPage() {
 
             router.push(`/events/${data.id}`)
         } catch (error: any) {
-            console.error('Error creating event:', error)
-            showToast(error.message || 'Failed to create event.', 'error')
+            console.error('Error creating event:', JSON.stringify(error, null, 2))
+            showToast(error?.message || 'Failed to create event.', 'error')
         } finally {
             setLoading(false)
         }

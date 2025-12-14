@@ -14,7 +14,7 @@ export default async function EventsPage() {
         .from('posts')
         .select(`
       *,
-      author:users(name, email),
+      author:users!author_id(name, email),
       rsvp_count:event_rsvps(count)
     `)
         .eq('content_type', 'event')

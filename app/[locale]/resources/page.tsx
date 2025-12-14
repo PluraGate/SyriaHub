@@ -28,7 +28,7 @@ export default async function ResourcesPage({
         .from('posts')
         .select(`
             *,
-            author:users(name, email)
+            author:users!author_id(name, email)
         `)
         .eq('content_type', 'resource')
         .eq('status', 'published')

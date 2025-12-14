@@ -18,10 +18,10 @@ export default async function ProfilePage(props: ProfilePageProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch profile data
+  // Fetch profile data - include all fields needed for ProfileHeader and EditProfileDialog
   const { data: profile, error: profileError } = await supabase
     .from('users')
-    .select('id, name, email, role, bio, affiliation, created_at')
+    .select('id, name, email, role, bio, affiliation, created_at, avatar_url, cover_image_url, location, website, research_interests')
     .eq('id', params.id)
     .single()
 

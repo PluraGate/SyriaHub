@@ -57,7 +57,13 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                 .map(s => s.trim())
                 .filter(s => s.length > 0)
 
-            const { error } = await supabase
+            // First verify user is authenticated
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError || !user) {
+                throw new Error('You must be logged in to update your profile')
+            }
+
+            const { error, data } = await supabase
                 .from('users')
                 .update({
                     name: formData.name,
@@ -70,16 +76,40 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     cover_image_url: formData.cover_image_url || null
                 })
                 .eq('id', profile.id)
+                .select()
 
-            if (error) throw error
+            if (error) {
+                console.error('Supabase error details:', {
+                    message: error.message,
+                    code: error.code,
+                    details: error.details,
+                    hint: error.hint
+                })
+                throw new Error(error.message || 'Failed to update profile')
+            }
+
+            // Check if the update actually affected any rows
+            if (!data || data.length === 0) {
+                throw new Error('No profile was updated. You may not have permission to edit this profile.')
+            }
 
             showToast('Your profile has been successfully updated.', 'success')
 
             setOpen(false)
             router.refresh()
-        } catch (error) {
-            console.error('Error updating profile:', error)
-            showToast('Failed to update profile. Please try again.', 'error')
+        } catch (error: unknown) {
+            // Better error logging for Supabase PostgrestError
+            const errorMessage = error instanceof Error
+                ? error.message
+                : typeof error === 'object' && error !== null
+                    ? JSON.stringify(error, null, 2)
+                    : String(error)
+            console.error('Error updating profile:', errorMessage, error)
+
+            // Check for specific error types
+            const supabaseError = error as { message?: string; code?: string; details?: string }
+            const displayMessage = supabaseError?.message || supabaseError?.details || 'Failed to update profile. Please try again.'
+            showToast(displayMessage, 'error')
         } finally {
             setLoading(false)
         }

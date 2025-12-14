@@ -19,13 +19,12 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
         .from('posts')
         .select(`
       *,
-      author:users(name, email)
+      author:users!author_id(name, email)
     `)
         .eq('id', id)
         .single()
 
     if (!event || event.content_type !== 'event') notFound()
-
     // Fetch RSVPs
     const { data: rsvps } = await supabase
         .from('event_rsvps')
@@ -56,50 +55,71 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
                     {/* Main Content */}
                     <div className="space-y-8">
-                        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden p-8">
-                            <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-6">
-                                {event.title}
-                            </h1>
+                        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
+                            {/* Hero Banner Component */}
+                            <div className="relative h-48 md:h-64 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center overflow-hidden">
+                                <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.04] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                                <div className="relative z-10 text-center p-6 max-w-2xl">
+                                    <h1 className="text-3xl md:text-4xl font-display font-bold text-text dark:text-dark-text mb-4 drop-shadow-sm">
+                                        {event.title}
+                                    </h1>
+                                </div>
+                            </div>
 
-                            <div className="flex flex-col gap-4 mb-8 text-text dark:text-dark-text">
-                                <div className="flex items-center gap-3">
-                                    <Calendar className="w-5 h-5 text-primary" />
-                                    <span className="font-medium">
-                                        {format(startDate, 'EEEE, MMMM d, yyyy')}
-                                    </span>
+                            <div className="p-8">
+                                <div className="flex flex-wrap gap-6 mb-8 text-text-light dark:text-dark-text-muted border-b border-gray-100 dark:border-dark-border pb-8">
+                                    <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border">
+                                        <Calendar className="w-5 h-5 text-primary" />
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Date</span>
+                                            <span className="font-medium text-text dark:text-dark-text">{format(startDate, 'MMM d, yyyy')}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border">
+                                        <Clock className="w-5 h-5 text-primary" />
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Time</span>
+                                            <span className="font-medium text-text dark:text-dark-text">
+                                                {format(startDate, 'h:mm a')}
+                                                {endDate && ` - ${format(endDate, 'h:mm a')}`}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border flex-1 min-w-[200px]">
+                                        <MapPin className="w-5 h-5 text-primary" />
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Location</span>
+                                            <span className="font-medium text-text dark:text-dark-text truncate">{event.metadata.location}</span>
+                                        </div>
+                                    </div>
+
+                                    {event.metadata.link && (
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border w-full md:w-auto">
+                                            <LinkIcon className="w-5 h-5 text-primary" />
+                                            <div className="flex flex-col min-w-0">
+                                                <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Online Link</span>
+                                                <a href={event.metadata.link} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline truncate max-w-[200px]">
+                                                    {event.metadata.link.replace(/^https?:\/\//, '')}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <Clock className="w-5 h-5 text-primary" />
-                                    <span>
-                                        {format(startDate, 'h:mm a')}
-                                        {endDate && ` - ${format(endDate, 'h:mm a')}`}
-                                    </span>
+
+                                <div className="prose prose-lg dark:prose-invert max-w-none text-text dark:text-dark-text mb-8">
+                                    {event.content}
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <MapPin className="w-5 h-5 text-primary" />
-                                    <span>{event.metadata.location}</span>
-                                </div>
-                                {event.metadata.link && (
-                                    <div className="flex items-center gap-3">
-                                        <LinkIcon className="w-5 h-5 text-primary" />
-                                        <a href={event.metadata.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
-                                            {event.metadata.link}
-                                        </a>
+
+                                {event.tags && event.tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100 dark:border-dark-border">
+                                        {event.tags.map((tag: string) => (
+                                            <TagChip key={tag} tag={tag} />
+                                        ))}
                                     </div>
                                 )}
                             </div>
-
-                            <div className="prose dark:prose-invert max-w-none text-text dark:text-dark-text mb-8">
-                                {event.content}
-                            </div>
-
-                            {event.tags && event.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                    {event.tags.map((tag: string) => (
-                                        <TagChip key={tag} tag={tag} />
-                                    ))}
-                                </div>
-                            )}
                         </div>
 
                         <CommentsSection postId={id} />

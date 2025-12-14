@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Bookmark, BookmarkCheck, Loader2 } from 'lucide-react'
+import { Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
 
 interface BookmarkButtonProps {
     postId: string
@@ -11,121 +12,143 @@ interface BookmarkButtonProps {
     showCount?: boolean
 }
 
+
+
 export function BookmarkButton({ postId, className, showCount = false }: BookmarkButtonProps) {
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [bookmarkCount, setBookmarkCount] = useState(0)
-    const [loading, setLoading] = useState(true)
-    const [toggling, setToggling] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const supabase = createClient()
+    const { showToast } = useToast()
 
     useEffect(() => {
+        let isMounted = true
+
         const checkBookmarkStatus = async () => {
             try {
                 const { data: { user } } = await supabase.auth.getUser()
 
                 if (user) {
-                    // Check if bookmarked
-                    const { data } = await supabase
+                    const { data, error } = await supabase
                         .from('bookmarks')
                         .select('id')
                         .eq('user_id', user.id)
                         .eq('post_id', postId)
-                        .single()
+                        .maybeSingle()
 
-                    setIsBookmarked(!!data)
+                    if (!error && data && isMounted) {
+                        setIsBookmarked(true)
+                    }
                 }
 
                 if (showCount) {
-                    // Get bookmark count
-                    const { count } = await supabase
+                    const { count, error } = await supabase
                         .from('bookmarks')
                         .select('*', { count: 'exact', head: true })
                         .eq('post_id', postId)
 
-                    setBookmarkCount(count || 0)
+                    if (!error && count !== null && isMounted) {
+                        setBookmarkCount(count)
+                    }
                 }
             } catch (error) {
-                // User not logged in or error
+                console.error('Error checking bookmark status:', error)
             } finally {
-                setLoading(false)
+                if (isMounted) setIsLoading(false)
             }
         }
 
         checkBookmarkStatus()
+
+        return () => {
+            isMounted = false
+        }
     }, [postId, supabase, showCount])
 
-    const toggleBookmark = async () => {
-        setToggling(true)
+    const toggleBookmark = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        // Store previous state for rollback
+        const previousBookmarked = isBookmarked
+        const previousCount = bookmarkCount
+
+        // Optimistic update
+        setIsBookmarked(!previousBookmarked)
+        if (showCount) {
+            setBookmarkCount(prev => previousBookmarked ? Math.max(0, prev - 1) : prev + 1)
+        }
+
         try {
             const { data: { user } } = await supabase.auth.getUser()
 
             if (!user) {
-                // Could redirect to login or show toast
+                // Not logged in, revert
+                setIsBookmarked(previousBookmarked)
+                setBookmarkCount(previousCount)
+                showToast('Please sign in to save posts', 'error')
                 return
             }
 
-            if (isBookmarked) {
+            if (previousBookmarked) {
                 // Remove bookmark
-                await supabase
+                const { error } = await supabase
                     .from('bookmarks')
                     .delete()
                     .eq('user_id', user.id)
                     .eq('post_id', postId)
 
-                setIsBookmarked(false)
-                if (showCount) setBookmarkCount(prev => Math.max(0, prev - 1))
+                if (error) throw error
+                showToast('Removed from saved posts', 'success')
             } else {
                 // Add bookmark
-                await supabase
+                const { error } = await supabase
                     .from('bookmarks')
                     .insert({ user_id: user.id, post_id: postId })
 
-                setIsBookmarked(true)
-                if (showCount) setBookmarkCount(prev => prev + 1)
+                if (error) throw error
+                showToast('Saved for later', 'success')
             }
         } catch (error) {
             console.error('Error toggling bookmark:', error)
-        } finally {
-            setToggling(false)
+            // Revert on error
+            setIsBookmarked(previousBookmarked)
+            setBookmarkCount(previousCount)
+            showToast('Failed to update bookmark', 'error')
         }
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
-            <button
-                disabled
-                className={cn(
-                    'p-2 rounded-md text-text-light dark:text-dark-text-muted',
-                    className
-                )}
-            >
-                <Bookmark className="w-4 h-4" />
-            </button>
+            <div className={cn("p-2.5", className)}>
+                <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            </div>
         )
     }
 
     return (
         <button
+            type="button"
             onClick={toggleBookmark}
-            disabled={toggling}
             className={cn(
-                'p-2 rounded-md transition-colors',
+                'relative z-10 p-2.5 rounded-full transition-all duration-200 group',
+                'hover:bg-gray-100 dark:hover:bg-dark-surface/80',
                 isBookmarked
-                    ? 'text-primary dark:text-accent-light'
+                    ? 'text-primary dark:text-primary'
                     : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text',
                 className
             )}
             title={isBookmarked ? 'Remove from saved' : 'Save for later'}
+            aria-label={isBookmarked ? 'Remove from saved' : 'Save for later'}
         >
-            {toggling ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-            ) : isBookmarked ? (
-                <BookmarkCheck className="w-4 h-4" />
-            ) : (
-                <Bookmark className="w-4 h-4" />
-            )}
+            <Bookmark
+                className={cn(
+                    "w-5 h-5 transition-transform duration-200 group-active:scale-95",
+                    isBookmarked && "fill-current"
+                )}
+            />
             {showCount && bookmarkCount > 0 && (
-                <span className="ml-1 text-xs">{bookmarkCount}</span>
+                <span className="ml-1 text-xs font-medium">{bookmarkCount}</span>
             )}
         </button>
     )

@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { MagazineCard } from '@/components/MagazineCard'
 import { GroupCard } from '@/components/GroupCard'
-import { FileText, Users, BookOpen } from 'lucide-react'
+import { EventCard } from '@/components/EventCard'
+import { FileText, Users, BookOpen, Calendar } from 'lucide-react'
 
 interface UserActivityFeedProps {
     posts: any[]
@@ -11,15 +12,18 @@ interface UserActivityFeedProps {
 }
 
 export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
-    const [activeTab, setActiveTab] = useState<'posts' | 'groups'>('posts')
+    const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'groups'>('posts')
+
+    const researchPosts = posts.filter(p => !p.content_type || p.content_type === 'article' || p.content_type === 'question' || p.content_type === 'answer')
+    const eventPosts = posts.filter(p => p.content_type === 'event')
 
     return (
         <div>
             {/* Tabs */}
-            <div className="flex items-center gap-2 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl mb-8 max-w-md">
+            <div className="flex items-center gap-2 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl mb-8 max-w-xl overflow-x-auto">
                 <button
                     onClick={() => setActiveTab('posts')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all ${activeTab === 'posts'
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${activeTab === 'posts'
                         ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
@@ -27,20 +31,34 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                     <FileText className="w-4 h-4" />
                     Research
                     <span className="px-2 py-0.5 bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light rounded-full text-xs font-semibold">
-                        {posts.length}
+                        {researchPosts.length}
+                    </span>
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('events')}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${activeTab === 'events'
+                        ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
+                        : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                        }`}
+                >
+                    <Calendar className="w-4 h-4" />
+                    Events
+                    <span className="px-2 py-0.5 bg-secondary/20 text-secondary-dark dark:text-secondary rounded-full text-xs font-semibold">
+                        {eventPosts.length}
                     </span>
                 </button>
 
                 <button
                     onClick={() => setActiveTab('groups')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all ${activeTab === 'groups'
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${activeTab === 'groups'
                         ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                 >
                     <Users className="w-4 h-4" />
                     Groups
-                    <span className="px-2 py-0.5 bg-secondary/20 text-secondary-dark dark:text-secondary rounded-full text-xs font-semibold">
+                    <span className="px-2 py-0.5 bg-accent/20 text-accent-dark dark:text-accent rounded-full text-xs font-semibold">
                         {groups.length}
                     </span>
                 </button>
@@ -50,9 +68,9 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
             <div className="min-h-[300px]">
                 {activeTab === 'posts' && (
                     <div>
-                        {posts.length > 0 ? (
+                        {researchPosts.length > 0 ? (
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                {posts.map((post) => (
+                                {researchPosts.map((post) => (
                                     <MagazineCard key={post.id} post={post} variant="standard" />
                                 ))}
                             </div>
@@ -64,6 +82,28 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                                 <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No publications yet</h3>
                                 <p className="text-text-light dark:text-dark-text-muted">
                                     Research posts will appear here
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === 'events' && (
+                    <div>
+                        {eventPosts.length > 0 ? (
+                            <div className="grid gap-6">
+                                {eventPosts.map((event) => (
+                                    <EventCard key={event.id} event={event} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16 bg-gray-50 dark:bg-dark-surface rounded-2xl">
+                                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-dark-bg rounded-full flex items-center justify-center">
+                                    <Calendar className="w-8 h-8 text-text-light dark:text-dark-text-muted" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No events scheduled</h3>
+                                <p className="text-text-light dark:text-dark-text-muted">
+                                    Hosted events will appear here
                                 </p>
                             </div>
                         )}
