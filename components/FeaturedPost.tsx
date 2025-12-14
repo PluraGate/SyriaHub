@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn, stripMarkdown } from '@/lib/utils'
 import { Clock, ArrowUpRight, TrendingUp } from 'lucide-react'
 
 type FeaturedSize = 'large' | 'medium' | 'small'
@@ -87,6 +87,8 @@ export function FeaturedPost({
                     'rounded-3xl overflow-hidden',
                     'transition-all duration-500',
                     'hover:shadow-soft-xl',
+                    'bg-white dark:bg-gray-900', // Fix for white flickering
+                    'isolation-auto', // Fix stacking context
                     className
                 )}
             >
@@ -94,7 +96,7 @@ export function FeaturedPost({
                 <div className="absolute inset-0">
                     {post.cover_image_url ? (
                         <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
                             style={{ backgroundImage: `url(${post.cover_image_url})` }}
                         />
                     ) : (
@@ -145,7 +147,7 @@ export function FeaturedPost({
                     {/* Excerpt */}
                     {post.excerpt && (
                         <p className="text-lg text-white/80 line-clamp-2 max-w-2xl">
-                            {post.excerpt}
+                            {stripMarkdown(post.excerpt)}
                         </p>
                     )}
 
@@ -199,6 +201,7 @@ export function FeaturedPost({
                     'rounded-2xl overflow-hidden',
                     'transition-all duration-300',
                     'hover:shadow-soft-lg hover:-translate-y-1',
+                    'bg-white dark:bg-gray-900',
                     className
                 )}
             >
@@ -206,7 +209,7 @@ export function FeaturedPost({
                 <div className="absolute inset-0">
                     {post.cover_image_url ? (
                         <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
                             style={{ backgroundImage: `url(${post.cover_image_url})` }}
                         />
                     ) : (

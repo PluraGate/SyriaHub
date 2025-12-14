@@ -22,7 +22,7 @@ export default async function SavedPage() {
     }
 
     // Get bookmarked posts
-    const { data: bookmarks } = await supabase
+    const { data: bookmarks, error } = await supabase
         .from('bookmarks')
         .select(`
       id,
@@ -36,20 +36,26 @@ export default async function SavedPage() {
         created_at,
         updated_at,
         author_id,
-        forked_from_id,
-        license,
-        comment_count,
-        citation_count,
         author:users!posts_author_id_fkey(id, name, email)
       )
     `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
-    // Filter out any null posts and format the data
+    if (error) {
+        console.error('Error fetching bookmarks:', error.message, error.code, error.details)
+    }
+
+    // Filter out any null posts and format the data, add default values for missing fields
     const savedPosts = (bookmarks || [])
         .filter((b: any) => b.post)
-        .map((b: any) => b.post)
+        .map((b: any) => ({
+            ...b.post,
+            comment_count: 0, // Will be computed separately if needed
+            citation_count: 0,
+            license: null,
+            forked_from_id: null
+        }))
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">

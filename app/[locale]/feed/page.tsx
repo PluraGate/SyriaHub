@@ -71,6 +71,7 @@ export default function FeedPage() {
           .from('posts')
           .select('*')
           .eq('status', 'published')
+          .neq('content_type', 'event')
 
         // Content type filter
         if (filter !== 'all') {

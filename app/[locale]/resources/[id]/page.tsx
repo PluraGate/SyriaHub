@@ -18,7 +18,7 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
         .from('posts')
         .select(`
       *,
-      author:users(name, email)
+      author:users!author_id(name, email)
     `)
         .eq('id', id)
         .single()

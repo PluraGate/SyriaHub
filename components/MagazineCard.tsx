@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn, stripMarkdown } from '@/lib/utils'
 import { Clock, Bookmark, Eye } from 'lucide-react'
 
 export type MagazineCardVariant = 'featured' | 'standard' | 'compact' | 'horizontal'
@@ -23,6 +23,7 @@ interface MagazineCardProps {
         tags?: string[]
         views?: number
         cover_image_url?: string | null
+        content_type?: string | null
     }
     variant?: MagazineCardVariant
     className?: string
@@ -81,13 +82,14 @@ export function MagazineCard({
     showImage = true,
 }: MagazineCardProps) {
     const readingTime = getReadingTime(post.content)
-    const excerpt = post.excerpt || post.content?.slice(0, 150) + '...'
+    const rawExcerpt = post.excerpt || post.content || ''
+    const excerpt = stripMarkdown(rawExcerpt).substring(0, 150).trim() + (rawExcerpt.length > 150 ? '...' : '')
 
     // Featured variant - large card with image background
     if (variant === 'featured') {
         return (
             <Link
-                href={`/post/${post.id}`}
+                href={post.content_type === 'event' ? `/events/${post.id}` : `/post/${post.id}`}
                 className={cn(
                     'group relative flex flex-col justify-end h-full min-h-[320px] p-6 md:p-8',
                     'rounded-2xl overflow-hidden',
@@ -100,7 +102,7 @@ export function MagazineCard({
                 {/* Background image or gradient */}
                 {post.cover_image_url && showImage && (
                     <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
                         style={{ backgroundImage: `url(${post.cover_image_url})` }}
                     />
                 )}
@@ -156,7 +158,7 @@ export function MagazineCard({
     if (variant === 'horizontal') {
         return (
             <Link
-                href={`/post/${post.id}`}
+                href={post.content_type === 'event' ? `/events/${post.id}` : `/post/${post.id}`}
                 className={cn(
                     'group flex gap-4 p-4 rounded-xl bg-white dark:bg-dark-surface',
                     'border border-gray-100 dark:border-dark-border',
@@ -170,7 +172,7 @@ export function MagazineCard({
                     <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-100 dark:bg-dark-border">
                         {post.cover_image_url ? (
                             <div
-                                className="w-full h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                                className="w-full h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105 will-change-transform"
                                 style={{ backgroundImage: `url(${post.cover_image_url})` }}
                             />
                         ) : (
@@ -205,7 +207,7 @@ export function MagazineCard({
     if (variant === 'compact') {
         return (
             <Link
-                href={`/post/${post.id}`}
+                href={post.content_type === 'event' ? `/events/${post.id}` : `/post/${post.id}`}
                 className={cn(
                     'group block p-4 rounded-xl',
                     'bg-gray-50 dark:bg-dark-surface/50',
@@ -254,7 +256,7 @@ export function MagazineCard({
                 <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-dark-border">
                     {post.cover_image_url ? (
                         <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
                             style={{ backgroundImage: `url(${post.cover_image_url})` }}
                         />
                     ) : (

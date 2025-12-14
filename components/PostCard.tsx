@@ -7,6 +7,7 @@ import { BookmarkButton } from '@/components/BookmarkButton'
 import { ReviewBadgeInline } from '@/components/ReviewBadge'
 import { PlagiarismDetails } from '@/components/PlagiarismDetails'
 import { Post } from '@/types'
+import { stripMarkdown } from '@/lib/utils'
 
 interface PostCardProps {
   post: Post & {
@@ -24,8 +25,9 @@ interface PostCardProps {
 
 export function PostCard({ post, showAuthor = true }: PostCardProps) {
   const getExcerpt = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content
-    return content.substring(0, maxLength).trim() + '...'
+    const plainText = stripMarkdown(content)
+    if (plainText.length <= maxLength) return plainText
+    return plainText.substring(0, maxLength).trim() + '...'
   }
 
   const displayAuthor =

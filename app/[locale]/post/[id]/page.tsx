@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, Share2, Bookmark, MessageSquare } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
@@ -111,8 +111,7 @@ export default async function PostPage(props: PostPageProps) {
     .select(
       `
         *,
-        author:users!posts_author_id_fkey(id, name, email, bio, affiliation)
-        // forked_from:posts!posts_forked_from_id_fkey(id, title)
+        author:users!posts_author_id_fkey(id, name, email, bio, affiliation, avatar_url)
       `
     )
     .eq('id', id)
@@ -121,6 +120,11 @@ export default async function PostPage(props: PostPageProps) {
   if (error || !post) {
     console.error('Error fetching post:', error)
     notFound()
+  }
+
+  // Redirect events to the dedicated event page
+  if (post.content_type === 'event') {
+    redirect(`/events/${id}`)
   }
 
   let relatedPosts: any[] = []
@@ -216,7 +220,7 @@ export default async function PostPage(props: PostPageProps) {
       <Navbar user={user} />
 
       {/* Hero Header with Cover Image Background */}
-      <header className={`group relative overflow-hidden ${post.cover_image_url ? 'min-h-[350px] md:min-h-[400px]' : ''}`}>
+      <header className={`group relative overflow-hidden ${post.cover_image_url ? 'min-h-[250px] sm:min-h-[350px] md:min-h-[400px]' : ''}`}>
         {/* Cover Image Background */}
         {post.cover_image_url && (
           <>
@@ -234,7 +238,7 @@ export default async function PostPage(props: PostPageProps) {
             {/* Back Link */}
             <Link
               href="/feed"
-              className={`inline-flex items-center gap-2 text-sm transition-colors mb-8 ${post.cover_image_url
+              className={`inline-flex items-center gap-2 text-sm transition-colors mb-4 md:mb-8 ${post.cover_image_url
                 ? 'text-white/80 hover:text-white'
                 : 'text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light'
                 }`}
@@ -254,14 +258,14 @@ export default async function PostPage(props: PostPageProps) {
             )}
 
             {/* Title */}
-            <h1 className={`text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-6 ${post.cover_image_url ? 'text-white' : 'text-text dark:text-dark-text'
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 ${post.cover_image_url ? 'text-white' : 'text-text dark:text-dark-text'
               }`}>
               {post.title}
             </h1>
 
             {/* Forked From */}
             {post.forked_from && (
-              <div className="flex items-center gap-2 mb-6 text-sm text-text-light dark:text-dark-text-muted bg-gray-50 dark:bg-dark-bg p-3 rounded-xl border border-gray-100 dark:border-dark-border w-fit">
+              <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-text-light dark:text-dark-text-muted bg-gray-50 dark:bg-dark-bg p-3 rounded-xl border border-gray-100 dark:border-dark-border w-fit">
                 <GitFork className="w-4 h-4 text-secondary" />
                 <span>Remixed from</span>
                 <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-primary dark:text-primary-light hover:underline">
@@ -272,7 +276,7 @@ export default async function PostPage(props: PostPageProps) {
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
                 {post.cover_image_url ? (
                   // White tags for visibility on cover image
                   post.tags.map((tag: string) => (
@@ -301,9 +305,17 @@ export default async function PostPage(props: PostPageProps) {
                 className={`flex items-center gap-3 transition-colors ${post.cover_image_url ? 'hover:text-white' : 'hover:text-primary dark:hover:text-primary-light'
                   }`}
               >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
-                </div>
+                {post.author?.avatar_url ? (
+                  <img
+                    src={post.author.avatar_url}
+                    alt={authorDisplay}
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                    {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
+                  </div>
+                )}
                 <div>
                   <span className={`font-semibold block ${post.cover_image_url ? 'text-white' : 'text-text dark:text-dark-text'}`}>{authorDisplay}</span>
                   {post.author?.affiliation && (
@@ -346,7 +358,7 @@ export default async function PostPage(props: PostPageProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-100 dark:border-dark-border">
+            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-gray-100 dark:border-dark-border">
               {user && user.id === post.author_id ? (
                 <>
                   <EditButton
@@ -455,9 +467,17 @@ export default async function PostPage(props: PostPageProps) {
                 href={`/profile/${post.author_id}`}
                 className="flex items-start gap-4 group"
               >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:scale-105 transition-transform">
-                  {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
-                </div>
+                {post.author?.avatar_url ? (
+                  <img
+                    src={post.author.avatar_url}
+                    alt={authorDisplay}
+                    className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:scale-105 transition-transform">
+                    {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
                     {authorDisplay}

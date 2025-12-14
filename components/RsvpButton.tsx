@@ -50,6 +50,8 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                         event_id: eventId,
                         user_id: user.id,
                         status: newStatus
+                    }, {
+                        onConflict: 'event_id, user_id'
                     })
 
                 if (error) throw error
@@ -58,46 +60,79 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
             }
 
         } catch (error: any) {
-            console.error('RSVP error:', error)
-            showToast('Failed to update RSVP.', 'error')
+            console.error('RSVP error:', error.message || error)
+            showToast('Failed to update RSVP. ' + (error.message || ''), 'error')
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-3 gap-2 w-full">
             <Button
-                variant={status === 'going' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => handleRsvp('going')}
                 disabled={loading}
-                className={cn(status === 'going' && "bg-green-600 hover:bg-green-700")}
+                className={cn(
+                    "relative overflow-hidden transition-all duration-300 border",
+                    status === 'going'
+                        ? "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
+                        : "hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 dark:hover:border-emerald-800/50"
+                )}
             >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Going
+                <CheckCircle className={cn(
+                    "w-4 h-4 mr-2 transition-transform",
+                    status === 'going' && "scale-110"
+                )} />
+                <span className="font-medium">Going</span>
+                {status === 'going' && (
+                    <span className="absolute inset-0 border-2 border-emerald-500/50 rounded-md pointer-events-none" />
+                )}
             </Button>
 
             <Button
-                variant={status === 'maybe' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => handleRsvp('maybe')}
                 disabled={loading}
-                className={cn(status === 'maybe' && "bg-yellow-600 hover:bg-yellow-700")}
+                className={cn(
+                    "relative overflow-hidden transition-all duration-300 border",
+                    status === 'maybe'
+                        ? "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
+                        : "hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/20 dark:hover:text-amber-400 dark:hover:border-amber-800/50"
+                )}
             >
-                <HelpCircle className="w-4 h-4 mr-2" />
-                Maybe
+                <HelpCircle className={cn(
+                    "w-4 h-4 mr-2 transition-transform",
+                    status === 'maybe' && "scale-110"
+                )} />
+                <span className="font-medium">Maybe</span>
+                {status === 'maybe' && (
+                    <span className="absolute inset-0 border-2 border-amber-500/50 rounded-md pointer-events-none" />
+                )}
             </Button>
 
             <Button
-                variant={status === 'not_going' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => handleRsvp('not_going')}
                 disabled={loading}
-                className={cn(status === 'not_going' && "bg-red-600 hover:bg-red-700")}
+                className={cn(
+                    "relative overflow-hidden transition-all duration-300 border",
+                    status === 'not_going'
+                        ? "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-800"
+                        : "hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 dark:hover:border-rose-800/50"
+                )}
             >
-                <XCircle className="w-4 h-4 mr-2" />
-                Can&apos;t Go
+                <XCircle className={cn(
+                    "w-4 h-4 mr-2 transition-transform",
+                    status === 'not_going' && "scale-110"
+                )} />
+                <span className="font-medium">Can't Go</span>
+                {status === 'not_going' && (
+                    <span className="absolute inset-0 border-2 border-rose-500/50 rounded-md pointer-events-none" />
+                )}
             </Button>
         </div>
     )
