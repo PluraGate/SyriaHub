@@ -1,0 +1,263 @@
+'use client'
+
+import { useState, useEffect, useMemo } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import {
+    History,
+    Shield,
+    Search,
+    Calendar,
+    ChevronLeft,
+    ChevronRight,
+    ArrowRight,
+    ArrowUp,
+    ArrowDown,
+    Loader2,
+    User,
+    Download
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { format } from 'date-fns'
+
+interface AuditLogEntry {
+    id: string
+    user_id: string
+    user_name: string | null
+    user_email: string | null
+    changed_by_id: string
+    changed_by_name: string | null
+    old_role: string
+    new_role: string
+    reason: string | null
+    created_at: string
+}
+
+interface AuditLogsResponse {
+    logs: AuditLogEntry[]
+    total: number
+    page: number
+    page_size: number
+}
+
+export function AuditLogs() {
+    const [logs, setLogs] = useState<AuditLogEntry[]>([])
+    const [loading, setLoading] = useState(true)
+    const [totalLogs, setTotalLogs] = useState(0)
+    const [page, setPage] = useState(1)
+    const [pageSize] = useState(50)
+
+    const supabase = useMemo(() => createClient(), [])
+
+    useEffect(() => {
+        loadLogs()
+    }, [page])
+
+    const loadLogs = async () => {
+        setLoading(true)
+        try {
+            const { data, error } = await supabase.rpc('get_audit_logs', {
+                page_number: page,
+                page_size: pageSize
+            })
+
+            if (error) {
+                console.error('Error loading audit logs:', error)
+                return
+            }
+
+            if (data.error) {
+                console.error('Access denied:', data.error)
+                return
+            }
+
+            const result = data as AuditLogsResponse
+            setLogs(result.logs || [])
+            setTotalLogs(result.total)
+        } catch (error) {
+            console.error('Error:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const getRoleChangeVisual = (oldRole: string, newRole: string) => {
+        const roleOrder = { researcher: 0, moderator: 1, admin: 2 }
+        const isPromotion = roleOrder[newRole as keyof typeof roleOrder] > roleOrder[oldRole as keyof typeof roleOrder]
+
+        const roleColors = {
+            researcher: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
+            moderator: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
+            admin: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+        }
+
+        return (
+            <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[oldRole as keyof typeof roleColors] || roleColors.researcher}`}>
+                    {oldRole}
+                </span>
+                <div className={`${isPromotion ? 'text-green-500' : 'text-red-500'}`}>
+                    {isPromotion ? (
+                        <ArrowUp className="w-4 h-4" />
+                    ) : (
+                        <ArrowDown className="w-4 h-4" />
+                    )}
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[newRole as keyof typeof roleColors] || roleColors.researcher}`}>
+                    {newRole}
+                </span>
+            </div>
+        )
+    }
+
+    const exportLogs = () => {
+        const csvContent = [
+            ['Date', 'User', 'User Email', 'Changed By', 'Old Role', 'New Role', 'Reason'].join(','),
+            ...logs.map(log => [
+                format(new Date(log.created_at), 'yyyy-MM-dd HH:mm:ss'),
+                log.user_name || 'Unknown',
+                log.user_email || 'Unknown',
+                log.changed_by_name || 'Unknown',
+                log.old_role,
+                log.new_role,
+                `"${(log.reason || '').replace(/"/g, '""')}"`
+            ].join(','))
+        ].join('\n')
+
+        const blob = new Blob([csvContent], { type: 'text/csv' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `audit-logs-${format(new Date(), 'yyyy-MM-dd')}.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
+
+    const totalPages = Math.ceil(totalLogs / pageSize)
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
+                        <History className="w-5 h-5 text-primary" />
+                        Audit Logs
+                    </h2>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                        Track all administrative role changes
+                    </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={exportLogs} disabled={logs.length === 0}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                <p className="text-sm text-text-light dark:text-dark-text-muted">
+                    Total role changes recorded: <span className="font-semibold text-text dark:text-dark-text">{totalLogs}</span>
+                </p>
+            </div>
+
+            {/* Logs List */}
+            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    </div>
+                ) : logs.length === 0 ? (
+                    <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
+                        <History className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                        <p>No audit logs found</p>
+                        <p className="text-sm mt-1">Role changes will appear here when they occur</p>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-gray-100 dark:divide-dark-border">
+                        {logs.map((log) => (
+                            <div
+                                key={log.id}
+                                className="p-4 hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors"
+                            >
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        {/* User affected */}
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center">
+                                                <User className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-text dark:text-dark-text">
+                                                    {log.user_name || 'Unknown User'}
+                                                </p>
+                                                <p className="text-xs text-text-light dark:text-dark-text-muted">
+                                                    {log.user_email}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Role Change */}
+                                        <div className="ml-10 space-y-2">
+                                            {getRoleChangeVisual(log.old_role, log.new_role)}
+
+                                            {log.reason && (
+                                                <div className="mt-2 p-2 bg-gray-50 dark:bg-dark-border/50 rounded-lg">
+                                                    <p className="text-xs text-text-light dark:text-dark-text-muted mb-0.5">Reason:</p>
+                                                    <p className="text-sm text-text dark:text-dark-text">{log.reason}</p>
+                                                </div>
+                                            )}
+
+                                            <p className="text-xs text-text-light dark:text-dark-text-muted">
+                                                Changed by: <span className="font-medium">{log.changed_by_name || 'Unknown'}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Timestamp */}
+                                    <div className="text-right flex-shrink-0">
+                                        <p className="text-sm text-text-light dark:text-dark-text-muted flex items-center gap-1">
+                                            <Calendar className="w-3.5 h-3.5" />
+                                            {format(new Date(log.created_at), 'MMM d, yyyy')}
+                                        </p>
+                                        <p className="text-xs text-text-light/70 dark:text-dark-text-muted/70">
+                                            {format(new Date(log.created_at), 'HH:mm:ss')}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">
+                        Page {page} of {totalPages}
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1 || loading}
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                            Previous
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages || loading}
+                        >
+                            Next
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}

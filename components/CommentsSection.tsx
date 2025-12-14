@@ -2,22 +2,23 @@
 
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { MessageCircle, Loader2 } from 'lucide-react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
-import { ReportButton } from '@/components/ReportButton'
+import { CommentTree } from '@/components/CommentTree'
 
-interface CommentUser {
-  id: string
-  name?: string | null
-  email?: string | null
-}
-
-interface CommentItem {
+interface Comment {
   id: string
   content: string
   created_at: string
-  user?: CommentUser | null
+  user_id: string
+  post_id: string
+  parent_id: string | null
+  user?: {
+    id: string
+    name: string
+    email: string
+    avatar_url?: string
+  }
 }
 
 interface CommentsSectionProps {
@@ -27,17 +28,8 @@ interface CommentsSectionProps {
 export function CommentsSection({ postId }: CommentsSectionProps) {
   const { showToast } = useToast()
   const supabase = useMemo(() => createClient(), [])
-  const [viewerId, setViewerId] = useState<string | null>(null)
-  const [comments, setComments] = useState<CommentItem[]>([])
+  const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [content, setContent] = useState('')
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setViewerId(data.user?.id ?? null)
-    })
-  }, [supabase])
 
   const fetchComments = useCallback(async () => {
     try {
@@ -50,7 +42,23 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
         return
       }
 
-      setComments(payload.data?.comments || [])
+      // Transform the API response to match CommentTree's expected format
+      const transformedComments = (payload.data?.comments || []).map((c: any) => ({
+        id: c.id,
+        content: c.content,
+        created_at: c.created_at,
+        user_id: c.user_id,
+        post_id: c.post_id,
+        parent_id: c.parent_id,
+        user: c.user ? {
+          id: c.user.id,
+          name: c.user.name,
+          email: c.user.email,
+          avatar_url: c.user.avatar_url,
+        } : undefined,
+      }))
+
+      setComments(transformedComments)
     } catch (error) {
       console.error('Comments fetch error:', error)
       showToast('Failed to load comments.', 'error')
@@ -63,49 +71,77 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
     fetchComments()
   }, [fetchComments])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = content.trim()
+  // Realtime subscription for new comments on this post
+  useEffect(() => {
+    const channel = supabase
+      .channel(`comments:${postId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`,
+        },
+        async (payload) => {
+          // Fetch the full comment with user data
+          const { data: newComment } = await supabase
+            .from('comments')
+            .select(`
+              *,
+              user:users!comments_user_id_fkey(id, name, email, avatar_url)
+            `)
+            .eq('id', payload.new.id)
+            .single()
 
-    if (!viewerId) {
-      showToast('Please sign in to join the discussion.', 'warning')
-      return
+          if (newComment) {
+            const transformedComment: Comment = {
+              id: newComment.id,
+              content: newComment.content,
+              created_at: newComment.created_at,
+              user_id: newComment.user_id,
+              post_id: newComment.post_id,
+              parent_id: newComment.parent_id,
+              user: newComment.user ? {
+                id: newComment.user.id,
+                name: newComment.user.name,
+                email: newComment.user.email,
+                avatar_url: newComment.user.avatar_url,
+              } : undefined,
+            }
+
+            setComments((prev) => {
+              // Avoid duplicates (in case we also did a manual refresh)
+              if (prev.some(c => c.id === transformedComment.id)) {
+                return prev
+              }
+              return [...prev, transformedComment]
+            })
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
     }
+  }, [postId, supabase])
 
-    if (trimmed.length < 3) {
-      showToast('Please share a bit more context.', 'warning')
-      return
-    }
-
-    try {
-      setSubmitting(true)
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: trimmed, post_id: postId }),
-      })
-
-      const payload = await response.json()
-
-      if (!response.ok || !payload.success) {
-        showToast(payload.error || 'Unable to post comment.', 'error')
-        return
-      }
-
-      if (payload.warnings?.length) {
-        showToast(payload.warnings[0], 'warning')
-      } else {
-        showToast('Comment posted.', 'success')
-      }
-
-      setContent('')
-      fetchComments()
-    } catch (error) {
-      console.error('Comment submit error:', error)
-      showToast('Failed to post comment.', 'error')
-    } finally {
-      setSubmitting(false)
-    }
+  if (loading) {
+    return (
+      <section className="mt-10">
+        <div className="flex items-center gap-2 mb-6">
+          <MessageCircle className="w-5 h-5 text-primary dark:text-accent-light" />
+          <h2 className="text-xl font-display font-semibold text-primary dark:text-dark-text">
+            Discussion
+          </h2>
+        </div>
+        <div className="flex items-center justify-center py-8 text-text-light dark:text-dark-text-muted">
+          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          Loading comments...
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -120,76 +156,14 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
         </span>
       </div>
 
-      {viewerId ? (
-        <form onSubmit={handleSubmit} className="card p-4 mb-6 space-y-3">
-          <textarea
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            placeholder="Share insights, sources, or constructive feedback..."
-            className="w-full rounded-lg border border-gray-200 dark:border-dark-border bg-background-white dark:bg-dark-bg text-text dark:text-dark-text p-3 focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-accent-light/40"
-            rows={4}
-            maxLength={5000}
-          />
-          <div className="flex items-center justify-between text-xs text-text-light dark:text-dark-text-muted">
-            <span>{content.length}/5000</span>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="btn btn-primary px-4 py-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {submitting ? 'Posting…' : 'Post Comment'}
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="card p-4 mb-6 flex items-center justify-between flex-wrap gap-4">
-          <p className="text-sm text-text-light dark:text-dark-text-muted">
-            Sign in to contribute to the conversation.
-          </p>
-          <Link href="/auth/login" className="btn btn-outline text-sm">
-            Sign In
-          </Link>
-        </div>
-      )}
-
-      <div className="space-y-4">
-        {loading ? (
-          <div className="flex items-center justify-center py-8 text-text-light dark:text-dark-text-muted">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
-            Loading comments...
-          </div>
-        ) : comments.length === 0 ? (
-          <div className="card p-6 text-center text-text-light dark:text-dark-text-muted">
-            No comments yet. Start the discussion.
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="card p-4 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-sm font-medium text-text dark:text-dark-text">
-                    {comment.user?.name ||
-                      comment.user?.email?.split('@')[0] ||
-                      'Anonymous'}
-                  </p>
-                  <p className="text-xs text-text-light dark:text-dark-text-muted">
-                    {new Date(comment.created_at).toLocaleString()}
-                  </p>
-                </div>
-                {viewerId && viewerId !== comment.user?.id && (
-                  <ReportButton
-                    commentId={comment.id}
-                    className="text-right"
-                  />
-                )}
-              </div>
-              <p className="text-sm leading-relaxed text-text dark:text-dark-text whitespace-pre-line">
-                {comment.content}
-              </p>
-            </div>
-          ))
-        )}
+      <div className="card p-6">
+        <CommentTree
+          postId={postId}
+          comments={comments}
+          onCommentAdded={fetchComments}
+        />
       </div>
     </section>
   )
 }
+

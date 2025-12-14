@@ -68,21 +68,21 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
     }
 
     return (
-        <div className="grid grid-cols-3 gap-2 w-full">
+        <div className="flex gap-2 w-full">
             <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleRsvp('going')}
                 disabled={loading}
                 className={cn(
-                    "relative overflow-hidden transition-all duration-300 border",
+                    "relative overflow-hidden transition-all duration-300 border flex-1 whitespace-nowrap",
                     status === 'going'
                         ? "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
                         : "hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 dark:hover:border-emerald-800/50"
                 )}
             >
                 <CheckCircle className={cn(
-                    "w-4 h-4 mr-2 transition-transform",
+                    "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'going' && "scale-110"
                 )} />
                 <span className="font-medium">Going</span>
@@ -97,14 +97,14 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                 onClick={() => handleRsvp('maybe')}
                 disabled={loading}
                 className={cn(
-                    "relative overflow-hidden transition-all duration-300 border",
+                    "relative overflow-hidden transition-all duration-300 border flex-1 whitespace-nowrap",
                     status === 'maybe'
                         ? "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
                         : "hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/20 dark:hover:text-amber-400 dark:hover:border-amber-800/50"
                 )}
             >
                 <HelpCircle className={cn(
-                    "w-4 h-4 mr-2 transition-transform",
+                    "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'maybe' && "scale-110"
                 )} />
                 <span className="font-medium">Maybe</span>
@@ -119,17 +119,17 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                 onClick={() => handleRsvp('not_going')}
                 disabled={loading}
                 className={cn(
-                    "relative overflow-hidden transition-all duration-300 border",
+                    "relative overflow-hidden transition-all duration-300 border flex-1 whitespace-nowrap",
                     status === 'not_going'
                         ? "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-800"
                         : "hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 dark:hover:border-rose-800/50"
                 )}
             >
                 <XCircle className={cn(
-                    "w-4 h-4 mr-2 transition-transform",
+                    "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'not_going' && "scale-110"
                 )} />
-                <span className="font-medium">Can't Go</span>
+                <span className="font-medium">Can&apos;t Go</span>
                 {status === 'not_going' && (
                     <span className="absolute inset-0 border-2 border-rose-500/50 rounded-md pointer-events-none" />
                 )}

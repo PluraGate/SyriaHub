@@ -19,6 +19,7 @@ export default async function QuestionsPage() {
     `)
         .eq('content_type', 'question')
         .eq('status', 'published')
+        .neq('approval_status', 'rejected')
         .order('created_at', { ascending: false })
 
     // Transform for QuestionCard

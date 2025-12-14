@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Calendar, MapPin, Users, Clock } from 'lucide-react'
+import { Calendar, MapPin, Users, Clock, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
 
@@ -19,6 +19,7 @@ interface EventPost {
     tags?: string[]
     metadata: EventMetadata
     rsvp_count?: number
+    approval_status?: 'pending' | 'approved' | 'rejected'
 }
 
 interface EventCardProps {
@@ -53,6 +54,12 @@ export function EventCard({ event }: EventCardProps) {
                                     {event.title}
                                 </h3>
                             </Link>
+                            {event.approval_status === 'rejected' && (
+                                <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
+                                    <AlertTriangle className="w-3 h-3" />
+                                    Rejected
+                                </span>
+                            )}
                         </div>
 
                         <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted mb-4">

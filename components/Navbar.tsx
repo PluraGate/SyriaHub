@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
 import { useRouter } from 'next/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
@@ -49,6 +49,7 @@ export function Navbar({ user }: NavbarProps) {
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(user?.user_metadata?.avatar_url || null)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, isDark } = useTheme()
 
@@ -60,23 +61,28 @@ export function Navbar({ user }: NavbarProps) {
   // Extract locale from pathname (first segment after /)
   const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
 
-  // Fetch avatar_url from users table if not in user_metadata
+  // Fetch avatar_url and role from users table
   useEffect(() => {
-    const fetchUserAvatar = async () => {
-      if (user?.id && !userAvatarUrl) {
+    const fetchUserData = async () => {
+      if (user?.id) {
         const supabase = createClient()
         const { data } = await supabase
           .from('users')
-          .select('avatar_url')
+          .select('avatar_url, role')
           .eq('id', user.id)
           .single()
 
-        if (data?.avatar_url) {
-          setUserAvatarUrl(data.avatar_url)
+        if (data) {
+          if (data.avatar_url && !userAvatarUrl) {
+            setUserAvatarUrl(data.avatar_url)
+          }
+          if (data.role) {
+            setUserRole(data.role)
+          }
         }
       }
     }
-    fetchUserAvatar()
+    fetchUserData()
   }, [user?.id, userAvatarUrl])
 
   const handleSignOut = async () => {
@@ -90,6 +96,7 @@ export function Navbar({ user }: NavbarProps) {
   // depending on whether it comes from auth.getUser() or a custom query
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
   const userAvatar = userAvatarUrl || user?.user_metadata?.avatar_url
+  const isAdminOrModerator = userRole === 'admin' || userRole === 'moderator'
 
   // Toggle between light/dark/system - cycles: light -> dark -> system -> light
   const toggleDarkMode = () => {
@@ -198,6 +205,17 @@ export function Navbar({ user }: NavbarProps) {
                           <span>Settings</span>
                         </Link>
                       </DropdownMenuItem>
+                      {isAdminOrModerator && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/admin" className="cursor-pointer w-full flex items-center">
+                              <Shield className="mr-2 h-4 w-4" />
+                              <span>Admin Panel</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-accent dark:text-accent-light">
                         <LogOut className="mr-2 h-4 w-4" />
@@ -303,6 +321,16 @@ export function Navbar({ user }: NavbarProps) {
                     {t('profile')}
                   </Link>
 
+                  {isAdminOrModerator && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Shield className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
+                  )}
                   <button
                     onClick={handleSignOut}
                     className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
