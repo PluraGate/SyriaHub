@@ -1,0 +1,798 @@
+'use client'
+
+import { useState } from 'react'
+import {
+    Vote,
+    Plus,
+    Users,
+    Clock,
+    Check,
+    X,
+    Loader2,
+    Edit,
+    Trash2,
+    BarChart2,
+    MoreVertical,
+    XCircle,
+    Share2
+} from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { createClient } from '@/lib/supabase/client'
+import { useToast } from '@/components/ui/toast'
+import { ShareDialog } from './ShareDialog'
+
+interface PollOption {
+    id: string
+    text: string
+    vote_count: number
+}
+
+interface Poll {
+    id: string
+    question: string
+    description?: string
+    options: PollOption[]
+    is_multiple_choice: boolean
+    is_anonymous: boolean
+    show_results_before_vote: boolean
+    total_votes: number
+    end_date?: string
+    created_at: string
+    is_active: boolean
+    author_id?: string
+    public_token?: string | null
+    allow_public_responses?: boolean
+    author?: { name?: string; email?: string }
+}
+
+interface PollsListProps {
+    polls: Poll[]
+    userVotes: Record<string, string[]>
+    userId?: string
+    showCreate?: boolean
+}
+
+export function PollsList({ polls, userVotes, userId, showCreate = false }: PollsListProps) {
+    const [isCreating, setIsCreating] = useState(showCreate)
+    const [votingPollId, setVotingPollId] = useState<string | null>(null)
+    const [localVotes, setLocalVotes] = useState<Record<string, string[]>>(userVotes)
+    const [localPolls, setLocalPolls] = useState(polls)
+    const [editingPoll, setEditingPoll] = useState<Poll | null>(null)
+    const [showResults, setShowResults] = useState<string | null>(null)
+    const [deletingPollId, setDeletingPollId] = useState<string | null>(null)
+    const { showToast } = useToast()
+
+    // New poll form state
+    const [newQuestion, setNewQuestion] = useState('')
+    const [newDescription, setNewDescription] = useState('')
+    const [newOptions, setNewOptions] = useState(['', ''])
+    const [isMultiple, setIsMultiple] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
+
+    const handleVote = async (pollId: string, optionIds: string[]) => {
+        if (!userId) {
+            showToast('Please log in to vote', 'error')
+            return
+        }
+
+        setVotingPollId(pollId)
+        const supabase = createClient()
+
+        try {
+            const { error } = await supabase
+                .from('poll_votes')
+                .upsert({
+                    poll_id: pollId,
+                    user_id: userId,
+                    option_ids: optionIds
+                })
+
+            if (error) throw error
+
+            // Update local state
+            setLocalVotes(prev => ({ ...prev, [pollId]: optionIds }))
+
+            // Update poll vote counts locally
+            setLocalPolls(prev => prev.map(poll => {
+                if (poll.id !== pollId) return poll
+
+                const updatedOptions = poll.options.map(opt => ({
+                    ...opt,
+                    vote_count: optionIds.includes(opt.id)
+                        ? opt.vote_count + 1
+                        : opt.vote_count
+                }))
+
+                return {
+                    ...poll,
+                    options: updatedOptions,
+                    total_votes: poll.total_votes + 1
+                }
+            }))
+
+            showToast('Vote recorded!', 'success')
+        } catch (error) {
+            showToast('Failed to vote', 'error')
+        } finally {
+            setVotingPollId(null)
+        }
+    }
+
+    const handleCreatePoll = async () => {
+        if (!userId) {
+            showToast('Please log in to create a poll', 'error')
+            return
+        }
+
+        if (!newQuestion.trim()) {
+            showToast('Please enter a question', 'error')
+            return
+        }
+
+        const validOptions = newOptions.filter(o => o.trim())
+        if (validOptions.length < 2) {
+            showToast('Please add at least 2 options', 'error')
+            return
+        }
+
+        setSubmitting(true)
+        const supabase = createClient()
+
+        try {
+            const pollOptions = validOptions.map((text, i) => ({
+                id: `opt_${i}`,
+                text: text.trim(),
+                vote_count: 0
+            }))
+
+            const { data, error } = await supabase
+                .from('polls')
+                .insert({
+                    question: newQuestion.trim(),
+                    description: newDescription.trim() || null,
+                    options: pollOptions,
+                    is_multiple_choice: isMultiple,
+                    author_id: userId
+                })
+                .select(`
+                    *,
+                    author:users!author_id(name, email)
+                `)
+                .single()
+
+            if (error) throw error
+
+            setLocalPolls(prev => [data, ...prev])
+            setNewQuestion('')
+            setNewDescription('')
+            setNewOptions(['', ''])
+            setIsMultiple(false)
+            setIsCreating(false)
+            showToast('Poll created!', 'success')
+        } catch (error) {
+            showToast('Failed to create poll', 'error')
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    const handleDeletePoll = async (pollId: string) => {
+        setDeletingPollId(pollId)
+
+        try {
+            const response = await fetch(`/api/polls/${pollId}`, {
+                method: 'DELETE'
+            })
+
+            if (!response.ok) {
+                const data = await response.json()
+                throw new Error(data.error || 'Failed to delete poll')
+            }
+
+            setLocalPolls(prev => prev.filter(p => p.id !== pollId))
+            showToast('Poll deleted successfully', 'success')
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : 'Failed to delete poll', 'error')
+        } finally {
+            setDeletingPollId(null)
+        }
+    }
+
+    const handleClosePoll = async (pollId: string) => {
+        try {
+            const response = await fetch(`/api/polls/${pollId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_active: false })
+            })
+
+            if (!response.ok) throw new Error('Failed to close poll')
+
+            setLocalPolls(prev => prev.map(p =>
+                p.id === pollId ? { ...p, is_active: false } : p
+            ))
+            showToast('Poll closed', 'success')
+        } catch (error) {
+            showToast('Failed to close poll', 'error')
+        }
+    }
+
+    const addOption = () => {
+        if (newOptions.length < 10) {
+            setNewOptions([...newOptions, ''])
+        }
+    }
+
+    const removeOption = (index: number) => {
+        if (newOptions.length > 2) {
+            setNewOptions(newOptions.filter((_, i) => i !== index))
+        }
+    }
+
+    return (
+        <div>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text mb-1">
+                        Polls
+                    </h1>
+                    <p className="text-text-light dark:text-dark-text-muted">
+                        Quick polls for instant community feedback
+                    </p>
+                </div>
+                <button
+                    onClick={() => setIsCreating(!isCreating)}
+                    className="btn btn-primary flex items-center gap-2"
+                >
+                    {isCreating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {isCreating ? 'Cancel' : 'New Poll'}
+                </button>
+            </div>
+
+            {/* Create Poll Form */}
+            {isCreating && (
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">
+                        Create a New Poll
+                    </h3>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                Question
+                            </label>
+                            <input
+                                type="text"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                                placeholder="What would you like to ask?"
+                                className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                Description (optional)
+                            </label>
+                            <input
+                                type="text"
+                                value={newDescription}
+                                onChange={(e) => setNewDescription(e.target.value)}
+                                placeholder="Add more context..."
+                                className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                Options
+                            </label>
+                            <div className="space-y-2">
+                                {newOptions.map((option, index) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <input
+                                            type="text"
+                                            value={option}
+                                            onChange={(e) => {
+                                                const updated = [...newOptions]
+                                                updated[index] = e.target.value
+                                                setNewOptions(updated)
+                                            }}
+                                            placeholder={`Option ${index + 1}`}
+                                            className="flex-1 px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        />
+                                        {newOptions.length > 2 && (
+                                            <button
+                                                onClick={() => removeOption(index)}
+                                                className="p-2 text-text-light hover:text-red-500 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            {newOptions.length < 10 && (
+                                <button
+                                    onClick={addOption}
+                                    className="mt-2 text-sm text-primary hover:underline"
+                                >
+                                    + Add Option
+                                </button>
+                            )}
+                        </div>
+
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={isMultiple}
+                                onChange={(e) => setIsMultiple(e.target.checked)}
+                                className="rounded border-gray-300 text-primary focus:ring-primary"
+                            />
+                            <span className="text-sm text-text dark:text-dark-text">
+                                Allow multiple selections
+                            </span>
+                        </label>
+
+                        <div className="flex justify-end gap-3 pt-2">
+                            <button
+                                onClick={() => setIsCreating(false)}
+                                className="btn btn-ghost"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCreatePoll}
+                                disabled={submitting}
+                                className="btn btn-primary"
+                            >
+                                {submitting ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    'Create Poll'
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Results Modal */}
+            {showResults && (
+                <PollResultsModal
+                    poll={localPolls.find(p => p.id === showResults)!}
+                    onClose={() => setShowResults(null)}
+                />
+            )}
+
+            {/* Polls List */}
+            <div className="space-y-6">
+                {localPolls.length > 0 ? (
+                    localPolls.map((poll) => (
+                        <PollCard
+                            key={poll.id}
+                            poll={poll}
+                            userVote={localVotes[poll.id]}
+                            onVote={(optionIds) => handleVote(poll.id, optionIds)}
+                            onShowResults={() => setShowResults(poll.id)}
+                            onEdit={() => setEditingPoll(poll)}
+                            onDelete={() => handleDeletePoll(poll.id)}
+                            onClose={() => handleClosePoll(poll.id)}
+                            isVoting={votingPollId === poll.id}
+                            isDeleting={deletingPollId === poll.id}
+                            isLoggedIn={!!userId}
+                            isAuthor={userId === poll.author_id}
+                        />
+                    ))
+                ) : (
+                    <div className="text-center py-16 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
+                        <Vote className="w-12 h-12 mx-auto text-gray-300 dark:text-dark-text-muted mb-4" />
+                        <h3 className="font-semibold text-text dark:text-dark-text mb-2">
+                            No polls yet
+                        </h3>
+                        <p className="text-text-light dark:text-dark-text-muted mb-4">
+                            Be the first to create a poll!
+                        </p>
+                        <button
+                            onClick={() => setIsCreating(true)}
+                            className="btn btn-outline"
+                        >
+                            Create Poll
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
+
+// Poll Results Modal
+function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }) {
+    const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote_count, 0)
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+            <div className="bg-white dark:bg-dark-surface rounded-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+                <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                        <div>
+                            <h2 className="text-lg font-semibold text-text dark:text-dark-text">
+                                Poll Results
+                            </h2>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                {totalVotes} total votes
+                            </p>
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="p-2 text-text-light hover:text-text dark:hover:text-dark-text transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <h3 className="font-medium text-text dark:text-dark-text mb-4">
+                        {poll.question}
+                    </h3>
+
+                    <div className="space-y-3">
+                        {poll.options
+                            .sort((a, b) => b.vote_count - a.vote_count)
+                            .map((option, index) => {
+                                const percentage = totalVotes > 0
+                                    ? Math.round((option.vote_count / totalVotes) * 100)
+                                    : 0
+
+                                return (
+                                    <div key={option.id}>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="text-sm text-text dark:text-dark-text flex items-center gap-2">
+                                                {index === 0 && totalVotes > 0 && (
+                                                    <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
+                                                        Leading
+                                                    </span>
+                                                )}
+                                                {option.text}
+                                            </span>
+                                            <span className="text-sm font-medium text-text-light dark:text-dark-text-muted">
+                                                {option.vote_count} ({percentage}%)
+                                            </span>
+                                        </div>
+                                        <div className="h-3 bg-gray-100 dark:bg-dark-bg rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
+                                                style={{ width: `${percentage}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Individual Poll Card Component
+interface PollCardProps {
+    poll: Poll
+    userVote?: string[]
+    onVote: (optionIds: string[]) => void
+    onShowResults: () => void
+    onEdit: () => void
+    onDelete: () => void
+    onClose: () => void
+    isVoting: boolean
+    isDeleting: boolean
+    isLoggedIn: boolean
+    isAuthor: boolean
+}
+
+function PollCard({
+    poll,
+    userVote,
+    onVote,
+    onShowResults,
+    onEdit,
+    onDelete,
+    onClose,
+    isVoting,
+    isDeleting,
+    isLoggedIn,
+    isAuthor
+}: PollCardProps) {
+    const [selectedOptions, setSelectedOptions] = useState<string[]>(userVote || [])
+    const [showMenu, setShowMenu] = useState(false)
+    const [confirmDelete, setConfirmDelete] = useState(false)
+    const [showShareDialog, setShowShareDialog] = useState(false)
+    const hasVoted = !!userVote
+    const canShowResults = hasVoted || poll.show_results_before_vote
+
+    const handleOptionClick = (optionId: string) => {
+        if (hasVoted || !poll.is_active) return
+
+        if (poll.is_multiple_choice) {
+            setSelectedOptions(prev =>
+                prev.includes(optionId)
+                    ? prev.filter(id => id !== optionId)
+                    : [...prev, optionId]
+            )
+        } else {
+            setSelectedOptions([optionId])
+        }
+    }
+
+    const handleSubmitVote = () => {
+        if (selectedOptions.length > 0) {
+            onVote(selectedOptions)
+        }
+    }
+
+    const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote_count, 0)
+
+    return (
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
+            <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-lg font-semibold text-text dark:text-dark-text">
+                            {poll.question}
+                        </h3>
+                        {!poll.is_active && (
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 rounded-full">
+                                Closed
+                            </span>
+                        )}
+                    </div>
+                    {poll.description && (
+                        <p className="text-text-light dark:text-dark-text-muted text-sm">
+                            {poll.description}
+                        </p>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    {poll.is_multiple_choice && !hasVoted && poll.is_active && (
+                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
+                            Multiple choice
+                        </span>
+                    )}
+                    {isAuthor && (
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowMenu(!showMenu)}
+                                className="p-2 text-text-light hover:text-text dark:hover:text-dark-text transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border"
+                            >
+                                <MoreVertical className="w-4 h-4" />
+                            </button>
+                            {showMenu && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setShowMenu(false)}
+                                    />
+                                    <div className="absolute right-0 top-full mt-1 z-20 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg py-1 min-w-[140px]">
+                                        <button
+                                            onClick={() => {
+                                                setShowShareDialog(true)
+                                                setShowMenu(false)
+                                            }}
+                                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
+                                        >
+                                            <Share2 className="w-4 h-4" />
+                                            Share
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                onShowResults()
+                                                setShowMenu(false)
+                                            }}
+                                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
+                                        >
+                                            <BarChart2 className="w-4 h-4" />
+                                            View Results
+                                        </button>
+                                        {poll.total_votes === 0 && (
+                                            <button
+                                                onClick={() => {
+                                                    onEdit()
+                                                    setShowMenu(false)
+                                                }}
+                                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
+                                            >
+                                                <Edit className="w-4 h-4" />
+                                                Edit Poll
+                                            </button>
+                                        )}
+                                        {poll.is_active && (
+                                            <button
+                                                onClick={() => {
+                                                    onClose()
+                                                    setShowMenu(false)
+                                                }}
+                                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-amber-600 hover:bg-gray-100 dark:hover:bg-dark-border"
+                                            >
+                                                <XCircle className="w-4 h-4" />
+                                                Close Poll
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => {
+                                                setConfirmDelete(true)
+                                                setShowMenu(false)
+                                            }}
+                                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-dark-border"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Delete Confirmation */}
+            {confirmDelete && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-red-700 dark:text-red-300 mb-3">
+                        Are you sure you want to delete this poll? This action cannot be undone.
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setConfirmDelete(false)}
+                            className="btn btn-ghost btn-sm"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => {
+                                onDelete()
+                                setConfirmDelete(false)
+                            }}
+                            disabled={isDeleting}
+                            className="btn btn-sm bg-red-500 hover:bg-red-600 text-white"
+                        >
+                            {isDeleting ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                'Delete'
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Options */}
+            <div className="space-y-2 mb-4">
+                {poll.options.map((option) => {
+                    const percentage = totalVotes > 0
+                        ? Math.round((option.vote_count / totalVotes) * 100)
+                        : 0
+                    const isSelected = selectedOptions.includes(option.id)
+                    const wasVotedFor = userVote?.includes(option.id)
+
+                    return (
+                        <button
+                            key={option.id}
+                            onClick={() => handleOptionClick(option.id)}
+                            disabled={hasVoted || isVoting || !poll.is_active}
+                            className={`
+                                w-full relative text-left p-3 rounded-lg border transition-all
+                                ${!poll.is_active
+                                    ? 'cursor-default opacity-70'
+                                    : hasVoted
+                                        ? 'cursor-default'
+                                        : isSelected
+                                            ? 'border-primary bg-primary/5'
+                                            : 'border-gray-200 dark:border-dark-border hover:border-primary/50'
+                                }
+                            `}
+                        >
+                            {/* Progress bar background */}
+                            {canShowResults && (
+                                <div
+                                    className={`absolute inset-0 rounded-lg transition-all ${wasVotedFor
+                                        ? 'bg-primary/20'
+                                        : 'bg-gray-100 dark:bg-dark-border/50'
+                                        }`}
+                                    style={{ width: `${percentage}%` }}
+                                />
+                            )}
+
+                            <div className="relative flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    {!hasVoted && poll.is_active && (
+                                        <div className={`
+                                            w-5 h-5 rounded-full border-2 flex items-center justify-center
+                                            ${isSelected
+                                                ? 'border-primary bg-primary text-white'
+                                                : 'border-gray-300 dark:border-dark-border'
+                                            }
+                                        `}>
+                                            {isSelected && <Check className="w-3 h-3" />}
+                                        </div>
+                                    )}
+                                    {wasVotedFor && (
+                                        <Check className="w-4 h-4 text-primary" />
+                                    )}
+                                    <span className="text-text dark:text-dark-text">
+                                        {option.text}
+                                    </span>
+                                </div>
+                                {canShowResults && (
+                                    <span className="text-sm font-medium text-text-light dark:text-dark-text-muted">
+                                        {percentage}%
+                                    </span>
+                                )}
+                            </div>
+                        </button>
+                    )
+                })}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-dark-border">
+                <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
+                    <span className="flex items-center gap-1.5">
+                        <Users className="w-4 h-4" />
+                        {totalVotes} vote{totalVotes !== 1 ? 's' : ''}
+                    </span>
+                    {poll.author && (
+                        <span>
+                            by {poll.author.name || poll.author.email?.split('@')[0]}
+                        </span>
+                    )}
+                    <span className="flex items-center gap-1.5">
+                        <Clock className="w-4 h-4" />
+                        {formatDistanceToNow(new Date(poll.created_at), { addSuffix: true })}
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    {hasVoted && (
+                        <button
+                            onClick={onShowResults}
+                            className="btn btn-ghost btn-sm flex items-center gap-1"
+                        >
+                            <BarChart2 className="w-4 h-4" />
+                            Results
+                        </button>
+                    )}
+
+                    {!hasVoted && isLoggedIn && poll.is_active && selectedOptions.length > 0 && (
+                        <button
+                            onClick={handleSubmitVote}
+                            disabled={isVoting}
+                            className="btn btn-primary btn-sm"
+                        >
+                            {isVoting ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                'Vote'
+                            )}
+                        </button>
+                    )}
+
+                    {!isLoggedIn && !hasVoted && poll.is_active && (
+                        <span className="text-sm text-text-light dark:text-dark-text-muted">
+                            Log in to vote
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            <ShareDialog
+                isOpen={showShareDialog}
+                onClose={() => setShowShareDialog(false)}
+                type="poll"
+                id={poll.id}
+                title={poll.question}
+                currentToken={poll.public_token}
+                isPublic={poll.allow_public_responses}
+            />
+        </div>
+    )
+}
