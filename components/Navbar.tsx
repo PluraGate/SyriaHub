@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
 import { useRouter } from 'next/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
@@ -137,6 +137,7 @@ export function Navbar({ user }: NavbarProps) {
               <NavLink href="/feed">{t('feed')}</NavLink>
               <NavLink href="/explore">{t('explore')}</NavLink>
               <NavLink href="/resources">{t('resources')}</NavLink>
+              <NavLink href="/research-lab">Research Lab</NavLink>
               <NavLink href="/events">{t('events')}</NavLink>
             </div>
 
@@ -278,6 +279,14 @@ export function Navbar({ user }: NavbarProps) {
               onClick={() => setIsMenuOpen(false)}
             >
               {t('resources')}
+            </Link>
+            <Link
+              href="/research-lab"
+              className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <FlaskConical className="w-4 h-4" />
+              Research Lab
             </Link>
             <Link
               href="/events"
