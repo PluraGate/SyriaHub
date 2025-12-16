@@ -260,7 +260,7 @@ function ExplorePageContent() {
             </div>
           ) : (
             <>
-              {/* Trending Posts - Bento Grid */}
+              {/* Trending Posts - Bento Grid (Remains Full Width) */}
               {!selectedTag && trendingPosts.length > 0 && (
                 <section className="mb-16">
                   <div className="flex items-center gap-3 mb-8">
@@ -298,133 +298,142 @@ function ExplorePageContent() {
                 </section>
               )}
 
-              {/* Featured Researchers */}
-              {!selectedTag && profiles.length > 0 && (
-                <section className="mb-16">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 bg-secondary/20 rounded-xl flex items-center justify-center">
-                      <Users className="w-5 h-5 text-secondary-dark" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">Featured Researchers</h2>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">Connect with leading minds</p>
-                    </div>
-                  </div>
+              {/* Main Content & Sidebar Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Main Content Column */}
+                <div className="lg:col-span-9 space-y-16">
 
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    {profiles.map((profile) => (
-                      <ProfileCard key={profile.id} profile={profile} />
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Upcoming Events */}
-              {!selectedTag && comingEvents.length > 0 && (
-                <section className="mb-16">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
-                        <Calendar className="w-5 h-5 text-accent" />
+                  {/* Upcoming Events */}
+                  {!selectedTag && comingEvents.length > 0 && (
+                    <section>
+                      <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
+                            <Calendar className="w-5 h-5 text-accent" />
+                          </div>
+                          <div>
+                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">Upcoming Events</h2>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">Don't miss out</p>
+                          </div>
+                        </div>
+                        <Link
+                          href="/events"
+                          className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
+                        >
+                          View all →
+                        </Link>
                       </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-text dark:text-dark-text">Upcoming Events</h2>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted">Don't miss out</p>
+
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {comingEvents.map((event) => (
+                          <MagazineCard key={event.id} post={event} variant="standard" />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Research Groups */}
+                  {!selectedTag && recommendedGroups.length > 0 && (
+                    <section>
+                      <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                            <Sparkles className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">Research Groups</h2>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">Join collaborative communities</p>
+                          </div>
+                        </div>
+                        <Link
+                          href="/groups"
+                          className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
+                        >
+                          View all →
+                        </Link>
+                      </div>
+
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {recommendedGroups.slice(0, 3).map((group) => (
+                          <GroupCard key={group.id} group={group} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* All Research */}
+                  <section>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-dark-surface rounded-xl flex items-center justify-center">
+                          <BookOpen className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-text dark:text-dark-text">
+                            {selectedTag ? `${selectedTag} Research` : 'Latest Research'}
+                          </h2>
+                          <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            {posts.length} publications
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Sort */}
+                      <div className="relative">
+                        <select
+                          value={sortBy}
+                          onChange={(e) => setSortBy(e.target.value as SortOption)}
+                          className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer"
+                        >
+                          <option value="recent">Most Recent</option>
+                          <option value="trending">Trending</option>
+                          <option value="cited">Most Cited</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
                       </div>
                     </div>
-                    <Link
-                      href="/events"
-                      className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
-                    >
-                      View all →
-                    </Link>
-                  </div>
 
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {comingEvents.map((event) => (
-                      <MagazineCard key={event.id} post={event} variant="standard" />
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Research Groups */}
-              {!selectedTag && recommendedGroups.length > 0 && (
-                <section className="mb-16">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-primary" />
+                    {posts.length > 0 ? (
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {posts.map((post) => (
+                          <MagazineCard key={post.id} post={post} variant="standard" />
+                        ))}
                       </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-text dark:text-dark-text">Research Groups</h2>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted">Join collaborative communities</p>
+                    ) : (
+                      <div className="text-center py-16 bg-gray-50 dark:bg-dark-surface rounded-2xl">
+                        <BookOpen className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
+                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No research found</h3>
+                        <p className="text-text-light dark:text-dark-text-muted">
+                          {selectedTag ? `No posts found for "${selectedTag}"` : 'No posts available yet.'}
+                        </p>
                       </div>
-                    </div>
-                    <Link
-                      href="/groups"
-                      className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
-                    >
-                      View all →
-                    </Link>
-                  </div>
-
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {recommendedGroups.slice(0, 3).map((group) => (
-                      <GroupCard key={group.id} group={group} />
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* All Research */}
-              <section>
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 dark:bg-dark-surface rounded-xl flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">
-                        {selectedTag ? `${selectedTag} Research` : 'Latest Research'}
-                      </h2>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">
-                        {posts.length} publications
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Sort */}
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as SortOption)}
-                      className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer"
-                    >
-                      <option value="recent">Most Recent</option>
-                      <option value="trending">Trending</option>
-                      <option value="cited">Most Cited</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
-                  </div>
+                    )}
+                  </section>
                 </div>
 
-                {posts.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {posts.map((post) => (
-                      <MagazineCard key={post.id} post={post} variant="standard" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16 bg-gray-50 dark:bg-dark-surface rounded-2xl">
-                    <BookOpen className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
-                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No research found</h3>
-                    <p className="text-text-light dark:text-dark-text-muted">
-                      {selectedTag ? `No posts found for "${selectedTag}"` : 'No posts available yet.'}
-                    </p>
-                  </div>
-                )}
-              </section>
+                {/* Sidebar Column */}
+                <div className="lg:col-span-3 space-y-8">
+                  {/* Featured Researchers - Vertical List */}
+                  {!selectedTag && profiles.length > 0 && (
+                    <section className="bg-white dark:bg-dark-surface p-6 rounded-2xl border border-gray-100 dark:border-dark-border sticky top-24">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-secondary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Users className="w-5 h-5 text-secondary-dark" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-bold text-text dark:text-dark-text leading-tight">Featured Researchers</h2>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        {profiles.map((profile) => (
+                          <ProfileCard key={profile.id} profile={profile} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                </div>
+              </div>
             </>
           )}
         </div>

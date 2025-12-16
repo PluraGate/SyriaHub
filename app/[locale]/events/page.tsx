@@ -67,7 +67,7 @@ export default async function EventsPage() {
                         <div className="grid gap-6">
                             {upcomingEvents.length > 0 ? (
                                 upcomingEvents.map((event) => (
-                                    <EventCard key={event.id} event={event} />
+                                    <EventCard key={event.id} event={event} currentUser={user} />
                                 ))
                             ) : (
                                 <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
@@ -88,7 +88,7 @@ export default async function EventsPage() {
 
                             <div className="grid gap-6 opacity-70 hover:opacity-100 transition-opacity">
                                 {pastEvents.map((event) => (
-                                    <EventCard key={event.id} event={event} />
+                                    <EventCard key={event.id} event={event} currentUser={user} />
                                 ))}
                             </div>
                         </section>
