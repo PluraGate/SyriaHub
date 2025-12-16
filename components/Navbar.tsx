@@ -120,7 +120,7 @@ export function Navbar({ user }: NavbarProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-2 group focus-ring rounded-lg px-2 py-1 -ml-2"
+            className="flex items-center space-x-2 group focus-ring rounded-lg px-2 py-1 -ml-2 shrink-0"
             aria-label={tCommon('appTitle')}
           >
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
@@ -132,18 +132,19 @@ export function Navbar({ user }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <div className="flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-4 flex-1 min-w-0 justify-end">
+            {/* Nav links - can shrink/hide on smaller screens */}
+            <div className="hidden lg:flex items-center gap-1 shrink min-w-0">
               <NavLink href="/feed">{t('feed')}</NavLink>
               <NavLink href="/explore">{t('explore')}</NavLink>
               <NavLink href="/resources">{t('resources')}</NavLink>
-              <NavLink href="/research-lab">Research Lab</NavLink>
               <NavLink href="/events">{t('events')}</NavLink>
             </div>
 
-            <div className="h-6 w-px bg-gray-200 dark:bg-dark-border" />
+            <div className="hidden lg:block h-6 w-px bg-gray-200 dark:bg-dark-border shrink-0" />
 
-            <div className="flex items-center gap-3">
+            {/* Action items - never shrink */}
+            <div className="flex items-center gap-3 shrink-0">
               <SearchBar />
 
               <LanguageSwitcher />
@@ -160,7 +161,14 @@ export function Navbar({ user }: NavbarProps) {
                 <>
                   <NotificationBell />
 
-                  <Link href="/editor">
+                  <Link href="/research-lab" className="shrink-0">
+                    <Button variant="outline" size="sm" className="gap-2 font-medium whitespace-nowrap">
+                      <FlaskConical className="w-4 h-4" />
+                      Research Lab
+                    </Button>
+                  </Link>
+
+                  <Link href="/editor" className="shrink-0">
                     <Button size="sm" className="gap-2 font-medium shadow-sm">
                       <PenSquare className="w-4 h-4" />
                       Write
@@ -169,7 +177,7 @@ export function Navbar({ user }: NavbarProps) {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 ml-2 focus-ring rounded-full">
+                      <button className="flex items-center gap-2 ml-2 focus-ring rounded-full shrink-0">
                         <Avatar className="w-8 h-8 border border-gray-200 dark:border-dark-border transition-transform hover:scale-105">
                           <AvatarImage src={userAvatar} alt={userName} />
                           <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">

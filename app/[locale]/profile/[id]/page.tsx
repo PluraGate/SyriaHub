@@ -74,7 +74,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   const isOwnProfile = user?.id === params.id
 
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-bg">
+    <div className="min-h-screen bg-background dark:bg-dark-bg overflow-x-hidden">
       <Navbar user={user} />
 
       {/* Back Navigation */}

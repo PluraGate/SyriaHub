@@ -1,60 +1,79 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
-import { PostCard } from '@/components/PostCard'
+import { SavedItemsManager } from '@/components/SavedItemsManager'
 import { Bookmark } from 'lucide-react'
-import Link from 'next/link'
 
 export const metadata = {
-    title: 'Saved Posts | Syrealize',
-    description: 'Your saved posts for later reference',
+    title: 'Saved | Syrealize',
+    description: 'Your saved posts, events, and web references',
+}
+
+async function getSavedContent(userId: string, supabase: any) {
+    // Get bookmarked posts
+    const { data: bookmarks, error: bookmarksError } = await supabase
+        .from('bookmarks')
+        .select(`
+            id,
+            created_at,
+            post:posts(
+                id,
+                title,
+                content,
+                tags,
+                status,
+                created_at,
+                updated_at,
+                author_id,
+                author:users!posts_author_id_fkey(id, name, email)
+            )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+    if (bookmarksError) {
+        console.error('Error fetching bookmarks:', bookmarksError.message)
+    }
+
+    // Get saved web references
+    const { data: references, error: referencesError } = await supabase
+        .from('saved_references')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+    if (referencesError) {
+        console.error('Error fetching references:', referencesError.message)
+    }
+
+    // Get saved events (from event_rsvps with status 'saved' or bookmarks linking to events)
+    // For now, keeping events empty - can be extended when events bookmarking is added
+    const events: any[] = []
+
+    return {
+        bookmarks: bookmarks || [],
+        references: references || [],
+        events
+    }
 }
 
 export default async function SavedPage() {
     const supabase = await createClient()
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
         redirect('/login')
     }
 
-    // Get bookmarked posts
-    const { data: bookmarks, error } = await supabase
-        .from('bookmarks')
-        .select(`
-      id,
-      created_at,
-      post:posts(
-        id,
-        title,
-        content,
-        tags,
-        status,
-        created_at,
-        updated_at,
-        author_id,
-        author:users!posts_author_id_fkey(id, name, email)
-      )
-    `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+    const { bookmarks, references, events } = await getSavedContent(user.id, supabase)
 
-    if (error) {
-        console.error('Error fetching bookmarks:', error.message, error.code, error.details)
-    }
-
-    // Filter out any null posts and format the data, add default values for missing fields
-    const savedPosts = (bookmarks || [])
+    // Transform bookmarks to posts format with bookmark_id for removal
+    const savedPosts = bookmarks
         .filter((b: any) => b.post)
         .map((b: any) => ({
             ...b.post,
-            comment_count: 0, // Will be computed separately if needed
-            citation_count: 0,
-            license: null,
-            forked_from_id: null
+            bookmark_id: b.id,
+            created_at: b.created_at // Use bookmark date for sorting
         }))
 
     return (
@@ -64,44 +83,26 @@ export default async function SavedPage() {
             <main className="flex-1 section pt-20 md:pt-24">
                 <div className="container-custom max-w-4xl">
                     {/* Header */}
-                    <div className="flex items-center gap-3 mb-8">
+                    <div className="flex items-center gap-3 mb-6">
                         <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-surface">
                             <Bookmark className="w-5 h-5 text-text dark:text-dark-text" />
                         </div>
                         <div>
                             <h1 className="text-2xl font-display font-semibold text-primary dark:text-dark-text">
-                                Saved Posts
+                                Saved Items
                             </h1>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                {savedPosts.length} saved for later
+                                {savedPosts.length + references.length + events.length} items saved
                             </p>
                         </div>
                     </div>
 
-                    {/* Saved Posts Grid */}
-                    {savedPosts.length > 0 ? (
-                        <div className="space-y-6">
-                            {savedPosts.map((post: any) => (
-                                <PostCard key={post.id} post={post} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-16">
-                            <Bookmark className="w-12 h-12 mx-auto text-gray-300 dark:text-dark-border mb-4" />
-                            <h2 className="text-lg font-medium text-text dark:text-dark-text mb-2">
-                                No saved posts yet
-                            </h2>
-                            <p className="text-text-light dark:text-dark-text-muted mb-6">
-                                Click the bookmark icon on any post to save it for later.
-                            </p>
-                            <Link
-                                href="/feed"
-                                className="btn btn-primary"
-                            >
-                                Explore Posts
-                            </Link>
-                        </div>
-                    )}
+                    {/* Saved Items Manager (Client Component) */}
+                    <SavedItemsManager
+                        posts={savedPosts}
+                        references={references}
+                        events={events}
+                    />
                 </div>
             </main>
         </div>

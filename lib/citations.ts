@@ -390,3 +390,161 @@ export function downloadCitation(data: CitationData, format: CitationFormat): vo
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
 }
+
+// ==================== Platform Citations ====================
+
+/**
+ * Generate a query hash for reproducible citations
+ * Creates a stable identifier for a specific search query and filters
+ */
+export function generateQueryHash(query: string, filters: Record<string, any>, timestamp: number): string {
+    const data = JSON.stringify({ query, filters, timestamp })
+    let hash = 0
+    for (let i = 0; i < data.length; i++) {
+        const char = data.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36).substring(0, 8).toUpperCase()
+}
+
+/**
+ * Web reference data for external sources
+ */
+export interface WebReferenceData {
+    title: string
+    url: string
+    source: string
+    snippet?: string
+    accessDate?: string
+}
+
+/**
+ * Generate SyriaHub Platform citation for web references
+ * Format: Title. (Source). Retrieved via SyriaHub Research Platform [SH-HASH]. Access date: Date. URL
+ */
+export function generatePlatformCitation(
+    data: WebReferenceData,
+    queryHash?: string,
+    searchQuery?: string
+): string {
+    const accessDate = data.accessDate || new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
+    const hashPart = queryHash ? ` [SH-${queryHash}]` : ''
+    const queryPart = searchQuery ? ` Search: "${searchQuery}".` : ''
+
+    return `${data.title}. (${data.source || 'Web'}).${queryPart} Retrieved via SyriaHub Research Platform${hashPart}. Access date: ${accessDate}. ${data.url}`
+}
+
+/**
+ * Generate APA-style web citation
+ */
+export function generateWebAPA(data: WebReferenceData): string {
+    const accessDate = data.accessDate || new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
+    const author = data.source || 'Unknown Author'
+
+    return `${author}. (n.d.). ${data.title}. Retrieved ${accessDate}, from ${data.url}`
+}
+
+/**
+ * Generate Chicago-style web citation
+ */
+export function generateWebChicago(data: WebReferenceData): string {
+    const accessDate = data.accessDate || new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
+    const author = data.source || 'Unknown Author'
+
+    return `${author}. "${data.title}." Accessed ${accessDate}. ${data.url}.`
+}
+
+/**
+ * Generate all citation formats for a web reference
+ */
+export function generateWebCitations(
+    data: WebReferenceData,
+    queryHash?: string,
+    searchQuery?: string
+): {
+    apa: string
+    chicago: string
+    platform: string
+} {
+    return {
+        apa: generateWebAPA(data),
+        chicago: generateWebChicago(data),
+        platform: generatePlatformCitation(data, queryHash, searchQuery)
+    }
+}
+
+// ==================== Reproducible Share Links ====================
+
+/**
+ * Generate a reproducible share link with encoded parameters
+ * Allows other researchers to reproduce the exact same search
+ */
+export function generateShareableLink(
+    baseUrl: string,
+    params: {
+        query: string
+        source?: 'internal' | 'web' | 'all'
+        disciplines?: string[]
+        evidenceTiers?: string[]
+        minTrust?: number
+        date?: string
+    }
+): string {
+    const searchParams = new URLSearchParams()
+
+    searchParams.set('q', params.query)
+    if (params.source) searchParams.set('src', params.source)
+    if (params.disciplines?.length) searchParams.set('disc', params.disciplines.join(','))
+    if (params.evidenceTiers?.length) searchParams.set('tier', params.evidenceTiers.join(','))
+    if (params.minTrust) searchParams.set('trust', params.minTrust.toString())
+    if (params.date) searchParams.set('dt', params.date)
+    searchParams.set('ts', Date.now().toString())
+
+    return `${baseUrl}?${searchParams.toString()}`
+}
+
+/**
+ * Parse a shareable link back to search parameters
+ */
+export function parseShareableLink(url: string): {
+    query: string
+    source?: 'internal' | 'web' | 'all'
+    disciplines?: string[]
+    evidenceTiers?: string[]
+    minTrust?: number
+    date?: string
+    timestamp?: number
+} | null {
+    try {
+        const urlObj = new URL(url)
+        const params = urlObj.searchParams
+
+        const query = params.get('q')
+        if (!query) return null
+
+        return {
+            query,
+            source: params.get('src') as 'internal' | 'web' | 'all' | undefined,
+            disciplines: params.get('disc')?.split(',').filter(Boolean),
+            evidenceTiers: params.get('tier')?.split(',').filter(Boolean),
+            minTrust: params.get('trust') ? parseInt(params.get('trust')!) : undefined,
+            date: params.get('dt') || undefined,
+            timestamp: params.get('ts') ? parseInt(params.get('ts')!) : undefined
+        }
+    } catch {
+        return null
+    }
+}
