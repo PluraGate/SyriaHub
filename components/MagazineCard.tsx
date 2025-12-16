@@ -2,8 +2,8 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { cn, stripMarkdown } from '@/lib/utils'
-import { Clock, Bookmark, Eye } from 'lucide-react'
+import { cn, stripMarkdown, getInitials, getAvatarGradient } from '@/lib/utils'
+import { Clock, Bookmark, Eye, Calendar } from 'lucide-react'
 
 export type MagazineCardVariant = 'featured' | 'standard' | 'compact' | 'horizontal'
 
@@ -24,6 +24,12 @@ interface MagazineCardProps {
         views?: number
         cover_image_url?: string | null
         content_type?: string | null
+        metadata?: {
+            start_time?: string
+            end_time?: string
+            location?: string
+            status?: string
+        } | null
     }
     variant?: MagazineCardVariant
     className?: string
@@ -53,25 +59,11 @@ function formatRelativeTime(dateString: string): string {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// Get author initials for avatar fallback
-function getInitials(name?: string, email?: string): string {
-    if (name) {
-        return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    }
-    if (email) {
-        return email[0].toUpperCase()
-    }
-    return 'U'
-}
-
-// Avatar gradient based on ID
-function getAvatarGradient(id: string): string {
-    const gradients = [
-        'avatar-gradient-1', 'avatar-gradient-2', 'avatar-gradient-3', 'avatar-gradient-4',
-        'avatar-gradient-5', 'avatar-gradient-6', 'avatar-gradient-7', 'avatar-gradient-8',
-    ]
-    const index = id ? id.charCodeAt(0) % gradients.length : 0
-    return gradients[index]
+// Format event date
+function formatEventDate(dateString?: string): string {
+    if (!dateString) return 'Date TBD'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function MagazineCard({
@@ -82,6 +74,8 @@ export function MagazineCard({
     showImage = true,
 }: MagazineCardProps) {
     const readingTime = getReadingTime(post.content)
+    const isEvent = post.content_type === 'event'
+    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time) : ''
     const rawExcerpt = post.excerpt || post.content || ''
     const excerpt = stripMarkdown(rawExcerpt).substring(0, 150).trim() + (rawExcerpt.length > 150 ? '...' : '')
 
@@ -144,10 +138,17 @@ export function MagazineCard({
                                 <span>{post.author.name || post.author.email?.split('@')[0]}</span>
                             </div>
                         )}
-                        <div className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>{readingTime} min read</span>
-                        </div>
+                        {isEvent ? (
+                            <div className="flex items-center gap-1 text-white bg-primary/20 backdrop-blur-sm px-2 py-0.5 rounded-full border border-primary/30">
+                                <Calendar className="w-3.5 h-3.5 text-primary-light" />
+                                <span className="text-primary-light font-medium">{eventDate}</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-1">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>{readingTime} min read</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </Link>
@@ -269,6 +270,14 @@ export function MagazineCard({
                             <Bookmark className="w-4 h-4 text-text dark:text-dark-text" />
                         </div>
                     </div>
+
+                    {/* Event Banner */}
+                    {post.content_type === 'event' && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-sm py-1.5 px-4 flex items-center justify-center gap-2 text-white">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span className="text-xs font-bold uppercase tracking-wide">Event</span>
+                        </div>
+                    )}
                 </div>
             )}
 

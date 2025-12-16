@@ -13,7 +13,7 @@ import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
 import { SearchBar } from '@/components/SearchBar'
-import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X } from 'lucide-react'
+import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
 
 import { Post } from '@/types'
 
@@ -42,6 +42,7 @@ function ExplorePageContent() {
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
   const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
   const [profiles, setProfiles] = useState<any[]>([])
+  const [comingEvents, setComingEvents] = useState<Post[]>([])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -113,13 +114,14 @@ function ExplorePageContent() {
           setRecommendedGroups(groupsWithCounts)
         }
 
-        // Fetch Main Feed Posts
+        // Fetch Main Feed Posts (Exclude events)
         let query = supabase
           .from('posts')
           .select(`
             *,
             author:users!posts_author_id_fkey(id, name, email)
           `)
+          .neq('content_type', 'event') // Exclude events
           .neq('approval_status', 'rejected') // Hide rejected posts
           .order('created_at', { ascending: false })
 
@@ -129,6 +131,21 @@ function ExplorePageContent() {
 
         const { data: postsData } = await query
         setPosts(postsData as Post[] || [])
+
+        // Fetch Events separately (showing 3 upcoming)
+        const { data: eventsData } = await supabase
+          .from('posts')
+          .select(`
+            *,
+            author:users!posts_author_id_fkey(id, name, email)
+          `)
+          .eq('content_type', 'event')
+          .neq('approval_status', 'rejected')
+          .order('metadata->>start_time', { ascending: true }) // Sort by event start time
+          .gt('metadata->>start_time', new Date().toISOString()) // Only future events
+          .limit(3)
+
+        setComingEvents(eventsData as Post[] || [])
 
         // Fetch Profiles
         const { data: profilesData } = await supabase
@@ -297,6 +314,35 @@ function ExplorePageContent() {
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {profiles.map((profile) => (
                       <ProfileCard key={profile.id} profile={profile} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Upcoming Events */}
+              {!selectedTag && comingEvents.length > 0 && (
+                <section className="mb-16">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-text dark:text-dark-text">Upcoming Events</h2>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted">Don't miss out</p>
+                      </div>
+                    </div>
+                    <Link
+                      href="/events"
+                      className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
+                    >
+                      View all →
+                    </Link>
+                  </div>
+
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {comingEvents.map((event) => (
+                      <MagazineCard key={event.id} post={event} variant="standard" />
                     ))}
                   </div>
                 </section>

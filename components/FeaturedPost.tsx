@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { cn, stripMarkdown } from '@/lib/utils'
-import { Clock, ArrowUpRight, TrendingUp } from 'lucide-react'
+import { Clock, ArrowUpRight, TrendingUp, Calendar } from 'lucide-react'
 
 type FeaturedSize = 'large' | 'medium' | 'small'
 
@@ -23,6 +23,13 @@ interface FeaturedPostProps {
         tags?: string[]
         views?: number
         cover_image_url?: string | null
+        content_type?: string | null
+        metadata?: {
+            start_time?: string
+            end_time?: string
+            location?: string
+            status?: string
+        } | null
     }
     size?: FeaturedSize
     showTrending?: boolean
@@ -66,6 +73,13 @@ const accentClasses = {
     },
 }
 
+// Format event date
+function formatEventDate(dateString?: string): string {
+    if (!dateString) return 'Date TBD'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
 export function FeaturedPost({
     post,
     size = 'large',
@@ -75,12 +89,14 @@ export function FeaturedPost({
 }: FeaturedPostProps) {
     const readingTime = getReadingTime(post.content)
     const colors = accentClasses[accentColor]
+    const isEvent = post.content_type === 'event'
+    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time) : ''
 
     // Large variant - full hero-style card
     if (size === 'large') {
         return (
             <Link
-                href={`/post/${post.id}`}
+                href={isEvent ? `/events/${post.id}` : `/post/${post.id}`}
                 className={cn(
                     'group relative flex flex-col justify-end',
                     'h-full min-h-[280px] md:min-h-[350px]',
@@ -128,15 +144,25 @@ export function FeaturedPost({
                             </div>
                         )}
 
-                        {/* Trending badge */}
-                        {showTrending && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-full shadow-sm">
-                                <TrendingUp className="w-3.5 h-3.5 text-white" />
-                                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                    Trending
-                                </span>
-                            </div>
-                        )}
+                        {/* Badges */}
+                        <div className="flex gap-2">
+                            {showTrending && (
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-full shadow-sm">
+                                    <TrendingUp className="w-3.5 h-3.5 text-white" />
+                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                        Trending
+                                    </span>
+                                </div>
+                            )}
+                            {isEvent && (
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-primary rounded-full shadow-sm">
+                                    <Calendar className="w-3.5 h-3.5 text-white" />
+                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                        Event
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Title */}
@@ -168,7 +194,7 @@ export function FeaturedPost({
                                         {post.author.name || post.author.email?.split('@')[0]}
                                     </div>
                                     <div className="text-sm text-white/60">
-                                        {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        {isEvent ? eventDate : new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                     </div>
                                 </div>
                             </div>
@@ -176,10 +202,12 @@ export function FeaturedPost({
 
                         {/* Read more */}
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1.5 text-white/70">
-                                <Clock className="w-4 h-4" />
-                                <span className="text-sm">{readingTime} min read</span>
-                            </div>
+                            {!isEvent && (
+                                <div className="flex items-center gap-1.5 text-white/70">
+                                    <Clock className="w-4 h-4" />
+                                    <span className="text-sm">{readingTime} min read</span>
+                                </div>
+                            )}
                             <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center transition-all group-hover:bg-white group-hover:scale-110">
                                 <ArrowUpRight className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
                             </div>
@@ -194,7 +222,7 @@ export function FeaturedPost({
     if (size === 'medium') {
         return (
             <Link
-                href={`/post/${post.id}`}
+                href={isEvent ? `/events/${post.id}` : `/post/${post.id}`}
                 className={cn(
                     'group relative flex flex-col justify-end',
                     'h-full min-h-[280px]',
@@ -220,19 +248,34 @@ export function FeaturedPost({
 
                 {/* Content */}
                 <div className="relative z-10 p-6 space-y-3">
-                    {post.tags && post.tags.length > 0 && (
-                        <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
-                            {post.tags[0]}
-                        </span>
-                    )}
+                    <div className="flex items-center justify-between">
+                        {post.tags && post.tags.length > 0 && (
+                            <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
+                                {post.tags[0]}
+                            </span>
+                        )}
+                        {isEvent && (
+                            <span className="text-xs font-bold text-white bg-primary/80 backdrop-blur-md px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                Event
+                            </span>
+                        )}
+                    </div>
 
                     <h3 className="text-xl md:text-2xl font-bold text-white leading-tight line-clamp-2">
                         {post.title}
                     </h3>
 
                     <div className="flex items-center gap-4 text-sm text-white/70">
-                        <span>{readingTime} min read</span>
-                        {post.views !== undefined && (
+                        {isEvent ? (
+                            <div className="flex items-center gap-1.5 font-medium text-white">
+                                <Calendar className="w-4 h-4" />
+                                <span>{eventDate}</span>
+                            </div>
+                        ) : (
+                            <span>{readingTime} min read</span>
+                        )}
+
+                        {post.views !== undefined && !isEvent && (
                             <>
                                 <span>•</span>
                                 <span>{post.views} views</span>
@@ -247,7 +290,7 @@ export function FeaturedPost({
     // Small variant - compact card
     return (
         <Link
-            href={`/post/${post.id}`}
+            href={isEvent ? `/events/${post.id}` : `/post/${post.id}`}
             className={cn(
                 'group flex flex-col h-full',
                 'p-5 rounded-xl',
@@ -260,9 +303,9 @@ export function FeaturedPost({
         >
             {/* Category dot */}
             <div className="flex items-center gap-2 mb-3">
-                <div className={cn('w-2 h-2 rounded-full', colors.bg)} />
-                <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
-                    {post.tags?.[0] || 'Research'}
+                <div className={cn('w-2 h-2 rounded-full', isEvent ? 'bg-primary' : colors.bg)} />
+                <span className={cn('text-xs font-semibold uppercase tracking-wider', isEvent ? 'text-primary' : colors.text)}>
+                    {isEvent ? 'Event' : (post.tags?.[0] || 'Research')}
                 </span>
             </div>
 
@@ -271,8 +314,17 @@ export function FeaturedPost({
             </h3>
 
             <div className="mt-4 pt-3 border-t border-gray-100 dark:border-dark-border flex items-center justify-between text-xs text-text-muted dark:text-dark-text-muted">
-                <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                <span>{readingTime} min</span>
+                {isEvent ? (
+                    <div className="flex items-center gap-1.5 text-primary font-medium w-full">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{eventDate}</span>
+                    </div>
+                ) : (
+                    <>
+                        <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        <span>{readingTime} min</span>
+                    </>
+                )}
             </div>
         </Link>
     )

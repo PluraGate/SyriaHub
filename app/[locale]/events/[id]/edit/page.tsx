@@ -24,6 +24,7 @@ interface EventData {
         end_time?: string
         location?: string
         link?: string
+        status?: string
     } | null
 }
 
@@ -35,6 +36,7 @@ export default function EditEventPage() {
     const [endTime, setEndTime] = useState('')
     const [location, setLocation] = useState('')
     const [link, setLink] = useState('')
+    const [status, setStatus] = useState('scheduled')
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [unauthorized, setUnauthorized] = useState(false)
@@ -95,6 +97,7 @@ export default function EditEventPage() {
                 }
                 setLocation(data.metadata.location || '')
                 setLink(data.metadata.link || '')
+                setStatus(data.metadata.status || 'scheduled')
             }
 
             setLoading(false)
@@ -121,7 +124,8 @@ export default function EditEventPage() {
                         start_time: new Date(startTime).toISOString(),
                         end_time: endTime ? new Date(endTime).toISOString() : null,
                         location,
-                        link
+                        link,
+                        status
                     },
                     updated_at: new Date().toISOString()
                 })
@@ -146,6 +150,7 @@ export default function EditEventPage() {
             }
 
             showToast('Event updated and submitted for review.', 'success')
+            router.refresh()
             router.push(`/events/${eventId}`)
         } catch (error: any) {
             console.error('Error updating event:', error)
@@ -281,6 +286,23 @@ export default function EditEventPage() {
                             required
                             className="min-h-[150px]"
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="status">Event Status</Label>
+                        <select
+                            id="status"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <option value="scheduled">Scheduled</option>
+                            <option value="postponed">Postponed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            Update the status if the event has been cancelled or postponed.
+                        </p>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
