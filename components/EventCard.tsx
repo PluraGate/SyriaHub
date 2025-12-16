@@ -1,8 +1,14 @@
+'use client'
+
 import Link from 'next/link'
-import { Calendar, MapPin, Users, Clock, AlertTriangle } from 'lucide-react'
+import { Calendar, MapPin, Users, Clock, AlertTriangle, Trash2, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
 import { getAvatarGradient, getInitials } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { User } from '@supabase/supabase-js'
 
 interface EventMetadata {
     start_time: string
@@ -23,36 +29,140 @@ interface EventPost {
     metadata: EventMetadata
     rsvp_count?: number
     approval_status?: 'pending' | 'approved' | 'rejected'
+    cover_image_url?: string | null
 }
 
 interface EventCardProps {
     event: EventPost
+    currentUser?: User | null
 }
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, currentUser }: EventCardProps) {
+    const router = useRouter()
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false)
+
     const startDate = new Date(event.metadata.start_time)
     const endDate = event.metadata.end_time ? new Date(event.metadata.end_time) : null
     const status = event.metadata.status || 'scheduled'
+    const isAuthor = currentUser?.id === event.author_id
+
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowConfirmation(true)
+    }
+
+    const handleCancelDelete = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowConfirmation(false)
+    }
+
+    const handleConfirmDelete = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setIsDeleting(true)
+        const supabase = createClient()
+
+        try {
+            const { data, error } = await supabase
+                .from('posts')
+                .delete()
+                .eq('id', event.id)
+                .select()
+
+            if (error) {
+                console.error('Error deleting event:', error)
+                alert('Failed to delete event: ' + error.message)
+            } else if (!data || data.length === 0) {
+                alert('Could not delete event. You may not have permission.')
+            } else {
+                router.refresh()
+            }
+        } catch (error: any) {
+            console.error('Error:', error)
+            alert('An error occurred: ' + (error.message || 'Unknown error'))
+        } finally {
+            setIsDeleting(false)
+            setShowConfirmation(false)
+        }
+    }
+
+    if (isDeleting) {
+        return (
+            <div className="card h-[200px] flex items-center justify-center bg-gray-50 dark:bg-dark-surface/50 opacity-50">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-text-light">Deleting...</span>
+                </div>
+            </div>
+        )
+    }
 
     return (
-        <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden">
-            {/* Date Badge */}
+        <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden relative">
+            {/* Delete Button / Confirmation for Author */}
+            {isAuthor && (
+                <div className="absolute top-2 right-2 z-20">
+                    {showConfirmation ? (
+                        <div className="flex items-center gap-1 bg-white dark:bg-dark-surface rounded-full shadow-md border border-gray-200 dark:border-dark-border p-1">
+                            <button
+                                onClick={handleCancelDelete}
+                                className="p-1.5 text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text rounded-full hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
+                                title="Cancel"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={handleConfirmDelete}
+                                className="px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
+                            >
+                                <Trash2 className="w-3 h-3" />
+                                Delete
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleDeleteClick}
+                            className="p-2 text-text-light hover:text-red-600 dark:text-dark-text-muted dark:hover:text-red-400 bg-white/80 dark:bg-dark-surface/80 rounded-full shadow-sm border border-gray-100 dark:border-dark-border hover:border-red-200 dark:hover:border-red-800 transition-colors"
+                            title="Delete Event"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Date Badge with optional background image */}
             <div className={`
-                min-w-[120px] p-6 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-dark-border
+                min-w-[120px] p-6 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-dark-border relative overflow-hidden
                 ${status === 'cancelled' ? 'bg-red-50 dark:bg-red-900/10' :
                     status === 'postponed' ? 'bg-amber-50 dark:bg-amber-900/10' :
                         'bg-primary/5 dark:bg-primary/10'}
             `}>
-                <span className={`text-sm font-bold uppercase tracking-wider ${status === 'cancelled' ? 'text-red-600 dark:text-red-400' :
-                        status === 'postponed' ? 'text-amber-600 dark:text-amber-400' :
-                            'text-primary'
+                {/* Background image with overlay */}
+                {event.cover_image_url && (
+                    <>
+                        <img
+                            src={event.cover_image_url}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover opacity-40"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
+                    </>
+                )}
+                <span className={`relative z-10 text-sm font-bold uppercase tracking-wider ${status === 'cancelled' ? 'text-red-600 dark:text-red-400' :
+                    status === 'postponed' ? 'text-amber-600 dark:text-amber-400' :
+                        event.cover_image_url ? 'text-white' : 'text-primary'
                     }`}>
                     {status === 'scheduled' ? format(startDate, 'MMM') : status}
                 </span>
-                <span className="text-3xl font-bold text-text dark:text-dark-text my-1">
+                <span className={`relative z-10 text-3xl font-bold my-1 ${event.cover_image_url ? 'text-white drop-shadow-md' : 'text-text dark:text-dark-text'}`}>
                     {format(startDate, 'd')}
                 </span>
-                <span className="text-sm text-text-light dark:text-dark-text-muted">
+                <span className={`relative z-10 text-sm ${event.cover_image_url ? 'text-white/80' : 'text-text-light dark:text-dark-text-muted'}`}>
                     {format(startDate, 'yyyy')}
                 </span>
             </div>

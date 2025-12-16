@@ -4,11 +4,12 @@ import { Footer } from '@/components/Footer'
 import { CommentsSection } from '@/components/CommentsSection'
 import { RsvpButton } from '@/components/RsvpButton'
 import { notFound } from 'next/navigation'
-import { Calendar, MapPin, Clock, Link as LinkIcon, Users, Edit } from 'lucide-react'
+import { Calendar, MapPin, Clock, Link as LinkIcon, Users } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
 import { RejectionBanner } from '@/components/RejectionBanner'
+import { EventActions } from '@/components/EventActions'
 import { getAvatarGradient, getInitials } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -172,15 +173,10 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                     <div className="space-y-6">
                         {/* RSVP Card */}
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 sticky top-24">
-                            {user?.id === event.author_id && (
-                                <Link
-                                    href={`/events/${id}/edit`}
-                                    className="flex items-center justify-center gap-2 w-full mb-6 px-4 py-2 bg-secondary/10 text-secondary-dark rounded-lg hover:bg-secondary/20 transition-colors font-medium"
-                                >
-                                    <Edit className="w-4 h-4" />
-                                    Edit Event
-                                </Link>
-                            )}
+                            <EventActions
+                                eventId={id}
+                                isAuthor={user?.id === event.author_id}
+                            />
 
                             <h3 className="text-lg font-bold text-text dark:text-dark-text mb-4">
                                 Are you going?
