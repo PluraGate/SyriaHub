@@ -1,6 +1,6 @@
 // Database types for SyriaHub platform
 
-export type UserRole = 'researcher' | 'moderator' | 'admin'
+export type UserRole = 'member' | 'researcher' | 'moderator' | 'admin'
 export type ReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed'
 
 export interface User {

@@ -2,7 +2,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { EditProfileDialog } from './EditProfileDialog'
 import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
-import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote } from 'lucide-react'
+import { UserLevelBadge } from './UserLevelBadge'
+import { getTierFromLevel } from '@/lib/gamification'
+import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap } from 'lucide-react'
 import { format } from 'date-fns'
 import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
@@ -66,7 +68,8 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
             <div
                 className={cn(
                     "relative h-48 md:h-56 w-full",
-                    !hasCoverImage && "bg-gradient-to-br from-primary via-primary-dark to-secondary"
+                    "relative h-48 md:h-56 w-full bg-primary-dark",
+                    !hasCoverImage && "bg-primary-dark"
                 )}
             >
                 {hasCoverImage && (
@@ -79,56 +82,63 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                 {/* Subtle overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-                {/* Decorative pattern overlay */}
-                {!hasCoverImage && (
-                    <div className="absolute inset-0 opacity-10">
-                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
-                                </pattern>
-                            </defs>
-                            <rect width="100%" height="100%" fill="url(#grid)" />
-                        </svg>
-                    </div>
-                )}
+
             </div>
 
-            {/* Profile Content */}
-            <div className="px-6 md:px-8 pb-6 md:pb-8">
-                {/* Avatar - overlapping the cover */}
-                <div className="flex flex-col md:flex-row gap-6 items-start md:items-end -mt-16 md:-mt-20">
-                    <div className="relative">
-                        <Avatar className="w-32 h-32 md:w-36 md:h-36 border-4 border-white dark:border-dark-surface shadow-xl ring-2 ring-white/20">
-                            <AvatarImage src={profile.avatar_url} alt={profile.name} />
-                            <AvatarFallback className="text-4xl bg-primary text-white">
+            {/* Profile Content - Clean integrated design */}
+            <div className="relative z-10 px-6 md:px-8 pb-6 md:pb-8">
+                {/* Avatar and info row */}
+                <div className="flex flex-col sm:flex-row gap-5 -mt-12 sm:-mt-16">
+                    {/* Avatar */}
+                    <div className="relative flex-shrink-0">
+                        <Avatar className="w-28 h-28 sm:w-32 sm:h-32 border-4 border-white dark:border-dark-surface shadow-xl bg-white dark:bg-dark-surface">
+                            <AvatarImage src={profile.avatar_url} alt={profile.name} className="object-cover" />
+                            <AvatarFallback className="text-3xl bg-primary text-white">
                                 {profile.name?.[0]?.toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        {/* Online indicator (optional) */}
+                        {/* Online indicator */}
                         <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white dark:border-dark-surface rounded-full" />
                     </div>
 
-                    {/* Name, role, and actions */}
-                    <div className="flex-1 w-full pt-2 md:pt-4">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    {/* Name, role, badges - positioned below avatar on mobile, beside on desktop */}
+                    <div className="flex-1 pt-2 sm:pt-20">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            {/* Name and badges */}
                             <div>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                    <h1 className="text-2xl md:text-3xl font-display font-bold text-text dark:text-dark-text">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white">
                                         {profile.name}
                                     </h1>
+                                    {profile.level && profile.level > 0 && (
+                                        <UserLevelBadge
+                                            level={profile.level}
+                                            tier={getTierFromLevel(profile.level)}
+                                            name={profile.level_name}
+                                            size="sm"
+                                        />
+                                    )}
                                     {profile.reputation > 0 && (
-                                        <ReputationScore score={profile.reputation} size="lg" />
+                                        <ReputationScore score={profile.reputation} size="md" />
+                                    )}
+                                </div>
+                                {/* Role and XP inline */}
+                                <div className="flex items-center gap-2 mt-1.5">
+                                    <span className="px-2.5 py-0.5 bg-primary/10 text-primary dark:text-white/50 dark:bg-primary/30 rounded-full text-xs font-semibold capitalize border border-primary/10 dark:border-primary/20">
+                                        {profile.role === 'researcher' ? 'Researcher' : profile.role}
+                                    </span>
+                                    {profile.xp_points > 0 && (
+                                        <span className="flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400 font-medium px-2 py-0.5 bg-yellow-400/10 rounded-full border border-yellow-400/10">
+                                            <Zap className="w-3 h-3" />
+                                            {profile.xp_points.toLocaleString()} XP
+                                        </span>
                                     )}
                                     <BadgeDisplay badges={badges} size="sm" />
                                 </div>
-                                <p className="text-text-light dark:text-dark-text-muted mt-1">
-                                    {profile.role === 'researcher' ? 'Researcher' : profile.role}
-                                </p>
                             </div>
 
-                            {/* Action buttons */}
-                            <div className="flex items-center gap-3">
+                            {/* Action button */}
+                            <div className="flex-shrink-0 mt-2 sm:mt-0">
                                 {isOwnProfile ? (
                                     <EditProfileDialog profile={profile} />
                                 ) : (
@@ -141,13 +151,13 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
 
                 {/* Bio */}
                 {profile.bio && (
-                    <p className="text-text dark:text-dark-text mt-6 max-w-2xl leading-relaxed">
+                    <p className="text-gray-700 dark:text-gray-300 mt-5 max-w-2xl leading-relaxed text-sm sm:text-base">
                         {profile.bio}
                     </p>
                 )}
 
                 {/* Meta info row */}
-                <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted mt-4">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 dark:text-gray-400 mt-4">
                     {profile.affiliation && (
                         <div className="flex items-center gap-1.5">
                             <Building2 className="w-4 h-4" />
@@ -183,7 +193,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                         {profile.research_interests.map((interest: string) => (
                             <span
                                 key={interest}
-                                className="px-3 py-1 bg-gray-100 dark:bg-dark-border rounded-full text-sm text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border/80 transition-colors"
+                                className="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full text-sm text-gray-700 dark:text-gray-300 transition-colors"
                             >
                                 {interest}
                             </span>
@@ -191,8 +201,8 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                     </div>
                 )}
 
-                {/* Stats with visual bars */}
-                <div className="flex flex-wrap gap-6 md:gap-10 mt-8 pt-6 border-t border-gray-100 dark:border-dark-border">
+                {/* Stats with visual bars - softened border */}
+                <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 pt-5 border-t border-gray-100 dark:border-white/10 px-1">
                     <StatItem
                         icon={FileText}
                         value={stats?.post_count || 0}

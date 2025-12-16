@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Ticket, Plus, Copy, Check, Loader2, Send, Users, Clock, Trash2 } from 'lucide-react'
+import { Ticket, Plus, Copy, Check, Loader2, Send, Users, Clock, GraduationCap, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
+import { cn } from '@/lib/utils'
+
+type InviteTargetRole = 'member' | 'researcher'
 
 interface InviteCode {
     id: string
@@ -15,14 +18,20 @@ interface InviteCode {
     max_uses: number
     note: string | null
     used_by: string | null
+    target_role: InviteTargetRole
+}
+
+interface RoleInviteStats {
+    active: number
+    used: number
+    remaining: number
 }
 
 interface InviteStats {
     total_invites_created: number
-    active_invites: number
-    used_invites: number
+    researcher_invites: RoleInviteStats
+    member_invites: RoleInviteStats
     people_invited: number
-    remaining_invites: number
 }
 
 export function InviteManager() {
@@ -31,6 +40,7 @@ export function InviteManager() {
     const [loading, setLoading] = useState(true)
     const [creating, setCreating] = useState(false)
     const [copiedId, setCopiedId] = useState<string | null>(null)
+    const [activeTab, setActiveTab] = useState<InviteTargetRole>('researcher')
     const { showToast } = useToast()
 
     const fetchData = async () => {
@@ -61,13 +71,13 @@ export function InviteManager() {
         fetchData()
     }, [])
 
-    const createInvite = async () => {
+    const createInvite = async (targetRole: InviteTargetRole) => {
         setCreating(true)
         try {
             const response = await fetch('/api/invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}),
+                body: JSON.stringify({ target_role: targetRole }),
             })
 
             const data = await response.json()
@@ -76,7 +86,7 @@ export function InviteManager() {
                 throw new Error(data.error || 'Failed to create invite')
             }
 
-            showToast('Invite code created!', 'success')
+            showToast(`${targetRole === 'researcher' ? 'Researcher' : 'Member'} invite created!`, 'success')
             fetchData()
         } catch (error) {
             showToast(error instanceof Error ? error.message : 'Failed to create invite', 'error')
@@ -100,6 +110,9 @@ export function InviteManager() {
         setTimeout(() => setCopiedId(null), 2000)
     }
 
+    const filteredInvites = invites.filter(invite => invite.target_role === activeTab)
+    const currentStats = activeTab === 'researcher' ? stats?.researcher_invites : stats?.member_invites
+
     if (loading) {
         return (
             <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
@@ -114,72 +127,132 @@ export function InviteManager() {
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">Your Invites</h3>
-                </div>
-                <div className="flex items-center gap-3">
+            <div className="p-4 border-b border-gray-100 dark:border-dark-border">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <Ticket className="w-5 h-5 text-primary" />
+                        <h3 className="font-semibold text-text dark:text-dark-text">Your Invites</h3>
+                    </div>
                     {stats && (
                         <span className="text-sm text-text-muted dark:text-dark-text-muted">
-                            {stats.remaining_invites} remaining
+                            {stats.people_invited} people invited
                         </span>
                     )}
-                    <Button
-                        onClick={createInvite}
-                        disabled={creating || (stats !== null && stats.remaining_invites <= 0)}
-                        size="sm"
-                        className="gap-2"
-                    >
-                        {creating ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <Plus className="w-4 h-4" />
+                </div>
+
+                {/* Role Tabs */}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setActiveTab('researcher')}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all",
+                            activeTab === 'researcher'
+                                ? "bg-primary text-white"
+                                : "bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border"
                         )}
-                        Create Invite
-                    </Button>
+                    >
+                        <GraduationCap className="w-4 h-4" />
+                        <span>Researchers</span>
+                        {stats && (
+                            <span className={cn(
+                                "px-1.5 py-0.5 rounded text-xs font-bold",
+                                activeTab === 'researcher'
+                                    ? "bg-white/20"
+                                    : "bg-gray-200 dark:bg-dark-border"
+                            )}>
+                                {stats.researcher_invites.remaining}
+                            </span>
+                        )}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('member')}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all",
+                            activeTab === 'member'
+                                ? "bg-primary text-white"
+                                : "bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border"
+                        )}
+                    >
+                        <User className="w-4 h-4" />
+                        <span>Members</span>
+                        {stats && (
+                            <span className={cn(
+                                "px-1.5 py-0.5 rounded text-xs font-bold",
+                                activeTab === 'member'
+                                    ? "bg-white/20"
+                                    : "bg-gray-200 dark:bg-dark-border"
+                            )}>
+                                {stats.member_invites.remaining}
+                            </span>
+                        )}
+                    </button>
                 </div>
             </div>
 
-            {/* Stats */}
-            {stats && (
+            {/* Stats for Current Tab */}
+            {currentStats && (
                 <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-dark-bg">
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-text dark:text-dark-text">{stats.people_invited}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">People Invited</p>
+                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.used}</p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">Used</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-text dark:text-dark-text">{stats.active_invites}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">Active Codes</p>
+                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.active}</p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">Active</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">{stats.remaining_invites}</p>
+                        <p className="text-2xl font-bold text-primary">{currentStats.remaining}</p>
                         <p className="text-xs text-text-light dark:text-dark-text-muted">Remaining</p>
                     </div>
                 </div>
             )}
 
+            {/* Create Button */}
+            <div className="p-4 border-b border-gray-100 dark:border-dark-border">
+                <Button
+                    onClick={() => createInvite(activeTab)}
+                    disabled={creating || (currentStats !== undefined && currentStats.remaining <= 0)}
+                    className="w-full gap-2"
+                >
+                    {creating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Plus className="w-4 h-4" />
+                    )}
+                    Create {activeTab === 'researcher' ? 'Researcher' : 'Member'} Invite
+                </Button>
+            </div>
+
             {/* Invite List */}
-            <div className="divide-y divide-gray-100 dark:divide-dark-border">
-                {invites.length === 0 ? (
+            <div className="divide-y divide-gray-100 dark:divide-dark-border max-h-80 overflow-y-auto">
+                {filteredInvites.length === 0 ? (
                     <div className="p-8 text-center">
                         <Users className="w-8 h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
-                        <p className="text-text-light dark:text-dark-text-muted">No invites yet</p>
+                        <p className="text-text-light dark:text-dark-text-muted">
+                            No {activeTab} invites yet
+                        </p>
                         <p className="text-sm text-text-light/70 dark:text-dark-text-muted/70 mt-1">
-                            Create an invite to share with colleagues
+                            Create an invite to share with {activeTab === 'researcher' ? 'researchers' : 'community members'}
                         </p>
                     </div>
                 ) : (
-                    invites.map((invite) => (
+                    filteredInvites.map((invite) => (
                         <div
                             key={invite.id}
-                            className={`p-4 flex items-center justify-between ${!invite.is_active ? 'opacity-50' : ''
-                                }`}
+                            className={`p-4 flex items-center justify-between ${!invite.is_active ? 'opacity-50' : ''}`}
                         >
                             <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${invite.is_active ? 'bg-primary/10 text-primary' : 'bg-gray-100 dark:bg-dark-border text-text-light'
-                                    }`}>
-                                    <Ticket className="w-5 h-5" />
+                                <div className={cn(
+                                    "w-10 h-10 rounded-lg flex items-center justify-center",
+                                    invite.is_active
+                                        ? "bg-primary/10 text-primary"
+                                        : "bg-gray-100 dark:bg-dark-border text-text-light"
+                                )}>
+                                    {invite.target_role === 'researcher' ? (
+                                        <GraduationCap className="w-5 h-5" />
+                                    ) : (
+                                        <User className="w-5 h-5" />
+                                    )}
                                 </div>
                                 <div>
                                     <p className="font-mono font-medium text-text dark:text-dark-text tracking-wider">
@@ -224,7 +297,7 @@ export function InviteManager() {
                                         ) : (
                                             <Send className="w-4 h-4" />
                                         )}
-                                        Share Link
+                                        Share
                                     </Button>
                                 </div>
                             )}
