@@ -68,7 +68,6 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
             <div
                 className={cn(
                     "relative h-48 md:h-56 w-full",
-                    "relative h-48 md:h-56 w-full bg-primary-dark",
                     !hasCoverImage && "bg-primary-dark"
                 )}
             >
@@ -81,8 +80,6 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                 )}
                 {/* Subtle overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-
-
             </div>
 
             {/* Profile Content - Clean integrated design */}

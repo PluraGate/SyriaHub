@@ -10,10 +10,20 @@ import {
     Database,
     ArrowRight,
     TrendingUp,
-    Users
+    Users,
+    Search
 } from 'lucide-react'
 
 const features = [
+    {
+        id: 'search',
+        title: 'Search Engine',
+        description: 'AI-powered semantic search across internal posts and external sources. Get explainable, evidence-ranked results.',
+        icon: Search,
+        href: '/research-lab/search',
+        color: 'bg-teal-500',
+        stats: { label: 'Sources', value: 'Multi' }
+    },
     {
         id: 'surveys',
         title: 'Survey Builder',
