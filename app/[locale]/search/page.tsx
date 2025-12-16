@@ -4,11 +4,11 @@ import { AdvancedSearchFilters } from '@/components/AdvancedSearchFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { FileText, Users, Globe, Search } from 'lucide-react'
+import { FileText, Users, Globe, Calendar } from 'lucide-react'
 
 type SearchResult = {
     id: string
-    type: 'post' | 'group' | 'user'
+    type: 'post' | 'group' | 'user' | 'event'
     title: string
     description: string
     url: string
@@ -28,20 +28,48 @@ export default async function SearchPage({
     let results: SearchResult[] = []
 
     if (q) {
-        const { data, error } = await supabase.rpc('search_content', {
-            query: q,
-            filter_type: type || null,
-            filter_tag: tag || null,
-            filter_date: date || null
+        // Try fuzzy search first
+        const { data: fuzzyData, error: fuzzyError } = await supabase.rpc('fuzzy_search_content', {
+            p_query: q,
+            p_filter_type: type || null,
+            p_filter_tag: tag || null,
+            p_filter_date: date || null,
+            p_limit: 50
         })
-        if (!error && data) {
-            results = data as SearchResult[]
 
-            // Apply client-side sorting if needed
-            if (sort === 'recent') {
-                results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        if (!fuzzyError && fuzzyData) {
+            results = fuzzyData as SearchResult[]
+        } else {
+            // Fallback to old search function
+            const { data, error } = await supabase.rpc('search_content', {
+                query: q,
+                filter_type: type || null,
+                filter_tag: tag || null,
+                filter_date: date || null
+            })
+            if (!error && data) {
+                results = data as SearchResult[]
             }
-            // 'popular' sorting would require view counts - keeping relevance as default
+        }
+
+        // Apply client-side sorting if needed
+        if (sort === 'recent') {
+            results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        }
+    }
+
+    const getIcon = (resultType: string) => {
+        switch (resultType) {
+            case 'post':
+                return <FileText className="w-5 h-5 text-blue-500" />
+            case 'group':
+                return <Globe className="w-5 h-5 text-green-500" />
+            case 'user':
+                return <Users className="w-5 h-5 text-purple-500" />
+            case 'event':
+                return <Calendar className="w-5 h-5 text-orange-500" />
+            default:
+                return <FileText className="w-5 h-5 text-gray-400" />
         }
     }
 
@@ -62,13 +90,24 @@ export default async function SearchPage({
                             <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
                                 Search Results
                             </h1>
-                            <p className="text-text-light dark:text-dark-text-muted">
-                                Showing results for <span className="font-semibold">&quot;{q}&quot;</span>
-                            </p>
+                            {q && (
+                                <p className="text-text-light dark:text-dark-text-muted">
+                                    Showing results for <span className="font-semibold">&quot;{q}&quot;</span>
+                                    {results.length > 0 && (
+                                        <span className="ml-2 text-sm">({results.length} found)</span>
+                                    )}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-6">
-                            {results.length === 0 ? (
+                            {!q ? (
+                                <div className="bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border p-12 text-center">
+                                    <p className="text-text-light dark:text-dark-text-muted">
+                                        Enter a search term to find posts, users, groups, and events.
+                                    </p>
+                                </div>
+                            ) : results.length === 0 ? (
                                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border">
                                     <EmptyState
                                         variant="no-results"
@@ -88,9 +127,7 @@ export default async function SearchPage({
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className="mt-1">
-                                                {result.type === 'post' && <FileText className="w-5 h-5 text-blue-500" />}
-                                                {result.type === 'group' && <Globe className="w-5 h-5 text-green-500" />}
-                                                {result.type === 'user' && <Users className="w-5 h-5 text-purple-500" />}
+                                                {getIcon(result.type)}
                                             </div>
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between mb-1">

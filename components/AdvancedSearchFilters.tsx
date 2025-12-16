@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, Tag as TagIcon, Clock, Users, FileText, Globe, ArrowUpDown } from 'lucide-react'
+import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, Tag as TagIcon, Clock, Users, FileText, Globe, ArrowUpDown, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 
@@ -72,6 +72,7 @@ export function AdvancedSearchFilters() {
         { value: 'post', label: 'Posts', icon: FileText },
         { value: 'group', label: 'Groups', icon: Globe },
         { value: 'user', label: 'Users', icon: Users },
+        { value: 'event', label: 'Events', icon: Calendar },
     ]
 
     const dateOptions = [
@@ -146,8 +147,8 @@ export function AdvancedSearchFilters() {
                                         key={option.value}
                                         onClick={() => handleFilterChange('type', option.value)}
                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${currentType === option.value
-                                                ? 'bg-primary text-white'
-                                                : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
                                             }`}
                                     >
                                         {Icon && <Icon className="w-4 h-4" />}
@@ -170,8 +171,8 @@ export function AdvancedSearchFilters() {
                                     key={option.value}
                                     onClick={() => handleFilterChange('date', option.value)}
                                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${currentDate === option.value
-                                            ? 'bg-primary/10 text-primary font-medium'
-                                            : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-bg'
+                                        ? 'bg-primary/10 text-primary font-medium'
+                                        : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-bg'
                                         }`}
                                 >
                                     {option.label}
@@ -192,8 +193,8 @@ export function AdvancedSearchFilters() {
                                     key={option.value}
                                     onClick={() => handleFilterChange('sort', option.value)}
                                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${currentSort === option.value
-                                            ? 'bg-primary/10 text-primary font-medium'
-                                            : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-bg'
+                                        ? 'bg-primary/10 text-primary font-medium'
+                                        : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-bg'
                                         }`}
                                 >
                                     {option.label}
@@ -239,8 +240,8 @@ export function AdvancedSearchFilters() {
                                                         key={tag.id}
                                                         onClick={() => handleFilterChange('tag', tag.label)}
                                                         className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${currentTag === tag.label
-                                                                ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-dark-surface'
-                                                                : ''
+                                                            ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-dark-surface'
+                                                            : ''
                                                             }`}
                                                         style={{
                                                             backgroundColor: `${tag.color}20`,

@@ -1,0 +1,361 @@
+'use client'
+
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { useToast } from '@/components/ui/toast'
+import {
+    MessagesSquare,
+    Plus,
+    Filter,
+    Search,
+    AlertTriangle,
+    FileText,
+    User,
+    MessageSquareWarning,
+    Calendar,
+    Flag,
+    Shield,
+    Loader2,
+    ChevronLeft,
+    ChevronRight,
+    Archive,
+    Clock
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { format, formatDistanceToNow } from 'date-fns'
+import { ThreadView } from './ThreadView'
+import { NewThreadDialog } from './NewThreadDialog'
+import { cn } from '@/lib/utils'
+
+interface CoordinationThread {
+    id: string
+    object_type: string
+    object_id: string
+    title: string
+    object_state: string
+    priority: string
+    trigger_event: string
+    created_by_name: string | null
+    message_count: number
+    last_message_at: string | null
+    archived_at: string | null
+    created_at: string
+    updated_at: string
+}
+
+interface CoordinationCenterProps {
+    isAdmin: boolean
+}
+
+const objectTypeIcons: Record<string, typeof FileText> = {
+    post: FileText,
+    user: User,
+    comment: MessagesSquare,
+    report: AlertTriangle,
+    appeal: MessageSquareWarning,
+    event: Calendar,
+    resource: FileText
+}
+
+const stateColors: Record<string, string> = {
+    ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+    UNDER_REVIEW: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+    CONTESTED: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+    REVOKED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+    ARCHIVED: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+}
+
+const priorityColors: Record<string, string> = {
+    low: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+    normal: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    high: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+    urgent: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+}
+
+const triggerEventLabels: Record<string, string> = {
+    manual: 'Manual',
+    auto_report: 'Report',
+    auto_appeal: 'Appeal',
+    auto_flag: 'Flagged',
+    auto_moderation: 'Moderation'
+}
+
+export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
+    const [threads, setThreads] = useState<CoordinationThread[]>([])
+    const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [total, setTotal] = useState(0)
+
+    // Filters
+    const [objectTypeFilter, setObjectTypeFilter] = useState<string | null>(null)
+    const [stateFilter, setStateFilter] = useState<string | null>(null)
+    const [priorityFilter, setPriorityFilter] = useState<string | null>(null)
+    const [includeArchived, setIncludeArchived] = useState(false)
+
+    // Selected thread
+    const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
+    const [showNewThreadDialog, setShowNewThreadDialog] = useState(false)
+
+    const supabase = useMemo(() => createClient(), [])
+    const { showToast } = useToast()
+
+    const loadThreads = useCallback(async () => {
+        setLoading(true)
+        try {
+            const params = new URLSearchParams({
+                page: page.toString(),
+                pageSize: '20',
+                includeArchived: includeArchived.toString()
+            })
+            if (objectTypeFilter) params.set('objectType', objectTypeFilter)
+            if (stateFilter) params.set('objectState', stateFilter)
+            if (priorityFilter) params.set('priority', priorityFilter)
+
+            const response = await fetch(`/api/coordination?${params}`)
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to load threads')
+            }
+
+            setThreads(data.threads || [])
+            setTotalPages(data.total_pages || 1)
+            setTotal(data.total || 0)
+        } catch (error: any) {
+            showToast(error.message, 'error')
+        } finally {
+            setLoading(false)
+        }
+    }, [page, objectTypeFilter, stateFilter, priorityFilter, includeArchived, showToast])
+
+    useEffect(() => {
+        loadThreads()
+    }, [loadThreads])
+
+    const handleThreadCreated = () => {
+        setShowNewThreadDialog(false)
+        loadThreads()
+        showToast('Thread created successfully', 'success')
+    }
+
+    if (selectedThreadId) {
+        return (
+            <ThreadView
+                threadId={selectedThreadId}
+                isAdmin={isAdmin}
+                onBack={() => {
+                    setSelectedThreadId(null)
+                    loadThreads()
+                }}
+            />
+        )
+    }
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
+                        <MessagesSquare className="w-5 h-5 text-primary" />
+                        Coordination Center
+                    </h2>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                        Structured decision-making for moderation and governance
+                    </p>
+                </div>
+                <Button onClick={() => setShowNewThreadDialog(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Thread
+                </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">Total Threads</p>
+                    <p className="text-2xl font-bold text-text dark:text-dark-text">{total}</p>
+                </div>
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">Under Review</p>
+                    <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                        {threads.filter(t => t.object_state === 'UNDER_REVIEW').length}
+                    </p>
+                </div>
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">Urgent</p>
+                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                        {threads.filter(t => t.priority === 'urgent').length}
+                    </p>
+                </div>
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">Contested</p>
+                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                        {threads.filter(t => t.object_state === 'CONTESTED').length}
+                    </p>
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-3 p-4 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
+                <Filter className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+
+                <select
+                    value={objectTypeFilter || ''}
+                    onChange={(e) => setObjectTypeFilter(e.target.value || null)}
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                >
+                    <option value="">All Types</option>
+                    <option value="post">Posts</option>
+                    <option value="user">Users</option>
+                    <option value="comment">Comments</option>
+                    <option value="report">Reports</option>
+                    <option value="appeal">Appeals</option>
+                    <option value="event">Events</option>
+                    <option value="resource">Resources</option>
+                </select>
+
+                <select
+                    value={stateFilter || ''}
+                    onChange={(e) => setStateFilter(e.target.value || null)}
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                >
+                    <option value="">All States</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="UNDER_REVIEW">Under Review</option>
+                    <option value="CONTESTED">Contested</option>
+                    <option value="REVOKED">Revoked</option>
+                </select>
+
+                <select
+                    value={priorityFilter || ''}
+                    onChange={(e) => setPriorityFilter(e.target.value || null)}
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                >
+                    <option value="">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+
+                <label className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={includeArchived}
+                        onChange={(e) => setIncludeArchived(e.target.checked)}
+                        className="rounded border-gray-300 dark:border-dark-border"
+                    />
+                    Include Archived
+                </label>
+            </div>
+
+            {/* Threads List */}
+            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    </div>
+                ) : threads.length === 0 ? (
+                    <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
+                        <MessagesSquare className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                        <p>No coordination threads found</p>
+                        <p className="text-sm mt-1">Create a new thread or adjust your filters</p>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-gray-100 dark:divide-dark-border">
+                        {threads.map((thread) => {
+                            const Icon = objectTypeIcons[thread.object_type] || FileText
+                            return (
+                                <button
+                                    key={thread.id}
+                                    onClick={() => setSelectedThreadId(thread.id)}
+                                    className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors"
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Icon className="w-4 h-4 text-text-light dark:text-dark-text-muted flex-shrink-0" />
+                                                <span className={cn(
+                                                    'px-2 py-0.5 rounded-full text-xs font-medium',
+                                                    stateColors[thread.object_state]
+                                                )}>
+                                                    {thread.object_state.replace('_', ' ')}
+                                                </span>
+                                                <span className={cn(
+                                                    'px-2 py-0.5 rounded-full text-xs font-medium capitalize',
+                                                    priorityColors[thread.priority]
+                                                )}>
+                                                    {thread.priority}
+                                                </span>
+                                                {thread.trigger_event !== 'manual' && (
+                                                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                                        {triggerEventLabels[thread.trigger_event]}
+                                                    </span>
+                                                )}
+                                                {thread.archived_at && (
+                                                    <Archive className="w-3.5 h-3.5 text-gray-400" />
+                                                )}
+                                            </div>
+                                            <h3 className="font-medium text-text dark:text-dark-text truncate">
+                                                {thread.title}
+                                            </h3>
+                                            <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                                                Created by {thread.created_by_name || 'System'} • {thread.message_count} messages
+                                            </p>
+                                        </div>
+                                        <div className="text-right flex-shrink-0">
+                                            <p className="text-sm text-text-light dark:text-dark-text-muted flex items-center gap-1">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                {formatDistanceToNow(new Date(thread.updated_at), { addSuffix: true })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </button>
+                            )
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between">
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">
+                        Page {page} of {totalPages}
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1 || loading}
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                            Previous
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages || loading}
+                        >
+                            Next
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            {/* New Thread Dialog */}
+            {showNewThreadDialog && (
+                <NewThreadDialog
+                    open={showNewThreadDialog}
+                    onOpenChange={setShowNewThreadDialog}
+                    onSuccess={handleThreadCreated}
+                />
+            )}
+        </div>
+    )
+}

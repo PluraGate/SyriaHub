@@ -13,7 +13,8 @@ import {
     History,
     ChevronLeft,
     ChevronRight,
-    MessageSquareWarning
+    MessageSquareWarning,
+    MessagesSquare
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -63,6 +64,11 @@ const navItems = [
         label: 'Waitlist',
         href: '/admin/waitlist',
         icon: UserPlus,
+    },
+    {
+        label: 'Coordination',
+        href: '/admin/coordination',
+        icon: MessagesSquare,
     },
     {
         label: 'Audit Logs',

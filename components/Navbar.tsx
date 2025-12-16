@@ -177,7 +177,7 @@ export function Navbar({ user }: NavbarProps) {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 ml-2 focus-ring rounded-full shrink-0">
+                      <button className="flex items-center gap-2 ml-2 focus-ring rounded-full shrink-0" suppressHydrationWarning>
                         <Avatar className="w-8 h-8 border border-gray-200 dark:border-dark-border transition-transform hover:scale-105">
                           <AvatarImage src={userAvatar} alt={userName} />
                           <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
