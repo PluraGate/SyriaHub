@@ -50,14 +50,20 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json()
-        const { note } = body
+        const { note, target_role = 'member' } = body
 
-        // Check user's active invite count (max 5)
+        // Validate target_role
+        if (!['member', 'researcher'].includes(target_role)) {
+            return NextResponse.json({ error: 'Invalid target role. Must be member or researcher.' }, { status: 400 })
+        }
+
+        // Check user's active invite count for this role type (max 5 per role)
         const { count: activeCount, error: countError } = await supabase
             .from('invite_codes')
             .select('*', { count: 'exact', head: true })
             .eq('created_by', user.id)
             .eq('is_active', true)
+            .eq('target_role', target_role)
 
         if (countError) {
             console.error('Error checking invite count:', countError)
@@ -65,18 +71,19 @@ export async function POST(request: NextRequest) {
         }
 
         if (activeCount !== null && activeCount >= 5) {
-            return NextResponse.json({ error: 'You have reached your invite limit (5)' }, { status: 400 })
+            return NextResponse.json({ error: `You have reached your ${target_role} invite limit (5)` }, { status: 400 })
         }
 
-        // Create invite code - use direct insert to avoid Supabase RPC parameter ordering issues
+        // Create invite code with target_role
         const { data, error } = await supabase
             .from('invite_codes')
             .insert({
                 code: generateInviteCode(),
                 created_by: user.id,
                 note: note || null,
+                target_role: target_role,
             })
-            .select('id, code')
+            .select('id, code, target_role')
             .single()
 
         if (error) {

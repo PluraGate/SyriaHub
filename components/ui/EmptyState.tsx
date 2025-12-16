@@ -30,7 +30,7 @@ const NoResultsIllustration = ({ className }: { className?: string }) => (
         <circle cx="90" cy="85" r="40" className="fill-gray-50 dark:fill-dark-surface stroke-gray-300 dark:stroke-dark-border" strokeWidth="3" />
         <circle cx="90" cy="85" r="30" className="fill-white dark:fill-dark-border stroke-gray-200 dark:stroke-dark-border" strokeWidth="2" />
         {/* Handle */}
-        <rect x="118" y="113" width="12" height="45" rx="6" transform="rotate(-45 118 113)" className="fill-gray-300 dark:fill-dark-border" />
+        <rect x="118" y="113" width="12" height="45" rx="6" className="fill-gray-300 dark:fill-dark-border" />
         {/* X mark inside */}
         <path d="M78 73L102 97M102 73L78 97" className="stroke-gray-300 dark:stroke-dark-text-muted" strokeWidth="3" strokeLinecap="round" />
         {/* Question marks floating */}
