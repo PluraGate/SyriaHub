@@ -2,12 +2,14 @@ import Link from 'next/link'
 import { Calendar, MapPin, Users, Clock, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
+import { getAvatarGradient, getInitials } from '@/lib/utils'
 
 interface EventMetadata {
     start_time: string
     end_time?: string
     location: string
     link?: string
+    status?: 'scheduled' | 'cancelled' | 'postponed'
 }
 
 interface EventPost {
@@ -15,6 +17,7 @@ interface EventPost {
     title: string
     content: string
     created_at: string
+    author_id?: string
     author?: { name?: string | null, email?: string | null } | null
     tags?: string[]
     metadata: EventMetadata
@@ -29,13 +32,22 @@ interface EventCardProps {
 export function EventCard({ event }: EventCardProps) {
     const startDate = new Date(event.metadata.start_time)
     const endDate = event.metadata.end_time ? new Date(event.metadata.end_time) : null
+    const status = event.metadata.status || 'scheduled'
 
     return (
         <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden">
             {/* Date Badge */}
-            <div className="bg-primary/5 dark:bg-primary/10 p-6 flex flex-col items-center justify-center min-w-[120px] text-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-dark-border">
-                <span className="text-sm font-bold text-primary uppercase tracking-wider">
-                    {format(startDate, 'MMM')}
+            <div className={`
+                min-w-[120px] p-6 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-dark-border
+                ${status === 'cancelled' ? 'bg-red-50 dark:bg-red-900/10' :
+                    status === 'postponed' ? 'bg-amber-50 dark:bg-amber-900/10' :
+                        'bg-primary/5 dark:bg-primary/10'}
+            `}>
+                <span className={`text-sm font-bold uppercase tracking-wider ${status === 'cancelled' ? 'text-red-600 dark:text-red-400' :
+                        status === 'postponed' ? 'text-amber-600 dark:text-amber-400' :
+                            'text-primary'
+                    }`}>
+                    {status === 'scheduled' ? format(startDate, 'MMM') : status}
                 </span>
                 <span className="text-3xl font-bold text-text dark:text-dark-text my-1">
                     {format(startDate, 'd')}
@@ -50,16 +62,18 @@ export function EventCard({ event }: EventCardProps) {
                     <div>
                         <div className="flex items-start justify-between gap-4 mb-2">
                             <Link href={`/events/${event.id}`} className="group-hover:text-primary transition-colors">
-                                <h3 className="text-xl font-bold text-text dark:text-dark-text line-clamp-2">
+                                <h3 className={`text-xl font-bold line-clamp-2 ${status === 'cancelled' ? 'text-text-light dark:text-dark-text-muted line-through' : 'text-text dark:text-dark-text'}`}>
                                     {event.title}
                                 </h3>
                             </Link>
-                            {event.approval_status === 'rejected' && (
-                                <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                    <AlertTriangle className="w-3 h-3" />
-                                    Rejected
-                                </span>
-                            )}
+                            <div className="flex gap-2">
+                                {event.approval_status === 'rejected' && (
+                                    <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
+                                        <AlertTriangle className="w-3 h-3" />
+                                        Rejected
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted mb-4">
@@ -92,6 +106,20 @@ export function EventCard({ event }: EventCardProps) {
                             <Users className="w-4 h-4 text-primary" />
                             <span>{event.rsvp_count || 0} Attending</span>
                         </div>
+                    </div>
+
+                    {/* Author & Footer */}
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-dark-border">
+                        {event.author && (
+                            <div className="flex items-center gap-2">
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white ${getAvatarGradient(event.author_id)}`}>
+                                    {getInitials(event.author.name || undefined, event.author.email || undefined)}
+                                </div>
+                                <span className="text-sm text-text-light dark:text-dark-text-muted truncate max-w-[150px]">
+                                    {event.author.name || event.author.email?.split('@')[0]}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

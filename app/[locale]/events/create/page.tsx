@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Loader2, Calendar as CalendarIcon } from 'lucide-react'
+import { ImageUpload } from '@/components/ImageUpload'
 
 export default function CreateEventPage() {
     const [title, setTitle] = useState('')
@@ -19,14 +20,15 @@ export default function CreateEventPage() {
     const [endTime, setEndTime] = useState('')
     const [location, setLocation] = useState('')
     const [link, setLink] = useState('')
+    const [coverImage, setCoverImage] = useState('')
     const [loading, setLoading] = useState(false)
 
     const supabase = createClient()
     const router = useRouter()
     const { showToast } = useToast()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleSave = async (action: 'publish' | 'draft' | 'preview', e?: React.FormEvent) => {
+        if (e) e.preventDefault()
         setLoading(true)
 
         try {
@@ -38,6 +40,8 @@ export default function CreateEventPage() {
                 return
             }
 
+            const status = action === 'publish' ? 'published' : 'draft'
+
             const { data, error } = await supabase
                 .from('posts')
                 .insert({
@@ -45,7 +49,8 @@ export default function CreateEventPage() {
                     content: description,
                     content_type: 'event',
                     author_id: user.id,
-                    status: 'published',
+                    status: status,
+                    cover_image_url: coverImage,
                     metadata: {
                         start_time: new Date(startTime).toISOString(),
                         end_time: endTime ? new Date(endTime).toISOString() : null,
@@ -58,9 +63,18 @@ export default function CreateEventPage() {
 
             if (error) throw error
 
-            showToast('Your event has been successfully created.', 'success')
-
-            router.push(`/events/${data.id}`)
+            if (action === 'preview') {
+                router.refresh()
+                router.push(`/events/${data.id}`)
+            } else if (action === 'draft') {
+                showToast('Draft saved successfully.', 'success')
+                router.refresh()
+                router.push('/events')
+            } else {
+                showToast('Your event has been successfully published.', 'success')
+                router.refresh()
+                router.push(`/events/${data.id}`)
+            }
         } catch (error: any) {
             console.error('Error creating event:', JSON.stringify(error, null, 2))
             showToast(error?.message || 'Failed to create event.', 'error')
@@ -78,7 +92,7 @@ export default function CreateEventPage() {
                     Create Event
                 </h1>
 
-                <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-dark-surface p-8 rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
+                <form onSubmit={(e) => handleSave('publish', e)} className="space-y-6 bg-white dark:bg-dark-surface p-8 rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
 
                     <div className="space-y-2">
                         <Label htmlFor="title">Event Title</Label>
@@ -88,6 +102,18 @@ export default function CreateEventPage() {
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="e.g. Weekly Research Sync"
                             required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Cover Image</Label>
+                        <ImageUpload
+                            bucket="post_images"
+                            currentImage={coverImage}
+                            onUploadComplete={(url) => setCoverImage(url)}
+                            cropShape="rect"
+                            aspectRatio={16 / 9}
+                            className="w-full max-w-xl mx-auto"
                         />
                     </div>
 
@@ -147,10 +173,42 @@ export default function CreateEventPage() {
                         />
                     </div>
 
-                    <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={loading} size="lg">
+                    <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-dark-border">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => router.push('/events')}
+                            disabled={loading}
+                            className="flex-1 sm:flex-none"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => handleSave('draft')}
+                            disabled={loading}
+                            className="flex-1 sm:flex-none"
+                        >
+                            Save Draft
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => handleSave('preview')}
+                            disabled={loading}
+                            className="flex-1 sm:flex-none"
+                        >
+                            Preview
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            size="lg"
+                            className="flex-1 sm:flex-none bg-primary hover:bg-primary-dark text-white"
+                        >
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            {loading ? 'Creating...' : 'Create Event'}
+                            {loading ? 'Publishing...' : 'Publish Event'}
                         </Button>
                     </div>
                 </form>

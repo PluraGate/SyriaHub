@@ -14,6 +14,8 @@ interface ImageUploadProps {
     currentImage?: string | null
     className?: string
     enableCrop?: boolean
+    cropShape?: 'round' | 'rect'
+    aspectRatio?: number
 }
 
 export function ImageUpload({
@@ -22,7 +24,9 @@ export function ImageUpload({
     onUploadComplete,
     currentImage,
     className = '',
-    enableCrop = true
+    enableCrop = true,
+    cropShape = 'round',
+    aspectRatio = 1
 }: ImageUploadProps) {
     const [uploading, setUploading] = useState(false)
     const [preview, setPreview] = useState<string | null>(currentImage || null)
@@ -122,12 +126,19 @@ export function ImageUpload({
         }
     }
 
+    const previewStyle = cropShape === 'round'
+        ? "w-32 h-32 rounded-full"
+        : "w-full aspect-video rounded-xl"
+
     return (
         <>
             <div className={`flex flex-col items-center gap-4 ${className}`}>
-                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div
+                    className={`relative group cursor-pointer overflow-hidden border-2 border-gray-200 dark:border-dark-border bg-gray-100 dark:bg-dark-surface flex items-center justify-center transition-colors hover:border-primary dark:hover:border-primary ${previewStyle}`}
+                    onClick={() => fileInputRef.current?.click()}
+                >
                     {preview ? (
-                        <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 dark:border-dark-border bg-gray-100">
+                        <>
                             <img
                                 src={preview}
                                 alt="Upload preview"
@@ -136,15 +147,13 @@ export function ImageUpload({
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Upload className="w-6 h-6 text-white" />
                             </div>
-                        </div>
+                        </>
                     ) : (
-                        <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-dark-surface flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-dark-border hover:border-primary dark:hover:border-primary transition-colors">
-                            <ImageIcon className="w-8 h-8 text-gray-400" />
-                        </div>
+                        <ImageIcon className="w-8 h-8 text-gray-400" />
                     )}
 
                     {uploading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-bg/80 rounded-full">
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-bg/80">
                             <Loader2 className="w-8 h-8 animate-spin text-primary" />
                         </div>
                     )}
@@ -194,8 +203,8 @@ export function ImageUpload({
                     onClose={handleCropModalClose}
                     imageSrc={selectedImage}
                     onCropComplete={handleCropComplete}
-                    aspectRatio={1}
-                    cropShape="round"
+                    aspectRatio={aspectRatio}
+                    cropShape={cropShape}
                 />
             )}
         </>

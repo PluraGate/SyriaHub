@@ -4,11 +4,13 @@ import { Footer } from '@/components/Footer'
 import { CommentsSection } from '@/components/CommentsSection'
 import { RsvpButton } from '@/components/RsvpButton'
 import { notFound } from 'next/navigation'
-import { Calendar, MapPin, Clock, Link as LinkIcon, Users } from 'lucide-react'
+import { Calendar, MapPin, Clock, Link as LinkIcon, Users, Edit } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
 import { RejectionBanner } from '@/components/RejectionBanner'
+import { getAvatarGradient, getInitials } from '@/lib/utils'
+import Link from 'next/link'
 
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -67,14 +69,44 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                         />
 
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
-                            {/* Hero Banner Component */}
-                            <div className="relative h-48 md:h-64 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center overflow-hidden">
-                                <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.04] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-                                <div className="relative z-10 text-center p-6 max-w-2xl">
-                                    <h1 className="text-3xl md:text-4xl font-display font-bold text-text dark:text-dark-text mb-4 drop-shadow-sm">
-                                        {event.title}
-                                    </h1>
+                            {/* Status Banner */}
+                            {event.metadata.status && event.metadata.status !== 'scheduled' && (
+                                <div className={`w-full py-3 px-6 text-center font-bold uppercase tracking-wider text-sm ${event.metadata.status === 'cancelled'
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-amber-500 text-white'
+                                    }`}>
+                                    This event has been {event.metadata.status}
                                 </div>
+                            )}
+
+                            {/* Hero Banner Component */}
+                            <div className="relative h-48 md:h-80 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center overflow-hidden">
+                                {event.cover_image_url ? (
+                                    <>
+                                        <div className="absolute inset-0">
+                                            <img
+                                                src={event.cover_image_url}
+                                                alt={event.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/50" />
+                                        </div>
+                                        <div className="relative z-10 text-center p-6 max-w-2xl">
+                                            <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-4 drop-shadow-md">
+                                                {event.title}
+                                            </h1>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.04] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                                        <div className="relative z-10 text-center p-6 max-w-2xl">
+                                            <h1 className="text-3xl md:text-4xl font-display font-bold text-text dark:text-dark-text mb-4 drop-shadow-sm">
+                                                {event.title}
+                                            </h1>
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
                             <div className="p-8">
@@ -140,6 +172,16 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                     <div className="space-y-6">
                         {/* RSVP Card */}
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 sticky top-24">
+                            {user?.id === event.author_id && (
+                                <Link
+                                    href={`/events/${id}/edit`}
+                                    className="flex items-center justify-center gap-2 w-full mb-6 px-4 py-2 bg-secondary/10 text-secondary-dark rounded-lg hover:bg-secondary/20 transition-colors font-medium"
+                                >
+                                    <Edit className="w-4 h-4" />
+                                    Edit Event
+                                </Link>
+                            )}
+
                             <h3 className="text-lg font-bold text-text dark:text-dark-text mb-4">
                                 Are you going?
                             </h3>
@@ -148,6 +190,25 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                 eventId={id}
                                 initialStatus={userRsvp}
                             />
+
+                            <div className="mt-6 pt-6 border-t border-gray-100 dark:border-dark-border">
+                                <h4 className="font-semibold text-text dark:text-dark-text mb-3">
+                                    Organized by
+                                </h4>
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white ${getAvatarGradient(event.author_id)}`}>
+                                        {getInitials(event.author.name || undefined, event.author.email || undefined)}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium text-text dark:text-dark-text">
+                                            {event.author.name || event.author.email?.split('@')[0]}
+                                        </span>
+                                        <span className="text-xs text-text-light dark:text-dark-text-muted">
+                                            Event Host
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className="mt-6 pt-6 border-t border-gray-100 dark:border-dark-border">
                                 <div className="flex items-center justify-between mb-4">
