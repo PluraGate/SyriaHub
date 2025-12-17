@@ -289,7 +289,7 @@ export function MagazineCard({
                         {post.tags.slice(0, 2).map((tag) => (
                             <span
                                 key={tag}
-                                className="px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light rounded-full"
+                                className="px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary dark:bg-white/5 dark:text-white/50 rounded-full"
                             >
                                 {tag}
                             </span>

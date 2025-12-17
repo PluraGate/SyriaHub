@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { PlagiarismCheckButton } from './PlagiarismCheckButton'
 import { diffWords } from 'diff'
+import Markdown from 'react-markdown'
 
 interface PostHistoryDialogProps {
     postId: string
@@ -103,7 +104,7 @@ export function PostHistoryDialog({ postId, isOpen, onClose }: PostHistoryDialog
                                 variant={showDiff ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => setShowDiff(!showDiff)}
-                                className="gap-2"
+                                className="gap-2 mr-8"
                             >
                                 <FileDiff className="w-4 h-4" />
                                 {showDiff ? 'Hide Changes' : 'Show Changes'}
@@ -179,8 +180,8 @@ export function PostHistoryDialog({ postId, isOpen, onClose }: PostHistoryDialog
                                 </div>
 
                                 {showDiff ? renderDiff() : (
-                                    <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap">
-                                        {selectedVersion.content}
+                                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                                        <Markdown>{selectedVersion.content}</Markdown>
                                     </div>
                                 )}
                             </div>

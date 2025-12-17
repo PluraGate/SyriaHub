@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { searchAllExternalSources, ExternalResult } from '@/lib/externalData'
 
-// Web search API using a search service
-// This can be connected to various search APIs like Bing, Google Custom Search, or DuckDuckGo
+// Web search API - integrates with external data sources
+// ReliefWeb, HDX (Humanitarian Data Exchange), World Bank
 
 interface WebSearchResult {
     id: string
@@ -10,6 +11,7 @@ interface WebSearchResult {
     url: string
     source: string
     date?: string
+    type?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -22,73 +24,59 @@ export async function POST(request: NextRequest) {
 
         const startTime = Date.now()
 
-        // Try to use the search_web tool via API or fall back to curated sources
-        const results: WebSearchResult[] = []
+        // Fetch from real external APIs
+        const externalResults = await searchAllExternalSources(query, Math.ceil(limit / 3))
 
-        // Search reconstruction-related sources
-        const reconstructionSources = [
-            {
-                name: 'World Bank',
-                baseUrl: 'https://www.worldbank.org',
-                searchUrl: `https://www.worldbank.org/en/search?q=${encodeURIComponent(query)}`
-            },
-            {
-                name: 'ReliefWeb',
-                baseUrl: 'https://reliefweb.int',
-                searchUrl: `https://reliefweb.int/search?search=${encodeURIComponent(query)}`
-            },
-            {
-                name: 'UNHCR',
-                baseUrl: 'https://www.unhcr.org',
-                searchUrl: `https://www.unhcr.org/search?query=${encodeURIComponent(query)}`
-            },
-            {
-                name: 'UNHABITAT',
-                baseUrl: 'https://unhabitat.org',
-                searchUrl: `https://unhabitat.org/?s=${encodeURIComponent(query)}`
-            },
-            {
-                name: 'OCHA',
-                baseUrl: 'https://www.unocha.org',
-                searchUrl: `https://www.unocha.org/search?keywords=${encodeURIComponent(query)}`
-            }
-        ]
+        // Transform to consistent format
+        const results: WebSearchResult[] = externalResults.map((result: ExternalResult) => ({
+            id: result.id,
+            title: result.title,
+            snippet: result.snippet,
+            url: result.url,
+            source: result.source,
+            date: result.date || new Date().toLocaleDateString(),
+            type: result.type
+        }))
 
-        // Create synthetic results pointing to relevant search pages
-        // In production, this would call actual search APIs
-        reconstructionSources.forEach((source, index) => {
-            results.push({
-                id: `web-${index}`,
-                title: `${query} - ${source.name} Resources`,
-                snippet: `Search ${source.name} for documents, reports, and data related to "${query}" and Syria reconstruction.`,
-                url: source.searchUrl,
-                source: source.name,
-                date: new Date().toLocaleDateString()
+        // If we got fewer results than desired, add curated search links as fallback
+        if (results.length < limit) {
+            const curatedSources = [
+                {
+                    name: 'Google Scholar',
+                    url: `https://scholar.google.com/scholar?q=${encodeURIComponent(query + ' Syria reconstruction')}`,
+                    type: 'academic'
+                },
+                {
+                    name: 'UNHCR',
+                    url: `https://www.unhcr.org/search?query=${encodeURIComponent(query + ' Syria')}`,
+                    type: 'humanitarian'
+                },
+                {
+                    name: 'UN-Habitat',
+                    url: `https://unhabitat.org/?s=${encodeURIComponent(query + ' Syria')}`,
+                    type: 'urban'
+                },
+                {
+                    name: 'OCHA',
+                    url: `https://www.unocha.org/search?keywords=${encodeURIComponent(query + ' Syria')}`,
+                    type: 'coordination'
+                }
+            ]
+
+            curatedSources.forEach((source, index) => {
+                if (results.length < limit) {
+                    results.push({
+                        id: `curated-${index}`,
+                        title: `Search ${source.name}: "${query}"`,
+                        snippet: `Find more resources about "${query}" on ${source.name}`,
+                        url: source.url,
+                        source: source.name,
+                        date: new Date().toLocaleDateString(),
+                        type: source.type
+                    })
+                }
             })
-        })
-
-        // Add academic sources
-        const academicSources = [
-            {
-                name: 'Google Scholar',
-                url: `https://scholar.google.com/scholar?q=${encodeURIComponent(query + ' Syria reconstruction')}`
-            },
-            {
-                name: 'ResearchGate',
-                url: `https://www.researchgate.net/search/publication?q=${encodeURIComponent(query + ' Syria')}`
-            }
-        ]
-
-        academicSources.forEach((source, index) => {
-            results.push({
-                id: `academic-${index}`,
-                title: `Academic papers on "${query}"`,
-                snippet: `Find peer-reviewed research papers and academic publications about ${query} related to Syria conflict and reconstruction.`,
-                url: source.url,
-                source: source.name,
-                date: new Date().toLocaleDateString()
-            })
-        })
+        }
 
         const duration = Date.now() - startTime
 
@@ -96,7 +84,8 @@ export async function POST(request: NextRequest) {
             results: results.slice(0, limit),
             total: results.length,
             search_duration_ms: duration,
-            query
+            query,
+            sources: ['ReliefWeb', 'HDX', 'World Bank', 'Curated']
         })
 
     } catch (error) {

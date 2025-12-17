@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { Github, Twitter, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -17,7 +17,7 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link
               href="/"
-              className="inline-flex items-center space-x-2 group focus-ring rounded-lg p-1 -ml-1"
+              className="inline-flex items-center gap-2 rtl:gap-reverse group focus-ring rounded-lg p-1 -ms-1"
               aria-label="Syrealize Home"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
@@ -41,7 +41,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/feed"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('browseFeed')}
                 </Link>
@@ -49,7 +49,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/editor"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('writePost')}
                 </Link>
@@ -57,7 +57,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/auth/signup"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('getStarted')}
                 </Link>
@@ -76,7 +76,7 @@ export function Footer() {
                   href="https://github.com/lAvArt/SyriaHub"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('github')}
                 </a>
@@ -84,15 +84,15 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('about')}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/privacy"
-                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ml-1"
+                  href="/about/privacy"
+                  className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('privacy')}
                 </Link>

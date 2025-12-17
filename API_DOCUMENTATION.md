@@ -735,22 +735,373 @@ All endpoints return consistent error responses:
 
 ---
 
+## Events
+
+### GET /api/posts?type=event
+List events (events are a type of post).
+
+**Query Parameters:**
+- `type` (string): Set to `event` to filter events
+- `limit` (number): Items per page (default: 10)
+- `offset` (number): Pagination offset (default: 0)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "posts": [
+      {
+        "id": "uuid",
+        "title": "Research Conference 2025",
+        "content": "Event description...",
+        "type": "event",
+        "event_date": "2025-03-15T10:00:00Z",
+        "event_end_date": "2025-03-15T18:00:00Z",
+        "event_location": "Damascus University",
+        "event_type": "conference",
+        "author": { ...authorData },
+        "created_at": "2025-01-01T00:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+### Event RSVP
+RSVP functionality is managed through the `event_rsvps` table via Supabase client.
+
+**RSVP Status Options:** `going`, `not_going`, `maybe`
+
+---
+
+## Plagiarism Check
+
+### POST /api/plagiarism/check
+Run a plagiarism check on a specific post version.
+
+**Authorization:** Post author, Moderator, Admin
+
+**How It Works:**
+- The plagiarism check scans content against a database of sources to detect potential duplication
+- Lower similarity scores indicate more original content
+- Scores **below 20%** are considered clean ("Original Content")
+- Scores **above 20%** are flagged for review ("Review Recommended")
+
+> **Note:** The current implementation uses simulated detection (demo mode). In production, this would integrate with services like Turnitin, Copyscape, or iThenticate.
+
+**Request Body:**
+```json
+{
+  "postVersionId": "uuid"
+}
+```
+
+**Response (200):**
+```json
+{
+  "id": "uuid",
+  "post_version_id": "uuid",
+  "provider": "mock-detector-v1",
+  "status": "completed",
+  "score": 3,
+  "flagged": false,
+  "summary": "Content appears original.",
+  "raw_response": { ... },
+  "created_at": "2025-01-01T00:00:00Z"
+}
+```
+
+**Understanding the Response:**
+| Field | Description |
+|-------|-------------|
+| `score` | Similarity percentage (0-100). Lower is better. |
+| `flagged` | `true` if score exceeds threshold (currently 20%) |
+| `status` | `pending`, `completed`, or `failed` |
+| `summary` | Human-readable interpretation of results |
+| `provider` | Detection service used (currently `mock-detector-v1`) |
+
+**Error Responses:**
+- `400` - Missing `postVersionId`
+- `401` - Not authenticated
+- `403` - Not authorized (not post author or moderator)
+- `500` - Database or service error
+
+---
+
+## Surveys
+
+
+### GET /api/surveys
+List surveys with optional filtering.
+
+**Query Parameters:**
+- `status` (string): Filter by status (draft, active, closed)
+- `author_id` (uuid): Filter by author
+
+**Response (200):**
+```json
+[
+  {
+    "id": "uuid",
+    "title": "Research Survey",
+    "description": "Survey description...",
+    "author_id": "uuid",
+    "author": { "name": "Author Name", "email": "author@example.com" },
+    "is_anonymous": false,
+    "allow_multiple_responses": false,
+    "status": "active",
+    "start_date": "2025-01-01T00:00:00Z",
+    "end_date": "2025-02-01T00:00:00Z",
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+]
+```
+
+### POST /api/surveys
+Create a new survey (authenticated).
+
+**Authorization:** User, Moderator, Admin
+
+**Request Body:**
+```json
+{
+  "title": "Research Survey",
+  "description": "Help us understand...",
+  "questions": [
+    {
+      "question_text": "What is your experience?",
+      "question_type": "text",
+      "required": true
+    },
+    {
+      "question_text": "Rate your satisfaction",
+      "question_type": "rating",
+      "options": [1, 2, 3, 4, 5],
+      "required": true
+    }
+  ],
+  "is_anonymous": true,
+  "allow_multiple_responses": false,
+  "start_date": "2025-01-01T00:00:00Z",
+  "end_date": "2025-02-01T00:00:00Z",
+  "status": "draft"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "uuid",
+  "title": "Research Survey",
+  ...surveyData
+}
+```
+
+### GET /api/surveys/[id]
+Get a single survey with questions.
+
+### PUT /api/surveys/[id]
+Update a survey (owner only).
+
+### DELETE /api/surveys/[id]
+Delete a survey (owner, moderator, or admin).
+
+---
+
+## Polls
+
+### GET /api/polls
+Get all active polls.
+
+**Response (200):**
+```json
+[
+  {
+    "id": "uuid",
+    "question": "Which topic needs more research?",
+    "description": "Help prioritize...",
+    "options": [
+      { "id": "opt_0", "text": "Healthcare", "vote_count": 15 },
+      { "id": "opt_1", "text": "Education", "vote_count": 23 }
+    ],
+    "is_multiple_choice": false,
+    "is_active": true,
+    "end_date": "2025-02-01T00:00:00Z",
+    "author": { "name": "Author Name", "email": "author@example.com" },
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+]
+```
+
+### POST /api/polls
+Create a new poll (authenticated).
+
+**Authorization:** User, Moderator, Admin
+
+**Request Body:**
+```json
+{
+  "question": "Which topic should we focus on?",
+  "description": "Optional description...",
+  "options": ["Option A", "Option B", "Option C"],
+  "is_multiple_choice": false,
+  "end_date": "2025-02-01T00:00:00Z"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "uuid",
+  "question": "Which topic should we focus on?",
+  ...pollData
+}
+```
+
+### POST /api/polls/[id]/vote
+Submit a vote on a poll.
+
+**Request Body:**
+```json
+{
+  "optionId": "opt_0"
+}
+```
+
+---
+
+## Research Lab
+
+### POST /api/question-advisor
+Get AI-powered research question refinement.
+
+**Authorization:** User, Moderator, Admin
+
+**Request Body:**
+```json
+{
+  "question": "How does climate change affect agriculture in Syria?"
+}
+```
+
+**Response (200):**
+```json
+{
+  "analysis": {
+    "clarity_score": 8,
+    "specificity_score": 7,
+    "researchability_score": 9,
+    "suggestions": [
+      "Consider narrowing to specific crop types",
+      "Add temporal scope (e.g., 2010-2024)"
+    ],
+    "refined_questions": [
+      "How has climate change affected wheat production in northeastern Syria between 2010-2024?",
+      "What adaptation strategies have Syrian farmers employed in response to changing precipitation patterns?"
+    ],
+    "methodology_hints": [
+      "Consider mixed-methods approach combining satellite data with farmer interviews"
+    ]
+  }
+}
+```
+
+---
+
+## Coordination (Admin/Moderator Only)
+
+### GET /api/coordination
+List coordination threads for internal moderation discussions.
+
+**Authorization:** Admin, Moderator
+
+**Query Parameters:**
+- `page` (number): Page number (default: 1)
+- `pageSize` (number): Items per page (default: 20)
+- `objectType` (string): Filter by object type (post, comment, user)
+- `objectState` (string): Filter by state
+- `priority` (string): Filter by priority (low, normal, high, urgent)
+- `includeArchived` (boolean): Include archived threads
+
+**Response (200):**
+```json
+{
+  "threads": [...],
+  "total": 42,
+  "page": 1,
+  "pageSize": 20
+}
+```
+
+### POST /api/coordination
+Create a new coordination thread.
+
+**Authorization:** Admin, Moderator
+
+**Request Body:**
+```json
+{
+  "objectType": "post",
+  "objectId": "uuid",
+  "title": "Review needed for flagged content",
+  "description": "Multiple reports received...",
+  "priority": "high",
+  "initialMessage": "Starting review process...",
+  "initialMessageType": "NOTE"
+}
+```
+
+### POST /api/coordination/[id]/messages
+Add a message to a coordination thread.
+
+---
+
+## Appeals
+
+### GET /api/appeals
+List content appeals (moderators and admins only).
+
+**Authorization:** Moderator, Admin
+
+### POST /api/appeals
+Submit an appeal for moderated content.
+
+**Authorization:** Content owner
+
+**Request Body:**
+```json
+{
+  "post_id": "uuid",
+  "reason": "I believe this content was incorrectly flagged because..."
+}
+```
+
+---
+
 ## Role-Based Access Control (RBAC)
 
 ### User Roles
-1. **Researcher** (default)
+
+1. **Member** (basic)
+   - View public content
+   - Create limited comments
+   - Request promotion to Researcher
+
+2. **Researcher** (default for invited users)
    - Create and manage own posts
    - Create and manage own comments
-   - Create reports
+   - Create reports, polls, and surveys
    - View all public content
 
-2. **Moderator**
+3. **Moderator**
    - All Researcher permissions
    - View and manage all reports
    - Delete any post or comment
    - Create and manage tags
+   - Access coordination center
 
-3. **Admin**
+4. **Admin**
    - All Moderator permissions
    - Manage users (view, update roles, delete)
    - Manage roles and permissions
@@ -758,23 +1109,25 @@ All endpoints return consistent error responses:
 
 ### Permission Matrix
 
-| Action | User | Moderator | Admin |
-|--------|------|-----------|-------|
-| Create post | ✓ | ✓ | ✓ |
-| Edit own post | ✓ | ✓ | ✓ |
-| Delete own post | ✓ | ✓ | ✓ |
-| Delete any post | ✗ | ✓ | ✓ |
-| Create comment | ✓ | ✓ | ✓ |
-| Edit own comment | ✓ | ✓ | ✓ |
-| Delete any comment | ✗ | ✓ | ✓ |
-| Create report | ✓ | ✓ | ✓ |
-| View all reports | ✗ | ✓ | ✓ |
-| Manage reports | ✗ | ✓ | ✓ |
-| Create tags | ✗ | ✓ | ✓ |
-| View users | ✗ | ✗ | ✓ |
-| Update user roles | ✗ | ✗ | ✓ |
-| Delete users | ✗ | ✗ | ✓ |
-| Manage roles | ✗ | ✗ | ✓ |
+| Action | Member | Researcher | Moderator | Admin |
+|--------|--------|------------|-----------|-------|
+| Create post | ✗ | ✓ | ✓ | ✓ |
+| Edit own post | ✗ | ✓ | ✓ | ✓ |
+| Delete own post | ✗ | ✓ | ✓ | ✓ |
+| Delete any post | ✗ | ✗ | ✓ | ✓ |
+| Create comment | ✓ | ✓ | ✓ | ✓ |
+| Edit own comment | ✓ | ✓ | ✓ | ✓ |
+| Delete any comment | ✗ | ✗ | ✓ | ✓ |
+| Create report | ✓ | ✓ | ✓ | ✓ |
+| View all reports | ✗ | ✗ | ✓ | ✓ |
+| Manage reports | ✗ | ✗ | ✓ | ✓ |
+| Create tags | ✗ | ✗ | ✓ | ✓ |
+| Create polls/surveys | ✗ | ✓ | ✓ | ✓ |
+| Access coordination | ✗ | ✗ | ✓ | ✓ |
+| View users | ✗ | ✗ | ✗ | ✓ |
+| Update user roles | ✗ | ✗ | ✗ | ✓ |
+| Delete users | ✗ | ✗ | ✗ | ✓ |
+| Manage roles | ✗ | ✗ | ✗ | ✓ |
 
 ---
 
@@ -821,6 +1174,25 @@ const postsResponse = await fetch(
   '/api/posts?tag=Public+Health&limit=20&offset=0'
 )
 const posts = await postsResponse.json()
+
+// Create a poll
+const pollResponse = await fetch('/api/polls', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    question: 'Which research area matters most?',
+    options: ['Healthcare', 'Education', 'Infrastructure']
+  })
+})
+
+// Get AI question advice
+const advisorResponse = await fetch('/api/question-advisor', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    question: 'How does education affect economic development?'
+  })
+})
 ```
 
 ### cURL Examples
@@ -838,6 +1210,14 @@ curl http://localhost:3000/api/posts?limit=10&tag=Education
 curl -X POST http://localhost:3000/api/comments \
   -H "Content-Type: application/json" \
   -d '{"content":"Great post!","post_id":"uuid-here"}'
+
+# Create poll
+curl -X POST http://localhost:3000/api/polls \
+  -H "Content-Type: application/json" \
+  -d '{"question":"Best approach?","options":["A","B","C"]}'
+
+# Get surveys
+curl http://localhost:3000/api/surveys?status=active
 ```
 
 ---
@@ -846,3 +1226,4 @@ For more information, see:
 - Database Schema: `DATABASE_SCHEMA.md`
 - Quick Reference: `QUICK_REFERENCE.md`
 - Setup Guide: `supabase/README.md`
+

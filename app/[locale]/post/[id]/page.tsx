@@ -19,6 +19,9 @@ import { TextSelectionHandler } from '@/components/TextSelectionHandler'
 import { BookmarkButton } from '@/components/BookmarkButton'
 import { EditButton } from '@/components/EditButton'
 import { LinkedResourcesSection } from '@/components/LinkedResourcesSection'
+import { EpistemicRecommendations } from '@/components/EpistemicRecommendations'
+import { SessionContextBar } from '@/components/SessionContextBar'
+import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Button } from '@/components/ui/button'
@@ -569,9 +572,15 @@ export default async function PostPage(props: PostPageProps) {
               </h3>
               <KnowledgeGraph centerPostId={post.id} />
             </div>
+
+            {/* Epistemic Recommendations - To Broaden This Inquiry */}
+            <EpistemicRecommendations postId={post.id} postTags={post.tags || []} />
           </aside>
         </div>
       </main>
+
+      {/* Session Tracker - adds post to research trail */}
+      <PostSessionTracker postId={post.id} postTitle={post.title} postTags={post.tags || []} />
 
       {/* Citation Context Bar */}
       <CitationContextBar postId={post.id} currentTags={post.tags || []} />

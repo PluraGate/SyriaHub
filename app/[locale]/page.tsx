@@ -11,6 +11,7 @@ import { SocialProofBanner } from '@/components/SocialProofBanner'
 import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
 import { RelatedAuthors } from '@/components/RelatedAuthors'
 import { OnboardingModal } from '@/components/OnboardingModal'
+import { EpistemicOnboarding } from '@/components/EpistemicOnboarding'
 
 // New Editorial Components
 import { HeroEditorial } from '@/components/HeroEditorial'
@@ -58,6 +59,9 @@ export default async function Home({
       <Navbar user={user} />
 
       <main className="flex-1">
+        {/* Epistemic Onboarding - shows on every homepage refresh for testing */}
+        <EpistemicOnboarding />
+
         {user ? (
           <>
             {/* Onboarding Modal for New Users */}

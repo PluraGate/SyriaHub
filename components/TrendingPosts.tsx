@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { TrendingUp, Flame, Clock, ChevronRight, Sparkles } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
@@ -21,6 +22,7 @@ interface TrendingPost {
 type TimeRange = '24h' | '7d' | '30d'
 
 export function TrendingPosts() {
+    const t = useTranslations('Trending')
     const [posts, setPosts] = useState<TrendingPost[]>([])
     const [loading, setLoading] = useState(true)
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
@@ -96,8 +98,8 @@ export function TrendingPosts() {
 
     const timeRangeOptions: { value: TimeRange; label: string }[] = [
         { value: '24h', label: '24h' },
-        { value: '7d', label: 'Week' },
-        { value: '30d', label: 'Month' },
+        { value: '7d', label: t('week') },
+        { value: '30d', label: t('month') },
     ]
 
     return (
@@ -108,7 +110,7 @@ export function TrendingPosts() {
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
                         <Flame className="w-4 h-4 text-white" />
                     </div>
-                    <h3 className="font-semibold text-text dark:text-dark-text">Trending</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('title')}</h3>
                 </div>
 
                 {/* Time Range Selector */}
@@ -145,7 +147,7 @@ export function TrendingPosts() {
                     <div className="p-6 text-center">
                         <Sparkles className="w-8 h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
                         <p className="text-sm text-text-light dark:text-dark-text-muted">
-                            No trending posts yet
+                            {t('noTrending')}
                         </p>
                     </div>
                 ) : (
@@ -157,7 +159,7 @@ export function TrendingPosts() {
                         >
                             {/* Rank Number */}
                             <span className={`w-6 h-6 flex items-center justify-center flex-shrink-0 font-semibold text-sm rounded-md ${index === 0
-                                ? 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+                                ? 'bg-primary/10 text-primary dark:bg-white/8 dark:text-white/50'
                                 : 'text-text-light dark:text-dark-text-muted'
                                 }`}>
                                 {index + 1}
@@ -195,7 +197,7 @@ export function TrendingPosts() {
                     href="/feed?sort=hot"
                     className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-primary hover:bg-primary/5 transition-colors border-t border-gray-100 dark:border-dark-border"
                 >
-                    View all trending
+                    {t('viewAll')}
                     <ChevronRight className="w-4 h-4" />
                 </Link>
             )}

@@ -1,0 +1,140 @@
+# System Gap Analysis
+
+**Last Updated:** December 17, 2025
+
+This document tracks the system capabilities, completed features, and remaining gaps for the Syrealize research platform.
+
+---
+
+## ✅ Completed Features
+
+### Core Platform
+| Feature | Status | Notes |
+|---------|--------|-------|
+| User Authentication | ✅ Complete | Supabase Auth with invite-only signup |
+| User Roles | ✅ Complete | Admin, Moderator, Researcher, Member roles |
+| Content Publishing | ✅ Complete | Articles, Questions, Events with markdown |
+| Content Moderation | ✅ Complete | Admin review, appeals, revision requests |
+| Comments & Replies | ✅ Complete | Threaded comments with reply-to |
+| Forking System | ✅ Complete | Fork content with attribution |
+| Citation System | ✅ Complete | Citation backlinks and references |
+| Tagging & Categories | ✅ Complete | Tag management with admin controls |
+| Notifications | ✅ Complete | Real-time notification center |
+| Gamification | ✅ Complete | XP, levels, badges, achievements |
+
+### Search & Discovery
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Full-text Search | ✅ Complete | PostgreSQL full-text search |
+| Advanced Filters | ✅ Complete | Content type, date range, author, tags |
+| External API Integration | ✅ Complete | ReliefWeb, HDX, World Bank APIs |
+| Search Analytics | ✅ Complete | Query tracking and analysis |
+
+### Research Lab
+| Feature | Status | Notes |
+|---------|--------|-------|
+| AI Question Advisor | ✅ Complete | OpenAI-powered question refinement |
+| Polls | ✅ Complete | Create and vote on polls |
+| Surveys | ✅ Complete | Professional survey builder |
+| Knowledge Graph | ✅ Complete | Topic visualization with D3.js |
+| Statistics Tools | ✅ Complete | Data visualization with Recharts |
+
+### Events System
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Event Creation | ✅ Complete | Conferences, workshops, webinars |
+| RSVP System | ✅ Complete | Going/Not Going/Maybe status |
+| Calendar Integration | ✅ Complete | Add to calendar functionality |
+| Event Deletion | ✅ Complete | Author can delete with embedded confirmation |
+
+### Internationalization (i18n)
+| Feature | Status | Notes |
+|---------|--------|-------|
+| English Translations | ✅ Complete | 750+ translation keys |
+| Arabic Translations | ✅ Complete | Full RTL support |
+| Onboarding Localization | ✅ Complete | 55+ keys for onboarding wizard |
+| Trending Localization | ✅ Complete | 6 keys for trending component |
+| Recommendations Localization | ✅ Complete | 20+ keys for recommendations |
+
+### Bias-Aware Recommendation System
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Session-Bounded Context | ✅ Complete | Research trail tracking without long-term profiling |
+| Session Context Bar | ✅ Complete | Shows research trail, reset option |
+| Epistemic Recommendations | ✅ Complete | 5 diversity categories with explanations |
+| Post Session Tracker | ✅ Complete | Invisible component tracking post views |
+| Terminology Updates | ✅ Complete | "Related Research" instead of "You might like" |
+
+### Enhanced Onboarding
+| Feature | Status | Notes |
+|---------|--------|-------|
+| 4-Step Wizard | ✅ Complete | Welcome, Create, Research Lab, Epistemic |
+| Professional Design | ✅ Complete | Large modal, Lucide icons, no emojis |
+| Full Localization | ✅ Complete | English + Arabic translations |
+| Homepage Display | ✅ Complete | Shows on homepage refresh |
+
+---
+
+## ⏳ Pending / Requires Migration
+
+### Database Migrations
+| Migration | Status | Notes |
+|-----------|--------|-------|
+| `20251217160000_diversity_recommendations.sql` | ⏳ Pending | Diversity recommendations functions and ENUMs |
+
+**To apply:** Run the migration in Supabase Dashboard SQL editor.
+
+### Data Population Required
+| Data | Status | Notes |
+|------|--------|-------|
+| Content Relationships | ⏳ Needs Data | `content_relationships` table for contradicts/supports links |
+| Trust Profiles | ⏳ Needs Data | `trust_profiles` for gap detection |
+
+---
+
+## 🔮 Future Enhancements
+
+### Recommendation System
+- [ ] Full diversity-based recommendations (after migration applied)
+- [ ] Author trust profile integration
+- [ ] Content relationship auto-detection via AI
+
+### Platform Features
+- [ ] Real-time collaboration on posts
+- [ ] AI-powered plagiarism check improvements
+- [ ] Advanced analytics dashboard for researchers
+
+### Internationalization
+- [ ] Additional languages (French, Turkish)
+- [ ] Locale-specific date formatting
+- [ ] Translation coverage reporting
+
+---
+
+## Architecture Notes
+
+### Documentation
+| Document | Status | Description |
+|----------|--------|-------------|
+| `README.md` | ✅ Updated | Features, Tech Stack, Getting Started, Roadmap |
+| `API_DOCUMENTATION.md` | ✅ Updated | Full API reference with Events, Surveys, Polls, Research Lab, Coordination |
+| `MODERATION_DOCUMENTATION.md` | ✅ Complete | AI moderation setup and configuration |
+| `docs/system_gap_analysis.md` | ✅ Current | This document - system status tracking |
+| `docs/feature-roadmap.md` | ⏳ Needs Update | Phased module overview |
+
+### Client Components Using Translations
+Components updated to use `useTranslations` hook:
+- `Navbar.tsx` - Navigation labels
+- `TrendingPosts.tsx` - Trending section
+- `EpistemicOnboarding.tsx` - Full onboarding wizard
+- `EpistemicRecommendations.tsx` - Recommendation categories and labels
+
+### Translation File Structure
+```
+messages/
+├── en.json (810+ lines)
+└── ar.json (810+ lines)
+```
+
+Key sections: Common, Navigation, Auth, Post, Editor, Profile, Landing, Footer, Resources, Events, Groups, Notifications, Search, Comments, Settings, Admin, ResearchLab, Trending, Recommendations, Onboarding, Errors, About, Faq, Roles
+

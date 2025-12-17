@@ -1,8 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Helper to log search analytics (non-blocking)
+async function logSearchAnalytics(
+    supabase: Awaited<ReturnType<typeof createClient>>,
+    params: {
+        query: string
+        filter_type?: string | null
+        filter_tag?: string | null
+        filter_date?: string | null
+        results_count: number
+        search_duration_ms: number
+    }
+) {
+    try {
+        const { data: { user } } = await supabase.auth.getUser()
+
+        await supabase.from('search_analytics').insert({
+            user_id: user?.id || null,
+            query: params.query,
+            query_normalized: params.query.toLowerCase().trim(),
+            filter_type: params.filter_type,
+            filter_tag: params.filter_tag,
+            filter_date: params.filter_date,
+            results_count: params.results_count,
+            search_duration_ms: params.search_duration_ms,
+            source: 'web'
+        })
+    } catch (e) {
+        // Silent fail - analytics should not affect search
+        console.error('Analytics logging failed:', e)
+    }
+}
+
 // GET: Fuzzy search for the main search page
 export async function GET(request: NextRequest) {
+    const startTime = Date.now()
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q')
     const type = searchParams.get('type')
@@ -32,7 +65,7 @@ export async function GET(request: NextRequest) {
             // Fallback to ILIKE search if RPC fails
             let queryBuilder = supabase
                 .from('posts')
-                .select('id, title, content, created_at, tags')
+                .select('id, title, content, created_at, tags, content_type')
                 .eq('status', 'published')
                 .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
                 .limit(limit)
@@ -59,8 +92,30 @@ export async function GET(request: NextRequest) {
                 rank: 0.5
             }))
 
+            // Log analytics (non-blocking)
+            const duration = Date.now() - startTime
+            logSearchAnalytics(supabase, {
+                query,
+                filter_type: type,
+                filter_tag: tag,
+                filter_date: date,
+                results_count: results.length,
+                search_duration_ms: duration
+            })
+
             return NextResponse.json({ results, total: results.length, fallback: true })
         }
+
+        // Log analytics (non-blocking)
+        const duration = Date.now() - startTime
+        logSearchAnalytics(supabase, {
+            query,
+            filter_type: type,
+            filter_tag: tag,
+            filter_date: date,
+            results_count: (data || []).length,
+            search_duration_ms: duration
+        })
 
         return NextResponse.json({
             results: data || [],
