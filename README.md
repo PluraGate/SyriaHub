@@ -4,21 +4,52 @@ A minimalist, mobile-first research platform built with Next.js 14, Tailwind CSS
 
 ## Features
 
-- 🔐 **Email Authentication** - Secure user authentication with Supabase Auth
-- 📝 **Post Creation** - Clean, distraction-free post editor
-- 👤 **User Profiles** - Dynamic profile pages with user posts
-- 🏷️ **Tag System** - Organize and discover posts by tags
-- 📱 **Mobile-First Design** - Responsive UI optimized for all devices
-- ⚡ **Fast Load Times** - Optimized for performance with Next.js 14+ App Router
-- ♿ **Accessible** - Built with accessibility best practices
-- 🎨 **Minimalist UI** - Clean, focused interface powered by Shadcn UI
-- 🔍 **Dynamic Routes** - Post and profile pages with dynamic routing
-- 🛡️ **Role-Based Access Control** - User, Moderator, and Admin roles (NEW!)
-- 🔒 **Secure API** - RESTful API with JWT authentication and authorization (NEW!)
-- 💬 **Comments System** - Threaded discussions on posts (NEW!)
-- 🚩 **Content Moderation** - Report system for community safety (NEW!)
-- 🤖 **AI Moderation** - Automated content scanning with OpenAI/Perspective API (NEW!)
-- 🔗 **Citations** - Academic post-to-post referencing (NEW!)
+### Core Platform
+- 🔐 **Invite-Only Authentication** - Secure signup with invitation codes via Supabase Auth
+- 📝 **Content Publishing** - Articles, Questions, and Events with Markdown support
+- 👤 **User Profiles** - Dynamic profiles with gamification, badges, and research history
+- 🏷️ **Tag System** - Organize and discover content by categories
+- 💬 **Comments & Replies** - Threaded discussions with reply-to functionality
+- 🔗 **Citations & Forking** - Academic referencing with content forking and attribution
+- 🔔 **Real-time Notifications** - Notification center for comments, mentions, and updates
+
+### Research Lab
+- 🤖 **AI Question Advisor** - OpenAI-powered research question refinement
+- 📊 **Surveys** - Professional survey builder with analytics
+- 📈 **Polls** - Create and vote on research polls
+- 🔍 **Knowledge Graph** - Topic visualization with D3.js
+- 📉 **Statistics Tools** - Data visualization with Recharts
+
+### Events System
+- 📅 **Event Creation** - Conferences, workshops, and webinars
+- ✅ **RSVP System** - Going/Not Going/Maybe status tracking
+- 🗓️ **Calendar Integration** - Add events to personal calendars
+
+### Discovery & Search
+- 🔍 **Full-text Search** - PostgreSQL-powered search with filters
+- 🌐 **External API Integration** - ReliefWeb, HDX, and World Bank data
+- 📊 **Search Analytics** - Query tracking and analysis
+
+### Moderation & Governance
+- 🛡️ **Role-Based Access Control** - Admin, Moderator, Researcher, and Member roles
+- 🚩 **Content Moderation** - Report system with appeals workflow
+- 🤖 **AI Moderation** - Automated content scanning with OpenAI/Perspective API
+- ⚖️ **Jury System** - Community-based content review
+
+### Gamification
+- 🏆 **XP & Levels** - Earn experience points for contributions
+- 🎖️ **Badges & Achievements** - Unlock milestones and special recognition
+- 📈 **Progress Tracking** - Visual progress with configurable visibility
+
+### Internationalization (i18n)
+- 🌍 **Bilingual Support** - Full English and Arabic translations (800+ keys)
+- ↔️ **RTL Support** - Complete right-to-left layout for Arabic
+- 🎓 **Onboarding Wizard** - Localized 4-step guided onboarding
+
+### Bias-Aware Recommendations
+- 🧠 **Epistemic Diversity** - Recommendations across 5 diversity categories
+- 🔄 **Session-Bounded Context** - Research trail without long-term profiling
+- 📚 **Related Research** - Terminology designed for academic contexts
 
 ## Tech Stack
 
@@ -288,23 +319,32 @@ For complete API documentation with examples:
 
 ## Features Roadmap
 
+### ✅ Completed
 - [x] Landing page with hero section
-- [x] Email authentication (login/signup)
+- [x] Email authentication (invite-only signup)
 - [x] Post feed with tag filtering
-- [x] Post editor with tag support
+- [x] Post editor with Markdown support
 - [x] Mobile-first responsive design
 - [x] Vercel deployment ready
-- [x] Dynamic post detail pages (`/post/[id]`)
-- [x] Dynamic user profile pages (`/profile/[id]`)
-- [x] Shadcn UI integration
-- [x] Lucide Icons integration
-- [x] TypeScript types for User, Post, Profile
-- [ ] Post editing functionality
-- [ ] User profile editing
-- [ ] Search functionality
-- [ ] Comments on posts
-- [ ] Bookmarking posts
-- [ ] Shadcn UI components (Button, Card, etc.)
+- [x] Dynamic post and profile pages
+- [x] Shadcn UI and Lucide Icons integration
+- [x] Post editing functionality
+- [x] User profile editing
+- [x] Full-text search with advanced filters
+- [x] Comments and replies system
+- [x] Bookmarking/saving posts
+- [x] Content moderation and appeals
+- [x] Research Lab (AI Advisor, Polls, Surveys)
+- [x] Events system with RSVP
+- [x] Gamification (XP, levels, badges)
+- [x] Internationalization (English + Arabic)
+- [x] Bias-aware recommendation system
+
+### 🔮 Future Enhancements
+- [ ] Real-time collaboration on posts
+- [ ] Additional languages (French, Turkish)
+- [ ] Advanced analytics dashboard
+- [ ] Content versioning with diff views
 
 ## Adding Shadcn UI Components
 

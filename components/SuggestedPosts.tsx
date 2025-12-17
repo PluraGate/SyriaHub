@@ -33,7 +33,7 @@ export function SuggestedPostsCarousel({
     currentPostId,
     currentTags = [],
     limit = 6,
-    title = 'You might like',
+    title = 'Related Research',
 }: SuggestedPostsCarouselProps) {
     const [posts, setPosts] = useState<SuggestedPost[]>([])
     const [loading, setLoading] = useState(true)

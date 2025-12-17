@@ -14,7 +14,8 @@ import {
     ChevronLeft,
     ChevronRight,
     MessageSquareWarning,
-    MessagesSquare
+    MessagesSquare,
+    Search
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -34,6 +35,11 @@ const navItems = [
         label: 'Analytics',
         href: '/admin/analytics',
         icon: BarChart3,
+    },
+    {
+        label: 'Search Analytics',
+        href: '/admin/search-analytics',
+        icon: Search,
     },
     {
         label: 'Users',

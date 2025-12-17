@@ -27,22 +27,22 @@ export function TagChip({
       'px-2.5 py-1 text-xs': size === 'sm',
       'px-3 py-1.5 text-sm': size === 'md',
       'px-4 py-2 text-base': size === 'lg',
-      
-      // Color variants
-      'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light':
+
+      // Color variants - improved dark mode contrast
+      'bg-primary/10 text-primary dark:bg-white/5 dark:text-white/50':
         variant === 'default',
-      'border-2 border-primary/20 text-primary dark:border-primary-light/30 dark:text-primary-light':
+      'border-2 border-primary/20 text-primary dark:border-white/20 dark:text-white/50':
         variant === 'outline',
-      'bg-accent/10 text-accent dark:bg-accent-light/20 dark:text-accent-light':
+      'bg-accent/10 text-accent dark:bg-white/5 dark:text-white/50':
         variant === 'accent',
-      
+
       // Interactive styles
       'cursor-pointer hover:scale-105': interactive,
-      'hover:bg-primary/20 dark:hover:bg-primary-light/30':
+      'hover:bg-primary/20 dark:hover:bg-white/10':
         interactive && variant === 'default',
-      'hover:border-primary/40 dark:hover:border-primary-light/50':
+      'hover:border-primary/40 dark:hover:border-white/40':
         interactive && variant === 'outline',
-      'hover:bg-accent/20 dark:hover:bg-accent-light/30':
+      'hover:bg-accent/20 dark:hover:bg-white/10':
         interactive && variant === 'accent',
     },
     className

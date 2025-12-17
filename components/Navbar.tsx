@@ -164,14 +164,14 @@ export function Navbar({ user }: NavbarProps) {
                   <Link href="/research-lab" className="shrink-0">
                     <Button variant="outline" size="sm" className="gap-2 font-medium whitespace-nowrap">
                       <FlaskConical className="w-4 h-4" />
-                      Research Lab
+                      {t('researchLab')}
                     </Button>
                   </Link>
 
                   <Link href="/editor" className="shrink-0">
                     <Button size="sm" className="gap-2 font-medium shadow-sm">
                       <PenSquare className="w-4 h-4" />
-                      Write
+                      {t('write')}
                     </Button>
                   </Link>
 
@@ -205,13 +205,13 @@ export function Navbar({ user }: NavbarProps) {
                       <DropdownMenuItem asChild>
                         <Link href="/saved" className="cursor-pointer w-full flex items-center">
                           <Bookmark className="mr-2 h-4 w-4" />
-                          <span>Saved</span>
+                          <span>{t('saved')}</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link href="/settings" className="cursor-pointer w-full flex items-center">
                           <Settings className="mr-2 h-4 w-4" />
-                          <span>Settings</span>
+                          <span>{t('settings')}</span>
                         </Link>
                       </DropdownMenuItem>
                       {isAdminOrModerator && (
@@ -220,7 +220,7 @@ export function Navbar({ user }: NavbarProps) {
                           <DropdownMenuItem asChild>
                             <Link href="/admin" className="cursor-pointer w-full flex items-center">
                               <Shield className="mr-2 h-4 w-4" />
-                              <span>Admin Panel</span>
+                              <span>{t('admin')}</span>
                             </Link>
                           </DropdownMenuItem>
                         </>
@@ -294,7 +294,7 @@ export function Navbar({ user }: NavbarProps) {
               onClick={() => setIsMenuOpen(false)}
             >
               <FlaskConical className="w-4 h-4" />
-              Research Lab
+              {t('researchLab')}
             </Link>
             <Link
               href="/events"
@@ -326,7 +326,7 @@ export function Navbar({ user }: NavbarProps) {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <PenSquare className="w-4 h-4" />
-                    Write a Post
+                    {t('write')}
                   </Link>
 
                   <Link
@@ -345,7 +345,7 @@ export function Navbar({ user }: NavbarProps) {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <Shield className="w-4 h-4" />
-                      Admin Panel
+                      {t('admin')}
                     </Link>
                   )}
                   <button

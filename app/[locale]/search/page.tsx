@@ -16,6 +16,26 @@ type SearchResult = {
     rank: number
 }
 
+// Helper to strip markdown formatting for clean display
+function stripMarkdown(text: string): string {
+    if (!text) return ''
+    return text
+        .replace(/^#{1,6}\s+/gm, '') // Remove headers
+        .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove bold
+        .replace(/\*([^*]+)\*/g, '$1') // Remove italic
+        .replace(/__([^_]+)__/g, '$1') // Remove bold
+        .replace(/_([^_]+)_/g, '$1') // Remove italic
+        .replace(/`([^`]+)`/g, '$1') // Remove inline code
+        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove links
+        .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1') // Remove images
+        .replace(/^[-*+]\s+/gm, '') // Remove list markers
+        .replace(/^\d+\.\s+/gm, '') // Remove numbered list markers
+        .replace(/^>\s+/gm, '') // Remove blockquotes
+        .replace(/\n+/g, ' ') // Replace newlines with spaces
+        .trim()
+}
+
 export default async function SearchPage({
     searchParams,
 }: {
@@ -56,6 +76,19 @@ export default async function SearchPage({
         if (sort === 'recent') {
             results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         }
+
+        // Log search analytics (non-blocking, fire and forget)
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        supabase.from('search_analytics').insert({
+            user_id: currentUser?.id || null,
+            query: q,
+            query_normalized: q.toLowerCase().trim(),
+            filter_type: type || null,
+            filter_tag: tag || null,
+            filter_date: date || null,
+            results_count: results.length,
+            source: 'web'
+        }).then(() => { }).catch(() => { }) // Silent fail
     }
 
     const getIcon = (resultType: string) => {
@@ -142,7 +175,7 @@ export default async function SearchPage({
                                                     {result.title}
                                                 </h3>
                                                 <p className="text-text-light dark:text-dark-text-muted line-clamp-2">
-                                                    {result.description}
+                                                    {stripMarkdown(result.description)}
                                                 </p>
                                             </div>
                                         </div>

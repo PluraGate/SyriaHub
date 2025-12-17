@@ -71,6 +71,7 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Inter', 'system-ui', 'sans-serif'],
         serif: ['Georgia', 'Cambria', 'serif'],
+        arabic: ['var(--font-arabic)', 'Cairo', 'Tahoma', 'sans-serif'],
       },
       fontSize: {
         'display-xl': ['4rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],

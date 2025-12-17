@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Link2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { Link2, ArrowRight, X, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react'
 
 interface RelatedPost {
     id: string
@@ -21,10 +21,23 @@ interface CitationContextBarProps {
 export function CitationContextBar({ postId, currentTags = [] }: CitationContextBarProps) {
     const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([])
     const [tagColors, setTagColors] = useState<Record<string, string>>({})
-    const [isExpanded, setIsExpanded] = useState(true)
+    const [isExpanded, setIsExpanded] = useState(false) // Collapsed by default
+    const [showAll, setShowAll] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
     const [loading, setLoading] = useState(true)
+    const [animatedTextIndex, setAnimatedTextIndex] = useState(0)
     const supabase = useMemo(() => createClient(), [])
+
+    // Animated text cycling
+    useEffect(() => {
+        if (relatedPosts.length === 0 || isExpanded) return
+
+        const interval = setInterval(() => {
+            setAnimatedTextIndex((prev) => (prev + 1) % 2)
+        }, 3000) // Switch every 3 seconds
+
+        return () => clearInterval(interval)
+    }, [relatedPosts.length, isExpanded])
 
     useEffect(() => {
         async function fetchRelatedContent() {
@@ -130,7 +143,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     }
                 })
 
-                setRelatedPosts(related.slice(0, 6))
+                setRelatedPosts(related.slice(0, 10)) // Keep more for "View more"
             } catch (error) {
                 console.error('Error fetching related content:', error)
             } finally {
@@ -164,6 +177,20 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
         return acc
     }, {} as Record<string, RelatedPost[]>)
 
+    const disciplineCount = Object.keys(disciplineGroups).length
+    const firstPostTitle = relatedPosts[0]?.title || 'Related content'
+
+    // Animated text options
+    const animatedTexts = [
+        `${relatedPosts.length} connections across ${disciplineCount} discipline${disciplineCount > 1 ? 's' : ''}`,
+        `Related: ${firstPostTitle.length > 40 ? firstPostTitle.slice(0, 37) + '...' : firstPostTitle}`
+    ]
+
+    // Limit displayed items based on showAll state
+    const displayLimit = showAll ? Object.keys(disciplineGroups).length : 3
+    const visibleDisciplineEntries = Object.entries(disciplineGroups).slice(0, displayLimit)
+    const hasMore = Object.keys(disciplineGroups).length > 3
+
     return (
         <div className="sticky bottom-4 z-40 mx-auto max-w-4xl px-4">
             <div className="bg-white/95 dark:bg-dark-surface/95 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-dark-border shadow-soft-lg overflow-hidden">
@@ -179,9 +206,20 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                         <span className="text-sm font-semibold text-text dark:text-dark-text">
                             Contextual Threads
                         </span>
-                        <span className="text-xs text-text-light dark:text-dark-text-muted">
-                            {relatedPosts.length} connections across {Object.keys(disciplineGroups).length} disciplines
-                        </span>
+                        {/* Animated text with fixed width and horizontal scroll for long text */}
+                        <div className="relative overflow-hidden w-[280px] h-5">
+                            <div
+                                className="absolute inset-0 flex items-center whitespace-nowrap animate-fade-in"
+                                key={animatedTextIndex}
+                            >
+                                <span
+                                    className={`text-xs text-text-light dark:text-dark-text-muted ${animatedTexts[animatedTextIndex].length > 45 ? 'animate-marquee' : ''
+                                        }`}
+                                >
+                                    {animatedTexts[animatedTextIndex]}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -202,46 +240,75 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     </div>
                 </div>
 
-                {/* Content */}
-                {isExpanded && (
-                    <div className="px-4 pb-4 space-y-3">
-                        {Object.entries(disciplineGroups).map(([discipline, posts]) => (
-                            <div key={discipline} className="flex items-start gap-3">
-                                {/* Discipline Badge */}
-                                <div
-                                    className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium text-white"
-                                    style={{ backgroundColor: tagColors[discipline] || '#6B7280' }}
-                                >
-                                    {discipline}
-                                </div>
+                {/* Content - Progressive Disclosure */}
+                {
+                    isExpanded && (
+                        <div className="px-4 pb-4 space-y-3">
+                            {visibleDisciplineEntries.map(([discipline, posts]) => (
+                                <div key={discipline} className="flex items-start gap-3">
+                                    {/* Discipline Badge */}
+                                    <div
+                                        className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium text-white"
+                                        style={{ backgroundColor: tagColors[discipline] || '#6B7280' }}
+                                    >
+                                        {discipline}
+                                    </div>
 
-                                {/* Related Posts */}
-                                <div className="flex-1 flex flex-wrap items-center gap-2">
-                                    {posts.map((post, idx) => (
-                                        <div key={post.id} className="flex items-center gap-1.5">
-                                            {idx > 0 && (
-                                                <span className="text-xs text-text-light dark:text-dark-text-muted">•</span>
-                                            )}
+                                    {/* Related Posts - Show max 2 per discipline when not expanded */}
+                                    <div className="flex-1 flex flex-wrap items-center gap-2">
+                                        {posts.slice(0, showAll ? posts.length : 2).map((post, idx) => (
+                                            <div key={post.id} className="flex items-center gap-1.5">
+                                                {idx > 0 && (
+                                                    <span className="text-xs text-text-light dark:text-dark-text-muted">•</span>
+                                                )}
+                                                <span className="text-xs text-text-light dark:text-dark-text-muted">
+                                                    {getConnectionLabel(post.connectionType)}
+                                                </span>
+                                                <Link
+                                                    href={`/post/${post.id}`}
+                                                    className="text-sm font-medium text-primary dark:text-primary-light hover:underline truncate max-w-[200px]"
+                                                    title={post.title}
+                                                >
+                                                    {post.title}
+                                                </Link>
+                                            </div>
+                                        ))}
+                                        {!showAll && posts.length > 2 && (
                                             <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                {getConnectionLabel(post.connectionType)}
+                                                +{posts.length - 2} more
                                             </span>
-                                            <Link
-                                                href={`/post/${post.id}`}
-                                                className="text-sm font-medium text-primary dark:text-primary-light hover:underline truncate max-w-[200px]"
-                                                title={post.title}
-                                            >
-                                                {post.title}
-                                            </Link>
-                                        </div>
-                                    ))}
-                                </div>
+                                        )}
+                                    </div>
 
-                                <ArrowRight className="w-4 h-4 text-text-light dark:text-dark-text-muted flex-shrink-0" />
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
+                                    <ArrowRight className="w-4 h-4 text-text-light dark:text-dark-text-muted flex-shrink-0" />
+                                </div>
+                            ))}
+
+                            {/* View More Button */}
+                            {hasMore && !showAll && (
+                                <button
+                                    onClick={() => setShowAll(true)}
+                                    className="flex items-center gap-2 text-sm text-primary hover:text-primary-dark transition-colors mx-auto"
+                                >
+                                    <MoreHorizontal className="w-4 h-4" />
+                                    View all {Object.keys(disciplineGroups).length} disciplines
+                                </button>
+                            )}
+
+                            {/* Collapse button when expanded */}
+                            {showAll && hasMore && (
+                                <button
+                                    onClick={() => setShowAll(false)}
+                                    className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-text transition-colors mx-auto"
+                                >
+                                    <ChevronUp className="w-4 h-4" />
+                                    Show less
+                                </button>
+                            )}
+                        </div>
+                    )
+                }
+            </div >
+        </div >
     )
 }
