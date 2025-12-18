@@ -1,14 +1,18 @@
 {
-  "name": "syrealize",
+  "name": "syriahub",
   "version": "1.0.0",
-  "description": "Syrealize (SyriaHub) - A minimalist research platform for collaborative knowledge sharing",
+  "description": "SyriaHub - A minimalist research platform for collaborative knowledge sharing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "next lint",
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "keywords": [
@@ -75,12 +79,20 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/nodemailer": "^7.0.4",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/ui": "^4.0.16",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.1",
+    "jsdom": "^27.3.0",
     "postcss": "^8.5.6",
     "supabase": "^2.54.11",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "vitest": "^4.0.16"
   }
 }

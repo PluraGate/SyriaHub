@@ -2,7 +2,7 @@
 
 **Last Updated:** December 18, 2025
 
-This document tracks the system capabilities, completed features, and remaining gaps for the Syrealize research platform.
+This document tracks the system capabilities, completed features, and remaining gaps for the SyriaHub research platform.
 
 ---
 
@@ -21,6 +21,9 @@ This document tracks the system capabilities, completed features, and remaining 
 | Tagging & Categories | ✅ Complete | Tag management with admin controls |
 | Notifications | ✅ Complete | Real-time notification center |
 | Gamification | ✅ Complete | XP, levels, badges, achievements |
+| Theme & Settings Sync | ✅ Complete | Robust theme persistence & Supabase sync |
+| Project Rebranding | ✅ Complete | "Syrealize" renamed to "SyriaHub" codebase-wide |
+
 
 ### Search & Discovery
 | Feature | Status | Notes |
@@ -85,6 +88,22 @@ This document tracks the system capabilities, completed features, and remaining 
 | Offline Indicator | ✅ Complete | Status badge showing connection state |
 | PWA Meta Tags | ✅ Complete | manifest, theme-color, apple-web-app, viewport |
 
+### UI/UX & Accessibility
+| Feature | Status | Notes |
+|---------|--------|-------|
+| WCAG 2.1 AA Compliance | ✅ Complete | Full audit and semantic HTML improvements |
+| Focus Management | ✅ Complete | Focus traps for modals/dialogs |
+| Reduced Motion | ✅ Complete | CSS/JS media query support for reduced motion |
+
+### Quality Assurance & Testing
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Unit Testing | ✅ Complete | Vitest configured with Next.js mocks |
+| E2E Testing | ✅ Complete | Playwright suite for cross-browser validation |
+| Test Utilities | ✅ Complete | Custom renderers for localized components |
+| Smoke Tests | ✅ Complete | Auth, Landing, and Footer flows verified |
+
+
 ---
 
 ## ⚠️ Known Gaps
@@ -92,17 +111,17 @@ This document tracks the system capabilities, completed features, and remaining 
 ### Infrastructure & Security
 | Gap | Severity | Status | Notes |
 |-----|----------|--------|-------|
-| Automated Testing | 🔴 Critical | ❌ Missing | No Jest/Vitest/Playwright config. Manual scripts only. |
 | Email Configuration | 🟠 High | ⚠️ Partial | Templates & transporter exist. SMTP envs missing in `.env.example`. |
-| API Rate Limiting | 🟡 Medium | ⚠️ Partial | `rateLimit.ts` exists but not integrated into API routes. |
+| API Rate Limiting | ✅ Complete | Integrated into Auth, Research Lab, and Public APIs |
 | CAPTCHA Integration | 🟡 Medium | ❌ Missing | Required for sensitive operations (Auth, Surveys). |
 | Performance Monitoring | 🔵 Low | ⚠️ Partial | Vercel Analytics active. Sentry/APM missing. |
 | Data Export (GDPR) | 🔵 Low | ⚠️ Partial | Basic export exists. Need full portability & BibTeX/RIS. |
 
-### UI/UX & Accessibility
-- [ ] Complete WCAG 2.1 AA compliance audit
-- [ ] Focus trap management in complex modals
-- [ ] Reduced motion support
+### Documentation & Architecture
+- [x] Complete WCAG 2.1 AA compliance audit
+- [x] Initial automated testing suite implementation
+- [x] API Rate Limiting integration across critical endpoints
+
 
 ---
 

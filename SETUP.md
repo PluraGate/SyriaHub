@@ -1,6 +1,6 @@
-# Syrealize Setup Guide
+# SyriaHub Setup Guide
 
-This guide will help you set up the Syrealize project from scratch.
+This guide will help you set up the SyriaHub project from scratch.
 
 ## Prerequisites Checklist
 

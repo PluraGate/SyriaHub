@@ -18,13 +18,13 @@ export function Footer() {
             <Link
               href="/"
               className="inline-flex items-center gap-2 rtl:gap-reverse group focus-ring rounded-lg p-1 -ms-1"
-              aria-label="Syrealize Home"
+              aria-label="SyriaHub Home"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <span className="text-white font-display font-bold text-lg">S</span>
               </div>
               <span className="font-display font-bold text-xl text-primary dark:text-dark-text">
-                Syrealize
+                SyriaHub
               </span>
             </Link>
             <p className="mt-4 text-text-light dark:text-dark-text-muted max-w-md leading-relaxed">
@@ -128,7 +128,7 @@ export function Footer() {
               <Twitter className="w-5 h-5" />
             </a>
             <a
-              href="mailto:contact@syrealize.com"
+              href="mailto:contact@syriahub.com"
               className="p-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded-lg"
               aria-label="Email"
             >

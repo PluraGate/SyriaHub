@@ -1,6 +1,6 @@
-# Contributing to Syrealize
+# Contributing to SyriaHub
 
-Thank you for considering contributing to Syrealize! This document outlines the guidelines for contributing to this project.
+Thank you for considering contributing to SyriaHub! This document outlines the guidelines for contributing to this project.
 
 ## Getting Started
 

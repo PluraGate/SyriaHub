@@ -1,49 +1,49 @@
 import nodemailer from 'nodemailer'
 
 interface EmailOptions {
-    to: string
-    subject: string
-    html: string
-    text?: string
+  to: string
+  subject: string
+  html: string
+  text?: string
 }
 
 // Create reusable transporter (Gmail SMTP for testing)
 const createTransporter = () => {
-    const config = {
-        service: 'gmail',
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASSWORD, // App password for Gmail
-        },
-    }
+  const config = {
+    service: 'gmail',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD, // App password for Gmail
+    },
+  }
 
-    return nodemailer.createTransport(config)
+  return nodemailer.createTransport(config)
 }
 
 export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
-    try {
-        const transporter = createTransporter()
+  try {
+    const transporter = createTransporter()
 
-        await transporter.sendMail({
-            from: `"Syrealize" <${process.env.SMTP_USER}>`,
-            to,
-            subject,
-            html,
-            text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for plain text
-        })
+    await transporter.sendMail({
+      from: `"SyriaHub" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for plain text
+    })
 
-        return true
-    } catch (error) {
-        console.error('Email send error:', error)
-        return false
-    }
+    return true
+  } catch (error) {
+    console.error('Email send error:', error)
+    return false
+  }
 }
 
 // Email templates
 export const emailTemplates = {
-    welcome: (userName: string) => ({
-        subject: 'Welcome to Syrealize! 🎉',
-        html: `
+  welcome: (userName: string) => ({
+    subject: 'Welcome to SyriaHub! 🎉',
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -60,11 +60,11 @@ export const emailTemplates = {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">Syrealize</div>
+            <div class="logo">SyriaHub</div>
           </div>
           <div class="content">
             <h1>Welcome, ${userName}! 👋</h1>
-            <p>Thank you for joining Syrealize, the research platform for knowledge sharing.</p>
+            <p>Thank you for joining SyriaHub, the research platform for knowledge sharing.</p>
             <p>Here's what you can do:</p>
             <ul>
               <li>📝 Share your research and ideas</li>
@@ -77,17 +77,17 @@ export const emailTemplates = {
             </p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Syrealize. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
           </div>
         </div>
       </body>
       </html>
     `,
-    }),
+  }),
 
-    newComment: (userName: string, postTitle: string, commentPreview: string, postUrl: string) => ({
-        subject: `New comment on "${postTitle}"`,
-        html: `
+  newComment: (userName: string, postTitle: string, commentPreview: string, postUrl: string) => ({
+    subject: `New comment on "${postTitle}"`,
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -105,7 +105,7 @@ export const emailTemplates = {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">Syrealize</div>
+            <div class="logo">SyriaHub</div>
           </div>
           <div class="content">
             <p>Hi there,</p>
@@ -125,11 +125,11 @@ export const emailTemplates = {
       </body>
       </html>
     `,
-    }),
+  }),
 
-    newFollower: (followerName: string, followerUrl: string) => ({
-        subject: `${followerName} started following you`,
-        html: `
+  newFollower: (followerName: string, followerUrl: string) => ({
+    subject: `${followerName} started following you`,
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -151,7 +151,7 @@ export const emailTemplates = {
         <div class="container">
           <div class="card">
             <div class="header">
-              <div class="logo">Syrealize</div>
+              <div class="logo">SyriaHub</div>
             </div>
             <div class="avatar">
               <span>${followerName.charAt(0).toUpperCase()}</span>
@@ -161,17 +161,17 @@ export const emailTemplates = {
             <a href="${followerUrl}" class="button">View Profile</a>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Syrealize</p>
+            <p>© ${new Date().getFullYear()} SyriaHub</p>
           </div>
         </div>
       </body>
       </html>
     `,
-    }),
+  }),
 
-    postPublished: (postTitle: string, postUrl: string) => ({
-        subject: `Your post "${postTitle}" is now live!`,
-        html: `
+  postPublished: (postTitle: string, postUrl: string) => ({
+    subject: `Your post "${postTitle}" is now live!`,
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -192,7 +192,7 @@ export const emailTemplates = {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">Syrealize</div>
+            <div class="logo">SyriaHub</div>
           </div>
           <div class="content">
             <div class="success-icon">🎉</div>
@@ -206,11 +206,11 @@ export const emailTemplates = {
             </div>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Syrealize. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
           </div>
         </div>
       </body>
       </html>
     `,
-    }),
+  }),
 }

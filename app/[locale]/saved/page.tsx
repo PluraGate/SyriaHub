@@ -5,7 +5,7 @@ import { SavedItemsManager } from '@/components/SavedItemsManager'
 import { Bookmark } from 'lucide-react'
 
 export const metadata = {
-    title: 'Saved | Syrealize',
+    title: 'Saved | SyriaHub',
     description: 'Your saved posts, events, and web references',
 }
 

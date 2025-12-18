@@ -77,6 +77,6 @@ export default async function JuryPage() {
 }
 
 export const metadata = {
-    title: 'Jury Panel | Syrealize',
+    title: 'Jury Panel | SyriaHub',
     description: 'Review and vote on content appeals as part of the decentralized moderation jury.'
 }

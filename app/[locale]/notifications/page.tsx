@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer'
 import { NotificationsPageContent } from '@/components/NotificationsPageContent'
 
 export const metadata = {
-    title: 'Notifications | Syrealize',
+    title: 'Notifications | SyriaHub',
     description: 'View and manage your notifications',
 }
 

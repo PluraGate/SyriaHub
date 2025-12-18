@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'About' })
     return {
-        title: `${t('terms')} | Syrealize`,
+        title: `${t('terms')} | SyriaHub`,
         description: t('termsTitle')
     }
 }
@@ -35,8 +35,8 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
                 <h3>{isArabic ? 'قبول الشروط' : 'Acceptance of Terms'}</h3>
                 <p>
                     {isArabic
-                        ? 'باستخدام Syrealize، فإنك توافق على الالتزام بهذه الشروط. إذا كنت لا توافق على أي جزء من الشروط، فلا يجوز لك استخدام خدماتنا.'
-                        : 'By using Syrealize, you agree to be bound by these terms. If you disagree with any part of the terms, you may not use our services.'
+                        ? 'باستخدام SyriaHub، فإنك توافق على الالتزام بهذه الشروط. إذا كنت لا توافق على أي جزء من الشروط، فلا يجوز لك استخدام خدماتنا.'
+                        : 'By using SyriaHub, you agree to be bound by these terms. If you disagree with any part of the terms, you may not use our services.'
                     }
                 </p>
 

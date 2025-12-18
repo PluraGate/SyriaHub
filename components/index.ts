@@ -1,4 +1,4 @@
-// Syrealize Component Library
+// SyriaHub Component Library
 // Export all reusable components for easy importing
 
 export { Navbar } from './Navbar'

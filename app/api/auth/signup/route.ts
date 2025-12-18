@@ -8,6 +8,7 @@ import {
   validateRequiredFields,
   withErrorHandling,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface SignupRequest {
   email: string
@@ -18,13 +19,13 @@ interface SignupRequest {
 
 async function handleSignup(request: Request): Promise<NextResponse> {
   const supabase = await createServerClient()
-  
+
   // Parse request body
   const body = await parseRequestBody<SignupRequest>(request)
-  
+
   // Validate required fields
   validateRequiredFields(body, ['email', 'password', 'name'])
-  
+
   const { email, password, name, affiliation } = body
 
   // Validate password strength
@@ -80,12 +81,12 @@ async function handleSignup(request: Request): Promise<NextResponse> {
     {
       user: profile,
       session: authData.session,
-      message: authData.session 
-        ? 'Account created successfully' 
+      message: authData.session
+        ? 'Account created successfully'
         : 'Account created. Please verify your email to continue',
     },
     201
   )
 }
 
-export const POST = withErrorHandling(handleSignup)
+export const POST = withRateLimit('auth')(withErrorHandling(handleSignup))

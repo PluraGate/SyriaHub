@@ -32,7 +32,7 @@ export function FaqPageClient({ user }: FaqPageClientProps) {
     }
 
     const faqItems = [
-        'whatIsSyrealize',
+        'whatIsSyriaHub',
         'howToJoin',
         'whatCanIPost',
         'howModeration',
@@ -43,7 +43,7 @@ export function FaqPageClient({ user }: FaqPageClientProps) {
     ]
 
     const categories = [
-        { key: 'gettingStarted', items: ['whatIsSyrealize', 'howToJoin'] },
+        { key: 'gettingStarted', items: ['whatIsSyriaHub', 'howToJoin'] },
         { key: 'content', items: ['whatCanIPost', 'canIEdit'] },
         { key: 'community', items: ['howModeration', 'whatAreRoles', 'howToBecome'] },
         { key: 'account', items: ['isContentFree'] }

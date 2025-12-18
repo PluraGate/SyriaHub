@@ -31,7 +31,7 @@ interface OnboardingModalProps {
 const ONBOARDING_STEPS = [
     {
         id: 'welcome',
-        title: 'Welcome to Syrealize',
+        title: 'Welcome to SyriaHub',
         description: 'Your journey into collaborative research begins here.',
         icon: Sparkles,
     },

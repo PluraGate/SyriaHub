@@ -1,6 +1,6 @@
 {
     "Common": {
-        "appTitle": "Syrealize",
+        "appTitle": "SyriaHub",
         "tagline": "Research platform for collaborative knowledge sharing",
         "primaryCta": "Get Started",
         "secondaryCta": "Explore Research",
@@ -236,7 +236,7 @@
         "legal": "Legal",
         "privacy": "Privacy Policy",
         "terms": "Terms of Service",
-        "copyright": "© {year} Syrealize. All rights reserved.",
+        "copyright": "© {year} SyriaHub. All rights reserved.",
         "madeWith": "Made with dedication for the research community"
     },
     "Resources": {
@@ -622,7 +622,7 @@
         "goBack": "Go Back"
     },
     "About": {
-        "title": "About Syrealize",
+        "title": "About SyriaHub",
         "subtitle": "Understanding our platform, mission, and values",
         "mission": "Our Mission",
         "missionTitle": "Empowering Research Collaboration",
@@ -651,7 +651,7 @@
             "terms": "Terms"
         },
         "content": {
-            "missionIntro": "Syrealize was created to democratize research collaboration, making knowledge accessible and collaborative for everyone.",
+            "missionIntro": "SyriaHub was created to democratize research collaboration, making knowledge accessible and collaborative for everyone.",
             "missionVision": "We envision a world where knowledge flows freely, where researchers from all backgrounds can contribute, learn, and collaborate without barriers.",
             "missionValues": "Our core values: Integrity, Collaboration, Accessibility, and Excellence.",
             "ethicsIntro": "We are committed to maintaining the highest ethical standards in research and community interaction.",
@@ -671,16 +671,16 @@
             "technical": "Technical Questions"
         },
         "questions": {
-            "whatIsSyrealize": {
-                "q": "What is Syrealize?",
-                "a": "Syrealize is a collaborative research platform designed for sharing knowledge, conducting research, and connecting with scholars worldwide. We provide tools for writing, peer review, and community engagement."
+            "whatIsSyriaHub": {
+                "q": "What is SyriaHub?",
+                "a": "SyriaHub is a collaborative research platform designed for sharing knowledge, conducting research, and connecting with scholars worldwide. We provide tools for writing, peer review, and community engagement."
             },
             "howToJoin": {
-                "q": "How do I join Syrealize?",
-                "a": "Syrealize operates on an invitation system. You need an invitation code from an existing member to create an account. This helps us maintain a quality community of genuine researchers."
+                "q": "How do I join SyriaHub?",
+                "a": "SyriaHub operates on an invitation system. You need an invitation code from an existing member to create an account. This helps us maintain a quality community of genuine researchers."
             },
             "whatCanIPost": {
-                "q": "What can I post on Syrealize?",
+                "q": "What can I post on SyriaHub?",
                 "a": "You can share research articles, ask questions, answer community questions, share resources like datasets and tools, and create events. All content should contribute to knowledge sharing."
             },
             "howModeration": {
@@ -700,7 +700,7 @@
                 "a": "Members can apply for Researcher status. Your application will be reviewed based on your contributions, expertise, and adherence to community guidelines."
             },
             "isContentFree": {
-                "q": "Is the content on Syrealize free to access?",
+                "q": "Is the content on SyriaHub free to access?",
                 "a": "Yes, all published content is freely accessible. Authors retain their rights and can choose appropriate licenses for their work."
             }
         }
@@ -760,9 +760,9 @@
         "beginResearch": "Begin Research",
         "closeOnboarding": "Close onboarding",
         "welcome": {
-            "title": "Welcome to Syrealize",
+            "title": "Welcome to SyriaHub",
             "subtitle": "Your Research Companion",
-            "description": "Syrealize is a knowledge platform designed for post-conflict reconstruction research, urban studies, heritage preservation, and evidence-based decision-making.",
+            "description": "SyriaHub is a knowledge platform designed for post-conflict reconstruction research, urban studies, heritage preservation, and evidence-based decision-making.",
             "mission": "Mission",
             "missionDesc": "Connect researchers with reliable, diverse evidence",
             "community": "Community",

@@ -1,6 +1,6 @@
-# Syrealize - Quick Start
+# SyriaHub - Quick Start
 
-Get up and running with Syrealize in 5 minutes!
+Get up and running with SyriaHub in 5 minutes!
 
 ## Prerequisites
 
