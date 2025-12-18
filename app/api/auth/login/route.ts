@@ -8,6 +8,7 @@ import {
   validateRequiredFields,
   withErrorHandling,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface LoginRequest {
   email: string
@@ -16,13 +17,13 @@ interface LoginRequest {
 
 async function handleLogin(request: Request): Promise<NextResponse> {
   const supabase = await createServerClient()
-  
+
   // Parse request body
   const body = await parseRequestBody<LoginRequest>(request)
-  
+
   // Validate required fields
   validateRequiredFields(body, ['email', 'password'])
-  
+
   const { email, password } = body
 
   // Authenticate user
@@ -56,4 +57,4 @@ async function handleLogin(request: Request): Promise<NextResponse> {
   })
 }
 
-export const POST = withErrorHandling(handleLogin)
+export const POST = withRateLimit('auth')(withErrorHandling(handleLogin))

@@ -1,6 +1,6 @@
-# 🎉 Syrealize Project Setup Complete!
+# 🎉 SyriaHub Project Setup Complete!
 
-Your **Syrealize** (SyriaHub) Next.js 14 project has been successfully initialized and configured with a complete database schema.
+Your **SyriaHub** (SyriaHub) Next.js 14 project has been successfully initialized and configured with a complete database schema.
 
 ## ✅ What's Been Set Up
 
@@ -183,6 +183,7 @@ Visit: http://localhost:3000
 - Through Supabase Dashboard: Authentication → Users → Add user
 - Or use the Auth API in your app
 - User profiles will be auto-created via trigger
+- Or run the seed script to create initial data
 
 ### 6. Optional: Add Sample Data
 - Get user IDs from `auth.users`
@@ -202,7 +203,7 @@ npx shadcn@latest add avatar
 ```bash
 # Push to GitHub
 git add .
-git commit -m "Initial Syrealize setup"
+git commit -m "Initial SyriaHub setup"
 git push origin main
 
 # Then deploy via Vercel dashboard or CLI
@@ -250,7 +251,7 @@ vercel
 
 ## 📝 Project Metadata
 
-- **Name**: Syrealize (SyriaHub)
+- **Name**: SyriaHub (SyriaHub)
 - **Version**: 1.0.0
 - **Node**: 20+
 - **Framework**: Next.js 14+

@@ -4,7 +4,7 @@ import { Navbar } from '@/components/Navbar'
 import { SettingsPage } from '@/components/SettingsPage'
 
 export const metadata = {
-    title: 'Settings | Syrealize',
+    title: 'Settings | SyriaHub',
     description: 'Manage your account settings and preferences',
 }
 

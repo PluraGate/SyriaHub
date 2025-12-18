@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'About' })
     return {
-        title: `${t('mission')} | Syrealize`,
+        title: `${t('mission')} | SyriaHub`,
         description: t('content.missionIntro')
     }
 }
@@ -52,8 +52,8 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
                 </h3>
                 <p>
                     {isArabic
-                        ? 'في عالم تتزايد فيه المعلومات المضللة، نؤمن بأن المعرفة الموثوقة والموثقة يجب أن تكون متاحة للجميع. أُسست Syrealize لتوفير مساحة آمنة ومحترفة للباحثين والمهتمين لمشاركة أعمالهم والتعاون في بناء قاعدة معرفية موثوقة.'
-                        : 'In a world of increasing misinformation, we believe that reliable, documented knowledge should be accessible to everyone. Syrealize was founded to provide a safe, professional space for researchers and knowledge seekers to share their work and collaborate in building a trustworthy knowledge base.'
+                        ? 'في عالم تتزايد فيه المعلومات المضللة، نؤمن بأن المعرفة الموثوقة والموثقة يجب أن تكون متاحة للجميع. أُسست SyriaHub لتوفير مساحة آمنة ومحترفة للباحثين والمهتمين لمشاركة أعمالهم والتعاون في بناء قاعدة معرفية موثوقة.'
+                        : 'In a world of increasing misinformation, we believe that reliable, documented knowledge should be accessible to everyone. SyriaHub was founded to provide a safe, professional space for researchers and knowledge seekers to share their work and collaborate in building a trustworthy knowledge base.'
                     }
                 </p>
 

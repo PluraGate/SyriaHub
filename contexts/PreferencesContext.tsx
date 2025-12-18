@@ -110,45 +110,52 @@ interface PreferencesProviderProps {
 }
 
 export function PreferencesProvider({ children, userId }: PreferencesProviderProps) {
-    const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences)
+    // Synchronously initialize from localStorage if available to prevent flash/stale state
+    const [preferences, setPreferences] = useState<UserPreferences>(() => {
+        if (typeof window !== 'undefined') {
+            const local = localStorage.getItem('user_preferences')
+            if (local) {
+                try {
+                    return { ...defaultPreferences, ...JSON.parse(local) }
+                } catch (e) {
+                    console.error('Failed to parse initial preferences', e)
+                }
+            }
+        }
+        return defaultPreferences
+    })
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
 
-    // Load preferences from localStorage and database
+    // Sync with database if user is logged in
     useEffect(() => {
         async function loadPreferences() {
-            // First, load from localStorage for immediate use
-            const localPrefs = localStorage.getItem('user_preferences')
-            if (localPrefs) {
-                try {
-                    const parsed = JSON.parse(localPrefs)
-                    setPreferences(prev => ({ ...prev, ...parsed }))
-                } catch (error) {
-                    console.error('Failed to parse local preferences:', error)
-                }
+            if (!userId) {
+                setLoading(false)
+                return
             }
 
-            // If user is logged in, sync with database
-            if (userId) {
-                try {
-                    const { data, error } = await supabase
-                        .from('user_preferences')
-                        .select('preferences')
-                        .eq('user_id', userId)
-                        .single()
+            try {
+                const { data, error } = await supabase
+                    .from('user_preferences')
+                    .select('preferences')
+                    .eq('user_id', userId)
+                    .single()
 
-                    if (data?.preferences) {
-                        const dbPrefs = data.preferences as UserPreferences
-                        setPreferences(prev => ({ ...prev, ...dbPrefs }))
-                        localStorage.setItem('user_preferences', JSON.stringify(dbPrefs))
-                    }
-                } catch (error) {
-                    // Preferences might not exist yet, that's okay
-                    console.log('No database preferences found, using defaults')
+                if (data?.preferences) {
+                    const dbPrefs = data.preferences as UserPreferences
+                    setPreferences(prev => {
+                        const merged = { ...prev, ...dbPrefs }
+                        // Update local cache with DB values
+                        localStorage.setItem('user_preferences', JSON.stringify(merged))
+                        return merged
+                    })
                 }
+            } catch (error) {
+                console.log('No database preferences found or sync error')
+            } finally {
+                setLoading(false)
             }
-
-            setLoading(false)
         }
 
         loadPreferences()
@@ -160,12 +167,6 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         if (typeof window === 'undefined') return
 
         const root = document.documentElement
-
-        // Clean up old 'theme' localStorage key from legacy Navbar logic
-        const oldTheme = localStorage.getItem('theme')
-        if (oldTheme) {
-            localStorage.removeItem('theme')
-        }
 
         if (preferences.theme === 'system') {
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -190,21 +191,33 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
     }, [preferences.theme])
 
     const savePreferences = useCallback(async (newPrefs: UserPreferences) => {
+        console.log('[Preferences] Saving:', newPrefs)
         // Save to localStorage immediately
-        localStorage.setItem('user_preferences', JSON.stringify(newPrefs))
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('user_preferences', JSON.stringify(newPrefs))
+        }
 
         // Save to database if user is logged in
         if (userId) {
             try {
-                await supabase
+                const { error } = await supabase
                     .from('user_preferences')
-                    .upsert({
-                        user_id: userId,
-                        preferences: newPrefs,
-                        updated_at: new Date().toISOString(),
-                    })
+                    .upsert(
+                        {
+                            user_id: userId,
+                            preferences: newPrefs,
+                            updated_at: new Date().toISOString(),
+                        },
+                        { onConflict: 'user_id' }
+                    )
+
+                if (error) {
+                    console.error('[Preferences] Supabase save error:', error)
+                } else {
+                    console.log('[Preferences] Saved and synced to database')
+                }
             } catch (error) {
-                console.error('Failed to save preferences to database:', error)
+                console.error('[Preferences] Failed to save preferences to database:', error)
             }
         }
     }, [userId, supabase])
@@ -213,10 +226,9 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         key: K,
         value: UserPreferences[K]
     ) => {
-        console.log('[Preferences] Updating:', key, '=', value)
-        const newPrefs = { ...preferences, [key]: value }
-        setPreferences(newPrefs)
-        await savePreferences(newPrefs)
+        const next = { ...preferences, [key]: value }
+        setPreferences(next)
+        await savePreferences(next)
     }, [preferences, savePreferences])
 
     const updateNestedPreference = useCallback(async <
@@ -227,15 +239,15 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         nestedKey: NK,
         value: UserPreferences[K][NK]
     ) => {
-        const newPrefs = {
+        const next = {
             ...preferences,
             [key]: {
                 ...(preferences[key] as object),
                 [nestedKey]: value,
             },
         }
-        setPreferences(newPrefs)
-        await savePreferences(newPrefs)
+        setPreferences(next)
+        await savePreferences(next)
     }, [preferences, savePreferences])
 
     const resetToDefaults = useCallback(async () => {

@@ -15,7 +15,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 const cairo = Cairo({ subsets: ['arabic'], variable: '--font-arabic' })
 
 export const metadata = {
-  title: 'Syrealize',
+  title: 'SyriaHub',
   description: 'A minimalist research platform for collaborative knowledge sharing',
   manifest: '/manifest.json',
   themeColor: '#3b82f6',
@@ -67,6 +67,26 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var prefs = JSON.parse(localStorage.getItem('user_preferences'));
+                  var theme = prefs ? prefs.theme : 'system';
+                  var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })()
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} ${outfit.variable} ${cairo.variable} ${locale === 'ar' ? 'font-arabic' : 'font-sans'} bg-background text-text overflow-x-hidden`} suppressHydrationWarning>
         <SkipNavLink />
         <NextIntlClientProvider messages={messages}>

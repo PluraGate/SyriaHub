@@ -1,6 +1,6 @@
-# Syrealize Design System
+# SyriaHub Design System
 
-A minimalist, mobile-first design system built with Tailwind CSS, focusing on clarity, accessibility, and responsiveness.
+A minimalist, mobile-first design system built with SyriaHub, focusing on clarity, accessibility, and responsiveness.
 
 ## 🎨 Color Palette
 

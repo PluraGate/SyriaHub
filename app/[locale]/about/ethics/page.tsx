@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'About' })
     return {
-        title: `${t('ethics')} | Syrealize`,
+        title: `${t('ethics')} | SyriaHub`,
         description: t('content.ethicsIntro')
     }
 }

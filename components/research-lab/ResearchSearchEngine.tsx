@@ -794,7 +794,7 @@ function SearchResultCard({ result, expanded, onToggleExpand }: SearchResultCard
                     <button
                         onClick={() => {
                             // Copy citation to clipboard
-                            const citation = `${result.title}. Retrieved from Syrealize Research Archive.`
+                            const citation = `${result.title}. Retrieved from SyriaHub Research Archive.`
                             navigator.clipboard.writeText(citation)
                         }}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"

@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
   if (!post) {
     return {
-      title: 'Post Not Found | Syrealize',
+      title: 'Post Not Found | SyriaHub',
       description: 'The requested post could not be found.',
     }
   }
@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const ogImageUrl = `${siteUrl}/api/og?id=${post.id}`
 
   return {
-    title: `${post.title} | Syrealize`,
+    title: `${post.title} | SyriaHub`,
     description,
     authors: [{ name: authorName }],
     keywords: post.tags || [],
@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
           alt: post.title,
         },
       ],
-      siteName: 'Syrealize',
+      siteName: 'SyriaHub',
     },
     twitter: {
       card: 'summary_large_image',

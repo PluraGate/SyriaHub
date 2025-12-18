@@ -50,6 +50,12 @@ export const RATE_LIMIT_CONFIGS = {
         maxRequests: 10,
         identifier: 'report',
     },
+    // AI/LLM operations - stricter to protect credits
+    ai: {
+        windowMs: 60 * 60 * 1000, // 1 hour
+        maxRequests: 50,
+        identifier: 'ai',
+    },
 } as const satisfies Record<string, RateLimitConfig>
 
 export type RateLimitType = keyof typeof RATE_LIMIT_CONFIGS
@@ -128,6 +134,13 @@ function cleanupExpiredEntries() {
 }
 
 /**
+ * Reset all rate limit entries (for testing)
+ */
+export function resetRateLimit() {
+    rateLimitStore.clear()
+}
+
+/**
  * Create rate limit headers for response
  */
 export function createRateLimitHeaders(result: RateLimitResult): Record<string, string> {
@@ -171,10 +184,10 @@ export function withRateLimit(
     type: RateLimitType = 'read'
 ) {
     return function (
-        handler: (req: NextRequest, context?: any) => Promise<NextResponse>
+        handler: (req: any, context?: any) => Promise<NextResponse>
     ) {
         return async function rateLimitedHandler(
-            req: NextRequest,
+            req: NextRequest | Request,
             context?: any
         ): Promise<NextResponse> {
             // Get user ID from auth header or null
@@ -227,22 +240,26 @@ export function withRateLimit(
  * Simple rate limit check for use in API routes
  */
 export async function applyRateLimit(
-    req: NextRequest,
+    req: NextRequest | Request,
     type: RateLimitType = 'read'
 ): Promise<{ allowed: boolean; response?: NextResponse }> {
     const ipAddress = getClientIP(req.headers)
 
     // Try to get user ID from cookie or header
     let userId: string | null = null
-    const authCookie = req.cookies.get('sb-auth-token')?.value
-    if (authCookie) {
-        try {
-            const payload = JSON.parse(atob(authCookie.split('.')[1]))
-            userId = payload.sub || null
-        } catch {
-            // Ignore
+    // Ensure req is NextRequest to access cookies
+    if (req instanceof NextRequest) {
+        const authCookie = req.cookies.get('sb-auth-token')?.value
+        if (authCookie) {
+            try {
+                const payload = JSON.parse(atob(authCookie.split('.')[1]))
+                userId = payload.sub || null
+            } catch {
+                // Ignore
+            }
         }
     }
+
 
     const result = checkRateLimit(userId, ipAddress, type)
 

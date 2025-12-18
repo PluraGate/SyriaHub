@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the technical plan for implementing real-time collaborative editing in Syrealize. This is a complex feature that requires careful architecture to ensure reliable synchronization and conflict resolution.
+This document outlines the technical plan for implementing real-time collaborative editing in SyriaHub. This is a complex feature that requires careful architecture to ensure reliable synchronization and conflict resolution.
 
 ## Proposed Architecture
 

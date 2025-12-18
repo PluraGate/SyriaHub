@@ -7,8 +7,8 @@ import Link from 'next/link'
 import { Ticket, Users, Clock, Sparkles } from 'lucide-react'
 
 export const metadata = {
-    title: 'Join the Waitlist | Syrealize',
-    description: 'Request access to Syrealize, the invite-only research platform for Syrian researchers.',
+    title: 'Join the Waitlist | SyriaHub',
+    description: 'Request access to SyriaHub, the invite-only research platform for Syrian researchers.',
 }
 
 export default async function WaitlistPage() {
@@ -36,14 +36,14 @@ export default async function WaitlistPage() {
                             <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
                                 <span className="text-white font-bold text-2xl">S</span>
                             </div>
-                            <span className="font-bold text-2xl text-white">Syrealize</span>
+                            <span className="font-bold text-2xl text-white">SyriaHub</span>
                         </Link>
 
                         <h1 className="text-4xl font-bold text-white mb-4">
                             Request Early Access
                         </h1>
                         <p className="text-xl text-white/80 mb-12 max-w-md">
-                            Syrealize is currently in private beta. Join the waitlist and we will notify you when a spot opens up.
+                            SyriaHub is currently in private beta. Join the waitlist and we will notify you when a spot opens up.
                         </p>
 
                         <div className="space-y-6">
@@ -87,7 +87,7 @@ export default async function WaitlistPage() {
                                 <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
                                     <span className="text-white font-bold text-xl">S</span>
                                 </div>
-                                <span className="font-bold text-2xl text-text dark:text-dark-text">Syrealize</span>
+                                <span className="font-bold text-2xl text-text dark:text-dark-text">SyriaHub</span>
                             </Link>
                         </div>
 

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
         const type = searchParams.get('type') || 'post'
 
         // If we have a post ID, fetch the data
-        let postTitle = title || 'Syrealize'
+        let postTitle = title || 'SyriaHub'
         let postAuthor = author || 'Research Platform'
         let postType = type
 
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
                                 letterSpacing: '-0.02em',
                             }}
                         >
-                            Syrealize
+                            SyriaHub
                         </span>
                     </div>
 
@@ -213,7 +213,7 @@ export async function GET(request: NextRequest) {
                             color: 'white',
                         }}
                     >
-                        Syrealize
+                        SyriaHub
                     </div>
                     <div
                         style={{

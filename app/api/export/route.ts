@@ -2,21 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
-    try {
-        const { searchParams } = new URL(request.url)
-        const postId = searchParams.get('id')
-        const format = searchParams.get('format') || 'markdown'
+  try {
+    const { searchParams } = new URL(request.url)
+    const postId = searchParams.get('id')
+    const format = searchParams.get('format') || 'markdown'
 
-        if (!postId) {
-            return NextResponse.json({ error: 'Post ID is required' }, { status: 400 })
-        }
+    if (!postId) {
+      return NextResponse.json({ error: 'Post ID is required' }, { status: 400 })
+    }
 
-        const supabase = await createClient()
+    const supabase = await createClient()
 
-        // Fetch the post with author
-        const { data: post, error } = await supabase
-            .from('posts')
-            .select(`
+    // Fetch the post with author
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select(`
         id,
         title,
         content,
@@ -27,82 +27,82 @@ export async function GET(request: NextRequest) {
         license,
         author:users!posts_author_id_fkey(name, email)
       `)
-            .eq('id', postId)
-            .single()
+      .eq('id', postId)
+      .single()
 
-        if (error || !post) {
-            return NextResponse.json({ error: 'Post not found' }, { status: 404 })
-        }
-
-        const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
-        const publishedDate = new Date(post.created_at).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        })
-
-        if (format === 'markdown') {
-            // Generate Markdown export
-            const markdown = generateMarkdown(post, authorName, publishedDate)
-
-            return new NextResponse(markdown, {
-                status: 200,
-                headers: {
-                    'Content-Type': 'text/markdown; charset=utf-8',
-                    'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.md"`,
-                },
-            })
-        } else if (format === 'json') {
-            // Generate JSON export
-            const json = {
-                title: post.title,
-                author: authorName,
-                content: post.content,
-                tags: post.tags || [],
-                publishedAt: post.created_at,
-                updatedAt: post.updated_at,
-                contentType: post.content_type,
-                license: post.license,
-                exportedAt: new Date().toISOString(),
-            }
-
-            return NextResponse.json(json, {
-                headers: {
-                    'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.json"`,
-                },
-            })
-        } else if (format === 'html') {
-            // Generate HTML export
-            const html = generateHTML(post, authorName, publishedDate)
-
-            return new NextResponse(html, {
-                status: 200,
-                headers: {
-                    'Content-Type': 'text/html; charset=utf-8',
-                    'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.html"`,
-                },
-            })
-        }
-
-        return NextResponse.json({ error: 'Invalid format. Use markdown, json, or html.' }, { status: 400 })
-    } catch (error) {
-        console.error('Export error:', error)
-        return NextResponse.json({ error: 'Failed to export post' }, { status: 500 })
+    if (error || !post) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
+
+    const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
+    const publishedDate = new Date(post.created_at).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+
+    if (format === 'markdown') {
+      // Generate Markdown export
+      const markdown = generateMarkdown(post, authorName, publishedDate)
+
+      return new NextResponse(markdown, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/markdown; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.md"`,
+        },
+      })
+    } else if (format === 'json') {
+      // Generate JSON export
+      const json = {
+        title: post.title,
+        author: authorName,
+        content: post.content,
+        tags: post.tags || [],
+        publishedAt: post.created_at,
+        updatedAt: post.updated_at,
+        contentType: post.content_type,
+        license: post.license,
+        exportedAt: new Date().toISOString(),
+      }
+
+      return NextResponse.json(json, {
+        headers: {
+          'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.json"`,
+        },
+      })
+    } else if (format === 'html') {
+      // Generate HTML export
+      const html = generateHTML(post, authorName, publishedDate)
+
+      return new NextResponse(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.html"`,
+        },
+      })
+    }
+
+    return NextResponse.json({ error: 'Invalid format. Use markdown, json, or html.' }, { status: 400 })
+  } catch (error) {
+    console.error('Export error:', error)
+    return NextResponse.json({ error: 'Failed to export post' }, { status: 500 })
+  }
 }
 
 function sanitizeFilename(title: string): string {
-    return title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .substring(0, 50)
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .substring(0, 50)
 }
 
 function generateMarkdown(post: any, authorName: string, publishedDate: string): string {
-    const tags = post.tags?.length ? post.tags.map((t: string) => `#${t}`).join(' ') : ''
+  const tags = post.tags?.length ? post.tags.map((t: string) => `#${t}`).join(' ') : ''
 
-    return `---
+  return `---
 title: "${post.title}"
 author: "${authorName}"
 date: "${publishedDate}"
@@ -123,21 +123,21 @@ ${post.content}
 
 ---
 
-*Exported from [Syrealize](https://syrealize.com) on ${new Date().toLocaleDateString()}*
+*Exported from [SyriaHub](https://syriahub.com) on ${new Date().toLocaleDateString()}*
 `
 }
 
 function generateHTML(post: any, authorName: string, publishedDate: string): string {
-    const tags = post.tags?.length
-        ? post.tags.map((t: string) => `<span class="tag">#${t}</span>`).join(' ')
-        : ''
+  const tags = post.tags?.length
+    ? post.tags.map((t: string) => `<span class="tag">#${t}</span>`).join(' ')
+    : ''
 
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${post.title} - Syrealize</title>
+  <title>${post.title} - SyriaHub</title>
   <style>
     :root {
       --primary: #6366f1;
@@ -232,7 +232,7 @@ function generateHTML(post: any, authorName: string, publishedDate: string): str
     ${convertMarkdownToBasicHTML(post.content)}
   </article>
   <footer>
-    <p>Exported from <a href="https://syrealize.com">Syrealize</a> on ${new Date().toLocaleDateString()}</p>
+    <p>Exported from <a href="https://syriahub.com">SyriaHub</a> on ${new Date().toLocaleDateString()}</p>
     <p>License: ${post.license || 'CC-BY-4.0'}</p>
   </footer>
 </body>
@@ -240,33 +240,33 @@ function generateHTML(post: any, authorName: string, publishedDate: string): str
 }
 
 function convertMarkdownToBasicHTML(markdown: string): string {
-    return markdown
-        // Headers
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        // Bold & Italic
-        .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        // Code blocks
-        .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        // Blockquotes
-        .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-        // Links
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-        // Lists
-        .replace(/^\- (.*$)/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-        // Paragraphs
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/^(.+)$/gm, (match) => {
-            if (match.startsWith('<')) return match
-            return `<p>${match}</p>`
-        })
-        // Clean up
-        .replace(/<p><\/p>/g, '')
-        .replace(/<p>(<h[1-6]>)/g, '$1')
-        .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+  return markdown
+    // Headers
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    // Bold & Italic
+    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Code blocks
+    .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // Blockquotes
+    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+    // Links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    // Lists
+    .replace(/^\- (.*$)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    // Paragraphs
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(.+)$/gm, (match) => {
+      if (match.startsWith('<')) return match
+      return `<p>${match}</p>`
+    })
+    // Clean up
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p>(<h[1-6]>)/g, '$1')
+    .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
 }

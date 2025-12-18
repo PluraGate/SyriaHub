@@ -35,6 +35,6 @@ export default async function ResearchSearchPage() {
 }
 
 export const metadata = {
-    title: 'Search Engine | Syrealize Research Lab',
+    title: 'Search Engine | SyriaHub Research Lab',
     description: 'Discipline-aware, evidence-first search with explainable results for Syria reconstruction research.'
 }

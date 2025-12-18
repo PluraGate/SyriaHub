@@ -60,7 +60,7 @@ export default async function LoginPage({
               <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-2xl">S</span>
               </div>
-              <span className="font-bold text-2xl text-white">Syrealize</span>
+              <span className="font-bold text-2xl text-white">SyriaHub</span>
             </Link>
 
             <h1 className="text-4xl font-bold text-white mb-4">
@@ -111,7 +111,7 @@ export default async function LoginPage({
                 <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-xl">S</span>
                 </div>
-                <span className="font-bold text-2xl text-text dark:text-dark-text">Syrealize</span>
+                <span className="font-bold text-2xl text-text dark:text-dark-text">SyriaHub</span>
               </Link>
             </div>
 

@@ -1,4 +1,4 @@
-# Syrealize (SyriaHub)
+# SyriaHub
 
 A minimalist, mobile-first research platform built with Next.js 14, Tailwind CSS, Shadcn UI, and Supabase.
 
@@ -180,7 +180,7 @@ If you need to set up a new GitHub repository named `syrealize-web`:
 1. Create a new repository on GitHub:
    - Go to [github.com/new](https://github.com/new)
    - Repository name: `syrealize-web`
-   - Description: "Syrealize - A minimalist research platform"
+   - Description: "SyriaHub - A minimalist research platform"
    - Choose Public or Private
    - Do NOT initialize with README (already exists)
 
