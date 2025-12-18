@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { createServerClient } from './supabaseClient'
 
 interface EmailOptions {
   to: string
@@ -21,20 +22,58 @@ const createTransporter = () => {
 }
 
 export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
-  try {
-    const transporter = createTransporter()
+  const supabase = await createServerClient()
 
+  try {
+    // In production, we call the Supabase Edge Function
+    if (process.env.NODE_ENV === 'production' || process.env.USE_EDGE_FUNCTIONS === 'true') {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: { to, subject, html, text },
+      })
+
+      if (error) throw error
+
+      // Log to database
+      await supabase.from('email_logs').insert({
+        recipient_email: to,
+        subject,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      })
+
+      return true
+    }
+
+    // Local/Dev Fallback
+    const transporter = createTransporter()
     await transporter.sendMail({
       from: `"SyriaHub" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,
-      text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for plain text
+      text: text || html.replace(/<[^>]*>/g, ''),
+    })
+
+    // Log to database even in dev
+    await supabase.from('email_logs').insert({
+      recipient_email: to,
+      subject,
+      status: 'sent',
+      sent_at: new Date().toISOString(),
     })
 
     return true
-  } catch (error) {
+  } catch (error: any) {
     console.error('Email send error:', error)
+
+    // Log failure
+    await supabase.from('email_logs').insert({
+      recipient_email: to,
+      subject,
+      status: 'failed',
+      error_message: error.message,
+    })
+
     return false
   }
 }
@@ -43,174 +82,142 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
 export const emailTemplates = {
   welcome: (userName: string) => ({
     subject: 'Welcome to SyriaHub! 🎉',
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a2e; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { text-align: center; padding: 30px 0; }
-          .logo { font-size: 28px; font-weight: 700; color: #6366f1; }
-          .content { background: #f8fafc; border-radius: 12px; padding: 30px; margin: 20px 0; }
-          .button { display: inline-block; padding: 14px 28px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; }
-          .footer { text-align: center; color: #64748b; font-size: 14px; padding: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">SyriaHub</div>
-          </div>
-          <div class="content">
-            <h1>Welcome, ${userName}! 👋</h1>
-            <p>Thank you for joining SyriaHub, the research platform for knowledge sharing.</p>
-            <p>Here's what you can do:</p>
-            <ul>
-              <li>📝 Share your research and ideas</li>
-              <li>🔍 Discover posts from the community</li>
-              <li>💬 Engage in discussions</li>
-              <li>👥 Join groups with shared interests</li>
-            </ul>
-            <p style="text-align: center; margin-top: 30px;">
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL}/feed" class="button">Explore the Feed</a>
-            </p>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
+    html: wrapEmailLayout(`
+      <h1 style="color: #1e293b; margin-top: 0;">Welcome, ${userName}! 👋</h1>
+      <p style="font-size: 16px; color: #475569; line-height: 1.6;">Thank you for joining SyriaHub, the next-generation research platform for knowledge sharing and academic collaboration.</p>
+      
+      <div style="background: #f8fafc; border-radius: 12px; padding: 24px; margin: 24px 0;">
+        <p style="margin-top: 0; font-weight: 600; color: #1e293b;">Here's how to get started:</p>
+        <ul style="margin-bottom: 0; padding-left: 20px; color: #475569;">
+          <li style="margin-bottom: 12px;"><strong>📝 Publish</strong>: Share your latest research findings</li>
+          <li style="margin-bottom: 12px;"><strong>🔍 Discover</strong>: Explore peer-reviewed data and insights</li>
+          <li style="margin-bottom: 12px;"><strong>💬 Collaborate</strong>: Engage in high-level academic discussions</li>
+          <li style="margin-bottom: 0;"><strong>👥 Network</strong>: Join specialized research groups</li>
+        </ul>
+      </div>
+
+      <p style="text-align: center; margin-top: 32px;">
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/feed" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);">Explore the Feed</a>
+      </p>
+    `),
   }),
 
   newComment: (userName: string, postTitle: string, commentPreview: string, postUrl: string) => ({
     subject: `New comment on "${postTitle}"`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a2e; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { text-align: center; padding: 20px 0; border-bottom: 1px solid #e2e8f0; }
-          .logo { font-size: 24px; font-weight: 700; color: #6366f1; }
-          .content { padding: 30px 0; }
-          .comment-box { background: #f8fafc; border-left: 4px solid #6366f1; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
-          .button { display: inline-block; padding: 12px 24px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; }
-          .footer { text-align: center; color: #64748b; font-size: 12px; padding: 20px 0; border-top: 1px solid #e2e8f0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">SyriaHub</div>
-          </div>
-          <div class="content">
-            <p>Hi there,</p>
-            <p><strong>${userName}</strong> commented on your post "<strong>${postTitle}</strong>":</p>
-            <div class="comment-box">
-              "${commentPreview.substring(0, 200)}${commentPreview.length > 200 ? '...' : ''}"
-            </div>
-            <p>
-              <a href="${postUrl}" class="button">View Comment</a>
-            </p>
-          </div>
-          <div class="footer">
-            <p>You're receiving this because you're subscribed to comment notifications.</p>
-            <p><a href="${process.env.NEXT_PUBLIC_SITE_URL}/settings/notifications">Manage notification preferences</a></p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
+    html: wrapEmailLayout(`
+      <p style="font-size: 16px; color: #475569;">Hi there,</p>
+      <p style="font-size: 16px; color: #475569;"><strong>${userName}</strong> has contributed to the discussion on your post "<strong>${postTitle}</strong>":</p>
+      
+      <div style="background: #f1f5f9; border-left: 4px solid #6366f1; padding: 20px; border-radius: 4px 12px 12px 4px; margin: 24px 0; font-style: italic; color: #334155;">
+        "${commentPreview.substring(0, 200)}${commentPreview.length > 200 ? '...' : ''}"
+      </div>
+
+      <p style="text-align: center; margin-top: 32px;">
+        <a href="${postUrl}" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">View Contribution</a>
+      </p>
+    `),
   }),
 
   newFollower: (followerName: string, followerUrl: string) => ({
-    subject: `${followerName} started following you`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a2e; background: #f8fafc; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-          .header { text-align: center; margin-bottom: 20px; }
-          .logo { font-size: 24px; font-weight: 700; color: #6366f1; }
-          .avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-          .avatar span { color: white; font-size: 28px; font-weight: 600; }
-          h2 { text-align: center; margin: 0 0 8px; }
-          .subtitle { text-align: center; color: #64748b; margin-bottom: 24px; }
-          .button { display: block; text-align: center; padding: 14px 28px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; }
-          .footer { text-align: center; color: #94a3b8; font-size: 12px; margin-top: 20px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="card">
-            <div class="header">
-              <div class="logo">SyriaHub</div>
-            </div>
-            <div class="avatar">
-              <span>${followerName.charAt(0).toUpperCase()}</span>
-            </div>
-            <h2>${followerName}</h2>
-            <p class="subtitle">started following you</p>
-            <a href="${followerUrl}" class="button">View Profile</a>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} SyriaHub</p>
-          </div>
+    subject: `${followerName} joined your research network`,
+    html: wrapEmailLayout(`
+      <div style="text-align: center;">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); line-height: 72px; color: white; font-size: 32px; font-weight: 700; margin: 0 auto 20px;">
+          ${followerName.charAt(0).toUpperCase()}
         </div>
-      </body>
-      </html>
-    `,
+        <h2 style="color: #1e293b; margin: 0 0 8px;">${followerName}</h2>
+        <p style="color: #64748b; margin-bottom: 24px; font-size: 16px;">is now following your research</p>
+        <a href="${followerUrl}" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">View Profile</a>
+      </div>
+    `),
   }),
 
   postPublished: (postTitle: string, postUrl: string) => ({
     subject: `Your post "${postTitle}" is now live!`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a2e; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { text-align: center; padding: 20px 0; }
-          .logo { font-size: 24px; font-weight: 700; color: #6366f1; }
-          .success-icon { font-size: 48px; text-align: center; margin: 20px 0; }
-          .content { background: #f0fdf4; border-radius: 12px; padding: 30px; margin: 20px 0; text-align: center; }
-          h2 { color: #16a34a; margin: 0 0 12px; }
-          .button { display: inline-block; padding: 14px 28px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 20px; }
-          .share-buttons { margin-top: 24px; }
-          .share-buttons a { margin: 0 8px; color: #6366f1; text-decoration: none; }
-          .footer { text-align: center; color: #64748b; font-size: 12px; padding: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">SyriaHub</div>
-          </div>
-          <div class="content">
-            <div class="success-icon">🎉</div>
-            <h2>Your post is live!</h2>
-            <p><strong>"${postTitle}"</strong> has been published successfully.</p>
-            <a href="${postUrl}" class="button">View Your Post</a>
-            <div class="share-buttons">
-              <p style="color: #64748b; font-size: 14px; margin-bottom: 8px;">Share it with the world:</p>
-              <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(postTitle)}">Twitter</a>
-              <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}">LinkedIn</a>
-            </div>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
+    html: wrapEmailLayout(`
+      <div style="text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
+        <h2 style="color: #6366f1; margin-bottom: 12px;">Your post is live!</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 24px;">
+          <strong>"${postTitle}"</strong> has been successfully published to SyriaHub.
+        </p>
+        <a href="${postUrl}" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);">View Your Post</a>
+      </div>
+    `),
   }),
+
+  inviteUser: (inviterName: string, inviteUrl: string) => ({
+    subject: `You've been invited to join SyriaHub`,
+    html: wrapEmailLayout(`
+      <div style="text-align: center;">
+        <h2 style="color: #6366f1; margin: 0 0 16px;">Exclusive Invitation</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 24px;">
+          <strong>${inviterName}</strong> has invited you to join <strong>SyriaHub</strong>, a professional research platform for knowledge sharing and collaboration.
+        </p>
+        <div style="background: #f1f5f9; border-radius: 16px; padding: 24px; margin-bottom: 30px; text-align: left;">
+          <p style="margin: 0 0 12px; font-weight: 600; color: #1e293b;">With your account you can:</p>
+          <ul style="margin: 0; padding-left: 20px; color: #475569;">
+            <li style="margin-bottom: 8px;">Access exclusive research and insights</li>
+            <li style="margin-bottom: 8px;">Collaborate with other vetted researchers</li>
+            <li style="margin-bottom: 8px;">Contribute to the collective knowledge base</li>
+          </ul>
+        </div>
+        <a href="${inviteUrl}" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);">Accept Invitation</a>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 24px;">
+          This invitation link will expire in 7 days.
+        </p>
+      </div>
+    `),
+  }),
+}
+
+/**
+ * Modern, premium layout wrapper for emails
+ */
+function wrapEmailLayout(content: string): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f8fafc; padding-bottom: 40px; }
+        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #0f172a; border-radius: 16px; overflow: hidden; margin-top: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 40px 20px; text-align: center; }
+        .logo { color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; text-decoration: none; }
+        .content { padding: 40px 30px; }
+        .footer { padding: 20px; text-align: center; color: #64748b; font-size: 13px; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #6366f1; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; }
+        @media screen and (max-width: 600px) {
+          .content { padding: 30px 20px !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <table class="main">
+          <tr>
+            <td class="header">
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL}" class="logo">SyriaHub</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="content">
+              ${content}
+            </td>
+          </tr>
+        </table>
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
+          <p>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/privacy" style="color: #64748b; text-decoration: underline;">Privacy Policy</a> • 
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/support" style="color: #64748b; text-decoration: underline;">Support</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
 }
