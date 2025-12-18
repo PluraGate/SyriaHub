@@ -1,29 +1,20 @@
 'use client'
 
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { useTheme } from 'next-themes'
 import {
     Loader2,
     Maximize2,
-    Minimize2,
+    RotateCcw,
     ZoomIn,
     ZoomOut,
-    Focus,
-    GitFork,
-    Quote,
-    Tag,
-    Users
+    X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
-// Dynamically import ForceGraph2D with no SSR
-const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
-    ssr: false,
-    loading: () => <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin" /></div>
-})
-
+// Types
 interface KnowledgeGraphProps {
     centerPostId: string
 }
@@ -31,72 +22,562 @@ interface KnowledgeGraphProps {
 interface GraphNode {
     id: string
     title: string
-    group: string
-    val: number
+    group: 'center' | 'fork' | 'citation' | 'related' | 'author'
     tag: string
-    authorId?: string
     authorName?: string
-    x?: number
-    y?: number
 }
 
-interface GraphLink {
-    source: string | GraphNode
-    target: string | GraphNode
+interface GraphEdge {
+    source: string
+    target: string
     type: 'fork' | 'citation' | 'shared_tag' | 'shared_author'
 }
 
 type RelationType = 'fork' | 'citation' | 'shared_tag' | 'shared_author'
 
-const RELATION_COLORS: Record<RelationType, string> = {
-    fork: '#10B981',      // Green
-    citation: '#3B82F6',  // Blue
-    shared_tag: '#F59E0B', // Amber
-    shared_author: '#8B5CF6' // Purple
+// Design System Colors
+const THEME_COLORS = {
+    primary: '#1A3D40',
+    primaryLight: '#2A5558',
+    secondary: '#4AA3A5',
+    accent: '#C9A227',         // Golden amber like reference
+    citation: '#C41E3A',       // Heritage Red for citations
+    textLight: '#5A6A72',
+    darkBg: '#0F1419',         // Darker background like reference
+    darkSurface: '#1A2028',
+    lightBg: '#FAFAFA',
+    lightSurface: '#FFFFFF',
+    textDark: '#2A3A42',
+    textDarkMode: '#E8EDEE'
+}
+
+// Node colors by relationship type
+const NODE_COLORS: Record<string, { bg: string, border: string, text: string }> = {
+    center: { bg: THEME_COLORS.secondary, border: THEME_COLORS.primaryLight, text: '#FFFFFF' },
+    fork: { bg: THEME_COLORS.accent, border: '#B8911F', text: '#1A1A1A' },
+    citation: { bg: THEME_COLORS.citation, border: '#A31830', text: '#FFFFFF' },
+    related: { bg: THEME_COLORS.primaryLight, border: THEME_COLORS.primary, text: '#FFFFFF' },
+    author: { bg: '#6366F1', border: '#4F46E5', text: '#FFFFFF' }
 }
 
 const RELATION_LABELS: Record<RelationType, string> = {
-    fork: 'Forks',
-    citation: 'Citations',
-    shared_tag: 'Related Topics',
+    fork: 'Fork',
+    citation: 'Cites This',
+    shared_tag: 'Related Topic',
     shared_author: 'Same Author'
 }
 
+// Edge descriptions for hover tooltips
+const EDGE_DESCRIPTIONS: Record<RelationType, string> = {
+    fork: 'This work was derived from or built upon the original',
+    citation: 'This work references or cites the original',
+    shared_tag: 'These works share common topics or themes',
+    shared_author: 'These works are by the same author'
+}
+
+// Helper component for dialog canvas - fully self-contained with its own state
+function DialogGraphCanvas({
+    nodes,
+    edges,
+    calculatePositions,
+    expanded
+}: {
+    nodes: GraphNode[]
+    edges: GraphEdge[]
+    calculatePositions: (width: number, height: number) => Map<string, { x: number, y: number }>
+    expanded: boolean
+}) {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [positions, setPositions] = useState<Map<string, { x: number, y: number }>>(new Map())
+    const [zoomLevel, setZoomLevel] = useState(0.9)
+    const [draggedNode, setDraggedNode] = useState<string | null>(null)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null)
+    const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null) // For click-to-show-info panel
+    const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null)
+    const hasDragged = useRef(false)
+
+    // Initialize positions when dialog opens
+    useEffect(() => {
+        if (expanded && containerRef.current && nodes.length > 0) {
+            const timer = setTimeout(() => {
+                if (containerRef.current) {
+                    const rect = containerRef.current.getBoundingClientRect()
+                    const newPositions = calculatePositions(rect.width, rect.height)
+                    setPositions(newPositions)
+                }
+            }, 50)
+            return () => clearTimeout(timer)
+        }
+    }, [expanded, nodes, calculatePositions])
+
+    // Draw function for dialog
+    const drawDialogGraph = useCallback(() => {
+        if (!canvasRef.current || !containerRef.current || positions.size === 0) return
+
+        const canvas = canvasRef.current
+        const rect = containerRef.current.getBoundingClientRect()
+        const width = rect.width
+        const height = rect.height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = width * dpr
+        canvas.height = height * dpr
+        canvas.style.width = `${width}px`
+        canvas.style.height = `${height}px`
+        ctx.scale(dpr, dpr)
+
+        // Clear
+        ctx.fillStyle = THEME_COLORS.darkBg
+        ctx.fillRect(0, 0, width, height)
+
+        // Apply zoom
+        ctx.save()
+        const centerX = width / 2
+        const centerY = height / 2
+        ctx.translate(centerX, centerY)
+        ctx.scale(zoomLevel, zoomLevel)
+        ctx.translate(-centerX, -centerY)
+
+        // Draw edges with semantic styling
+        edges.forEach(edge => {
+            const sourcePos = positions.get(edge.source)
+            const targetPos = positions.get(edge.target)
+            if (!sourcePos || !targetPos) return
+
+            const midX = (sourcePos.x + targetPos.x) / 2
+            const midY = (sourcePos.y + targetPos.y) / 2
+            const dx = targetPos.x - sourcePos.x
+            const dy = targetPos.y - sourcePos.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            const curvature = dist * 0.15
+            const perpX = -dy / dist * curvature
+            const perpY = dx / dist * curvature
+
+            const edgeColor = edge.type === 'citation' ? THEME_COLORS.citation :
+                edge.type === 'fork' ? THEME_COLORS.accent :
+                    edge.type === 'shared_author' ? '#6366F1' : THEME_COLORS.secondary
+
+            const isHovered = hoveredEdge?.source === edge.source && hoveredEdge?.target === edge.target
+
+            // Apply glow effect when hovered
+            if (isHovered) {
+                ctx.shadowColor = edgeColor
+                ctx.shadowBlur = 12
+            }
+
+            ctx.beginPath()
+            ctx.moveTo(sourcePos.x, sourcePos.y)
+            ctx.quadraticCurveTo(midX + perpX, midY + perpY, targetPos.x, targetPos.y)
+
+            // Solid for forks (derived work), dashed for citations
+            if (edge.type === 'citation' || edge.type === 'shared_tag') {
+                ctx.setLineDash([6, 4])
+            } else {
+                ctx.setLineDash([])
+            }
+
+            // Thicker when hovered
+            ctx.lineWidth = isHovered ? 3 : 2
+            ctx.strokeStyle = isHovered ? edgeColor : `${edgeColor}60`
+            ctx.stroke()
+
+            // Reset
+            ctx.setLineDash([])
+            ctx.shadowColor = 'transparent'
+            ctx.shadowBlur = 0
+        })
+
+        // Draw nodes
+        nodes.forEach(node => {
+            const pos = positions.get(node.id)
+            if (!pos) return
+
+            const colors = NODE_COLORS[node.group]
+            const isCenter = node.group === 'center'
+            const isHovered = hoveredNode?.id === node.id
+            const nodeWidth = isCenter ? 110 : 90
+            const nodeHeight = isCenter ? 44 : 36
+            const radius = 6
+
+            if (isHovered || isCenter) {
+                ctx.shadowColor = `${colors.bg}40`
+                ctx.shadowBlur = 15
+                ctx.shadowOffsetY = 4
+            }
+
+            ctx.beginPath()
+            ctx.roundRect(pos.x - nodeWidth / 2, pos.y - nodeHeight / 2, nodeWidth, nodeHeight, radius)
+            ctx.fillStyle = colors.bg
+            ctx.fill()
+            ctx.strokeStyle = colors.border
+            ctx.lineWidth = isHovered ? 3 : 2
+            ctx.stroke()
+
+            ctx.shadowColor = 'transparent'
+            ctx.shadowBlur = 0
+            ctx.shadowOffsetY = 0
+
+            ctx.fillStyle = colors.text
+            ctx.font = `${isCenter ? '600' : '500'} ${isCenter ? 12 : 11}px Inter, system-ui, sans-serif`
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+            const title = node.title.length > 12 ? node.title.substring(0, 11) + '…' : node.title
+            ctx.fillText(title, pos.x, pos.y - (isCenter ? 5 : 3))
+
+            ctx.font = '500 9px Inter, system-ui, sans-serif'
+            ctx.fillStyle = `${colors.text}99`
+            const tag = node.tag.length > 12 ? node.tag.substring(0, 11) + '…' : node.tag
+            ctx.fillText(tag, pos.x, pos.y + (isCenter ? 10 : 8))
+        })
+
+        ctx.restore()
+    }, [nodes, edges, positions, zoomLevel, hoveredNode, hoveredEdge])
+
+    // Redraw when positions/zoom change
+    useEffect(() => {
+        drawDialogGraph()
+    }, [drawDialogGraph])
+
+    // Get node at position (adjusted for zoom)
+    const getNodeAtPosition = useCallback((x: number, y: number, rect: DOMRect): GraphNode | null => {
+        if (positions.size === 0) return null
+        const centerX = rect.width / 2
+        const centerY = rect.height / 2
+        // Adjust for zoom - transform screen coords back to canvas coords
+        const adjustedX = centerX + (x - centerX) / zoomLevel
+        const adjustedY = centerY + (y - centerY) / zoomLevel
+
+        for (const node of nodes) {
+            const pos = positions.get(node.id)
+            if (!pos) continue
+            const isCenter = node.group === 'center'
+            const nodeWidth = isCenter ? 110 : 90
+            const nodeHeight = isCenter ? 44 : 36
+
+            // Check if click is within node bounds
+            if (adjustedX >= pos.x - nodeWidth / 2 && adjustedX <= pos.x + nodeWidth / 2 &&
+                adjustedY >= pos.y - nodeHeight / 2 && adjustedY <= pos.y + nodeHeight / 2) {
+                return node
+            }
+        }
+        return null
+    }, [nodes, positions, zoomLevel])
+
+    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        hasDragged.current = false
+        const node = getNodeAtPosition(x, y, rect)
+        if (node) {
+            const pos = positions.get(node.id)
+            if (pos) {
+                // Adjust for zoom
+                const centerX = rect.width / 2
+                const centerY = rect.height / 2
+                const adjustedX = centerX + (x - centerX) / zoomLevel
+                const adjustedY = centerY + (y - centerY) / zoomLevel
+                setDraggedNode(node.id)
+                setDragOffset({ x: adjustedX - pos.x, y: adjustedY - pos.y })
+            }
+        }
+    }, [getNodeAtPosition, positions, zoomLevel])
+
+    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+
+        if (draggedNode) {
+            hasDragged.current = true
+            const centerX = rect.width / 2
+            const centerY = rect.height / 2
+            const adjustedX = centerX + (x - centerX) / zoomLevel
+            const adjustedY = centerY + (y - centerY) / zoomLevel
+            const padding = 70
+            const newX = Math.max(padding, Math.min(rect.width - padding, adjustedX - dragOffset.x))
+            const newY = Math.max(padding, Math.min(rect.height - padding, adjustedY - dragOffset.y))
+
+            setPositions(prev => {
+                const next = new Map(prev)
+                next.set(draggedNode, { x: newX, y: newY })
+                return next
+            })
+        } else {
+            // Check for node hover first
+            const node = getNodeAtPosition(x, y, rect)
+            setHoveredNode(node)
+
+            // Only check for edge hover if not hovering a node
+            if (!node && containerRef.current) {
+                const centerX = rect.width / 2
+                const centerY = rect.height / 2
+                const adjustedX = centerX + (x - centerX) / zoomLevel
+                const adjustedY = centerY + (y - centerY) / zoomLevel
+
+                // Find if hovering near an edge
+                let foundEdge: GraphEdge | null = null
+                for (const edge of edges) {
+                    const sourcePos = positions.get(edge.source)
+                    const targetPos = positions.get(edge.target)
+                    if (!sourcePos || !targetPos) continue
+
+                    // Check distance to line (simplified - check distance to midpoint)
+                    const midX = (sourcePos.x + targetPos.x) / 2
+                    const midY = (sourcePos.y + targetPos.y) / 2
+                    const dist = Math.sqrt((adjustedX - midX) ** 2 + (adjustedY - midY) ** 2)
+
+                    if (dist < 30) {
+                        foundEdge = edge
+                        break
+                    }
+                }
+                setHoveredEdge(foundEdge)
+            } else {
+                setHoveredEdge(null)
+            }
+
+            e.currentTarget.style.cursor = node ? 'pointer' : 'default'
+        }
+    }, [draggedNode, dragOffset, getNodeAtPosition, zoomLevel])
+
+    const handleMouseUp = useCallback(() => {
+        setDraggedNode(null)
+    }, [])
+
+    const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (hasDragged.current) {
+            hasDragged.current = false
+            return
+        }
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const node = getNodeAtPosition(x, y, rect)
+
+        // Click to select node (shows info panel)
+        if (node) {
+            setSelectedNode(node)
+        } else {
+            // Click on empty space clears selection
+            setSelectedNode(null)
+        }
+    }, [getNodeAtPosition, positions])
+
+    const resetLayout = useCallback(() => {
+        if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            setPositions(calculatePositions(rect.width, rect.height))
+        }
+        setZoomLevel(0.9)
+    }, [calculatePositions])
+
+    return (
+        <div ref={containerRef} className="absolute inset-0">
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onClick={handleClick}
+            />
+
+            {/* Info Panel - Always visible */}
+            <div className="absolute top-3 left-3 z-10 bg-[#1A2028]/95 backdrop-blur-md rounded-lg border border-dark-border p-4 shadow-lg w-[280px]">
+                {/* Header */}
+                <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-3 pb-2 border-b border-dark-border">
+                    Node Details
+                </div>
+
+                {selectedNode ? (
+                    <>
+                        {/* Relationship Badge */}
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded" style={{ backgroundColor: NODE_COLORS[selectedNode.group].bg }} />
+                                <span className="text-xs font-medium text-dark-text uppercase tracking-wide">
+                                    {RELATION_LABELS[selectedNode.group as RelationType] || selectedNode.group}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => setSelectedNode(null)}
+                                className="text-dark-text-muted hover:text-dark-text transition-colors p-1 hover:bg-dark-border/30 rounded"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+
+                        {/* Title */}
+                        <div className="text-base font-semibold text-dark-text mb-2 leading-tight">
+                            {selectedNode.title}
+                        </div>
+
+                        {/* Author */}
+                        {selectedNode.authorName && (
+                            <div className="flex items-center gap-2 text-sm text-dark-text-muted mb-2">
+                                <span className="text-dark-text-muted/60">By</span>
+                                <span className="text-dark-text">{selectedNode.authorName}</span>
+                            </div>
+                        )}
+
+                        {/* Tag */}
+                        <div className="inline-block bg-dark-border/40 text-xs text-dark-text-muted px-2 py-1 rounded mb-3">
+                            #{selectedNode.tag}
+                        </div>
+
+                        {/* Relationship Explanation */}
+                        <div className="bg-dark-border/20 rounded p-2 mb-3">
+                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-1">Connection</div>
+                            <div className="text-xs text-dark-text">
+                                {selectedNode.group === 'center' && "This is the current post you're viewing"}
+                                {selectedNode.group === 'fork' && "This work was derived from or built upon the original"}
+                                {selectedNode.group === 'citation' && "This work references or cites the original"}
+                                {selectedNode.group === 'related' && "Shares common topics or themes"}
+                                {selectedNode.group === 'author' && "Written by the same author"}
+                            </div>
+                        </div>
+
+                        {/* Action Button */}
+                        {selectedNode.group !== 'center' && (
+                            <Button
+                                onClick={() => window.location.href = `/post/${selectedNode.id}`}
+                                className="w-full bg-secondary hover:bg-secondary/80 text-white text-sm h-9 font-medium"
+                            >
+                                View Post →
+                            </Button>
+                        )}
+                        {selectedNode.group === 'center' && (
+                            <div className="text-center text-xs text-secondary py-2">
+                                Currently viewing this post
+                            </div>
+                        )}
+                    </>
+                ) : hoveredEdge ? (
+                    <>
+                        {/* Edge Hover Info */}
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-8 h-0.5" style={{
+                                backgroundColor: hoveredEdge.type === 'citation' ? THEME_COLORS.citation :
+                                    hoveredEdge.type === 'fork' ? THEME_COLORS.accent : THEME_COLORS.secondary,
+                            }} />
+                            <span className="text-sm font-medium text-dark-text uppercase tracking-wide">
+                                {RELATION_LABELS[hoveredEdge.type]}
+                            </span>
+                        </div>
+                        <div className="text-sm text-dark-text">
+                            {EDGE_DESCRIPTIONS[hoveredEdge.type]}
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {/* Empty State - Instructions */}
+                        <div className="text-center py-4">
+                            <div className="text-4xl mb-3 opacity-40">🔍</div>
+                            <div className="text-sm text-dark-text mb-2">Select a Node</div>
+                            <div className="text-xs text-dark-text-muted leading-relaxed">
+                                Click on any node to see details about how it connects to this work
+                            </div>
+                        </div>
+
+                        {/* Quick Stats */}
+                        <div className="border-t border-dark-border pt-3 mt-3">
+                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-2">Graph Overview</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="bg-dark-border/30 rounded p-2 text-center">
+                                    <div className="text-lg font-bold text-dark-text">{nodes.length}</div>
+                                    <div className="text-dark-text-muted">Nodes</div>
+                                </div>
+                                <div className="bg-dark-border/30 rounded p-2 text-center">
+                                    <div className="text-lg font-bold text-dark-text">{edges.length}</div>
+                                    <div className="text-dark-text-muted">Connections</div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+
+            {/* Controls */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 bg-[#1A2028]/95 backdrop-blur-md rounded-full border border-dark-border p-1.5 shadow-lg">
+                <Button variant="ghost" size="icon" onClick={() => setZoomLevel(z => Math.min(z * 1.2, 2))} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Zoom in">
+                    <ZoomIn className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setZoomLevel(z => Math.max(z / 1.2, 0.4))} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Zoom out">
+                    <ZoomOut className="w-4 h-4" />
+                </Button>
+                <div className="h-4 w-px bg-dark-border mx-1" />
+                <Button variant="ghost" size="icon" onClick={resetLayout} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Reset layout">
+                    <RotateCcw className="w-4 h-4" />
+                </Button>
+            </div>
+
+            {/* Legend */}
+            <div className="absolute top-3 right-3 z-10 bg-[#1A2028]/90 backdrop-blur-md rounded-lg border border-dark-border p-3 shadow-sm">
+                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">Node Types</div>
+                <div className="flex flex-wrap gap-3 text-xs mb-3">
+                    {Object.entries(NODE_COLORS).slice(0, 4).map(([key, colors]) => (
+                        <div key={key} className="flex items-center gap-1.5">
+                            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors.bg }} />
+                            <span className="text-dark-text-muted capitalize">{key === 'related' ? 'Topic' : key}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">Edge Types</div>
+                <div className="flex flex-col gap-1.5 text-xs">
+                    <div className="flex items-center gap-2">
+                        <div className="w-5 h-0.5 bg-dark-text-muted" />
+                        <span className="text-dark-text-muted">Solid = Derived (Fork)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-5 h-0 border-t-2 border-dashed border-dark-text-muted" />
+                        <span className="text-dark-text-muted">Dashed = Citation</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Purpose Hint */}
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 text-xs text-dark-text-muted/70 text-center">
+                Explore how this work connects, diverges, or is contested
+            </div>
+        </div>
+    )
+}
+
 export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
-    const [graphData, setGraphData] = useState<{ nodes: GraphNode[], links: GraphLink[] }>({ nodes: [], links: [] })
-    const [filteredGraphData, setFilteredGraphData] = useState<{ nodes: GraphNode[], links: GraphLink[] }>({ nodes: [], links: [] })
+    const [nodes, setNodes] = useState<GraphNode[]>([])
+    const [edges, setEdges] = useState<GraphEdge[]>([])
     const [loading, setLoading] = useState(true)
     const [expanded, setExpanded] = useState(false)
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-    const [tagColors, setTagColors] = useState<Record<string, string>>({})
-    const [activeTags, setActiveTags] = useState<Set<string>>(new Set())
-    const [hoverNode, setHoverNode] = useState<GraphNode | null>(null)
-
-    // Relationship type filters
-    const [activeRelations, setActiveRelations] = useState<Set<RelationType>>(
-        new Set(['fork', 'citation', 'shared_tag', 'shared_author'])
-    )
-    const [availableRelations, setAvailableRelations] = useState<Set<RelationType>>(new Set())
+    const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null)
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
 
     const containerRef = useRef<HTMLDivElement>(null)
-    const graphRef = useRef<any>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const dialogCanvasRef = useRef<HTMLCanvasElement>(null)
+
     const supabase = useMemo(() => createClient(), [])
-    const { theme } = useTheme()
+    const { resolvedTheme } = useTheme()
+    const isDark = resolvedTheme === 'dark'
 
-    const fetchTagColors = useCallback(async () => {
-        const { data } = await supabase.from('tags').select('label, color')
-        if (data) {
-            const colors: Record<string, string> = {}
-            data.forEach((tag: { label: string; color: string }) => {
-                colors[tag.label] = tag.color
-            })
-            setTagColors(colors)
-        }
-    }, [supabase])
+    // Node positions (will be calculated once and stored)
+    const [nodePositions, setNodePositions] = useState<Map<string, { x: number, y: number }>>(new Map())
+    const [dialogPositions, setDialogPositions] = useState<Map<string, { x: number, y: number }>>(new Map())
+    const [draggedNode, setDraggedNode] = useState<string | null>(null)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const [zoomLevel, setZoomLevel] = useState(0.85) // Start slightly zoomed out
+    const [dialogZoomLevel, setDialogZoomLevel] = useState(0.85)
+    const hasDragged = useRef(false) // Track if actual dragging occurred
+    const dialogContainerRef = useRef<HTMLDivElement>(null)
 
+    // Fetch graph data
     const fetchGraphData = useCallback(async () => {
         try {
-            // 1. Fetch the center post with author info
             const { data: centerPost } = await supabase
                 .from('posts')
                 .select('id, title, forked_from_id, tags, author_id, users:author_id(name)')
@@ -105,96 +586,85 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
 
             if (!centerPost) return
 
-            const nodes = new Map<string, GraphNode>()
-            const links: GraphLink[] = []
-            const currentTags = new Set<string>()
-            const relations = new Set<RelationType>()
+            const newNodes: GraphNode[] = []
+            const newEdges: GraphEdge[] = []
+            const nodeIds = new Set<string>()
 
-            const addNode = (post: any, group: string, val: number) => {
-                if (nodes.has(post.id)) return // Avoid duplicates
-                const primaryTag = post.tags && post.tags.length > 0 ? post.tags[0] : 'Uncategorized'
-                currentTags.add(primaryTag)
-                nodes.set(post.id, {
+            const addNode = (post: any, group: GraphNode['group']) => {
+                if (nodeIds.has(post.id)) return
+                nodeIds.add(post.id)
+                newNodes.push({
                     id: post.id,
                     title: post.title || 'Untitled',
                     group,
-                    val,
-                    tag: primaryTag,
-                    authorId: post.author_id,
+                    tag: post.tags?.[0] || 'Research',
                     authorName: post.users?.name || 'Unknown'
                 })
             }
 
-            // Add center node
-            addNode({
-                ...centerPost,
-                users: (centerPost as any).users
-            }, 'center', 20)
+            // Center node
+            addNode({ ...centerPost, users: (centerPost as any).users }, 'center')
 
-            // 2. Fetch parent (if exists)
+            // Parent fork
             if (centerPost.forked_from_id) {
                 const { data: parent } = await supabase
                     .from('posts')
                     .select('id, title, tags, author_id, users:author_id(name)')
                     .eq('id', centerPost.forked_from_id)
                     .single()
-
                 if (parent) {
-                    addNode(parent, 'parent', 15)
-                    links.push({ source: parent.id, target: centerPost.id, type: 'fork' })
-                    relations.add('fork')
+                    addNode(parent, 'fork')
+                    newEdges.push({ source: parent.id, target: centerPost.id, type: 'fork' })
                 }
             }
 
-            // 3. Fetch children (forks)
+            // Child forks
             const { data: forks } = await supabase
                 .from('posts')
                 .select('id, title, tags, author_id, users:author_id(name)')
                 .eq('forked_from_id', centerPostId)
                 .eq('status', 'published')
+                .limit(4)
 
             forks?.forEach(fork => {
-                addNode(fork, 'child', 10)
-                links.push({ source: centerPost.id, target: fork.id, type: 'fork' })
-                relations.add('fork')
+                addNode(fork, 'fork')
+                newEdges.push({ source: centerPost.id, target: fork.id, type: 'fork' })
             })
 
-            // 4. Fetch citations (where this post is target)
+            // Citations
             const { data: citations } = await supabase
                 .from('citations')
                 .select('source_post_id, posts!citations_source_post_id_fkey(id, title, tags, author_id, users:author_id(name))')
                 .eq('target_post_id', centerPostId)
+                .limit(4)
 
             citations?.forEach((citation: any) => {
-                const source = citation.posts
-                if (source) {
-                    addNode(source, 'citation', 8)
-                    links.push({ source: source.id, target: centerPost.id, type: 'citation' })
-                    relations.add('citation')
+                if (citation.posts) {
+                    addNode(citation.posts, 'citation')
+                    newEdges.push({ source: citation.posts.id, target: centerPost.id, type: 'citation' })
                 }
             })
 
-            // 5. Fetch posts with shared primary tag (Related Topics)
+            // Related by tag
             const primaryTag = centerPost.tags?.[0]
             if (primaryTag) {
-                const { data: sharedTagPosts } = await supabase
+                const { data: shared } = await supabase
                     .from('posts')
                     .select('id, title, tags, author_id, users:author_id(name)')
                     .contains('tags', [primaryTag])
                     .neq('id', centerPostId)
                     .eq('status', 'published')
-                    .limit(5)
+                    .limit(3)
 
-                sharedTagPosts?.forEach(post => {
-                    if (!nodes.has(post.id)) {
-                        addNode(post, 'related', 6)
-                        links.push({ source: centerPost.id, target: post.id, type: 'shared_tag' })
-                        relations.add('shared_tag')
+                shared?.forEach(post => {
+                    if (!nodeIds.has(post.id)) {
+                        addNode(post, 'related')
+                        newEdges.push({ source: centerPost.id, target: post.id, type: 'shared_tag' })
                     }
                 })
             }
 
-            // 6. Fetch posts by the same author
+            // Same author
             if (centerPost.author_id) {
                 const { data: authorPosts } = await supabase
                     .from('posts')
@@ -202,361 +672,440 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                     .eq('author_id', centerPost.author_id)
                     .neq('id', centerPostId)
                     .eq('status', 'published')
-                    .limit(5)
+                    .limit(3)
 
                 authorPosts?.forEach(post => {
-                    if (!nodes.has(post.id)) {
-                        addNode(post, 'author', 6)
-                        links.push({ source: centerPost.id, target: post.id, type: 'shared_author' })
-                        relations.add('shared_author')
+                    if (!nodeIds.has(post.id)) {
+                        addNode(post, 'author')
+                        newEdges.push({ source: centerPost.id, target: post.id, type: 'shared_author' })
                     }
                 })
             }
 
-            setGraphData({
-                nodes: Array.from(nodes.values()),
-                links: links
-            })
-            setActiveTags(currentTags)
-            setAvailableRelations(relations)
-        } catch (error) {
-            console.error('Error fetching graph data:', error)
+            setNodes(newNodes)
+            setEdges(newEdges)
+        } catch (err) {
+            console.error('Error fetching graph data:', err)
         } finally {
             setLoading(false)
         }
     }, [centerPostId, supabase])
 
-    // Filter graph data based on active relations
-    useEffect(() => {
-        const filteredLinks = graphData.links.filter(link => activeRelations.has(link.type))
+    useEffect(() => { fetchGraphData() }, [fetchGraphData])
 
-        // Get all node IDs that are connected by filtered links
-        const connectedNodeIds = new Set<string>()
-        filteredLinks.forEach(link => {
-            const sourceId = typeof link.source === 'object' ? link.source.id : link.source
-            const targetId = typeof link.target === 'object' ? link.target.id : link.target
-            connectedNodeIds.add(sourceId)
-            connectedNodeIds.add(targetId)
-        })
+    // Calculate initial positions in a clean layout
+    const calculatePositions = useCallback((width: number, height: number) => {
+        const positions = new Map<string, { x: number, y: number }>()
+        const centerX = width / 2
+        const centerY = height / 2
 
-        // Always include center node
-        const centerNode = graphData.nodes.find(n => n.group === 'center')
-        if (centerNode) connectedNodeIds.add(centerNode.id)
+        // Group nodes by type
+        const centerNode = nodes.find(n => n.group === 'center')
+        const forkNodes = nodes.filter(n => n.group === 'fork')
+        const citationNodes = nodes.filter(n => n.group === 'citation')
+        const relatedNodes = nodes.filter(n => n.group === 'related')
+        const authorNodes = nodes.filter(n => n.group === 'author')
 
-        const filteredNodes = graphData.nodes.filter(node => connectedNodeIds.has(node.id))
-
-        setFilteredGraphData({ nodes: filteredNodes, links: filteredLinks })
-    }, [graphData, activeRelations])
-
-    useEffect(() => {
-        fetchTagColors()
-    }, [fetchTagColors])
-
-    useEffect(() => {
-        if (Object.keys(tagColors).length > 0) {
-            fetchGraphData()
-        }
-    }, [centerPostId, tagColors, fetchGraphData])
-
-    useEffect(() => {
-        const updateDimensions = () => {
-            if (containerRef.current) {
-                const { width, height } = containerRef.current.getBoundingClientRect()
-                setDimensions({ width, height })
-            }
+        // Center node
+        if (centerNode) {
+            positions.set(centerNode.id, { x: centerX, y: centerY })
         }
 
-        updateDimensions()
-
-        const resizeObserver = new ResizeObserver(() => {
-            updateDimensions()
-        })
-
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current)
+        // Arrange other nodes in concentric arcs
+        const arrangeInArc = (nodeList: GraphNode[], radius: number, startAngle: number, sweep: number) => {
+            const count = nodeList.length
+            if (count === 0) return
+            const angleStep = sweep / Math.max(count - 1, 1)
+            nodeList.forEach((node, i) => {
+                const angle = startAngle + (count === 1 ? sweep / 2 : i * angleStep)
+                positions.set(node.id, {
+                    x: centerX + Math.cos(angle) * radius,
+                    y: centerY + Math.sin(angle) * radius
+                })
+            })
         }
 
-        return () => resizeObserver.disconnect()
-    }, [expanded])
+        // Distribute by type in different directions - even wider spacing
+        const radius1 = Math.min(width, height) * 0.42
+        const radius2 = Math.min(width, height) * 0.48
 
-    const toggleRelation = (relation: RelationType) => {
-        setActiveRelations(prev => {
-            const newSet = new Set(prev)
-            if (newSet.has(relation)) {
-                newSet.delete(relation)
+        arrangeInArc(forkNodes, radius1, -Math.PI * 0.85, Math.PI * 0.6)     // Top-left arc (wider sweep)
+        arrangeInArc(citationNodes, radius1, Math.PI * 0.15, Math.PI * 0.6)  // Bottom-right arc
+        arrangeInArc(relatedNodes, radius2, -Math.PI * 0.1, Math.PI * 0.25)  // Right side
+        arrangeInArc(authorNodes, radius2, Math.PI * 0.9, Math.PI * 0.25)    // Left side
+
+        return positions
+    }, [nodes])
+
+    // Initialize positions when nodes change
+    useEffect(() => {
+        if (nodes.length > 0 && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            const positions = calculatePositions(rect.width, rect.height)
+            setNodePositions(positions)
+        }
+    }, [nodes, calculatePositions])
+
+    // Draw the graph on canvas
+    const drawGraph = useCallback((canvas: HTMLCanvasElement | null, width: number, height: number) => {
+        if (!canvas || nodePositions.size === 0) return
+
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        // Set canvas size with device pixel ratio for sharp rendering
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = width * dpr
+        canvas.height = height * dpr
+        canvas.style.width = `${width}px`
+        canvas.style.height = `${height}px`
+        ctx.scale(dpr, dpr)
+
+        // Clear - always use dark background
+        ctx.fillStyle = THEME_COLORS.darkBg
+        ctx.fillRect(0, 0, width, height)
+
+        // Apply zoom transform
+        ctx.save()
+        const centerX = width / 2
+        const centerY = height / 2
+        ctx.translate(centerX, centerY)
+        ctx.scale(zoomLevel, zoomLevel)
+        ctx.translate(-centerX, -centerY)
+
+        // Draw edges first (behind nodes) with semantic styling
+        edges.forEach(edge => {
+            const sourcePos = nodePositions.get(edge.source)
+            const targetPos = nodePositions.get(edge.target)
+            if (!sourcePos || !targetPos) return
+
+            // Calculate control points for bezier curve
+            const midX = (sourcePos.x + targetPos.x) / 2
+            const midY = (sourcePos.y + targetPos.y) / 2
+            const dx = targetPos.x - sourcePos.x
+            const dy = targetPos.y - sourcePos.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+
+            // Perpendicular offset for curve
+            const curvature = dist * 0.15
+            const perpX = -dy / dist * curvature
+            const perpY = dx / dist * curvature
+
+            // Solid for forks (derived work), dashed for citations
+            if (edge.type === 'citation' || edge.type === 'shared_tag') {
+                ctx.setLineDash([5, 3])
             } else {
-                newSet.add(relation)
+                ctx.setLineDash([])
             }
-            return newSet
+
+            ctx.beginPath()
+            ctx.moveTo(sourcePos.x, sourcePos.y)
+            ctx.quadraticCurveTo(midX + perpX, midY + perpY, targetPos.x, targetPos.y)
+
+            // Edge color based on type
+            const edgeColor = edge.type === 'citation' ? THEME_COLORS.citation :
+                edge.type === 'fork' ? THEME_COLORS.accent :
+                    edge.type === 'shared_author' ? '#6366F1' :
+                        THEME_COLORS.secondary
+
+            ctx.lineWidth = 2
+            ctx.strokeStyle = `${edgeColor}60`
+            ctx.stroke()
+
+            // Reset line dash
+            ctx.setLineDash([])
         })
+
+        // Draw nodes
+        nodes.forEach(node => {
+            const pos = nodePositions.get(node.id)
+            if (!pos) return
+
+            const colors = NODE_COLORS[node.group]
+            const isCenter = node.group === 'center'
+            const isHovered = hoveredNode?.id === node.id
+
+            // Node dimensions - narrower nodes
+            const nodeWidth = isCenter ? 110 : 90
+            const nodeHeight = isCenter ? 44 : 36
+            const radius = 6
+
+            // Shadow
+            if (isHovered || isCenter) {
+                ctx.shadowColor = `${colors.bg}40`
+                ctx.shadowBlur = 15
+                ctx.shadowOffsetY = 4
+            }
+
+            // Draw rounded rectangle
+            ctx.beginPath()
+            ctx.roundRect(pos.x - nodeWidth / 2, pos.y - nodeHeight / 2, nodeWidth, nodeHeight, radius)
+            ctx.fillStyle = colors.bg
+            ctx.fill()
+            ctx.strokeStyle = colors.border
+            ctx.lineWidth = isHovered ? 3 : 2
+            ctx.stroke()
+
+            // Reset shadow
+            ctx.shadowColor = 'transparent'
+            ctx.shadowBlur = 0
+            ctx.shadowOffsetY = 0
+
+            // Title text
+            ctx.fillStyle = colors.text
+            ctx.font = `${isCenter ? '600' : '500'} ${isCenter ? 12 : 11}px Inter, system-ui, sans-serif`
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+
+            const title = node.title.length > 12 ? node.title.substring(0, 11) + '…' : node.title
+            ctx.fillText(title, pos.x, pos.y - (isCenter ? 5 : 3))
+
+            // Tag badge
+            ctx.font = '500 9px Inter, system-ui, sans-serif'
+            ctx.fillStyle = `${colors.text}99`
+            const tag = node.tag.length > 12 ? node.tag.substring(0, 11) + '…' : node.tag
+            ctx.fillText(tag, pos.x, pos.y + (isCenter ? 10 : 8))
+        })
+
+        // Restore context after zoom transform
+        ctx.restore()
+
+    }, [nodes, edges, nodePositions, hoveredNode, zoomLevel])
+
+    // Redraw on position or zoom changes
+    useEffect(() => {
+        if (canvasRef.current && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            drawGraph(canvasRef.current, rect.width, rect.height)
+        }
+    }, [nodePositions, drawGraph, hoveredNode, zoomLevel])
+
+    // Handle mouse events for dragging and hovering
+    const getNodeAtPosition = useCallback((x: number, y: number): GraphNode | null => {
+        for (const node of nodes) {
+            const pos = nodePositions.get(node.id)
+            if (!pos) continue
+            const isCenter = node.group === 'center'
+            const nodeWidth = isCenter ? 110 : 90
+            const nodeHeight = isCenter ? 44 : 36
+
+            if (x >= pos.x - nodeWidth / 2 && x <= pos.x + nodeWidth / 2 &&
+                y >= pos.y - nodeHeight / 2 && y <= pos.y + nodeHeight / 2) {
+                return node
+            }
+        }
+        return null
+    }, [nodes, nodePositions])
+
+    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const node = getNodeAtPosition(x, y)
+
+        hasDragged.current = false // Reset on mousedown
+
+        if (node) {
+            const pos = nodePositions.get(node.id)
+            if (pos) {
+                setDraggedNode(node.id)
+                setDragOffset({ x: x - pos.x, y: y - pos.y })
+            }
+        }
+    }, [getNodeAtPosition, nodePositions])
+
+    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+
+        if (draggedNode) {
+            hasDragged.current = true // Mark that we actually dragged
+
+            // Bounded dragging - keep nodes within container
+            const padding = 70
+            const newX = Math.max(padding, Math.min(rect.width - padding, x - dragOffset.x))
+            const newY = Math.max(padding, Math.min(rect.height - padding, y - dragOffset.y))
+
+            setNodePositions(prev => {
+                const next = new Map(prev)
+                next.set(draggedNode, { x: newX, y: newY })
+                return next
+            })
+        } else {
+            // Hover detection
+            const node = getNodeAtPosition(x, y)
+            setHoveredNode(node)
+            setTooltipPos({ x: e.clientX, y: e.clientY })
+
+            // Change cursor
+            e.currentTarget.style.cursor = node ? 'pointer' : 'default'
+        }
+    }, [draggedNode, dragOffset, getNodeAtPosition])
+
+    const handleMouseUp = useCallback(() => {
+        setDraggedNode(null)
+    }, [])
+
+    const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+        // Don't navigate if we actually dragged
+        if (hasDragged.current) {
+            hasDragged.current = false
+            return
+        }
+
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const node = getNodeAtPosition(x, y)
+
+        if (node && node.group !== 'center') {
+            window.location.href = `/post/${node.id}`
+        }
+    }, [getNodeAtPosition])
+
+    const resetLayout = useCallback(() => {
+        if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            const positions = calculatePositions(rect.width, rect.height)
+            setNodePositions(positions)
+        }
+        setZoomLevel(0.85)
+    }, [calculatePositions])
+
+    const zoomIn = useCallback(() => {
+        setZoomLevel(prev => Math.min(prev * 1.2, 2))
+    }, [])
+
+    const zoomOut = useCallback(() => {
+        setZoomLevel(prev => Math.max(prev / 1.2, 0.4))
+    }, [])
+
+    // Handle resize
+    useEffect(() => {
+        const handleResize = () => {
+            if (containerRef.current && canvasRef.current) {
+                const rect = containerRef.current.getBoundingClientRect()
+                drawGraph(canvasRef.current, rect.width, rect.height)
+            }
+        }
+
+        const observer = new ResizeObserver(handleResize)
+        if (containerRef.current) {
+            observer.observe(containerRef.current)
+        }
+
+        return () => observer.disconnect()
+    }, [drawGraph])
+
+    if (loading) {
+        return (
+            <div className="relative border border-dark-border rounded-xl overflow-hidden bg-[#0F1419] h-[400px] w-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-secondary" />
+            </div>
+        )
     }
 
-    // Zoom controls
-    const handleZoomIn = () => {
-        if (graphRef.current) {
-            const currentZoom = graphRef.current.zoom()
-            graphRef.current.zoom(currentZoom * 1.5, 300)
-        }
-    }
-
-    const handleZoomOut = () => {
-        if (graphRef.current) {
-            const currentZoom = graphRef.current.zoom()
-            graphRef.current.zoom(currentZoom / 1.5, 300)
-        }
-    }
-
-    const handleCenterView = () => {
-        if (graphRef.current) {
-            graphRef.current.zoomToFit(400, 50)
-        }
-    }
-
-    const isDark = theme === 'dark'
-
-    const getRelationIcon = (relation: RelationType) => {
-        switch (relation) {
-            case 'fork': return <GitFork className="w-3 h-3" />
-            case 'citation': return <Quote className="w-3 h-3" />
-            case 'shared_tag': return <Tag className="w-3 h-3" />
-            case 'shared_author': return <Users className="w-3 h-3" />
-        }
+    if (nodes.length <= 1) {
+        return (
+            <div className="relative border border-dark-border rounded-xl overflow-hidden bg-[#0F1419] h-[200px] w-full flex items-center justify-center">
+                <p className="text-dark-text-muted text-sm">No connections found for this post</p>
+            </div>
+        )
     }
 
     return (
-        <div
-            ref={containerRef}
-            className={`relative border border-gray-200 dark:border-dark-border rounded-lg overflow-hidden bg-gray-50 dark:bg-dark-surface transition-all duration-300 ${expanded ? 'fixed inset-4 z-50 shadow-2xl' : 'h-[450px] w-full'}`}
-        >
-            {/* Top controls - Relation filters */}
-            <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1">
-                {Array.from(availableRelations).map(relation => (
-                    <button
-                        key={relation}
-                        onClick={() => toggleRelation(relation)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${activeRelations.has(relation)
-                            ? 'text-white shadow-sm'
-                            : 'bg-white/80 dark:bg-dark-bg/80 text-text-light dark:text-dark-text-muted border border-gray-200 dark:border-dark-border opacity-60'
-                            }`}
-                        style={activeRelations.has(relation) ? { backgroundColor: RELATION_COLORS[relation] } : {}}
-                        title={`Toggle ${RELATION_LABELS[relation]}`}
-                    >
-                        {getRelationIcon(relation)}
-                        <span className="hidden sm:inline">{RELATION_LABELS[relation]}</span>
-                    </button>
-                ))}
-            </div>
+        <>
+            <div
+                ref={containerRef}
+                className="relative border border-dark-border rounded-xl overflow-hidden bg-[#0F1419] h-[400px] w-full"
+            >
+                <canvas
+                    ref={canvasRef}
+                    className="absolute inset-0"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onClick={handleClick}
+                />
 
-            {/* Right side controls */}
-            <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
+                {/* Controls */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 bg-[#1A2028]/95 backdrop-blur-md rounded-full border border-dark-border p-1.5 shadow-lg">
+                    <Button variant="ghost" size="icon" onClick={zoomIn} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Zoom in">
+                        <ZoomIn className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={zoomOut} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Zoom out">
+                        <ZoomOut className="w-4 h-4" />
+                    </Button>
+                    <div className="h-4 w-px bg-dark-border mx-1" />
+                    <Button variant="ghost" size="icon" onClick={resetLayout} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Reset layout">
+                        <RotateCcw className="w-4 h-4" />
+                    </Button>
+                    <div className="h-4 w-px bg-dark-border mx-1" />
+                    <Button variant="ghost" size="icon" onClick={() => setExpanded(true)} className="h-8 w-8 rounded-full text-dark-text-muted hover:text-dark-text hover:bg-dark-border/50" title="Expand">
+                        <Maximize2 className="w-4 h-4" />
+                    </Button>
+                </div>
+
                 {/* Legend */}
-                {activeTags.size > 0 && (
-                    <div className="bg-white/80 dark:bg-black/50 backdrop-blur-sm p-2 rounded-lg border border-gray-200 dark:border-dark-border text-xs">
-                        <div className="font-semibold mb-1 text-text dark:text-dark-text">Disciplines</div>
-                        <div className="flex flex-col gap-1">
-                            {Array.from(activeTags).slice(0, 5).map(tag => (
-                                <div key={tag} className="flex items-center gap-2">
-                                    <div
-                                        className="w-3 h-3 rounded-full"
-                                        style={{ backgroundColor: tagColors[tag] || '#9CA3AF' }}
-                                    />
-                                    <span className="text-text-light dark:text-dark-text-muted truncate max-w-[80px]">{tag}</span>
+                <div className="absolute top-3 right-3 z-10 bg-[#1A2028]/90 backdrop-blur-md rounded-lg border border-dark-border p-2 shadow-sm">
+                    <div className="flex flex-wrap gap-2 text-[10px]">
+                        {Object.entries(NODE_COLORS).slice(0, 4).map(([key, colors]) => (
+                            <div key={key} className="flex items-center gap-1">
+                                <div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: colors.bg }} />
+                                <span className="text-dark-text-muted capitalize">
+                                    {key === 'related' ? 'Topic' : key}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Tooltip */}
+                {hoveredNode && hoveredNode.group !== 'center' && (
+                    <div
+                        className="fixed z-50 pointer-events-none"
+                        style={{ left: tooltipPos.x + 10, top: tooltipPos.y + 10 }}
+                    >
+                        <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-xl p-3 min-w-[180px]">
+                            <div className="text-xs font-medium text-text-muted dark:text-dark-text-muted mb-1">
+                                {RELATION_LABELS[edges.find(e => e.source === hoveredNode.id || e.target === hoveredNode.id)?.type || 'shared_tag']}
+                            </div>
+                            <div className="font-semibold text-sm text-text dark:text-dark-text">
+                                {hoveredNode.title}
+                            </div>
+                            {hoveredNode.authorName && (
+                                <div className="text-xs text-text-light dark:text-dark-text-muted mt-1">
+                                    by {hoveredNode.authorName}
                                 </div>
-                            ))}
+                            )}
+                            <div className="text-xs text-secondary dark:text-secondary-light mt-1">
+                                Click to view →
+                            </div>
                         </div>
                     </div>
                 )}
-
-                {/* Zoom and view controls */}
-                <div className="flex flex-col gap-1 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-dark-border p-1">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleZoomIn}
-                        className="h-7 w-7"
-                        title="Zoom in"
-                    >
-                        <ZoomIn className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleZoomOut}
-                        className="h-7 w-7"
-                        title="Zoom out"
-                    >
-                        <ZoomOut className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleCenterView}
-                        className="h-7 w-7"
-                        title="Fit all"
-                    >
-                        <Focus className="w-4 h-4" />
-                    </Button>
-                    <div className="h-px bg-gray-200 dark:bg-dark-border mx-1" />
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setExpanded(!expanded)}
-                        className="h-7 w-7"
-                        title={expanded ? 'Minimize' : 'Fullscreen'}
-                    >
-                        {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                    </Button>
-                </div>
             </div>
 
-            {/* Stats badge */}
-            <div className="absolute bottom-2 left-2 z-10 bg-white/80 dark:bg-black/50 backdrop-blur-sm px-2 py-1 rounded-md text-xs text-text-light dark:text-dark-text-muted">
-                {filteredGraphData.nodes.length} nodes · {filteredGraphData.links.length} connections
-            </div>
-
-            {!loading && dimensions.width > 0 && (
-                <ForceGraph2D
-                    ref={graphRef}
-                    graphData={filteredGraphData}
-                    nodeLabel="title"
-                    backgroundColor={isDark ? '#111827' : '#F9FAFB'}
-                    width={dimensions.width}
-                    height={dimensions.height}
-                    onNodeClick={node => {
-                        window.location.href = `/post/${node.id}`
-                    }}
-                    onNodeHover={node => {
-                        setHoverNode((node as GraphNode) || null)
-                        if (containerRef.current) {
-                            containerRef.current.style.cursor = node ? 'pointer' : 'default'
-                        }
-                    }}
-                    // Link styling based on type
-                    linkColor={(link: any) => {
-                        const linkType = link.type as RelationType
-                        return RELATION_COLORS[linkType] || (isDark ? '#4B5563' : '#D1D5DB')
-                    }}
-                    linkDirectionalArrowLength={3.5}
-                    linkDirectionalArrowRelPos={1}
-                    linkCurvature={0.25}
-                    linkWidth={(link: any) => {
-                        const sourceId = typeof link.source === 'object' ? link.source.id : link.source
-                        const targetId = typeof link.target === 'object' ? link.target.id : link.target
-
-                        if (hoverNode && (sourceId === hoverNode.id || targetId === hoverNode.id)) {
-                            return 3
-                        }
-                        // Weaker connections for shared_tag and shared_author
-                        if (link.type === 'shared_tag' || link.type === 'shared_author') {
-                            return 1
-                        }
-                        return 1.5
-                    }}
-                    linkLineDash={(link: any) => {
-                        // Dashed lines for weaker connections
-                        if (link.type === 'shared_tag' || link.type === 'shared_author') {
-                            return [2, 2]
-                        }
-                        return null
-                    }}
-                    // Custom Node Rendering
-                    nodeCanvasObject={(node: any, ctx, globalScale) => {
-                        // Guard against undefined positions during initial render
-                        if (node.x === undefined || node.y === undefined ||
-                            !isFinite(node.x) || !isFinite(node.y)) {
-                            return
-                        }
-
-                        const label = node.title
-                        const fontSize = 12 / globalScale
-                        ctx.font = `${fontSize}px Sans-Serif`
-
-                        // Node styling based on tag
-                        const tagColor = tagColors[node.tag] || '#9CA3AF'
-                        let radius = 5
-
-                        if (node.group === 'center') radius = 10
-                        else if (node.group === 'parent') radius = 8
-                        else if (node.group === 'child') radius = 7
-                        else if (node.group === 'citation') radius = 6
-                        else radius = 5
-
-                        // Highlight on hover
-                        const isHovered = hoverNode && node.id === hoverNode.id
-                        const isNeighbor = hoverNode && filteredGraphData.links.some((link: any) => {
-                            const sourceId = typeof link.source === 'object' ? link.source.id : link.source
-                            const targetId = typeof link.target === 'object' ? link.target.id : link.target
-                            return (sourceId === hoverNode.id && targetId === node.id) ||
-                                (targetId === hoverNode.id && sourceId === node.id)
-                        })
-
-                        // Outer glow for hovered/neighbor nodes
-                        if (isHovered || isNeighbor) {
-                            ctx.beginPath()
-                            ctx.arc(node.x, node.y, radius + 4, 0, 2 * Math.PI, false)
-                            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)'
-                            ctx.fill()
-                        }
-
-                        // Draw Node with gradient
-                        const gradient = ctx.createRadialGradient(
-                            node.x - radius * 0.3, node.y - radius * 0.3, 0,
-                            node.x, node.y, radius
-                        )
-                        gradient.addColorStop(0, tagColor)
-                        gradient.addColorStop(1, `${tagColor}CC`)
-
-                        ctx.beginPath()
-                        ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false)
-                        ctx.fillStyle = gradient
-                        ctx.fill()
-
-                        // Border
-                        ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'
-                        ctx.lineWidth = 1
-                        ctx.stroke()
-
-                        // Pulsing glow effect for center node
-                        if (node.group === 'center') {
-                            ctx.shadowBlur = 20
-                            ctx.shadowColor = tagColor
-                            ctx.beginPath()
-                            ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false)
-                            ctx.fill()
-                            ctx.shadowBlur = 0
-                        }
-
-                        // Draw Label
-                        if (isHovered || node.group === 'center' || node.group === 'parent' || globalScale > 1.5) {
-                            const maxLabelLength = 25
-                            const truncatedLabel = label.length > maxLabelLength
-                                ? label.substring(0, maxLabelLength) + '...'
-                                : label
-
-                            ctx.textAlign = 'center'
-                            ctx.textBaseline = 'middle'
-
-                            // Text shadow for better readability
-                            ctx.fillStyle = isDark ? '#111827' : '#FFFFFF'
-                            ctx.fillText(truncatedLabel, node.x + 0.5, node.y + radius + fontSize + 0.5)
-
-                            ctx.fillStyle = isDark ? '#E5E7EB' : '#374151'
-                            ctx.fillText(truncatedLabel, node.x, node.y + radius + fontSize)
-                        }
-                    }}
-                    cooldownTicks={100}
-                />
-            )}
-
-            {/* Loading overlay */}
-            {loading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-dark-surface/80">
-                    <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <span className="text-sm text-text-light dark:text-dark-text-muted">Building knowledge graph...</span>
+            {/* Expanded Dialog */}
+            <Dialog open={expanded} onOpenChange={setExpanded}>
+                <DialogContent className="max-w-[95vw] w-[95vw] h-[90vh] flex flex-col p-0 gap-0 bg-[#0F1419] overflow-hidden">
+                    <DialogHeader className="p-4 border-b border-dark-border flex-shrink-0">
+                        <div className="flex items-center justify-between">
+                            <DialogTitle className="text-dark-text">Knowledge Graph Explorer</DialogTitle>
+                        </div>
+                    </DialogHeader>
+                    <div className="flex-1 relative overflow-hidden bg-[#0F1419]">
+                        <DialogGraphCanvas
+                            nodes={nodes}
+                            edges={edges}
+                            calculatePositions={calculatePositions}
+                            expanded={expanded}
+                        />
                     </div>
-                </div>
-            )}
-        </div>
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }
