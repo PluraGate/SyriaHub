@@ -99,11 +99,6 @@ This document tracks the system capabilities, completed features, and remaining 
 | Performance Monitoring | 🔵 Low | ⚠️ Partial | Vercel Analytics active. Sentry/APM missing. |
 | Data Export (GDPR) | 🔵 Low | ⚠️ Partial | Basic export exists. Need full portability & BibTeX/RIS. |
 
-### Search & Discovery
-- [ ] Search autocomplete/suggestions (Backend ready, frontend integration pending)
-- [ ] Personalized recommendations based on reading history
-- [ ] External data source expansion (Beyond current 3 APIs)
-
 ### UI/UX & Accessibility
 - [ ] Complete WCAG 2.1 AA compliance audit
 - [ ] Focus trap management in complex modals
@@ -118,9 +113,9 @@ This document tracks the system capabilities, completed features, and remaining 
 ### Database Migrations
 | Migration | Status | Notes |
 |-----------|--------|-------|
-| `20251217160000_diversity_recommendations.sql` | ⏳ Pending | Diversity recommendations functions and ENUMs |
+| `20251217160000_diversity_recommendations.sql` | ✅ Applied | Diversity recommendations functions and ENUMs |
 
-**To apply:** Run the migration in Supabase Dashboard SQL editor.
+**Note:** Migration has been applied to the database.
 
 ### Data Population Required
 | Data | Status | Notes |
