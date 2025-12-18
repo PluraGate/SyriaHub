@@ -1,6 +1,6 @@
 # System Gap Analysis
 
-**Last Updated:** December 17, 2025
+**Last Updated:** December 18, 2025
 
 This document tracks the system capabilities, completed features, and remaining gaps for the Syrealize research platform.
 
@@ -73,7 +73,45 @@ This document tracks the system capabilities, completed features, and remaining 
 | Full Localization | ✅ Complete | English + Arabic translations |
 | Homepage Display | ✅ Complete | Shows on homepage refresh |
 
+### Mobile App / PWA
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Web App Manifest | ✅ Complete | Full manifest with icons, shortcuts, share_target |
+| Service Worker | ✅ Complete | Caching strategies (cache-first, network-first, stale-while-revalidate) |
+| Offline Storage | ✅ Complete | IndexedDB for drafts and article caching |
+| PWA Icons | ✅ Complete | All sizes (72-512px) + shortcut icons |
+| Offline Page | ✅ Complete | Shows cached articles when offline |
+| Install Prompt | ✅ Complete | Non-intrusive banner with dismissal persistence |
+| Offline Indicator | ✅ Complete | Status badge showing connection state |
+| PWA Meta Tags | ✅ Complete | manifest, theme-color, apple-web-app, viewport |
+
 ---
+
+## ⚠️ Known Gaps
+
+### Infrastructure & Security
+| Gap | Severity | Status | Notes |
+|-----|----------|--------|-------|
+| Automated Testing | 🔴 Critical | ❌ Missing | No Jest/Vitest/Playwright config. Manual scripts only. |
+| Email Configuration | 🟠 High | ⚠️ Partial | Templates & transporter exist. SMTP envs missing in `.env.example`. |
+| API Rate Limiting | 🟡 Medium | ⚠️ Partial | `rateLimit.ts` exists but not integrated into API routes. |
+| CAPTCHA Integration | 🟡 Medium | ❌ Missing | Required for sensitive operations (Auth, Surveys). |
+| Performance Monitoring | 🔵 Low | ⚠️ Partial | Vercel Analytics active. Sentry/APM missing. |
+| Data Export (GDPR) | 🔵 Low | ⚠️ Partial | Basic export exists. Need full portability & BibTeX/RIS. |
+
+### Search & Discovery
+- [ ] Search autocomplete/suggestions (Backend ready, frontend integration pending)
+- [ ] Personalized recommendations based on reading history
+- [ ] External data source expansion (Beyond current 3 APIs)
+
+### UI/UX & Accessibility
+- [ ] Complete WCAG 2.1 AA compliance audit
+- [ ] Focus trap management in complex modals
+- [ ] Reduced motion support
+
+---
+
+
 
 ## ⏳ Pending / Requires Migration
 
