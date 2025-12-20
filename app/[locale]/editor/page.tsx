@@ -12,8 +12,10 @@ import { Footer } from '@/components/Footer'
 import { useToast } from '@/components/ui/toast'
 import { CoverImageUpload } from '@/components/CoverImageUpload'
 import { useAutosave } from '@/lib/hooks/useAutosave'
+import { useCollaboration } from '@/lib/hooks/useCollaboration'
 import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecoveryBanner'
 import { ResourceLinker } from '@/components/ResourceLinker'
+import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -55,6 +57,14 @@ export default function EditorPage() {
   const [useRichEditor, setUseRichEditor] = useState(true)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
   const [linkedResources, setLinkedResources] = useState<any[]>([])
+
+  // Real-time collaboration for editing existing posts
+  const { collaborators, isConnected, userColor } = useCollaboration({
+    documentId: postIdParam || 'new',
+    userId: user?.id || 'anon',
+    userName: user?.user_metadata?.name || user?.email?.split('@')[0] || 'Anonymous',
+    userAvatar: user?.user_metadata?.avatar_url
+  })
 
   // Autosave hook - only active when creating new posts (not editing)
   const {
@@ -427,6 +437,17 @@ export default function EditorPage() {
               >
                 Remove
               </button>
+            </div>
+          )}
+
+          {/* Real-time Collaboration Presence */}
+          {postIdParam && user && (
+            <div className="mt-4">
+              <CollaboratorAvatars
+                collaborators={collaborators}
+                isConnected={isConnected}
+                userColor={userColor}
+              />
             </div>
           )}
         </div>

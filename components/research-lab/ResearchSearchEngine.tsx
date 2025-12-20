@@ -92,6 +92,7 @@ export function ResearchSearchEngine() {
         notes?: string
         is_pinned: boolean
         created_at: string
+        cached_results?: Record<string, unknown>
     }
 
     // Web search result type

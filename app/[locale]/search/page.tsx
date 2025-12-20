@@ -79,7 +79,8 @@ export default async function SearchPage({
 
         // Log search analytics (non-blocking, fire and forget)
         const { data: { user: currentUser } } = await supabase.auth.getUser()
-        supabase.from('search_analytics').insert({
+        // Fire and forget - don't await
+        void supabase.from('search_analytics').insert({
             user_id: currentUser?.id || null,
             query: q,
             query_normalized: q.toLowerCase().trim(),
@@ -88,7 +89,7 @@ export default async function SearchPage({
             filter_date: date || null,
             results_count: results.length,
             source: 'web'
-        }).then(() => { }).catch(() => { }) // Silent fail
+        })
     }
 
     const getIcon = (resultType: string) => {

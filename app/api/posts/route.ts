@@ -12,6 +12,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/apiUtils'
 import { checkContent } from '@/lib/moderation'
+import { analyzePostForRecommendations } from '@/lib/recommendationAnalysis'
 import type { CreatePostInput } from '@/types'
 
 /**
@@ -22,7 +23,7 @@ import type { CreatePostInput } from '@/types'
 async function handleGetPosts(request: Request): Promise<NextResponse> {
   const supabase = await createServerClient()
   const params = getQueryParams(request)
-  
+
   // Get query parameters
   const tag = params.get('tag')
   const authorId = params.get('author_id')
@@ -78,13 +79,13 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
   const user = await verifyAuth()
 
   const supabase = await createServerClient()
-  
+
   // Parse request body
   const body = await parseRequestBody<CreatePostInput>(request)
-  
+
   // Validate required fields
   validateRequiredFields(body, ['title', 'content'])
-  
+
   const { title, content, tags } = body
 
   // Validate title and content length
@@ -151,6 +152,11 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
   if (error) {
     return handleSupabaseError(error)
   }
+
+  // Trigger AI recommendation analysis in the background
+  // This populates trust_profiles, relationships, specialties, etc.
+  analyzePostForRecommendations(data.id, data.title, data.content, data.tags || [])
+    .catch(err => console.error('Failed to analyze post for recommendations:', err))
 
   // Return success with optional warnings
   if (hasWarnings) {

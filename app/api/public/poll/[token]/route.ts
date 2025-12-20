@@ -175,9 +175,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             .from('polls')
             .update({
                 options: updatedOptions,
-                total_votes: (poll as { total_votes?: number }).total_votes
-                    ? ((poll as { total_votes: number }).total_votes + 1)
-                    : 1
+                total_votes: ((poll as Record<string, unknown>).total_votes as number || 0) + 1
             })
             .eq('id', poll.id)
 

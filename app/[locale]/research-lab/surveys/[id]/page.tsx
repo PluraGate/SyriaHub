@@ -206,12 +206,12 @@ export default async function SurveyPage({ params }: PageProps) {
                                                 <div className="flex-1">
                                                     <p className="font-medium text-text dark:text-dark-text">
                                                         {question.question_text as string}
-                                                        {question.required && <span className="text-red-500 ml-1">*</span>}
+                                                        {Boolean(question.required) && <span className="text-red-500 ml-1">*</span>}
                                                     </p>
                                                     <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
                                                         Type: {(question.question_type as string).replace('_', ' ')}
                                                     </p>
-                                                    {question.options && Array.isArray(question.options) && (
+                                                    {Array.isArray(question.options) && question.options.length > 0 && (
                                                         <div className="mt-2 space-y-1">
                                                             {(question.options as Array<{ id: string; text: string }>).map((opt) => (
                                                                 <div key={opt.id} className="text-sm text-text-light dark:text-dark-text-muted flex items-center gap-2">

@@ -1,0 +1,103 @@
+-- ============================================
+-- EXPANDED SKILLS DATABASE
+-- ============================================
+-- Additional skills for Syria reconstruction research platform
+-- Run after 20251213100000_endorsement_system.sql
+
+-- Insert additional recognized skills across major categories
+INSERT INTO skills (name, category, is_recognized) VALUES
+  -- Research Methods (expanded)
+  ('Mixed Methods Research', 'Research Methods', true),
+  ('Ethnographic Research', 'Research Methods', true),
+  ('Action Research', 'Research Methods', true),
+  ('Case Study Research', 'Research Methods', true),
+  ('Participatory Research', 'Research Methods', true),
+  ('Systematic Review', 'Research Methods', true),
+  ('Meta-Analysis', 'Research Methods', true),
+  ('Content Analysis', 'Research Methods', true),
+  ('Discourse Analysis', 'Research Methods', true),
+  ('Oral History Methods', 'Research Methods', true),
+  
+  -- Technical (expanded)
+  ('Remote Sensing', 'Technical', true),
+  ('Satellite Imagery Analysis', 'Technical', true),
+  ('3D Modeling', 'Technical', true),
+  ('BIM (Building Information Modeling)', 'Technical', true),
+  ('CAD (Computer-Aided Design)', 'Technical', true),
+  ('Photogrammetry', 'Technical', true),
+  ('Database Management', 'Technical', true),
+  ('SQL', 'Technical', true),
+  ('Web Development', 'Technical', true),
+  ('Mobile App Development', 'Technical', true),
+  ('Cloud Computing', 'Technical', true),
+  ('Geospatial Analysis', 'Technical', true),
+  ('UAV/Drone Operations', 'Technical', true),
+  ('LiDAR Processing', 'Technical', true),
+  ('Image Processing', 'Technical', true),
+  ('Natural Language Processing', 'Technical', true),
+  ('Computer Vision', 'Technical', true),
+  
+  -- Domain Knowledge (expanded for Syria context)
+  ('Syrian History', 'Domain Knowledge', true),
+  ('Middle East Studies', 'Domain Knowledge', true),
+  ('Arabic Language', 'Domain Knowledge', true),
+  ('Islamic Architecture', 'Domain Knowledge', true),
+  ('Urban Studies', 'Domain Knowledge', true),
+  ('Archaeology', 'Domain Knowledge', true),
+  ('Cultural Heritage', 'Domain Knowledge', true),
+  ('Anthropology', 'Domain Knowledge', true),
+  ('International Relations', 'Domain Knowledge', true),
+  ('Human Rights', 'Domain Knowledge', true),
+  ('Refugee Studies', 'Domain Knowledge', true),
+  ('Migration Studies', 'Domain Knowledge', true),
+  ('Conflict Resolution', 'Domain Knowledge', true),
+  ('Peace Studies', 'Domain Knowledge', true),
+  ('Development Studies', 'Domain Knowledge', true),
+  ('Public Health', 'Domain Knowledge', true),
+  ('Water Resources', 'Domain Knowledge', true),
+  ('Agriculture', 'Domain Knowledge', true),
+  ('Climate Change', 'Domain Knowledge', true),
+  ('Disaster Risk Reduction', 'Domain Knowledge', true),
+  
+  -- Work Field (expanded)
+  ('Humanitarian Response', 'Work Field', true),
+  ('Emergency Management', 'Work Field', true),
+  ('Needs Assessment', 'Work Field', true),
+  ('Program Design', 'Work Field', true),
+  ('Proposal Writing', 'Work Field', true),
+  ('Donor Relations', 'Work Field', true),
+  ('Budget Management', 'Work Field', true),
+  ('Logistics', 'Work Field', true),
+  ('Procurement', 'Work Field', true),
+  ('Supply Chain Management', 'Work Field', true),
+  ('Risk Management', 'Work Field', true),
+  ('Quality Assurance', 'Work Field', true),
+  ('Impact Evaluation', 'Work Field', true),
+  ('Knowledge Management', 'Work Field', true),
+  ('Advocacy', 'Work Field', true),
+  ('Communications', 'Work Field', true),
+  ('Media Relations', 'Work Field', true),
+  ('Public Speaking', 'Work Field', true),
+  
+  -- Practical Expertise (expanded)
+  ('Conflict Sensitivity', 'Practical Expertise', true),
+  ('Do No Harm Approach', 'Practical Expertise', true),
+  ('Gender Mainstreaming', 'Practical Expertise', true),
+  ('Protection Mainstreaming', 'Practical Expertise', true),
+  ('Accountability to Affected Populations', 'Practical Expertise', true),
+  ('Community Mobilization', 'Practical Expertise', true),
+  ('Capacity Building', 'Practical Expertise', true),
+  ('Partnership Development', 'Practical Expertise', true),
+  ('Coordination Mechanisms', 'Practical Expertise', true),
+  ('Cluster System', 'Practical Expertise', true),
+  ('Negotiation', 'Practical Expertise', true),
+  ('Mediation', 'Practical Expertise', true),
+  ('Interviewing', 'Practical Expertise', true),
+  ('Focus Group Facilitation', 'Practical Expertise', true),
+  ('Workshop Design', 'Practical Expertise', true),
+  ('Curriculum Development', 'Practical Expertise', true),
+  ('Translation/Interpretation', 'Practical Expertise', true),
+  ('Security Management', 'Practical Expertise', true),
+  ('Context Analysis', 'Practical Expertise', true),
+  ('Stakeholder Mapping', 'Practical Expertise', true)
+ON CONFLICT (name) DO NOTHING;

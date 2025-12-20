@@ -88,11 +88,7 @@ export function PlagiarismCheckButton({ postVersionId }: PlagiarismCheckButtonPr
                                 : 'Some sections may need citation or rewording'}
                         </p>
 
-                        {/* Demo mode notice */}
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-text-light dark:text-dark-text-muted opacity-75">
-                            <Info className="w-3 h-3" />
-                            <span>Demo mode: Using simulated detection</span>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -112,7 +108,7 @@ export function PlagiarismCheckButton({ postVersionId }: PlagiarismCheckButtonPr
                 Check Originality
             </Button>
             <InfoHint
-                content="Run a plagiarism check to see if this content matches existing sources. Currently in demo mode."
+                content="Run a plagiarism check to compare this content against existing research using semantic similarity."
             />
         </div>
     )

@@ -1,13 +1,5 @@
 'use client'
 
-interface ProcessedResult {
-    questionId: string
-    questionText: string
-    questionType: string
-    responseCount: number
-    data: Record<string, unknown>
-}
-
 interface BarData {
     type: 'bar'
     options: Array<{ label: string; value: number; percentage: number }>
@@ -26,23 +18,37 @@ interface TextData {
     responses: unknown[]
 }
 
+type ChartData = BarData | StatsData | TextData
+
+interface ProcessedResult {
+    questionId: string
+    questionText: string
+    questionType: string
+    responseCount: number
+    data: ChartData | Record<string, unknown>
+}
+
 interface SurveyResultsChartProps {
     result: ProcessedResult
 }
 
 export function SurveyResultsChart({ result }: SurveyResultsChartProps) {
-    const data = result.data as BarData | StatsData | TextData
+    const rawData = result.data as ChartData | undefined
 
-    if (data.type === 'bar') {
-        return <BarChart data={data} />
+    if (!rawData || !('type' in rawData)) {
+        return null
     }
 
-    if (data.type === 'stats') {
-        return <StatsDisplay data={data} questionType={result.questionType} />
+    if (rawData.type === 'bar') {
+        return <BarChart data={rawData} />
     }
 
-    if (data.type === 'text') {
-        return <TextResponses data={data} />
+    if (rawData.type === 'stats') {
+        return <StatsDisplay data={rawData} questionType={result.questionType} />
+    }
+
+    if (rawData.type === 'text') {
+        return <TextResponses data={rawData} />
     }
 
     return null

@@ -147,14 +147,14 @@ This document tracks the system capabilities, completed features, and remaining 
 ## 🔮 Future Enhancements
 
 ### Recommendation System
-- [ ] Full diversity-based recommendations (after migration applied)
-- [ ] Author trust profile integration
-- [ ] Content relationship auto-detection via AI
+- [x] Full diversity-based recommendations (after migration applied)
+- [x] Author trust profile integration
+- [x] Content relationship auto-detection via AI
 
 ### Platform Features
-- [ ] Real-time collaboration on posts
-- [ ] AI-powered plagiarism check improvements
-- [ ] Advanced analytics dashboard for researchers
+- [x] Real-time collaboration on posts
+- [x] AI-powered plagiarism check improvements
+- [x] Advanced analytics dashboard for researchers
 
 ### Internationalization
 - [ ] Additional languages (French, Turkish)
@@ -171,8 +171,9 @@ This document tracks the system capabilities, completed features, and remaining 
 | `README.md` | ✅ Updated | Features, Tech Stack, Getting Started, Roadmap |
 | `API_DOCUMENTATION.md` | ✅ Updated | Full API reference with Events, Surveys, Polls, Research Lab, Coordination |
 | `MODERATION_DOCUMENTATION.md` | ✅ Complete | AI moderation setup and configuration |
+| `docs/USER_GUIDE.md` | ✅ New | User walkthrough with licensing, features, and tips |
 | `docs/system_gap_analysis.md` | ✅ Current | This document - system status tracking |
-| `docs/feature-roadmap.md` | ⏳ Needs Update | Phased module overview |
+| `docs/feature-roadmap.md` | ✅ Updated | Phased module overview with completion status |
 
 ### Client Components Using Translations
 Components updated to use `useTranslations` hook:

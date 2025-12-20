@@ -788,7 +788,7 @@ Run a plagiarism check on a specific post version.
 - Scores **below 20%** are considered clean ("Original Content")
 - Scores **above 20%** are flagged for review ("Review Recommended")
 
-> **Note:** The current implementation uses simulated detection (demo mode). In production, this would integrate with services like Turnitin, Copyscape, or iThenticate.
+> **Note:** Plagiarism detection uses semantic embeddings (OpenAI `text-embedding-3-small`) and pgvector similarity search. For matches above 85% similarity, GPT-4o-mini performs a detailed comparison.
 
 **Request Body:**
 ```json

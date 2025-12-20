@@ -64,9 +64,26 @@ export function UserManagement() {
     const [showRoleDialog, setShowRoleDialog] = useState(false)
     const [processingUserId, setProcessingUserId] = useState<string | null>(null)
     const [showActionMenu, setShowActionMenu] = useState<string | null>(null)
+    const [currentUserRole, setCurrentUserRole] = useState<string | null>(null)
 
     const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
+
+    // Fetch current user's role on mount
+    useEffect(() => {
+        async function fetchCurrentUserRole() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                if (data) setCurrentUserRole(data.role)
+            }
+        }
+        fetchCurrentUserRole()
+    }, [supabase])
 
     const loadUsers = useCallback(async () => {
         setLoading(true)
@@ -111,12 +128,23 @@ export function UserManagement() {
     }, [searchQuery])
 
     const handleRoleChange = (user: AdminUser) => {
+        // Only admins can change roles
+        if (currentUserRole !== 'admin') {
+            showToast('Only admins can change user roles', 'error')
+            return
+        }
         setSelectedUser(user)
         setShowRoleDialog(true)
         setShowActionMenu(null)
     }
 
     const handleSuspend = async (user: AdminUser) => {
+        // Moderators cannot suspend admins
+        if (currentUserRole === 'moderator' && user.role === 'admin') {
+            showToast('Moderators cannot suspend admins', 'error')
+            setShowActionMenu(null)
+            return
+        }
         setProcessingUserId(user.id)
         setShowActionMenu(null)
         try {
@@ -349,32 +377,38 @@ export function UserManagement() {
                                                             onClick={() => setShowActionMenu(null)}
                                                         />
                                                         <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-20 py-1">
-                                                            <button
-                                                                onClick={() => handleRoleChange(user)}
-                                                                className="w-full px-4 py-2 text-left text-sm text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border flex items-center gap-2"
-                                                            >
-                                                                <Shield className="w-4 h-4" />
-                                                                Change Role
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleSuspend(user)}
-                                                                className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${user.suspended_at
+                                                            {/* Only show Change Role to admins */}
+                                                            {currentUserRole === 'admin' && (
+                                                                <button
+                                                                    onClick={() => handleRoleChange(user)}
+                                                                    className="w-full px-4 py-2 text-left text-sm text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border flex items-center gap-2"
+                                                                >
+                                                                    <Shield className="w-4 h-4" />
+                                                                    Change Role
+                                                                </button>
+                                                            )}
+                                                            {/* Moderators cannot suspend admins */}
+                                                            {!(currentUserRole === 'moderator' && user.role === 'admin') && (
+                                                                <button
+                                                                    onClick={() => handleSuspend(user)}
+                                                                    className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${user.suspended_at
                                                                         ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
                                                                         : 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                                                    }`}
-                                                            >
-                                                                {user.suspended_at ? (
-                                                                    <>
-                                                                        <CheckCircle className="w-4 h-4" />
-                                                                        Unsuspend
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Ban className="w-4 h-4" />
-                                                                        Suspend
-                                                                    </>
-                                                                )}
-                                                            </button>
+                                                                        }`}
+                                                                >
+                                                                    {user.suspended_at ? (
+                                                                        <>
+                                                                            <CheckCircle className="w-4 h-4" />
+                                                                            Unsuspend
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <Ban className="w-4 h-4" />
+                                                                            Suspend
+                                                                        </>
+                                                                    )}
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </>
                                                 )}

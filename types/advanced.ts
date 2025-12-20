@@ -447,4 +447,11 @@ export interface ModerationAppeal {
     resolved_at?: string
     created_at: string
     updated_at: string
+    // Joined data (when fetched with relations)
+    post?: {
+        id: string
+        title: string
+        content?: string
+        author_id: string
+    }
 }
