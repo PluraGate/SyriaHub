@@ -85,8 +85,8 @@ export async function moderateContentWithOpenAI(
       categoryScores: result.category_scores,
       details: result.flagged
         ? Object.entries(result.categories)
-            .filter(([_, flagged]) => flagged)
-            .map(([category]) => category)
+          .filter(([_, flagged]) => flagged)
+          .map(([category]) => category)
         : undefined,
     }
   } catch (error) {
@@ -181,11 +181,11 @@ export async function moderateContentWithPerspective(
       },
       details: flagged
         ? [
-            toxicityScore > threshold && 'Toxic language detected',
-            severeToxicityScore > threshold && 'Severe toxicity detected',
-            threatScore > threshold && 'Threatening content detected',
-            identityAttackScore > threshold && 'Identity attack detected',
-          ].filter(Boolean) as string[]
+          toxicityScore > threshold && 'Toxic language detected',
+          severeToxicityScore > threshold && 'Severe toxicity detected',
+          threatScore > threshold && 'Threatening content detected',
+          identityAttackScore > threshold && 'Identity attack detected',
+        ].filter(Boolean) as string[]
         : undefined,
     }
   } catch (error) {
@@ -256,29 +256,121 @@ export function generateModerationWarning(result: ModerationResult): string {
 }
 
 /**
- * Placeholder for plagiarism detection
- * To be implemented with services like Copyscape, Turnitin API, or custom solution
+ * Semantic Plagiarism Detection
+ * Uses pgvector embeddings to find similar content, then uses AI only for high-match cases
  */
 export async function checkPlagiarism(
   text: string,
   title?: string
 ): Promise<PlagiarismCheckResult> {
-  // TODO: Integrate with plagiarism detection service
-  // Options:
-  // 1. Copyscape API: https://www.copyscape.com/apidocumentation.php
-  // 2. Turnitin API: https://www.turnitin.com/
-  // 3. Custom solution using embeddings + similarity search
-  // 4. iThenticate API for academic content
-  
-  console.log('Plagiarism check called for text (length:', text.length, ')')
-  
-  // For now, return placeholder result
-  return {
-    isPlagiarized: false,
-    similarityScore: 0,
-    details: 'Plagiarism detection not yet implemented - feature coming soon',
+  // Skip very short content
+  if (text.length < 100) {
+    return { isPlagiarized: false, similarityScore: 0, details: 'Content too short for plagiarism check' }
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    console.warn('[Plagiarism] OpenAI API key not configured, skipping check')
+    return { isPlagiarized: false, similarityScore: 0, details: 'Plagiarism API not configured' }
+  }
+
+  try {
+    // 1. Generate embedding for the new content
+    const embeddingText = `${title || ''}\n\n${text}`.slice(0, 8000)
+    const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ model: 'text-embedding-3-small', input: embeddingText })
+    })
+
+    if (!embeddingResponse.ok) {
+      console.error('[Plagiarism] Embedding generation failed')
+      return { isPlagiarized: false, similarityScore: 0, details: 'Embedding generation failed' }
+    }
+
+    const embeddingData = await embeddingResponse.json()
+    const embedding = embeddingData.data[0].embedding
+
+    // 2. Search for similar content in database using pgvector
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+      return { isPlagiarized: false, similarityScore: 0, details: 'Database not configured' }
+    }
+
+    // Call the RPC for similarity matching
+    const rpcResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/match_content_embeddings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      },
+      body: JSON.stringify({
+        query_embedding: `[${embedding.join(',')}]`,
+        match_threshold: 0.7, // Only consider 70%+ similar content
+        match_count: 3
+      })
+    })
+
+    if (!rpcResponse.ok) {
+      console.warn('[Plagiarism] Similarity search failed, RPC may not be deployed')
+      return { isPlagiarized: false, similarityScore: 0, details: 'Similarity search unavailable' }
+    }
+
+    const matches = await rpcResponse.json()
+
+    if (!matches || matches.length === 0) {
+      return { isPlagiarized: false, similarityScore: 0, details: 'No similar content found' }
+    }
+
+    // 3. Get the highest similarity score
+    const topMatch = matches[0]
+    const similarityScore = topMatch.similarity
+
+    // If similarity is high (>85%), use AI to confirm if it's actually plagiarism
+    if (similarityScore > 0.85) {
+      const aiCheckResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: 'You are a plagiarism detector. Compare the two texts and determine if the NEW text is plagiarized from the EXISTING text. Consider: direct copying, paraphrasing without attribution, and structural similarity. Respond with JSON: {"isPlagiarized": boolean, "reason": "string"}' },
+            { role: 'user', content: `EXISTING TEXT:\n${topMatch.embedded_text?.slice(0, 2000) || 'N/A'}\n\nNEW TEXT:\n${text.slice(0, 2000)}` }
+          ],
+          response_format: { type: 'json_object' },
+          max_tokens: 200
+        })
+      })
+
+      if (aiCheckResponse.ok) {
+        const aiData = await aiCheckResponse.json()
+        const aiResult = JSON.parse(aiData.choices[0].message.content || '{}')
+        return {
+          isPlagiarized: aiResult.isPlagiarized || false,
+          similarityScore,
+          sources: [topMatch.content_id],
+          details: aiResult.reason || `${Math.round(similarityScore * 100)}% similar to existing content`
+        }
+      }
+    }
+
+    // For moderate similarity (70-85%), flag but don't block
+    return {
+      isPlagiarized: similarityScore > 0.9, // Only consider >90% as definite plagiarism
+      similarityScore,
+      sources: matches.map((m: any) => m.content_id),
+      details: `${Math.round(similarityScore * 100)}% similar to existing research content`
+    }
+
+  } catch (error) {
+    console.error('[Plagiarism] Check failed:', error)
+    return { isPlagiarized: false, similarityScore: 0, details: 'Plagiarism check encountered an error' }
   }
 }
+
 
 /**
  * Comprehensive content check - runs both moderation and plagiarism detection
@@ -298,11 +390,11 @@ export async function checkContent(
   ])
 
   const warnings: string[] = []
-  
+
   if (moderation.flagged) {
     warnings.push(generateModerationWarning(moderation))
   }
-  
+
   if (plagiarism.isPlagiarized) {
     warnings.push(
       `Potential plagiarism detected (${Math.round(plagiarism.similarityScore * 100)}% similarity). Please ensure you properly cite all sources.`

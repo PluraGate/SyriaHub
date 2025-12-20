@@ -17,8 +17,9 @@ import {
     MessagesSquare,
     Search
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
 
 interface AdminSidebarProps {
     className?: string
@@ -70,6 +71,7 @@ const navItems = [
         label: 'Waitlist',
         href: '/admin/waitlist',
         icon: UserPlus,
+        adminOnly: true,
     },
     {
         label: 'Coordination',
@@ -80,12 +82,33 @@ const navItems = [
         label: 'Audit Logs',
         href: '/admin/audit',
         icon: History,
+        adminOnly: true,
     },
 ]
 
 export function AdminSidebar({ className }: AdminSidebarProps) {
     const pathname = usePathname()
     const [collapsed, setCollapsed] = useState(false)
+    const [userRole, setUserRole] = useState<'admin' | 'moderator' | null>(null)
+    const supabase = useMemo(() => createClient(), [])
+
+    // Fetch current user's role
+    useEffect(() => {
+        async function fetchRole() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                if (data && (data.role === 'admin' || data.role === 'moderator')) {
+                    setUserRole(data.role)
+                }
+            }
+        }
+        fetchRole()
+    }, [supabase])
 
     // Remove locale prefix from pathname for comparison
     const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '')
@@ -96,6 +119,14 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
         }
         return pathWithoutLocale.startsWith(href)
     }
+
+    // Filter items based on user role
+    const filteredNavItems = navItems.filter(item => {
+        if (item.adminOnly && userRole !== 'admin') return false
+        return true
+    })
+
+    const panelTitle = userRole === 'admin' ? 'Admin Panel' : 'Moderation'
 
     return (
         <aside
@@ -110,7 +141,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
             <div className="p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
                 {!collapsed && (
                     <h2 className="font-display font-semibold text-primary dark:text-dark-text">
-                        Admin Panel
+                        {panelTitle}
                     </h2>
                 )}
                 <button
@@ -128,7 +159,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
 
             {/* Navigation */}
             <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-                {navItems.map((item) => {
+                {filteredNavItems.map((item) => {
                     const active = isActive(item.href, item.exact)
                     const Icon = item.icon
 

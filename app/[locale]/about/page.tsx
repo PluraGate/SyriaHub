@@ -8,6 +8,7 @@ import {
     Settings,
     Users,
     HelpCircle,
+    BookOpen,
     ArrowRight
 } from 'lucide-react'
 
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const sections = [
+    { href: '/about/guide', icon: BookOpen, key: 'guide', descKey: 'guideDesc' },
     { href: '/about/mission', icon: Target, key: 'mission', descKey: 'content.missionIntro' },
     { href: '/about/ethics', icon: Shield, key: 'ethics', descKey: 'content.ethicsIntro' },
     { href: '/about/methodology', icon: Settings, key: 'methodology', descKey: 'content.methodologyIntro' },

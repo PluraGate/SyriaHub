@@ -33,11 +33,7 @@ export function SurveyResultsActions({
 
     const handleExportCSV = async () => {
         if (responses.length === 0) {
-            showToast({
-                type: 'error',
-                title: 'No Data',
-                message: 'No responses to export'
-            })
+            showToast('No responses to export', 'error')
             return
         }
 
@@ -108,17 +104,9 @@ export function SurveyResultsActions({
             document.body.removeChild(link)
             URL.revokeObjectURL(url)
 
-            showToast({
-                type: 'success',
-                title: 'Export Complete',
-                message: `Exported ${responses.length} responses to CSV`
-            })
+            showToast(`Exported ${responses.length} responses to CSV`, 'success')
         } catch (error) {
-            showToast({
-                type: 'error',
-                title: 'Export Failed',
-                message: 'Failed to export responses'
-            })
+            showToast('Failed to export responses', 'error')
         } finally {
             setIsExporting(false)
         }
@@ -128,11 +116,7 @@ export function SurveyResultsActions({
         const url = `${window.location.origin}/research-lab/surveys/${surveyId}`
         await navigator.clipboard.writeText(url)
         setCopied(true)
-        showToast({
-            type: 'success',
-            title: 'Link Copied',
-            message: 'Survey link copied to clipboard'
-        })
+        showToast('Survey link copied to clipboard', 'success')
         setTimeout(() => setCopied(false), 2000)
     }
 

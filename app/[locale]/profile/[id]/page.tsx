@@ -6,6 +6,7 @@ import { Navbar } from '@/components/Navbar'
 import { ProfileHeader } from '@/components/ProfileHeader'
 import { EndorsementSection } from '@/components/EndorsementSection'
 import { UserActivityFeed } from '@/components/UserActivityFeed'
+import { ProfileCompletionCard } from '@/components/ProfileCompletionCard'
 
 interface ProfilePageProps {
   params: Promise<{
@@ -105,6 +106,13 @@ export default async function ProfilePage(props: ProfilePageProps) {
             isOwnProfile={isOwnProfile}
           />
         </div>
+
+        {/* Profile Completion - only show on own profile */}
+        {isOwnProfile && (
+          <div className="mb-8">
+            <ProfileCompletionCard userId={params.id} />
+          </div>
+        )}
 
         <UserActivityFeed
           posts={posts || []}

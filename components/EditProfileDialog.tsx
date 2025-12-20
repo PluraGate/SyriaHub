@@ -95,6 +95,9 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
 
             showToast('Your profile has been successfully updated.', 'success')
 
+            // Dispatch event to update ProfileCompletionCard
+            window.dispatchEvent(new CustomEvent('profile-updated'))
+
             setOpen(false)
             router.refresh()
         } catch (error: unknown) {
@@ -173,8 +176,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                 <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-5">
                     {/* Name field - prominent */}
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
-                            <User className="w-4 h-4 text-primary" />
+                        <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
+                            <User className="w-4 h-4 text-gray-400" />
                             Display Name
                         </Label>
                         <Input
@@ -207,8 +210,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     {/* Two-column layout */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="affiliation" className="text-sm font-semibold flex items-center gap-2">
-                                <Building2 className="w-4 h-4 text-secondary" />
+                            <Label htmlFor="affiliation" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
+                                <Building2 className="w-4 h-4 text-gray-400" />
                                 Affiliation
                             </Label>
                             <Input
@@ -219,9 +222,10 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="location" className="text-sm font-semibold flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-accent" />
+                            <Label htmlFor="location" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
+                                <MapPin className="w-4 h-4 text-gray-400" />
                                 Location
+                                <span className="text-xs text-gray-400 font-normal">(optional)</span>
                             </Label>
                             <Input
                                 id="location"
@@ -234,8 +238,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
 
                     {/* Website */}
                     <div className="space-y-2">
-                        <Label htmlFor="website" className="text-sm font-semibold flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-primary" />
+                        <Label htmlFor="website" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
+                            <Globe className="w-4 h-4 text-gray-400" />
                             Website
                         </Label>
                         <Input
@@ -249,8 +253,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
 
                     {/* Research Interests */}
                     <div className="space-y-2">
-                        <Label htmlFor="interests" className="text-sm font-semibold flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-secondary" />
+                        <Label htmlFor="interests" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
+                            <Sparkles className="w-4 h-4 text-gray-400" />
                             Research Interests
                         </Label>
                         <Input

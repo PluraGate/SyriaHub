@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
 import { useRouter } from 'next/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
@@ -206,6 +206,18 @@ export function Navbar({ user }: NavbarProps) {
                         <Link href="/saved" className="cursor-pointer w-full flex items-center">
                           <Bookmark className="mr-2 h-4 w-4" />
                           <span>{t('saved')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/analytics" className="cursor-pointer w-full flex items-center">
+                          <BarChart3 className="mr-2 h-4 w-4" />
+                          <span>{t('analytics')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/achievements" className="cursor-pointer w-full flex items-center">
+                          <Trophy className="mr-2 h-4 w-4" />
+                          <span>{t('achievements')}</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>

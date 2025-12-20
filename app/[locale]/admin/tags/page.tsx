@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { AdminSidebar } from '@/components/admin'
 import { Button } from '@/components/ui/button'
-import { Loader2, Check, Tag as TagIcon, X } from 'lucide-react'
+import { Loader2, Check, Tag as TagIcon, X, Palette } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import {
     Dialog,
@@ -18,6 +18,30 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
+// Curated palette aligned with Syrian Identity design guidelines
+// Professional, muted colors suitable for academic/research context
+const TAG_COLORS = [
+    '#1A3D40', // Deep Teal (Primary)
+    '#4AA3A5', // Sage Teal (Secondary)
+    '#C41E3A', // Heritage Red (Accent)
+    '#475569', // Slate
+    '#4d7c6f', // Muted Sage
+    '#8b6f6f', // Dusty Rose
+    '#4f5d75', // Cool Indigo
+    '#8b7355', // Soft Brass
+    '#3b5f54', // Deep Sage
+    '#6b5454', // Warm Stone
+    '#3d4a5c', // Twilight Blue
+    '#57534e', // Warm Gray
+    '#5c6b5e', // Forest Sage
+    '#7a6e5d', // Olive Bronze
+    '#596e79', // Steel Teal
+    '#6b5b6b', // Mauve Gray
+    '#4a5d6b', // Dusk Blue
+    '#6b6b5b', // Moss
+    '#5b4d4d', // Umber
+]
+
 interface UnverifiedTag {
     tag: string
     usage_count: number
@@ -28,18 +52,39 @@ export default function AdminTagsPage() {
     const [loading, setLoading] = useState(true)
     const [approvingTag, setApprovingTag] = useState<string | null>(null)
     const [decliningTag, setDecliningTag] = useState<string | null>(null)
-    const [newTagColor, setNewTagColor] = useState('#3B82F6') // Default blue
+    const [newTagColor, setNewTagColor] = useState(TAG_COLORS[0])
     const [dialogOpen, setDialogOpen] = useState(false)
     const [declineDialogOpen, setDeclineDialogOpen] = useState(false)
     const [declining, setDeclining] = useState(false)
+    const [usedColors, setUsedColors] = useState<string[]>([])
 
     const supabase = createClient()
     const { showToast } = useToast()
 
+    // Suggest next unused color from palette
+    const suggestNextColor = useMemo(() => {
+        const normalizedUsed = usedColors.map(c => c.toUpperCase())
+        for (const color of TAG_COLORS) {
+            if (!normalizedUsed.includes(color.toUpperCase())) {
+                return color
+            }
+        }
+        // All colors used, generate a random one
+        return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')
+    }, [usedColors])
+
     useEffect(() => {
         fetchUnverifiedTags()
+        fetchUsedColors()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    const fetchUsedColors = async () => {
+        const { data } = await supabase.from('tags').select('color')
+        if (data) {
+            setUsedColors(data.map(t => t.color).filter(Boolean))
+        }
+    }
 
     const fetchUnverifiedTags = async () => {
         setLoading(true)
@@ -57,7 +102,7 @@ export default function AdminTagsPage() {
 
     const handleApproveClick = (tag: string) => {
         setApprovingTag(tag)
-        setNewTagColor('#3B82F6') // Reset to default
+        setNewTagColor(suggestNextColor) // Suggest next unused color
         setDialogOpen(true)
     }
 
@@ -232,6 +277,45 @@ export default function AdminTagsPage() {
                                     {approvingTag}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Quick Color Palette */}
+                        <div className="space-y-2">
+                            <Label className="text-text dark:text-dark-text font-medium flex items-center gap-2">
+                                <Palette className="w-4 h-4" />
+                                Quick Select
+                            </Label>
+                            <div className="flex flex-wrap gap-2">
+                                {TAG_COLORS.map((color) => {
+                                    const isUsed = usedColors.some(c => c.toUpperCase() === color.toUpperCase())
+                                    const isSelected = newTagColor.toUpperCase() === color.toUpperCase()
+                                    return (
+                                        <button
+                                            key={color}
+                                            type="button"
+                                            onClick={() => setNewTagColor(color)}
+                                            className={`w-8 h-8 rounded-lg border-2 transition-all relative ${isSelected
+                                                ? 'border-primary ring-2 ring-primary/30 scale-110'
+                                                : isUsed
+                                                    ? 'border-gray-300 dark:border-gray-600 opacity-40'
+                                                    : 'border-transparent hover:scale-110 hover:border-gray-300'
+                                                }`}
+                                            style={{ backgroundColor: color }}
+                                            title={isUsed ? `${color} (already used)` : color}
+                                        >
+                                            {isUsed && !isSelected && (
+                                                <X className="w-4 h-4 text-white absolute inset-0 m-auto opacity-70" />
+                                            )}
+                                            {isSelected && (
+                                                <Check className="w-4 h-4 text-white absolute inset-0 m-auto" />
+                                            )}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                            <p className="text-xs text-text-light dark:text-dark-text-muted">
+                                Grayed colors are already used. Click any color to select.
+                            </p>
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:gap-0">

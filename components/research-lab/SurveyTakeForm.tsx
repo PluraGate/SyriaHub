@@ -43,11 +43,7 @@ export function SurveyTakeForm({ surveyId, questions, isAnonymous }: SurveyTakeF
             .filter(q => !answers[q.id] || (typeof answers[q.id] === 'string' && !(answers[q.id] as string).trim()))
 
         if (missingRequired.length > 0) {
-            showToast({
-                type: 'error',
-                title: 'Required Fields Missing',
-                message: `Please answer all required questions (${missingRequired.length} missing)`
-            })
+            showToast(`Please answer all required questions (${missingRequired.length} missing)`, 'error')
             return
         }
 
@@ -66,18 +62,10 @@ export function SurveyTakeForm({ surveyId, questions, isAnonymous }: SurveyTakeF
             }
 
             setSubmitted(true)
-            showToast({
-                type: 'success',
-                title: 'Response Submitted',
-                message: 'Thank you for completing this survey!'
-            })
+            showToast('Thank you for completing this survey!', 'success')
 
         } catch (error) {
-            showToast({
-                type: 'error',
-                title: 'Error',
-                message: error instanceof Error ? error.message : 'Failed to submit response'
-            })
+            showToast(error instanceof Error ? error.message : 'Failed to submit response', 'error')
         } finally {
             setIsSubmitting(false)
         }
@@ -254,8 +242,8 @@ function renderQuestionInput(
                             type="button"
                             onClick={() => onChange(num)}
                             className={`w-10 h-10 rounded-lg font-medium transition-colors ${value === num
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 dark:bg-dark-bg text-text dark:text-dark-text hover:bg-primary/10'
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-100 dark:bg-dark-bg text-text dark:text-dark-text hover:bg-primary/10'
                                 }`}
                         >
                             {num}
@@ -277,8 +265,8 @@ function renderQuestionInput(
                         >
                             <Star
                                 className={`w-8 h-8 ${num <= rating
-                                        ? 'text-yellow-400 fill-yellow-400'
-                                        : 'text-gray-300 dark:text-dark-border'
+                                    ? 'text-yellow-400 fill-yellow-400'
+                                    : 'text-gray-300 dark:text-dark-border'
                                     }`}
                             />
                         </button>

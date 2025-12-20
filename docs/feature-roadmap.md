@@ -1,92 +1,170 @@
 # Feature Roadmap
 
-This roadmap outlines the next feature modules and how to integrate them with minimal disruption. Each phase intentionally keeps dependencies lean and supports incremental rollout, with clear handoff points for design, frontend, backend, and ops.
+This roadmap outlines the SyriaHub feature modules and their current status. Each phase supports incremental rollout with clear handoff points.
 
 ## Guiding Architectural Principles
-- Favor composition over tight coupling so each module can ship independently.
-- Introduce feature flags and gradual rollout toggles for every major capability.
-- Keep third-party dependencies optional; prefer native platform tooling or existing services.
-- Document all migrations and configuration changes alongside the code for reproducibility.
 
-## Phased Module Overview
-
-| Phase | Focus | Key Outcomes |
-| --- | --- | --- |
-| 0 | Shared groundwork | Localization hooks, audit logging, feature flag scaffolding |
-| 1 | Localization (i18n) | Bilingual UI and content workflows |
-| 2 | Forum / Q&A | Threaded discussions, moderation-friendly schemas |
-| 3 | AI Plagiarism Detection | Plagiarism service integration with review queue |
-| 4 | Private Groups / Invitations | Private communities with invitation flows |
-| 5 | Content Versioning & Diff | Revision history, diff views, rollback tooling |
+- Favor composition over tight coupling so each module can ship independently
+- Introduce feature flags and gradual rollout toggles for every major capability
+- Keep third-party dependencies optional; prefer native platform tooling
+- Document all migrations and configuration changes alongside the code
 
 ---
 
-## Localization (Arabic / English)
-- **Incremental adoption**
-  - Phase 0: Extract literals into reusable translation keys and load default locale via Next.js internationalized routing.
-  - Phase 1: Layer in Arabic translations feature-flagged per user profile. Allow fallback to English.
-  - Phase 2: Enable locale-specific SEO assets (sitemap entries, metadata) and localized emails.
-- **Key workstreams**
-  - Introduce `i18n` utilities in `lib/` without new runtime dependencies (use built-in `next-intl` or similar lightweight solution once vetted).
-  - Add locale column to user profile preferences (schema change documented in `schema-migrations.md`).
-  - Ensure moderation copy supports bilingual responses.
-- **Dependencies / integrations**
-  - Avoid large translation libraries initially; rely on JSON resource bundles committed to the repo.
-  - Optional later integration with translation management platform via API adapter.
+## Current Status Overview
 
-## Forum / Q&A Module
-- **Incremental adoption**
-  - Phase 1: Read-only listing powered by existing posts schema (e.g., flag posts as `type = "question"`).
-  - Phase 2: Enable answers and comments with vote tracking, keeping separation from article content.
-  - Phase 3: Launch reputation badges and moderation escalation workflows.
-- **Key workstreams**
-  - Reuse current `posts` table by adding enumerated `content_type` and `status` fields.
-  - Implement question-specific components under `app/forum/` with shared UI primitives.
-  - Extend Supabase Row Level Security (RLS) policies to cover new interactions.
-- **Dependencies / integrations**
-  - Stick to Supabase functions or webhooks; defer any new queue/worker infra unless metrics require it.
+| Phase | Focus | Status | Notes |
+|-------|-------|--------|-------|
+| 0 | Shared Groundwork | ✅ Complete | Localization hooks, audit logging, feature flags |
+| 1 | Localization (i18n) | ✅ Complete | English/Arabic with full translation coverage |
+| 2 | Forum / Q&A | ✅ Complete | Questions, answers, voting, accepted answers |
+| 3 | AI Plagiarism Detection | ✅ Complete | Semantic embeddings + pgvector + AI analysis |
+| 4 | Private Groups / Invitations | ✅ Complete | Invite-only signup with role-based codes |
+| 5 | Content Versioning & Diff | ✅ Complete | Full version history with diff viewer |
+| 6 | Research Lab | ✅ Complete | Polls, surveys, AI advisor, multi-source search |
+| 7 | Events System | ✅ Complete | Events, RSVP, calendar integration |
+| 8 | Gamification | ✅ Complete | XP, levels, badges, achievements |
+| 9 | Real-time Collaboration | ✅ Complete | Presence tracking in editor |
+| 10 | Analytics Dashboard | ✅ Complete | Researcher analytics with trends |
 
-## AI Plagiarism Detection
-- **Incremental adoption**
-  - Phase 1: Manual plagiarism checks triggered by moderators, stored as review events.
-  - Phase 2: Automatic scanning webhook on submission using a lightweight external API.
-  - Phase 3: Inline feedback surfaced to authors with override workflow.
-- **Key workstreams**
-  - Create service abstraction in `lib/ai/` (pure TypeScript) so provider swaps are isolated.
-  - Store plagiarism scores in dedicated table; associate with `post_version_id` for future versioning alignment.
-  - Queue suspicious content for human review within moderation dashboard.
-- **Dependencies / integrations**
-  - Use HTTP-based API clients only; avoid SDK bloat. Prefer fetch-based adapters.
-  - Cache responses via existing Supabase storage or simple KV table until volume justifies more.
+---
 
-## Private Groups / Invitations
-- **Incremental adoption**
-  - Phase 1: Private tags that gate visibility (no new UI chrome yet).
-  - Phase 2: Full groups with membership management and invite emails.
-  - Phase 3: Group-scoped moderation settings and analytics.
-- **Key workstreams**
-  - Add `groups` table and membership join table (`group_members`).
-  - Extend access checks in API routes (`app/api/posts`, `app/api/comments`) to respect group membership.
-  - Add lightweight invitation service using signed Supabase tokens.
-- **Dependencies / integrations**
-  - Reuse Supabase Auth for invitation acceptance flows.
-  - Use existing email provider configuration; no new vendor footprint initially.
+## Completed Features
 
-## Content Versioning & Diff View
-- **Incremental adoption**
-  - Phase 1: Track versions on publish (auto-created snapshots).
-  - Phase 2: Author-visible history with revert option.
-  - Phase 3: Side-by-side diff view and moderation comparison tools.
-- **Key workstreams**
-  - Introduce `post_versions` table and link to moderation audit trail.
-  - Implement diff utility in `lib/versioning/` using existing diff algorithms (e.g., `diff` npm package if acceptable size) or custom minimal implementation.
-  - Update editor workflow to save drafts vs. published versions cleanly.
-- **Dependencies / integrations**
-  - Prefer minimal diff library (<50kb). If none suitable, implement simple character/paragraph diff bespoke.
-  - Avoid full CMS dependencies; maintain current Next.js rendering pipeline.
+### ✅ Localization (Arabic / English)
 
-## Cross-Cutting Tasks
-- Expand automated tests: per module add unit tests in `lib/`, integration tests in `app/api/`, and Cypress/Playwright smoke tests once infrastructure is stable.
-- Extend observability with structured logging hooks for new services; keep console fallback until metrics stack is finalized.
-- Update `CHANGELOG.md` and `/docs/schema-migrations.md` alongside feature releases to preserve traceability.
-- Maintain env-based feature toggles (`NEXT_PUBLIC_FEATURE_*`) so each module can ship behind gradual rollout flags.
+- Full bilingual UI with 800+ translation keys
+- RTL support for Arabic
+- Locale-specific routing via `next-intl`
+- Fallback to English for missing translations
+
+### ✅ Forum / Q&A Module
+
+- Posts can be `question` type with answer tracking
+- Vote system (upvote/downvote)
+- Accepted answer marking by question author
+- Reputation badges tied to Q&A activity
+
+### ✅ AI Plagiarism Detection
+
+- Semantic similarity using OpenAI embeddings (`text-embedding-3-small`)
+- pgvector for efficient similarity search
+- AI-powered detailed analysis for high-similarity matches (>85%)
+- Stores results in `plagiarism_checks` table
+- Integrated into moderation workflow
+
+### ✅ Private Groups / Invitations
+
+- Invite-only signup system
+- Role-specific invitation codes (member, researcher, moderator)
+- Invite tracking and usage limits
+- Admin invitation management dashboard
+
+### ✅ Content Versioning & Diff View
+
+- Automatic version snapshots on publish
+- `post_versions` table with full content history
+- Inline diff view comparing versions
+- Restore/rollback capability
+- Version history accessible from post menu
+
+### ✅ Research Lab
+
+| Tool | Description |
+|------|-------------|
+| Multi-Source Search | Internal + ReliefWeb + HDX + World Bank APIs |
+| AI Question Advisor | Research question feedback and methodology suggestions |
+| Polls | Quick community voting instruments |
+| Surveys | Multi-question research forms with analytics |
+| Statistics Tools | Data analysis and visualization |
+
+### ✅ Events System
+
+- Event creation with date/time/location
+- Multiple event types (conference, workshop, webinar, meetup)
+- RSVP tracking (going/maybe/not going)
+- Calendar integration (export to ICS)
+- Event search and filtering
+
+### ✅ Gamification
+
+- XP rewards for platform activities
+- Level progression system
+- Achievement badges
+- Profile-visible progress
+- Leaderboards (coming soon)
+
+### ✅ Real-time Collaboration
+
+- User presence tracking in editor
+- See who's viewing/editing the same post
+- Color-coded collaborator avatars
+- Powered by Supabase Realtime
+
+### ✅ Analytics Dashboard
+
+- Researcher-specific analytics at `/analytics`
+- Metrics: views, votes, publications, citations, followers, trust score
+- Trend charts (7/14/30/90 day periods)
+- Top performing content ranking
+
+---
+
+## Future Enhancements
+
+### Internationalization Expansion
+
+- [ ] Additional languages (French, Turkish)
+- [ ] Locale-specific date/number formatting
+- [ ] Translation coverage reporting dashboard
+
+### Platform Improvements
+
+- [ ] Leaderboards and public rankings
+- [ ] Advanced collaboration (real-time co-editing)
+- [ ] Mobile app (React Native or Flutter)
+- [ ] Push notifications
+
+### AI Enhancements
+
+- [ ] AI-powered content summarization
+- [ ] Automatic tag suggestions
+- [ ] Smart citation recommendations
+- [ ] Research question generation
+
+---
+
+## Cross-Cutting Infrastructure
+
+### Documentation
+
+| Document | Status |
+|----------|--------|
+| `README.md` | ✅ Updated |
+| `API_DOCUMENTATION.md` | ✅ Complete |
+| `MODERATION_DOCUMENTATION.md` | ✅ Complete |
+| `docs/USER_GUIDE.md` | ✅ New |
+| `docs/system_gap_analysis.md` | ✅ Current |
+| `docs/feature-roadmap.md` | ✅ This document |
+
+### Testing
+
+- Unit tests in `lib/`
+- Integration tests in `app/api/`
+- E2E tests with Playwright (in progress)
+
+### Observability
+
+- Structured logging hooks
+- Error tracking (console fallback until metrics stack finalized)
+- Admin audit log for all moderation actions
+
+### Feature Flags
+
+- Environment-based toggles (`NEXT_PUBLIC_FEATURE_*`)
+- Gradual rollout support
+- Per-user feature gating (planned)
+
+---
+
+*Last updated: December 2024*

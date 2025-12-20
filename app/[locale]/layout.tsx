@@ -18,17 +18,10 @@ export const metadata = {
   title: 'SyriaHub',
   description: 'A minimalist research platform for collaborative knowledge sharing',
   manifest: '/manifest.json',
-  themeColor: '#3b82f6',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'SyriaHub',
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
   },
   icons: {
     icon: [
@@ -39,6 +32,14 @@ export const metadata = {
       { url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' },
     ],
   },
+}
+
+export const viewport = {
+  themeColor: '#3b82f6',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 

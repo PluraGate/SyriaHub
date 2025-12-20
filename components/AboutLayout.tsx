@@ -13,7 +13,8 @@ import {
     HelpCircle,
     Lock,
     FileText,
-    ChevronRight
+    ChevronRight,
+    Trophy
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -32,6 +33,8 @@ interface AboutLayoutProps {
 
 const navigationItems = [
     { href: '/about', icon: BookOpen, key: 'overview' },
+    { href: '/about/guide', icon: BookOpen, key: 'guide' },
+    { href: '/about/gamification', icon: Trophy, key: 'gamification' },
     { href: '/about/mission', icon: Target, key: 'mission' },
     { href: '/about/ethics', icon: Shield, key: 'ethics' },
     { href: '/about/methodology', icon: Settings, key: 'methodology' },
