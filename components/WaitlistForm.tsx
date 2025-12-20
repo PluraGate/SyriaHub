@@ -4,12 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Mail, User, Building, MessageSquare, Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 
 interface WaitlistFormProps {
     onSuccess?: () => void
 }
 
 export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
+    const t = useTranslations('Waitlist')
     const [email, setEmail] = useState('')
     const [name, setName] = useState('')
     const [affiliation, setAffiliation] = useState('')
@@ -59,7 +61,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                     <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
-                    You're on the list!
+                    {t('onTheList')}
                 </h3>
                 <p className="text-text-light dark:text-dark-text-muted mb-6">
                     We'll notify you at <strong>{email}</strong> when a spot opens up.
@@ -86,7 +88,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {/* Email */}
             <div>
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                    Email *
+                    {t('email')} *
                 </label>
                 <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light dark:text-dark-text-muted" />
@@ -104,7 +106,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {/* Name */}
             <div>
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                    Full Name
+                    {t('fullName')}
                 </label>
                 <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light dark:text-dark-text-muted" />
@@ -121,7 +123,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {/* Affiliation */}
             <div>
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                    University / Organization
+                    {t('organization')}
                 </label>
                 <div className="relative">
                     <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light dark:text-dark-text-muted" />
@@ -138,7 +140,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {/* Reason */}
             <div>
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                    Why do you want to join?
+                    {t('whyJoin')}
                 </label>
                 <div className="relative">
                     <MessageSquare className="absolute left-3 top-3 w-5 h-5 text-text-light dark:text-dark-text-muted" />
@@ -155,7 +157,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {/* Referral Source */}
             <div>
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                    How did you hear about us?
+                    {t('referralSource')}
                 </label>
                 <select
                     value={referralSource}
@@ -184,7 +186,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                     </>
                 ) : (
                     <>
-                        Join Waitlist
+                        {t('joinWaitlist')}
                         <ArrowRight className="w-4 h-4" />
                     </>
                 )}

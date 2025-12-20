@@ -4,10 +4,12 @@ import { Footer } from '@/components/Footer'
 import { EventCard } from '@/components/EventCard'
 import Link from 'next/link'
 import { PlusCircle, Calendar } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 export default async function EventsPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const t = await getTranslations('Events')
 
     // Fetch events with RSVP count
     const { data: events } = await supabase
@@ -40,10 +42,10 @@ export default async function EventsPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                     <div>
                         <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                            Events
+                            {t('title')}
                         </h1>
                         <p className="text-text-light dark:text-dark-text-muted">
-                            Discover workshops, webinars, and meetups.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -52,7 +54,7 @@ export default async function EventsPage() {
                         className="btn btn-primary flex items-center justify-center gap-2"
                     >
                         <PlusCircle className="w-5 h-5" />
-                        Create Event
+                        {t('createEvent')}
                     </Link>
                 </div>
 
@@ -61,7 +63,7 @@ export default async function EventsPage() {
                     <section>
                         <h2 className="text-xl font-bold text-text dark:text-dark-text mb-6 flex items-center gap-2">
                             <Calendar className="w-5 h-5 text-primary" />
-                            Upcoming Events
+                            {t('upcomingEvents')}
                         </h2>
 
                         <div className="grid gap-6">
@@ -72,7 +74,7 @@ export default async function EventsPage() {
                             ) : (
                                 <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                                     <p className="text-text-light dark:text-dark-text-muted">
-                                        No upcoming events scheduled.
+                                        {t('noEvents')}
                                     </p>
                                 </div>
                             )}
@@ -83,7 +85,7 @@ export default async function EventsPage() {
                     {pastEvents.length > 0 && (
                         <section>
                             <h2 className="text-xl font-bold text-text dark:text-dark-text mb-6 opacity-70">
-                                Past Events
+                                {t('pastEvents')}
                             </h2>
 
                             <div className="grid gap-6 opacity-70 hover:opacity-100 transition-opacity">
@@ -100,3 +102,4 @@ export default async function EventsPage() {
         </div>
     )
 }
+

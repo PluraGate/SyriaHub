@@ -16,6 +16,7 @@ import { useCollaboration } from '@/lib/hooks/useCollaboration'
 import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecoveryBanner'
 import { ResourceLinker } from '@/components/ResourceLinker'
 import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
+import { useTranslations } from 'next-intl'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -41,6 +42,8 @@ export default function EditorPage() {
   const critiqueOfParam = searchParams.get('critique_of')
   const quoteParam = searchParams.get('quote')
   const { showToast } = useToast()
+  const t = useTranslations('Editor')
+  const tCommon = useTranslations('Common')
 
   const [user, setUser] = useState<User | null>(null)
   const [initializing, setInitializing] = useState(true)
@@ -374,17 +377,17 @@ export default function EditorPage() {
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-text dark:text-dark-text">
-              Sign in to write
+              {t('page.signInToWrite')}
             </h1>
             <p className="text-text-light dark:text-dark-text-muted max-w-md">
-              You need an account to share your research with the community.
+              {t('page.needAccount')}
             </p>
           </div>
           <Link
             href="/auth/login"
             className="px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all"
           >
-            Sign In
+            {t('page.signIn')}
           </Link>
         </main>
       </div>
@@ -403,7 +406,7 @@ export default function EditorPage() {
             className="inline-flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Feed
+            {t('page.backToFeed')}
           </Link>
 
           <div className="flex items-center gap-4">
@@ -416,10 +419,10 @@ export default function EditorPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-text dark:text-dark-text">
-                {postIdParam ? 'Edit Post' : contentType === 'question' ? 'Ask a Question' : 'Write New Post'}
+                {postIdParam ? t('page.editPost') : contentType === 'question' ? t('page.askQuestion') : t('page.writeNewPost')}
               </h1>
               <p className="text-sm text-text-light dark:text-dark-text-muted">
-                Share your research with the community
+                {t('page.shareResearch')}
               </p>
             </div>
           </div>
@@ -428,14 +431,14 @@ export default function EditorPage() {
             <div className="flex items-center gap-2 mt-4 px-4 py-3 bg-secondary/10 border border-secondary/20 rounded-xl text-secondary-dark dark:text-secondary">
               <Users className="w-4 h-4" />
               <span className="text-sm font-medium">
-                Posting to: <strong>{group.name}</strong>
+                {t('page.posting')} <strong>{group.name}</strong>
               </span>
               <button
                 type="button"
                 onClick={() => setGroup(null)}
                 className="ml-auto text-xs hover:underline opacity-70 hover:opacity-100"
               >
-                Remove
+                {t('page.remove')}
               </button>
             </div>
           )}
@@ -479,7 +482,7 @@ export default function EditorPage() {
                     }`}
                 >
                   <BookOpen className="w-4 h-4" />
-                  Article
+                  {t('page.article')}
                 </button>
                 <button
                   type="button"
@@ -490,14 +493,14 @@ export default function EditorPage() {
                     }`}
                 >
                   <HelpCircle className="w-4 h-4" />
-                  Question
+                  {t('page.question')}
                 </button>
               </div>
 
               {/* Cover Image */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-text dark:text-dark-text">
-                  Cover Image
+                  {t('coverImage')}
                 </label>
                 {user && (
                   <CoverImageUpload
@@ -511,14 +514,14 @@ export default function EditorPage() {
               {/* Title */}
               <div className="space-y-2">
                 <label htmlFor="title" className="text-sm font-semibold text-text dark:text-dark-text">
-                  Title
+                  {t('title')}
                 </label>
                 <input
                   id="title"
                   name="title"
                   type="text"
                   autoComplete="off"
-                  placeholder={contentType === 'question' ? "What's your question?" : "What are you researching today?"}
+                  placeholder={contentType === 'question' ? t('page.titlePlaceholderQuestion') : t('page.titlePlaceholderArticle')}
                   value={title}
                   onChange={event => setTitle(event.target.value)}
                   className="w-full px-4 py-3.5 text-lg rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
@@ -530,7 +533,7 @@ export default function EditorPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label htmlFor="content" className="text-sm font-semibold text-text dark:text-dark-text">
-                    Content
+                    {t('content')}
                   </label>
                   <div className="flex items-center gap-2">
                     <button
@@ -542,7 +545,7 @@ export default function EditorPage() {
                         }`}
                     >
                       <Type className="h-3.5 w-3.5" />
-                      Visual Editor
+                      {t('page.visualEditor')}
                     </button>
                   </div>
                 </div>
@@ -570,7 +573,7 @@ export default function EditorPage() {
               {/* Tags */}
               <div className="space-y-2">
                 <label htmlFor="tags" className="text-sm font-semibold text-text dark:text-dark-text">
-                  Tags
+                  {t('tags')}
                 </label>
                 <input
                   id="tags"
@@ -605,7 +608,7 @@ export default function EditorPage() {
               {/* License */}
               <div className="space-y-2">
                 <label htmlFor="license" className="text-sm font-semibold text-text dark:text-dark-text">
-                  License
+                  {t('license')}
                 </label>
                 <select
                   id="license"
@@ -620,7 +623,7 @@ export default function EditorPage() {
                   <option value="All Rights Reserved">All Rights Reserved</option>
                 </select>
                 <p className="text-xs text-text-light dark:text-dark-text-muted">
-                  Choose how others can use your work.
+                  {t('page.licenseHelp')}
                 </p>
               </div>
 
@@ -632,7 +635,7 @@ export default function EditorPage() {
                   onClick={handleDraft}
                   className="flex-1 sm:flex-none px-6 py-3 text-sm font-semibold rounded-xl border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary hover:text-primary transition-all disabled:opacity-50"
                 >
-                  Save Draft
+                  {t('saveDraft')}
                 </button>
                 <button
                   type="submit"
@@ -640,7 +643,7 @@ export default function EditorPage() {
                   className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
                 >
                   <Save className="h-4 w-4" />
-                  {saving ? 'Publishing...' : 'Publish'}
+                  {saving ? t('page.publishing') : t('publish')}
                 </button>
               </div>
 
@@ -660,41 +663,41 @@ export default function EditorPage() {
                 <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-secondary-dark" />
                 </div>
-                <h2 className="font-semibold text-text dark:text-dark-text">Writing Tips</h2>
+                <h2 className="font-semibold text-text dark:text-dark-text">{t('page.writingTips')}</h2>
               </div>
               <ul className="space-y-3 text-sm text-text-light dark:text-dark-text-muted">
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                  Lead with a clear thesis or summary
+                  {t('page.tip1')}
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                  Use tags to help discovery
+                  {t('page.tip2')}
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                  Preview before publishing
+                  {t('page.tip3')}
                 </li>
               </ul>
             </div>
 
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-              <h2 className="font-semibold text-text dark:text-dark-text mb-3">Need Inspiration?</h2>
+              <h2 className="font-semibold text-text dark:text-dark-text mb-3">{t('page.needInspiration')}</h2>
               <p className="text-sm text-text-light dark:text-dark-text-muted mb-4">
-                Explore recent research in the feed or discover trending topics.
+                {t('page.inspirationDesc')}
               </p>
               <Link
                 href="/feed"
                 className="inline-flex items-center justify-center w-full px-4 py-2.5 text-sm font-semibold rounded-xl border border-primary text-primary hover:bg-primary/5 transition-all"
               >
-                Browse Posts
+                {t('page.browsePosts')}
               </Link>
             </div>
 
             <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl border border-primary/10 p-6">
-              <h3 className="font-semibold text-text dark:text-dark-text mb-2">Markdown Supported</h3>
+              <h3 className="font-semibold text-text dark:text-dark-text mb-2">{t('page.markdownSupported')}</h3>
               <p className="text-xs text-text-light dark:text-dark-text-muted">
-                Use **bold**, *italic*, # headings, - lists, and `code` in your content.
+                {t('page.markdownHelp')}
               </p>
             </div>
           </aside>

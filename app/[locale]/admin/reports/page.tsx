@@ -4,8 +4,11 @@ import { AdminSidebar } from '@/components/admin'
 import { redirect } from 'next/navigation'
 import { CheckCircle, XCircle, Trash2, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
+import { getTranslations } from 'next-intl/server'
 
 export default async function AdminReportsPage() {
+    const t = await getTranslations('Admin.reportsPage')
+    const tCommon = await getTranslations('Common')
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -51,22 +54,22 @@ export default async function AdminReportsPage() {
                         <div className="flex items-center gap-3 mb-8">
                             <AlertTriangle className="w-8 h-8 text-red-500" />
                             <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
-                                All Reports
+                                {t('title')}
                             </h1>
                         </div>
 
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
                             <div className="overflow-x-auto">
-                                <table className="w-full text-left text-sm">
+                                <table className="w-full text-start text-sm">
                                     <thead className="bg-gray-50 dark:bg-dark-border/50 border-b border-gray-200 dark:border-dark-border">
                                         <tr>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Status</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Type</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Reason</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Content</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Reporter</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text">Date</th>
-                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-right">Actions</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableStatus')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableType')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableReason')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableContent')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableReporter')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-start">{t('tableDate')}</th>
+                                            <th className="px-6 py-4 font-semibold text-text dark:text-dark-text text-end">{t('tableActions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-dark-border">
@@ -83,38 +86,38 @@ export default async function AdminReportsPage() {
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-text-light dark:text-dark-text-muted">
-                                                        {report.post_id ? 'Post' : 'Comment'}
+                                                        {report.post_id ? tCommon('post') : tCommon('comment')}
                                                     </td>
                                                     <td className="px-6 py-4 text-text dark:text-dark-text font-medium">
                                                         {report.reason}
                                                     </td>
                                                     <td className="px-6 py-4 max-w-xs truncate text-text-light dark:text-dark-text-muted">
-                                                        {report.post?.title || report.comment?.content || 'Content deleted'}
+                                                        {report.post?.title || report.comment?.content || tCommon('contentDeleted')}
                                                     </td>
                                                     <td className="px-6 py-4 text-text-light dark:text-dark-text-muted">
-                                                        {report.reporter?.name || 'Unknown'}
+                                                        {report.reporter?.name || tCommon('unknown')}
                                                     </td>
                                                     <td className="px-6 py-4 text-text-light dark:text-dark-text-muted">
                                                         {format(new Date(report.created_at), 'MMM d, yyyy')}
                                                     </td>
-                                                    <td className="px-6 py-4 text-right">
+                                                    <td className="px-6 py-4 text-end">
                                                         <div className="flex items-center justify-end gap-2">
                                                             {report.status === 'pending' && (
                                                                 <>
                                                                     <form action={`/api/reports/${report.id}/dismiss`} method="POST">
-                                                                        <button title="Dismiss" className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                                                                        <button title={tCommon('dismiss')} className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                                                                             <XCircle className="w-5 h-5" />
                                                                         </button>
                                                                     </form>
                                                                     <form action={`/api/reports/${report.id}/resolve`} method="POST">
-                                                                        <button title="Resolve" className="p-1 text-green-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                                                                        <button title={tCommon('resolve')} className="p-1 text-green-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
                                                                             <CheckCircle className="w-5 h-5" />
                                                                         </button>
                                                                     </form>
                                                                 </>
                                                             )}
                                                             <form action={`/api/reports/${report.id}/delete`} method="POST">
-                                                                <button title="Delete Content" className="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                                                                <button title={tCommon('deleteContent')} className="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
                                                                     <Trash2 className="w-5 h-5" />
                                                                 </button>
                                                             </form>
@@ -125,7 +128,7 @@ export default async function AdminReportsPage() {
                                         ) : (
                                             <tr>
                                                 <td colSpan={7} className="px-6 py-12 text-center text-text-light dark:text-dark-text-muted">
-                                                    No reports found.
+                                                    {t('noReports')}
                                                 </td>
                                             </tr>
                                         )}

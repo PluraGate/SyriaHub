@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Users, Check, X, Mail, Building, MessageSquare, Clock, Loader2, Send, Search, Filter } from 'lucide-react'
+import { Users, Check, X, Mail, Building, MessageSquare, Clock, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface WaitlistEntry {
     id: string
@@ -23,6 +24,8 @@ interface AdminWaitlistDashboardProps {
 }
 
 export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitlistDashboardProps) {
+    const t = useTranslations('Admin.waitlistPage')
+    const tCommon = useTranslations('Common')
     const [entries, setEntries] = useState<WaitlistEntry[]>([])
     const [loading, setLoading] = useState(true)
     const [activeStatus, setActiveStatus] = useState(initialStatus)
@@ -52,7 +55,6 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
     const handleApprove = async (entry: WaitlistEntry) => {
         setProcessingId(entry.id)
         try {
-            // Create invite code
             const inviteResponse = await fetch('/api/invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -65,7 +67,6 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
 
             const { code } = await inviteResponse.json()
 
-            // Update waitlist entry status
             const supabase = createClient()
             const { data: { user } } = await supabase.auth.getUser()
 
@@ -78,11 +79,10 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                 })
                 .eq('id', entry.id)
 
-            // TODO: Send email with invite code (would use email service)
-            showToast(`Approved! Invite code: ${code}`, 'success')
+            showToast(t('approvalSuccess', { code }), 'success')
             fetchEntries(activeStatus)
         } catch (error) {
-            showToast('Failed to approve', 'error')
+            showToast(t('failureApprove'), 'error')
         } finally {
             setProcessingId(null)
         }
@@ -103,10 +103,10 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                 })
                 .eq('id', entry.id)
 
-            showToast('Entry rejected', 'success')
+            showToast(t('rejectionSuccess'), 'success')
             fetchEntries(activeStatus)
         } catch (error) {
-            showToast('Failed to reject', 'error')
+            showToast(t('failureReject'), 'error')
         } finally {
             setProcessingId(null)
         }
@@ -123,9 +123,9 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
     })
 
     const statusTabs = [
-        { key: 'pending', label: 'Pending', color: 'text-amber-600' },
-        { key: 'invited', label: 'Invited', color: 'text-green-600' },
-        { key: 'rejected', label: 'Rejected', color: 'text-red-600' },
+        { key: 'pending', label: t('pending'), color: 'text-amber-600' },
+        { key: 'invited', label: t('invited'), color: 'text-green-600' },
+        { key: 'rejected', label: t('rejected'), color: 'text-red-600' },
     ]
 
     return (
@@ -135,21 +135,21 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <Users className="w-5 h-5 text-primary" />
-                        <h3 className="font-semibold text-text dark:text-dark-text">Waitlist Management</h3>
+                        <h3 className="font-semibold text-text dark:text-dark-text">{t('title')}</h3>
                     </div>
                     <span className="text-sm text-text-light dark:text-dark-text-muted">
-                        {filteredEntries.length} entries
+                        {t('entries', { count: filteredEntries.length })}
                     </span>
                 </div>
 
                 {/* Search */}
                 <div className="relative mb-4">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light dark:text-dark-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search by email, name, or affiliation..."
+                        placeholder={t('searchPlaceholder')}
                         className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     />
                 </div>
@@ -161,8 +161,8 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                             key={tab.key}
                             onClick={() => setActiveStatus(tab.key)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeStatus === tab.key
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
                                 }`}
                         >
                             {tab.label}
@@ -175,12 +175,12 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
             {loading ? (
                 <div className="p-8 text-center">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
-                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-2">Loading...</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-2">{tCommon('loading')}</p>
                 </div>
             ) : filteredEntries.length === 0 ? (
                 <div className="p-8 text-center">
                     <Users className="w-8 h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
-                    <p className="text-text-light dark:text-dark-text-muted">No {activeStatus} entries</p>
+                    <p className="text-text-light dark:text-dark-text-muted">{t('noEntries', { status: activeStatus })}</p>
                 </div>
             ) : (
                 <div className="divide-y divide-gray-100 dark:divide-dark-border max-h-[600px] overflow-y-auto">
@@ -225,7 +225,7 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                                             {new Date(entry.created_at).toLocaleDateString()}
                                         </span>
                                         {entry.referral_source && (
-                                            <span>via {entry.referral_source.replace('_', ' ')}</span>
+                                            <span>{t('via', { source: entry.referral_source.replace('_', ' ') })}</span>
                                         )}
                                     </div>
                                 </div>
@@ -257,7 +257,7 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
                                             ) : (
                                                 <>
                                                     <Check className="w-4 h-4" />
-                                                    Approve & Invite
+                                                    {t('approveAndInvite')}
                                                 </>
                                             )}
                                         </Button>

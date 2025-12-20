@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
 import { useToast } from '@/components/ui/toast'
 import { InviteManager } from '@/components/InviteManager'
+import { useTranslations } from 'next-intl'
 
 interface SettingsPageProps {
     user: {
@@ -30,6 +31,7 @@ interface SettingsPageProps {
 export function SettingsPage({ user }: SettingsPageProps) {
     const { preferences, updatePreference, updateNestedPreference, resetToDefaults, loading } = usePreferences()
     const { showToast } = useToast()
+    const t = useTranslations('Settings')
     const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites'>('appearance')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,18 +39,18 @@ export function SettingsPage({ user }: SettingsPageProps) {
         try {
             // @ts-expect-error - Dynamic key access for settings
             await updateNestedPreference(section, key, value)
-            showToast('Settings saved', 'success')
+            showToast(t('saved'), 'success')
         } catch (error) {
-            showToast('Failed to save settings', 'error')
+            showToast(t('saveFailed') || 'Failed to save settings', 'error')
         }
     }
 
 
 
     const handleReset = async () => {
-        if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        if (confirm(t('confirmReset'))) {
             await resetToDefaults()
-            showToast('Settings reset to defaults', 'success')
+            showToast(t('settingsReset'), 'success')
         }
     }
 
@@ -61,12 +63,12 @@ export function SettingsPage({ user }: SettingsPageProps) {
     }
 
     const sections = [
-        { id: 'appearance', label: 'Appearance', icon: Palette },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'display', label: 'Display', icon: Eye },
-        { id: 'privacy', label: 'Privacy', icon: Lock },
-        { id: 'editor', label: 'Editor', icon: FileEdit },
-        { id: 'invites', label: 'Invites', icon: Ticket },
+        { id: 'appearance', label: t('appearance'), icon: Palette },
+        { id: 'notifications', label: t('notifications'), icon: Bell },
+        { id: 'display', label: t('displaySettings.title'), icon: Eye },
+        { id: 'privacy', label: t('privacyTab'), icon: Lock },
+        { id: 'editor', label: t('editorSettings.title'), icon: FileEdit },
+        { id: 'invites', label: t('invitesSection.title'), icon: Ticket },
     ] as const
 
     return (
@@ -75,12 +77,12 @@ export function SettingsPage({ user }: SettingsPageProps) {
                 <div className="flex items-center gap-3">
                     <Settings className="w-8 h-8 text-primary" />
                     <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
-                        Settings
+                        {t('title')}
                     </h1>
                 </div>
                 <Button variant="outline" onClick={handleReset} className="gap-2">
                     <RotateCcw className="w-4 h-4" />
-                    Reset to Defaults
+                    {t('resetToDefaults')}
                 </Button>
             </div>
 
@@ -114,18 +116,18 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'appearance' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Appearance
+                                {t('appearance')}
                             </h2>
 
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-3">
-                                    Theme
+                                    {t('theme.title')}
                                 </label>
                                 <div className="flex gap-3">
                                     {[
-                                        { value: 'light', label: 'Light', icon: Sun },
-                                        { value: 'dark', label: 'Dark', icon: Moon },
-                                        { value: 'system', label: 'System', icon: Monitor },
+                                        { value: 'light', label: t('theme.light'), icon: Sun },
+                                        { value: 'dark', label: t('theme.dark'), icon: Moon },
+                                        { value: 'system', label: t('theme.system'), icon: Monitor },
                                     ].map(option => {
                                         const Icon = option.icon
                                         const isSelected = preferences.theme === option.value
@@ -153,45 +155,45 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'notifications' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Notification Settings
+                                {t('notificationSettings.title')}
                             </h2>
 
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                                    Email Notifications
+                                    {t('notificationSettings.emailNotifications')}
                                 </h3>
 
                                 <ToggleSetting
-                                    label="Mentions"
-                                    description="Get notified when someone mentions you"
+                                    label={t('notificationSettings.mentions')}
+                                    description={t('notificationSettings.mentionsDesc')}
                                     checked={preferences.notifications.email_mentions}
                                     onChange={(v) => handleUpdate('notifications', 'email_mentions', v)}
                                 />
                                 <ToggleSetting
-                                    label="Replies"
-                                    description="Get notified when someone replies to your posts or comments"
+                                    label={t('notificationSettings.replies')}
+                                    description={t('notificationSettings.repliesDesc')}
                                     checked={preferences.notifications.email_replies}
                                     onChange={(v) => handleUpdate('notifications', 'email_replies', v)}
                                 />
                                 <ToggleSetting
-                                    label="New Followers"
-                                    description="Get notified when someone follows you"
+                                    label={t('notificationSettings.newFollowers')}
+                                    description={t('notificationSettings.newFollowersDesc')}
                                     checked={preferences.notifications.email_follows}
                                     onChange={(v) => handleUpdate('notifications', 'email_follows', v)}
                                 />
 
                                 <div className="pt-4">
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Email Digest
+                                        {t('notificationSettings.emailDigest')}
                                     </label>
                                     <select
                                         value={preferences.notifications.email_digest}
                                         onChange={(e) => handleUpdate('notifications', 'email_digest', e.target.value)}
                                         className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
                                     >
-                                        <option value="never">Never</option>
-                                        <option value="daily">Daily</option>
-                                        <option value="weekly">Weekly</option>
+                                        <option value="never">{t('notificationSettings.never')}</option>
+                                        <option value="daily">{t('notificationSettings.daily')}</option>
+                                        <option value="weekly">{t('notificationSettings.weekly')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -202,25 +204,25 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'display' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Display Settings
+                                {t('displaySettings.title')}
                             </h2>
 
                             <ToggleSetting
-                                label="Compact Mode"
-                                description="Show more content with smaller spacing"
+                                label={t('displaySettings.compactMode')}
+                                description={t('displaySettings.compactModeDesc')}
                                 checked={preferences.display.compact_mode}
                                 onChange={(v) => handleUpdate('display', 'compact_mode', v)}
                             />
                             <ToggleSetting
-                                label="Show Avatars"
-                                description="Display user avatars in posts and comments"
+                                label={t('displaySettings.showAvatars')}
+                                description={t('displaySettings.showAvatarsDesc')}
                                 checked={preferences.display.show_avatars}
                                 onChange={(v) => handleUpdate('display', 'show_avatars', v)}
                             />
 
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                    Posts Per Page
+                                    {t('displaySettings.postsPerPage')}
                                 </label>
                                 <select
                                     value={preferences.display.posts_per_page}
@@ -235,16 +237,16 @@ export function SettingsPage({ user }: SettingsPageProps) {
 
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                    Default Sort
+                                    {t('displaySettings.defaultSort')}
                                 </label>
                                 <select
                                     value={preferences.display.default_sort}
                                     onChange={(e) => handleUpdate('display', 'default_sort', e.target.value)}
                                     className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
                                 >
-                                    <option value="recent">Most Recent</option>
-                                    <option value="popular">Most Popular</option>
-                                    <option value="trending">Trending</option>
+                                    <option value="recent">{t('displaySettings.mostRecent')}</option>
+                                    <option value="popular">{t('displaySettings.mostPopular')}</option>
+                                    <option value="trending">{t('displaySettings.trending')}</option>
                                 </select>
                             </div>
                         </div>
@@ -254,24 +256,24 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'privacy' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Privacy Settings
+                                {t('privacySectionSettings.title')}
                             </h2>
 
                             <ToggleSetting
-                                label="Public Profile"
-                                description="Allow anyone to view your profile"
+                                label={t('privacySectionSettings.publicProfile')}
+                                description={t('privacySectionSettings.publicProfileDesc')}
                                 checked={preferences.privacy.show_profile_public}
                                 onChange={(v) => handleUpdate('privacy', 'show_profile_public', v)}
                             />
                             <ToggleSetting
-                                label="Show Email"
-                                description="Display your email on your profile"
+                                label={t('privacySectionSettings.showEmail')}
+                                description={t('privacySectionSettings.showEmailDesc')}
                                 checked={preferences.privacy.show_email}
                                 onChange={(v) => handleUpdate('privacy', 'show_email', v)}
                             />
                             <ToggleSetting
-                                label="Allow Messages"
-                                description="Allow other users to send you messages"
+                                label={t('privacySectionSettings.allowMessages')}
+                                description={t('privacySectionSettings.allowMessagesDesc')}
                                 checked={preferences.privacy.allow_messages}
                                 onChange={(v) => handleUpdate('privacy', 'allow_messages', v)}
                             />
@@ -282,12 +284,12 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'editor' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Editor Settings
+                                {t('editorSettings.title')}
                             </h2>
 
                             <ToggleSetting
-                                label="Auto-save"
-                                description="Automatically save drafts while editing"
+                                label={t('editorSettings.autosave')}
+                                description={t('editorSettings.autosaveDesc')}
                                 checked={preferences.editor.autosave}
                                 onChange={(v) => handleUpdate('editor', 'autosave', v)}
                             />
@@ -295,7 +297,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                             {preferences.editor.autosave && (
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Auto-save Interval (seconds)
+                                        {t('editorSettings.autosaveInterval')}
                                     </label>
                                     <input
                                         type="number"
@@ -309,14 +311,14 @@ export function SettingsPage({ user }: SettingsPageProps) {
                             )}
 
                             <ToggleSetting
-                                label="Spellcheck"
-                                description="Enable browser spellchecking in editor"
+                                label={t('editorSettings.spellcheck')}
+                                description={t('editorSettings.spellcheckDesc')}
                                 checked={preferences.editor.spellcheck}
                                 onChange={(v) => handleUpdate('editor', 'spellcheck', v)}
                             />
                             <ToggleSetting
-                                label="Line Numbers"
-                                description="Show line numbers in editor"
+                                label={t('editorSettings.lineNumbers')}
+                                description={t('editorSettings.lineNumbersDesc')}
                                 checked={preferences.editor.line_numbers}
                                 onChange={(v) => handleUpdate('editor', 'line_numbers', v)}
                             />
@@ -327,10 +329,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'invites' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Invite Codes
+                                {t('invitesSection.title')}
                             </h2>
                             <p className="text-text-light dark:text-dark-text-muted mb-6">
-                                Share invite codes to bring new members to SyriaHub. Each code can be used once.
+                                {t('invitesSection.description')}
                             </p>
                             <InviteManager />
                         </div>

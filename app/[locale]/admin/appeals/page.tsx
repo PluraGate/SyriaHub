@@ -21,12 +21,12 @@ import {
     Clock,
     Eye,
     MessageSquare,
-    RefreshCw,
     Edit
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface Appeal {
     id: string
@@ -50,6 +50,8 @@ interface Appeal {
 }
 
 export default function AdminAppealsPage() {
+    const t = useTranslations('Admin.appealsPage')
+    const tCommon = useTranslations('Common')
     const [appeals, setAppeals] = useState<Appeal[]>([])
     const [loading, setLoading] = useState(true)
     const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'revision_requested'>('pending')
@@ -63,6 +65,7 @@ export default function AdminAppealsPage() {
 
     useEffect(() => {
         fetchAppeals()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [statusFilter])
 
     // Realtime subscription
@@ -79,6 +82,7 @@ export default function AdminAppealsPage() {
         return () => {
             supabase.removeChannel(channel)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [supabase])
 
     const fetchAppeals = async () => {
@@ -101,7 +105,7 @@ export default function AdminAppealsPage() {
 
         if (error) {
             console.error('Error fetching appeals:', error.message, error.code, error.details, error.hint)
-            showToast(`Failed to load appeals: ${error.message || 'Unknown error'}`, 'error')
+            showToast(t('failLoad', { error: error.message || tCommon('unknown') }), 'error')
         } else {
             setAppeals(data || [])
         }
@@ -117,7 +121,6 @@ export default function AdminAppealsPage() {
     const handleDecision = async (decision: 'approved' | 'rejected' | 'revision_requested') => {
         if (!selectedAppeal) return
 
-        console.log('handleDecision called with:', { decision, appealId: selectedAppeal.id, adminResponse })
         setProcessing(true)
         try {
             // Update appeal status
@@ -129,10 +132,7 @@ export default function AdminAppealsPage() {
                 })
                 .eq('id', selectedAppeal.id)
 
-            console.log('Appeal update result:', { appealError })
-
             if (appealError) {
-                console.error('Appeal update error:', appealError.message, appealError.code)
                 throw new Error(`Failed to update appeal: ${appealError.message}`)
             }
 
@@ -149,7 +149,6 @@ export default function AdminAppealsPage() {
                     .eq('id', selectedAppeal.post_id)
 
                 if (postError) {
-                    console.error('Post update error:', postError.message, postError.code)
                     throw new Error(`Failed to update post: ${postError.message}`)
                 }
             }
@@ -181,20 +180,20 @@ export default function AdminAppealsPage() {
 
             if (notifyError) {
                 console.error('Notification error:', notifyError.message)
-                // Don't throw - notification is non-critical
             }
 
             const successMessages: Record<string, string> = {
-                approved: 'Appeal approved - content restored.',
-                rejected: 'Appeal denied.',
-                revision_requested: 'Revision requested - author notified.'
+                approved: t('approveSuccess'),
+                rejected: t('denySuccess'),
+                revision_requested: t('revisionSuccess')
             }
             showToast(successMessages[decision], 'success')
             setReviewDialogOpen(false)
             fetchAppeals()
-        } catch (error: any) {
-            console.error('Error processing appeal:', error.message || error)
-            showToast(error.message || 'Failed to process appeal.', 'error')
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : t('failProcess')
+            console.error('Error processing appeal:', errorMessage)
+            showToast(errorMessage, 'error')
         } finally {
             setProcessing(false)
         }
@@ -202,10 +201,10 @@ export default function AdminAppealsPage() {
 
     const getStatusBadge = (status: string) => {
         const badges: Record<string, { icon: typeof CheckCircle; className: string; label: string }> = {
-            approved: { icon: CheckCircle, className: 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400', label: 'Approved' },
-            rejected: { icon: XCircle, className: 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400', label: 'Rejected' },
-            pending: { icon: Clock, className: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400', label: 'Pending' },
-            revision_requested: { icon: Edit, className: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400', label: 'Revision Requested' }
+            approved: { icon: CheckCircle, className: 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400', label: t('approved') },
+            rejected: { icon: XCircle, className: 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400', label: t('rejected') },
+            pending: { icon: Clock, className: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400', label: t('pending') },
+            revision_requested: { icon: Edit, className: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400', label: t('revisionRequested') }
         }
         const badge = badges[status] || badges.pending
         const Icon = badge.icon
@@ -216,6 +215,14 @@ export default function AdminAppealsPage() {
             </span>
         )
     }
+
+    const filters = [
+        { value: 'all', label: t('all') },
+        { value: 'pending', label: t('pending') },
+        { value: 'revision_requested', label: t('revision') },
+        { value: 'approved', label: t('approved') },
+        { value: 'rejected', label: t('rejected') }
+    ] as const
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
@@ -229,22 +236,16 @@ export default function AdminAppealsPage() {
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h1 className="text-3xl font-bold text-text dark:text-dark-text">Appeals</h1>
+                                <h1 className="text-3xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
                                 <p className="text-text-light dark:text-dark-text-muted mt-1">
-                                    Review and respond to content appeals from authors
+                                    {t('subtitle')}
                                 </p>
                             </div>
                         </div>
 
                         {/* Filters */}
                         <div className="flex flex-wrap gap-2 mb-6">
-                            {([
-                                { value: 'all', label: 'All' },
-                                { value: 'pending', label: 'Pending' },
-                                { value: 'revision_requested', label: 'Revision' },
-                                { value: 'approved', label: 'Approved' },
-                                { value: 'rejected', label: 'Rejected' }
-                            ] as const).map((filter) => (
+                            {filters.map((filter) => (
                                 <button
                                     key={filter.value}
                                     onClick={() => setStatusFilter(filter.value)}
@@ -268,12 +269,12 @@ export default function AdminAppealsPage() {
                                 <div className="text-center py-16">
                                     <MessageSquare className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
                                     <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
-                                        No {statusFilter !== 'all' ? statusFilter : ''} appeals
+                                        {t('noAppeals', { status: statusFilter !== 'all' ? statusFilter : '' })}
                                     </h3>
                                     <p className="text-text-light dark:text-dark-text-muted">
                                         {statusFilter === 'pending'
-                                            ? 'No appeals are awaiting review.'
-                                            : 'No appeals match the selected filter.'}
+                                            ? t('noAppealsSubPending')
+                                            : t('noAppealsSubFilter')}
                                     </p>
                                 </div>
                             ) : (
@@ -290,28 +291,28 @@ export default function AdminAppealsPage() {
                                                     </div>
 
                                                     <h3 className="font-semibold text-text dark:text-dark-text mb-1">
-                                                        Appeal for: {appeal.post?.title || 'Unknown Post'}
+                                                        {t('titleFor', { title: appeal.post?.title || tCommon('unknown') })}
                                                     </h3>
 
                                                     <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
-                                                        By {appeal.user?.name || appeal.user?.email || 'Unknown User'}
+                                                        {t('by', { name: appeal.user?.name || appeal.user?.email || tCommon('unknown') })}
                                                     </p>
 
                                                     <div className="bg-gray-50 dark:bg-dark-bg rounded-lg p-3 mb-3">
                                                         <p className="text-sm text-text dark:text-dark-text">
-                                                            <strong>Appeal reason:</strong> {appeal.dispute_reason}
+                                                            <strong>{t('appealReason')}</strong> {appeal.dispute_reason}
                                                         </p>
                                                     </div>
 
                                                     {appeal.post?.rejection_reason && (
                                                         <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                                            <strong>Original rejection:</strong> {appeal.post.rejection_reason}
+                                                            <strong>{t('originalRejection')}</strong> {appeal.post.rejection_reason}
                                                         </p>
                                                     )}
 
                                                     {appeal.admin_response && (
                                                         <p className="text-sm text-text-light dark:text-dark-text-muted mt-2">
-                                                            <strong>Admin response:</strong> {appeal.admin_response}
+                                                            <strong>{t('adminResponse')}</strong> {appeal.admin_response}
                                                         </p>
                                                     )}
                                                 </div>
@@ -320,7 +321,7 @@ export default function AdminAppealsPage() {
                                                     <Link href={`/post/${appeal.post_id}`} target="_blank">
                                                         <Button variant="outline" size="sm" className="gap-1.5">
                                                             <Eye className="w-4 h-4" />
-                                                            View Post
+                                                            {t('viewPost')}
                                                         </Button>
                                                     </Link>
                                                     {appeal.status === 'pending' && (
@@ -328,7 +329,7 @@ export default function AdminAppealsPage() {
                                                             size="sm"
                                                             onClick={() => handleReviewClick(appeal)}
                                                         >
-                                                            Review
+                                                            {t('review')}
                                                         </Button>
                                                     )}
                                                 </div>
@@ -346,9 +347,9 @@ export default function AdminAppealsPage() {
             <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
                 <DialogContent className="max-w-lg">
                     <DialogHeader>
-                        <DialogTitle>Review Appeal</DialogTitle>
+                        <DialogTitle>{t('reviewDialogTitle')}</DialogTitle>
                         <DialogDescription>
-                            Review the appeal for &quot;{selectedAppeal?.post?.title}&quot; and make a decision.
+                            {t('reviewDialogDesc', { title: selectedAppeal?.post?.title })}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -356,15 +357,15 @@ export default function AdminAppealsPage() {
                         <div className="bg-gray-50 dark:bg-dark-bg rounded-lg p-4 space-y-3">
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-1">
-                                    Original Rejection Reason
+                                    {t('originalRejection')}
                                 </p>
                                 <p className="text-sm text-text dark:text-dark-text">
-                                    {selectedAppeal?.post?.rejection_reason || 'No reason provided'}
+                                    {selectedAppeal?.post?.rejection_reason || tCommon('unknown')}
                                 </p>
                             </div>
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-1">
-                                    Author&apos;s Appeal
+                                    {t('authorAppeal')}
                                 </p>
                                 <p className="text-sm text-text dark:text-dark-text">
                                     {selectedAppeal?.dispute_reason}
@@ -374,13 +375,13 @@ export default function AdminAppealsPage() {
 
                         <div className="space-y-2">
                             <Label htmlFor="admin-response" className="text-text dark:text-dark-text font-medium">
-                                Response (optional)
+                                {t('responseLabel')}
                             </Label>
                             <textarea
                                 id="admin-response"
                                 value={adminResponse}
                                 onChange={(e) => setAdminResponse(e.target.value)}
-                                placeholder="Add an optional response to the author..."
+                                placeholder={t('responsePlaceholder')}
                                 rows={3}
                                 className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light dark:placeholder:text-dark-text-muted focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                             />
@@ -393,7 +394,7 @@ export default function AdminAppealsPage() {
                             onClick={() => setReviewDialogOpen(false)}
                             disabled={processing}
                         >
-                            Cancel
+                            {tCommon('cancel')}
                         </Button>
                         <Button
                             variant="outline"
@@ -402,17 +403,17 @@ export default function AdminAppealsPage() {
                             className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-900/20"
                         >
                             {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4 mr-1.5" />}
-                            Deny
+                            {t('deny')}
                         </Button>
                         <Button
                             variant="outline"
                             onClick={() => handleDecision('revision_requested')}
                             disabled={processing || !adminResponse.trim()}
                             className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-900/20"
-                            title={!adminResponse.trim() ? "Please add a message explaining what revisions are needed" : ""}
+                            title={!adminResponse.trim() ? t('revisionHint') : ""}
                         >
                             {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4 mr-1.5" />}
-                            Request Revision
+                            {t('requestRevision')}
                         </Button>
                         <Button
                             onClick={() => handleDecision('approved')}
@@ -420,7 +421,7 @@ export default function AdminAppealsPage() {
                             className="bg-green-600 hover:bg-green-700 text-white"
                         >
                             {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-1.5" />}
-                            Approve
+                            {t('approve')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

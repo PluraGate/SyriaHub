@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { FileText, Users, Globe, Calendar } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 type SearchResult = {
     id: string
@@ -46,6 +47,7 @@ export default async function SearchPage({
     const { data: { user } } = await supabase.auth.getUser()
 
     let results: SearchResult[] = []
+    const t = await getTranslations('Search')
 
     if (q) {
         // Try fuzzy search first
@@ -122,13 +124,13 @@ export default async function SearchPage({
                     <div className="flex-1">
                         <div className="mb-8">
                             <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                                Search Results
+                                {t('title')}
                             </h1>
                             {q && (
                                 <p className="text-text-light dark:text-dark-text-muted">
-                                    Showing results for <span className="font-semibold">&quot;{q}&quot;</span>
+                                    {t('showingResults')} <span className="font-semibold">&quot;{q}&quot;</span>
                                     {results.length > 0 && (
-                                        <span className="ml-2 text-sm">({results.length} found)</span>
+                                        <span className="ml-2 text-sm">({results.length} {t('found', { count: results.length })})</span>
                                     )}
                                 </p>
                             )}
@@ -138,16 +140,16 @@ export default async function SearchPage({
                             {!q ? (
                                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border p-12 text-center">
                                     <p className="text-text-light dark:text-dark-text-muted">
-                                        Enter a search term to find posts, users, groups, and events.
+                                        {t('enterSearch')}
                                     </p>
                                 </div>
                             ) : results.length === 0 ? (
                                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-dashed border-gray-300 dark:border-dark-border">
                                     <EmptyState
                                         variant="no-results"
-                                        title="No results found"
-                                        description={`We couldn't find anything matching "${q}". Try different keywords or adjust your filters.`}
-                                        actionLabel="Clear Search"
+                                        title={t('noResults')}
+                                        description={t('noResultsDesc', { query: q })}
+                                        actionLabel={t('clearSearch')}
                                         actionHref="/search"
                                     />
                                 </div>

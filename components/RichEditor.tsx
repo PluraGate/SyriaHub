@@ -26,6 +26,7 @@ import {
   List, ListOrdered, Quote, Code, Link2, Minus, HelpCircle
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface RichEditorProps {
   value: string
@@ -170,6 +171,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
 )
 
 export function RichEditor({ value, onChange, placeholder, userId }: RichEditorProps) {
+  const t = useTranslations('EditorExtras')
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [lastInsertedImage, setLastInsertedImage] = useState<string | null>(null)
@@ -295,13 +297,13 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         {lastInsertedImage && !isUploading && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg text-sm text-green-700 dark:text-green-400 animate-fade-in">
             <Check className="w-4 h-4" />
-            Image added
+            {t('imageAdded')}
           </div>
         )}
         {isUploading && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-lg text-sm text-primary">
             <Loader2 className="w-4 h-4 animate-spin" />
-            Uploading...
+            {t('uploading')}
           </div>
         )}
         <button
@@ -309,7 +311,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading || !userId}
           className="p-2 rounded-lg bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-border transition-colors disabled:opacity-50"
-          title="Insert image"
+          title={t('insertImage')}
         >
           <ImagePlus className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
         </button>
@@ -327,7 +329,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="absolute inset-0 z-30 bg-primary/10 border-2 border-dashed border-primary rounded-xl flex items-center justify-center">
           <div className="text-center">
             <ImagePlus className="w-12 h-12 text-primary mx-auto mb-2" />
-            <p className="text-lg font-medium text-primary">Drop image here</p>
+            <p className="text-lg font-medium text-primary">{t('dropImageHere')}</p>
             <p className="text-sm text-text-light">PNG, JPG, GIF, WEBP up to 5MB</p>
           </div>
         </div>
@@ -339,12 +341,12 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={Heading1}
-            title="Heading 1 (Ctrl+Alt+1)"
+            title={t('heading1')}
             onClick={() => editorRef.current?.runCommand(wrapInHeadingCommand.key, 1)}
           />
           <ToolbarButton
             icon={Heading2}
-            title="Heading 2 (Ctrl+Alt+2)"
+            title={t('heading2')}
             onClick={() => editorRef.current?.runCommand(wrapInHeadingCommand.key, 2)}
           />
         </div>
@@ -353,17 +355,17 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={Bold}
-            title="Bold (Ctrl+B)"
+            title={t('bold')}
             onClick={() => editorRef.current?.runCommand(toggleStrongCommand.key)}
           />
           <ToolbarButton
             icon={Italic}
-            title="Italic (Ctrl+I)"
+            title={t('italic')}
             onClick={() => editorRef.current?.runCommand(toggleEmphasisCommand.key)}
           />
           <ToolbarButton
             icon={Code}
-            title="Inline code"
+            title={t('inlineCode')}
             onClick={() => editorRef.current?.runCommand(toggleInlineCodeCommand.key)}
           />
         </div>
@@ -372,12 +374,12 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={List}
-            title="Bullet list"
+            title={t('bulletList')}
             onClick={() => editorRef.current?.runCommand(wrapInBulletListCommand.key)}
           />
           <ToolbarButton
             icon={ListOrdered}
-            title="Numbered list"
+            title={t('numberedList')}
             onClick={() => editorRef.current?.runCommand(wrapInOrderedListCommand.key)}
           />
         </div>
@@ -386,12 +388,12 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={Quote}
-            title="Quote"
+            title={t('quote')}
             onClick={() => editorRef.current?.runCommand(wrapInBlockquoteCommand.key)}
           />
           <ToolbarButton
             icon={Minus}
-            title="Horizontal line"
+            title={t('horizontalLine')}
             onClick={() => editorRef.current?.runCommand(insertHrCommand.key)}
           />
         </div>
@@ -400,7 +402,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         <div className="flex items-center">
           <ToolbarButton
             icon={Link2}
-            title="Add link to selected text"
+            title={t('addLink')}
             onClick={() => {
               const url = prompt('Enter URL:')
               if (url) {
@@ -410,7 +412,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
           />
           <ToolbarButton
             icon={ImagePlus}
-            title="Insert image"
+            title={t('insertImage')}
             onClick={() => fileInputRef.current?.click()}
             disabled={!userId}
           />

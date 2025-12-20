@@ -23,6 +23,7 @@ import {
     AlignLeft
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface SurveyBuilderProps {
     userId: string
@@ -52,6 +53,8 @@ const QUESTION_TYPES = [
 export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
     const router = useRouter()
     const { showToast } = useToast()
+    const t = useTranslations('Surveys')
+    const tPolls = useTranslations('Polls')
 
     const [title, setTitle] = useState(existingSurvey?.title || '')
     const [description, setDescription] = useState(existingSurvey?.description || '')
@@ -249,7 +252,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                 className="rounded border-gray-300 text-primary focus:ring-primary"
                             />
                             <div>
-                                <span className="text-text dark:text-dark-text font-medium">Anonymous Responses</span>
+                                <span className="text-text dark:text-dark-text font-medium">{tPolls('anonymous')}</span>
                                 <p className="text-sm text-text-light dark:text-dark-text-muted">
                                     Respondent identities will not be recorded
                                 </p>
@@ -268,13 +271,13 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Survey Title"
+                            placeholder={t('titlePlaceholder')}
                             className="w-full text-2xl font-display font-bold border-none bg-transparent text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0"
                         />
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Add a description (optional)"
+                            placeholder={t('descriptionPlaceholder')}
                             rows={2}
                             className="w-full mt-3 border-none bg-transparent text-text-light dark:text-dark-text-muted placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0 resize-none"
                         />
@@ -337,7 +340,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                                 type="text"
                                                 value={question.question_text}
                                                 onChange={(e) => updateQuestion(question.id, { question_text: e.target.value })}
-                                                placeholder="Enter your question"
+                                                placeholder={t('questionPlaceholder')}
                                                 className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
                                             />
 

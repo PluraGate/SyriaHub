@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { CheckCircle, Circle, User, FileText, Camera, Award, Shield, MapPin, Building, Globe, Image } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface ProfileCompletion {
     success: boolean
@@ -40,6 +41,7 @@ const OPTIONAL_FIELDS = [
 ]
 
 export function ProfileCompletionCard({ userId, compact = false }: ProfileCompletionCardProps) {
+    const t = useTranslations('ProfileCompletion')
     const [completion, setCompletion] = useState<ProfileCompletion | null>(null)
     const [loading, setLoading] = useState(true)
     const [refreshKey, setRefreshKey] = useState(0)
@@ -130,7 +132,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
                 </div>
                 <div>
                     <p className="text-sm font-medium text-text dark:text-dark-text">
-                        {is_complete ? 'Profile Complete!' : 'Complete Profile'}
+                        {is_complete ? t('complete') : t('completeProfile')}
                     </p>
                     {bonus_xp > 0 && (
                         <p className="text-xs text-primary">+{bonus_xp} bonus XP</p>
@@ -177,7 +179,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
                 </div>
                 <div>
                     <h3 className="font-semibold text-text dark:text-dark-text">
-                        {is_complete ? 'Profile Complete!' : 'Complete Your Profile'}
+                        {is_complete ? t('complete') : t('completeYourProfile')}
                     </h3>
                     <p className="text-sm text-text-light dark:text-dark-text-muted">
                         {is_complete
@@ -192,7 +194,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
             {missing_core.length > 0 && (
                 <div className="space-y-2 mb-4">
                     <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                        Suggested
+                        {t('suggested')}
                     </p>
                     {CORE_FIELDS.filter(f => missing_core.includes(f.id)).map(field => (
                         <div
@@ -211,7 +213,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
             {is_complete && (
                 <div className="space-y-2">
                     <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                        Optional Extras
+                        {t('optionalExtras')}
                     </p>
                     {OPTIONAL_FIELDS.filter(f => !optional_completed.includes(f.id)).slice(0, 3).map(field => (
                         <div
@@ -236,7 +238,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
             {/* Privacy note */}
             <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                 <Shield className="w-3 h-3" />
-                100% achievable without sharing location or personal data
+                {t('privacyNote')}
             </p>
         </div>
     )

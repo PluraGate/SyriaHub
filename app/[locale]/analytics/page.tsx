@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { format, subDays } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface ResearcherStats {
     totalViews: number
@@ -47,6 +48,7 @@ export default function ResearcherAnalyticsDashboard() {
     const [daysBack, setDaysBack] = useState(30)
     const router = useRouter()
     const supabase = useMemo(() => createClient(), [])
+    const t = useTranslations('Analytics')
 
     useEffect(() => {
         async function loadData() {
@@ -146,10 +148,10 @@ export default function ResearcherAnalyticsDashboard() {
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text flex items-center gap-3">
                         <BarChart3 className="w-8 h-8" />
-                        Research Analytics
+                        {t('title')}
                     </h1>
                     <div className="flex items-center gap-2">
-                        {[7, 14, 30, 90].map((days) => (
+                        {[90, 30, 14, 7].map((days) => (
                             <button
                                 key={days}
                                 onClick={() => setDaysBack(days)}
@@ -158,7 +160,7 @@ export default function ResearcherAnalyticsDashboard() {
                                     : 'bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
                                     }`}
                             >
-                                {days}d
+                                {t('days', { count: days })}
                             </button>
                         ))}
                     </div>
@@ -166,12 +168,12 @@ export default function ResearcherAnalyticsDashboard() {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-                    <StatCard icon={Eye} label="Total Views" value={stats?.totalViews || 0} color="blue" />
-                    <StatCard icon={ThumbsUp} label="Total Votes" value={stats?.totalVotes || 0} color="green" />
-                    <StatCard icon={BookOpen} label="Publications" value={stats?.totalPosts || 0} color="purple" />
-                    <StatCard icon={Quote} label="Citations" value={stats?.totalCitations || 0} color="orange" />
-                    <StatCard icon={UsersIcon} label="Followers" value={stats?.totalFollowers || 0} color="pink" />
-                    <StatCard icon={Shield} label="Trust Score" value={stats?.avgTrustScore || 0} suffix="/100" color="teal" />
+                    <StatCard icon={Shield} label={t('trustScore')} value={stats?.avgTrustScore || 0} suffix="/100" color="teal" />
+                    <StatCard icon={UsersIcon} label={t('followers')} value={stats?.totalFollowers || 0} color="pink" />
+                    <StatCard icon={Quote} label={t('citations')} value={stats?.totalCitations || 0} color="orange" />
+                    <StatCard icon={BookOpen} label={t('publications')} value={stats?.totalPosts || 0} color="purple" />
+                    <StatCard icon={ThumbsUp} label={t('totalVotes')} value={stats?.totalVotes || 0} color="green" />
+                    <StatCard icon={Eye} label={t('totalViews')} value={stats?.totalViews || 0} color="blue" />
                 </div>
 
                 {/* Trends Chart */}
@@ -179,7 +181,7 @@ export default function ResearcherAnalyticsDashboard() {
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-primary" />
-                            Views Over Time
+                            {t('viewsOverTime')}
                         </h2>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
@@ -202,7 +204,7 @@ export default function ResearcherAnalyticsDashboard() {
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <Award className="w-5 h-5 text-secondary" />
-                            Engagement Trend
+                            {t('engagementTrend')}
                         </h2>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
@@ -220,9 +222,9 @@ export default function ResearcherAnalyticsDashboard() {
                 {/* Top Content */}
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
                     <div className="p-6 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-text dark:text-dark-text">Top Performing Research</h2>
+                        <h2 className="text-xl font-bold text-text dark:text-dark-text">{t('topPerformingResearch')}</h2>
                         <Link href="/feed" className="text-sm text-primary hover:underline flex items-center gap-1">
-                            View All <ArrowUpRight className="w-4 h-4" />
+                            {t('viewAll')} <ArrowUpRight className="w-4 h-4" />
                         </Link>
                     </div>
 
@@ -251,7 +253,7 @@ export default function ResearcherAnalyticsDashboard() {
                             ))
                         ) : (
                             <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
-                                No publications yet. <Link href="/editor" className="text-primary hover:underline">Start writing!</Link>
+                                {t('noPublications')} <Link href="/editor" className="text-primary hover:underline">{t('startWriting')}</Link>
                             </div>
                         )}
                     </div>

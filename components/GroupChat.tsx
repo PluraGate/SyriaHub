@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/toast'
 import { Send } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useTranslations } from 'next-intl'
 
 type Message = {
     id: string
@@ -19,6 +20,7 @@ type Message = {
 }
 
 export function GroupChat({ groupId, currentUserId }: { groupId: string, currentUserId: string }) {
+    const t = useTranslations('Groups')
     const [messages, setMessages] = useState<Message[]>([])
     const [newMessage, setNewMessage] = useState('')
     const [isLoading, setIsLoading] = useState(true)
@@ -107,7 +109,7 @@ export function GroupChat({ groupId, currentUserId }: { groupId: string, current
     return (
         <div className="flex flex-col h-[600px] border rounded-xl bg-white dark:bg-dark-surface dark:border-dark-border shadow-sm">
             <div className="p-4 border-b dark:border-dark-border">
-                <h3 className="font-semibold text-lg">Group Chat</h3>
+                <h3 className="font-semibold text-lg">{t('groupChat')}</h3>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -117,7 +119,7 @@ export function GroupChat({ groupId, currentUserId }: { groupId: string, current
                     </div>
                 ) : messages.length === 0 ? (
                     <div className="text-center text-muted-foreground py-8">
-                        No messages yet. Start the conversation!
+                        {t('noMessages')}
                     </div>
                 ) : (
                     messages.map((msg) => {
@@ -169,7 +171,7 @@ export function GroupChat({ groupId, currentUserId }: { groupId: string, current
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
+                        placeholder={t('typeMessage')}
                         className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
                     <button

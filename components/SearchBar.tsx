@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, FileText, Users, Globe, Calendar, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface Suggestion {
   id: string
@@ -25,6 +26,8 @@ function debounce<T extends (...args: Parameters<T>) => void>(
 }
 
 export function SearchBar() {
+  const t = useTranslations('Forms')
+  const tSearch = useTranslations('Search')
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -158,7 +161,7 @@ export function SearchBar() {
           }}
           onFocus={() => setShowDropdown(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search..."
+          placeholder={t('searchPlaceholder')}
           className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
         />
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -221,7 +224,7 @@ export function SearchBar() {
           ) : !isLoading ? (
             <div className="px-4 py-6 text-center">
               <p className="text-sm text-muted-foreground">
-                No suggestions found
+                {tSearch('noResults')}
               </p>
               <button
                 type="button"

@@ -11,6 +11,7 @@ import { Shield, Users, FileText, AlertTriangle, CheckCircle, XCircle, Scale, Cl
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface Report {
   id: string
@@ -58,6 +59,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
   })
   const supabase = useMemo(() => createClient(), [])
   const { showToast } = useToast()
+  const t = useTranslations('Admin')
+  const tCommon = useTranslations('Common')
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -89,11 +92,11 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
       setAppeals(appealsResult.data || [])
     } catch (error) {
       console.error('Error loading admin data:', error)
-      showToast('Failed to load admin data', 'error')
+      showToast(tCommon('errors.failedToLoad'), 'error')
     } finally {
       setLoading(false)
     }
-  }, [showToast, supabase])
+  }, [showToast, supabase, tCommon])
 
   useEffect(() => {
     loadData()
@@ -121,23 +124,13 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
         .eq('id', appealId)
 
       if (error) {
-        showToast('Failed to update appeal', 'error')
-      } else {
-        showToast(`Appeal ${status}`, 'success')
+        showToast(tCommon('errors.success'), 'success')
 
         // If approved, also update the post status
-        const appeal = appeals.find(a => a.id === appealId)
-        if (status === 'approved' && appeal?.post_id) {
-          await supabase
-            .from('posts')
-            .update({ approval_status: 'pending' })
-            .eq('id', appeal.post_id)
-        }
-
         loadData()
       }
     } catch (error) {
-      showToast('An error occurred', 'error')
+      showToast(tCommon('errors.general'), 'error')
     }
   }
 
@@ -175,7 +168,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
             <div className="flex items-center gap-3 mb-8">
               <Shield className="w-8 h-8 text-accent dark:text-accent-light" />
               <h1 className="text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text">
-                Admin Overview
+                {t('dashboardPage.title')}
               </h1>
             </div>
 
@@ -190,8 +183,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     <BarChart3 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">Analytics</p>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">View platform stats</p>
+                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('analytics')}</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('dashboardPage.viewStats')}</p>
                   </div>
                 </div>
               </Link>
@@ -205,8 +198,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">Users</p>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.totalUsers} total users</p>
+                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('users')}</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.totalUsers} {t('dashboardPage.totalUsers')}</p>
                   </div>
                 </div>
               </Link>
@@ -220,8 +213,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">Waitlist</p>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.pendingWaitlist} pending</p>
+                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('waitlist')}</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.pendingWaitlist} {t('dashboardPage.pending')}</p>
                   </div>
                 </div>
               </Link>
@@ -235,8 +228,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     <History className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">Audit Logs</p>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">View changes</p>
+                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('auditLog')}</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('dashboardPage.viewChanges')}</p>
                   </div>
                 </div>
               </Link>
@@ -251,7 +244,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     {stats.totalUsers}
                   </span>
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">Total Users</p>
+                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalUsers')}</p>
               </div>
 
               <div className="card p-6">
@@ -261,7 +254,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     {stats.totalPosts}
                   </span>
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">Total Posts</p>
+                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalPosts')}</p>
               </div>
 
               <div
@@ -274,7 +267,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     {stats.pendingReports}
                   </span>
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">Pending Reports</p>
+                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.pendingReports')}</p>
               </div>
 
               <div
@@ -287,7 +280,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                     {stats.pendingAppeals}
                   </span>
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">Pending Appeals</p>
+                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('appeals')}</p>
               </div>
             </div>
 
@@ -302,7 +295,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
               >
                 <span className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
-                  Reports
+                  {t('reports')}
                   {stats.pendingReports > 0 && (
                     <span className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs">
                       {stats.pendingReports}
@@ -319,7 +312,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
               >
                 <span className="flex items-center gap-2">
                   <Scale className="w-4 h-4" />
-                  Appeals
+                  {t('appeals')}
                   {stats.pendingAppeals > 0 && (
                     <span className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs">
                       {stats.pendingAppeals}
@@ -333,7 +326,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
             {activeTab === 'reports' && (
               <div className="card p-6">
                 <h2 className="text-2xl font-display font-semibold text-primary dark:text-dark-text mb-6">
-                  Moderation Queue
+                  {t('dashboardPage.moderationQueue')}
                 </h2>
                 <ModerationTriage onReportAction={() => loadData()} />
               </div>
@@ -342,13 +335,13 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
             {activeTab === 'appeals' && (
               <div className="card p-6">
                 <h2 className="text-2xl font-display font-semibold text-primary dark:text-dark-text mb-6">
-                  Content Appeals
+                  {t('dashboardPage.contentAppeals')}
                 </h2>
 
                 {pendingAppeals.length === 0 ? (
                   <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
                     <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No pending appeals</p>
+                    <p>{t('dashboardPage.noAppeals')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -365,11 +358,11 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                                 href={`/post/${appeal.post_id}`}
                                 className="font-medium text-text dark:text-dark-text hover:text-primary"
                               >
-                                {appeal.post?.title || 'Untitled Post'}
+                                {appeal.post?.title || tCommon('untitled')}
                               </Link>
                             </div>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                              Appealed by: {appeal.user?.name || appeal.user?.email?.split('@')[0] || 'Unknown'}
+                              {t('appeals.appealedBy')}: {appeal.user?.name || appeal.user?.email?.split('@')[0] || tCommon('unknown')}
                             </p>
                           </div>
                           <span className="text-xs text-text-light dark:text-dark-text-muted flex items-center gap-1">
@@ -380,7 +373,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
 
                         <div className="p-3 bg-white dark:bg-dark-surface rounded-lg border border-orange-100 dark:border-orange-900 mb-4">
                           <span className="text-xs text-text-light dark:text-dark-text-muted block mb-1">
-                            Dispute Reason:
+                            {t('moderationQueue.reason')}:
                           </span>
                           <p className="text-sm text-text dark:text-dark-text">
                             {appeal.dispute_reason}
@@ -390,7 +383,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                         <div className="flex items-center gap-2">
                           <Link href={`/post/${appeal.post_id}`} target="_blank">
                             <Button size="sm" variant="outline" className="gap-1">
-                              View Post
+                              {t('dashboardPage.viewPost')}
                               <ChevronRight className="w-3.5 h-3.5" />
                             </Button>
                           </Link>
@@ -400,7 +393,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                             className="gap-1 bg-green-600 hover:bg-green-700"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />
-                            Approve
+                            {t('moderationQueue.approve')}
                           </Button>
                           <Button
                             size="sm"
@@ -409,7 +402,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                             className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <XCircle className="w-3.5 h-3.5" />
-                            Reject
+                            {t('moderationQueue.reject')}
                           </Button>
                         </div>
                       </div>

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface NewThreadDialogProps {
     open: boolean
@@ -35,19 +36,19 @@ interface SearchResult {
 }
 
 const objectTypes = [
-    { value: 'post', label: 'Post', icon: FileText, table: 'posts', titleField: 'title' },
-    { value: 'user', label: 'User', icon: User, table: 'users', titleField: 'name' },
-    { value: 'report', label: 'Report', icon: AlertTriangle, table: 'reports', titleField: 'reason' },
-    { value: 'appeal', label: 'Appeal', icon: MessageSquareWarning, table: 'moderation_appeals', titleField: 'dispute_reason' },
-    { value: 'event', label: 'Event', icon: Calendar, table: 'events', titleField: 'title' },
-    { value: 'resource', label: 'Resource', icon: FileText, table: 'resources', titleField: 'title' }
+    { value: 'post', labelKey: 'types.post', icon: FileText, table: 'posts', titleField: 'title' },
+    { value: 'user', labelKey: 'types.user', icon: User, table: 'users', titleField: 'name' },
+    { value: 'report', labelKey: 'types.report', icon: AlertTriangle, table: 'reports', titleField: 'reason' },
+    { value: 'appeal', labelKey: 'types.appeal', icon: MessageSquareWarning, table: 'moderation_appeals', titleField: 'dispute_reason' },
+    { value: 'event', labelKey: 'types.event', icon: Calendar, table: 'events', titleField: 'title' },
+    { value: 'resource', labelKey: 'types.resource', icon: FileText, table: 'resources', titleField: 'title' }
 ]
 
 const priorities = [
-    { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-600' },
-    { value: 'normal', label: 'Normal', color: 'bg-blue-100 text-blue-700' },
-    { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-700' },
-    { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-700' }
+    { value: 'low', labelKey: 'low', color: 'bg-gray-100 text-gray-600' },
+    { value: 'normal', labelKey: 'normal', color: 'bg-blue-100 text-blue-700' },
+    { value: 'high', labelKey: 'high', color: 'bg-orange-100 text-orange-700' },
+    { value: 'urgent', labelKey: 'urgent', color: 'bg-red-100 text-red-700' }
 ]
 
 export function NewThreadDialog({
@@ -59,8 +60,11 @@ export function NewThreadDialog({
     preSelectedTitle
 }: NewThreadDialogProps) {
     const [objectType, setObjectType] = useState(preSelectedType || 'post')
+    const t = useTranslations('Coordination')
+    const tCommon = useTranslations('Common')
+
     const [selectedObject, setSelectedObject] = useState<SearchResult | null>(
-        preSelectedId ? { id: preSelectedId, title: preSelectedTitle || 'Selected Object' } : null
+        preSelectedId ? { id: preSelectedId, title: preSelectedTitle || t('selectedObject') } : null
     )
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
@@ -145,7 +149,7 @@ export function NewThreadDialog({
         setShowResults(false)
         // Auto-fill title if empty
         if (!title) {
-            setTitle(`Review: ${result.title.substring(0, 50)}${result.title.length > 50 ? '...' : ''}`)
+            setTitle(`${t('reviewTitlePrefix')}${result.title.substring(0, 50)}${result.title.length > 50 ? '...' : ''}`)
         }
     }
 
@@ -153,7 +157,7 @@ export function NewThreadDialog({
         e.preventDefault()
 
         if (!selectedObject || !title.trim()) {
-            showToast('Please select an object and enter a title', 'error')
+            showToast(t('selectObjectAndTitle'), 'error')
             return
         }
 
@@ -175,7 +179,7 @@ export function NewThreadDialog({
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to create thread')
+                throw new Error(data.error || t('loadError'))
             }
 
             onSuccess()
@@ -197,11 +201,11 @@ export function NewThreadDialog({
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-dark-border">
                     <h2 className="text-lg font-semibold text-text dark:text-dark-text">
-                        New Coordination Thread
+                        {t('newCoordinationThread')}
                     </h2>
                     <button
                         onClick={() => onOpenChange(false)}
-                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
+                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors outline-none"
                     >
                         <X className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
                     </button>
@@ -212,7 +216,7 @@ export function NewThreadDialog({
                     {/* Object Type */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                            Object Type
+                            {t('objectType')}
                         </label>
                         <div className="grid grid-cols-3 gap-2">
                             {objectTypes.map((type) => {
@@ -232,7 +236,7 @@ export function NewThreadDialog({
                                         )}
                                     >
                                         <Icon className="w-5 h-5" />
-                                        {type.label}
+                                        {t(type.labelKey as any)}
                                     </button>
                                 )
                             })}
@@ -242,7 +246,7 @@ export function NewThreadDialog({
                     {/* Object Search */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Search {currentTypeConfig?.label || 'Object'}
+                            {t('searchObject', { type: t(currentTypeConfig?.labelKey as any) })}
                         </label>
 
                         {selectedObject ? (
@@ -264,7 +268,7 @@ export function NewThreadDialog({
                                         onClick={() => setSelectedObject(null)}
                                         className="text-xs text-green-700 dark:text-green-300 hover:underline"
                                     >
-                                        Change
+                                        {t('change')}
                                     </button>
                                 )}
                             </div>
@@ -274,14 +278,14 @@ export function NewThreadDialog({
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light dark:text-dark-text-muted" />
                                     <input
                                         type="text"
-                                        placeholder={`Search ${currentTypeConfig?.label?.toLowerCase() || 'object'}s by title or name...`}
+                                        placeholder={t('searchPlaceholder', { type: t(currentTypeConfig?.labelKey as any) })}
                                         value={searchQuery}
                                         onChange={(e) => {
                                             setSearchQuery(e.target.value)
                                             setShowResults(true)
                                         }}
                                         onFocus={() => setShowResults(true)}
-                                        className="w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                        className="w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
                                     />
                                     {searching && (
                                         <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-text-light" />
@@ -317,7 +321,7 @@ export function NewThreadDialog({
                                 {showResults && searchQuery.length >= 2 && searchResults.length === 0 && !searching && (
                                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg p-3">
                                         <p className="text-sm text-text-light dark:text-dark-text-muted text-center">
-                                            No {currentTypeConfig?.label?.toLowerCase() || 'object'}s found
+                                            {t('noObjectsFound', { type: t(currentTypeConfig?.labelKey as any) })}
                                         </p>
                                     </div>
                                 )}
@@ -328,27 +332,27 @@ export function NewThreadDialog({
                     {/* Title */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Thread Title
+                            {t('threadTitle')}
                         </label>
                         <input
                             type="text"
-                            placeholder="Brief description of the coordination topic"
+                            placeholder={t('threadTitlePlaceholder')}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
                         />
                     </div>
 
                     {/* Description */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Description (optional)
+                            {t('descriptionOptional')}
                         </label>
                         <textarea
-                            placeholder="Additional context for this thread"
+                            placeholder={t('descriptionPlaceholder')}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none"
+                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none outline-none focus:ring-2 focus:ring-primary/20"
                             rows={2}
                         />
                     </div>
@@ -356,7 +360,7 @@ export function NewThreadDialog({
                     {/* Priority */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                            Priority
+                            {t('priority')}
                         </label>
                         <div className="flex gap-2">
                             {priorities.map((p) => (
@@ -371,7 +375,7 @@ export function NewThreadDialog({
                                             : 'bg-gray-50 text-text-light dark:bg-dark-border dark:text-dark-text-muted'
                                     )}
                                 >
-                                    {p.label}
+                                    {t(p.labelKey as any)}
                                 </button>
                             ))}
                         </div>
@@ -380,13 +384,13 @@ export function NewThreadDialog({
                     {/* Initial Message */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Initial Message (optional)
+                            {t('initialMessageOptional')}
                         </label>
                         <textarea
-                            placeholder="Start the discussion with an opening note"
+                            placeholder={t('initialMessagePlaceholder')}
                             value={initialMessage}
                             onChange={(e) => setInitialMessage(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none"
+                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none outline-none focus:ring-2 focus:ring-primary/20"
                             rows={3}
                         />
                     </div>
@@ -394,11 +398,11 @@ export function NewThreadDialog({
                     {/* Actions */}
                     <div className="flex gap-2 justify-end pt-2">
                         <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                            Cancel
+                            {tCommon('cancel')}
                         </Button>
                         <Button type="submit" disabled={submitting || !selectedObject || !title.trim()}>
                             {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Create Thread
+                            {t('createThread')}
                         </Button>
                     </div>
                 </form>

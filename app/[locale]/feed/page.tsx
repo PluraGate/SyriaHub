@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { FeedCardSkeletonCompact } from '@/components/ui/skeleton'
 import { Post } from '@/types'
 import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
 type FeedTab = 'all' | 'following'
@@ -28,6 +29,7 @@ export default function FeedPage() {
   const [feedTab, setFeedTab] = useState<FeedTab>('all')
   const [followingIds, setFollowingIds] = useState<string[]>([])
   const supabase = createClient()
+  const t = useTranslations('Feed')
 
   const [officialTags, setOfficialTags] = useState<string[]>([])
 
@@ -152,11 +154,11 @@ export default function FeedPage() {
   const remainingPosts = filteredPosts.slice(4)
 
   const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-    { value: 'new', label: 'New' },
-    { value: 'hot', label: 'Hot' },
-    { value: 'top-week', label: 'Top (Week)' },
-    { value: 'top-month', label: 'Top (Month)' },
-    { value: 'top-all', label: 'Top (All)' },
+    { value: 'new', label: t('sortNew') },
+    { value: 'hot', label: t('sortHot') },
+    { value: 'top-week', label: t('sortTopWeek') },
+    { value: 'top-month', label: t('sortTopMonth') },
+    { value: 'top-all', label: t('sortTopAll') },
   ]
 
   return (
@@ -172,14 +174,14 @@ export default function FeedPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-text-light dark:text-dark-text-muted">
-                    Live Feed
+                    {t('liveFeed')}
                   </span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold text-text dark:text-dark-text tracking-tight">
-                  Your Feed
+                  {t('yourFeed')}
                 </h1>
                 <p className="mt-2 text-lg text-text-light dark:text-dark-text-muted">
-                  Discover the latest research from the community
+                  {t('discoverResearch')}
                 </p>
               </div>
 
@@ -189,7 +191,7 @@ export default function FeedPage() {
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
                 >
                   <PenSquare className="w-5 h-5" />
-                  Write Post
+                  {t('writePost')}
                 </Link>
               )}
             </div>
@@ -210,7 +212,7 @@ export default function FeedPage() {
                     }`}
                 >
                   <Sparkles className="w-4 h-4 inline mr-2" />
-                  All Posts
+                  {t('allPosts')}
                 </button>
                 <button
                   onClick={() => setFeedTab('following')}
@@ -219,7 +221,7 @@ export default function FeedPage() {
                     : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
-                  Following
+                  {t('following')}
                   {followingIds.length > 0 && (
                     <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
                       {followingIds.length}
@@ -256,7 +258,7 @@ export default function FeedPage() {
                       : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                       }`}
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {type === 'all' ? t('all') : type === 'article' ? t('article') : t('question')}
                   </button>
                 ))}
               </div>
@@ -273,7 +275,7 @@ export default function FeedPage() {
                   : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
                   }`}
               >
-                All Topics
+                {t('allTopics')}
               </button>
               {officialTags.slice(0, 8).map(tag => (
                 <button
@@ -325,7 +327,7 @@ export default function FeedPage() {
                 <section className="mb-12">
                   <div className="flex items-center gap-3 mb-6">
                     <TrendingUp className="w-5 h-5 text-accent" />
-                    <h2 className="text-2xl font-bold text-text dark:text-dark-text">Featured</h2>
+                    <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('featured')}</h2>
                   </div>
 
                   <BentoGrid columns={4} gap="md">
@@ -357,7 +359,7 @@ export default function FeedPage() {
               {remainingPosts.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-6">
-                    Latest Research
+                    {t('latestResearch')}
                   </h2>
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {remainingPosts.map(post => (

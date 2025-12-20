@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { User } from '@supabase/supabase-js'
+import { useTranslations } from 'next-intl'
 
 interface EventMetadata {
     start_time: string
@@ -39,6 +40,8 @@ interface EventCardProps {
 
 export function EventCard({ event, currentUser }: EventCardProps) {
     const router = useRouter()
+    const t = useTranslations('Common')
+    const tEvents = useTranslations('Events')
     const [isDeleting, setIsDeleting] = useState(false)
     const [showConfirmation, setShowConfirmation] = useState(false)
 
@@ -95,7 +98,7 @@ export function EventCard({ event, currentUser }: EventCardProps) {
             <div className="card h-[200px] flex items-center justify-center bg-gray-50 dark:bg-dark-surface/50 opacity-50">
                 <div className="flex flex-col items-center gap-2">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm text-text-light">Deleting...</span>
+                    <span className="text-sm text-text-light">{t('deleting')}</span>
                 </div>
             </div>
         )
@@ -111,7 +114,7 @@ export function EventCard({ event, currentUser }: EventCardProps) {
                             <button
                                 onClick={handleCancelDelete}
                                 className="p-1.5 text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text rounded-full hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
-                                title="Cancel"
+                                title={t('cancel')}
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -120,14 +123,14 @@ export function EventCard({ event, currentUser }: EventCardProps) {
                                 className="px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
                             >
                                 <Trash2 className="w-3 h-3" />
-                                Delete
+                                {t('delete')}
                             </button>
                         </div>
                     ) : (
                         <button
                             onClick={handleDeleteClick}
                             className="p-2 text-text-light hover:text-red-600 dark:text-dark-text-muted dark:hover:text-red-400 bg-white/80 dark:bg-dark-surface/80 rounded-full shadow-sm border border-gray-100 dark:border-dark-border hover:border-red-200 dark:hover:border-red-800 transition-colors"
-                            title="Delete Event"
+                            title={tEvents('deleteEvent')}
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
@@ -180,7 +183,7 @@ export function EventCard({ event, currentUser }: EventCardProps) {
                                 {event.approval_status === 'rejected' && (
                                     <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
                                         <AlertTriangle className="w-3 h-3" />
-                                        Rejected
+                                        {tEvents('rejected')}
                                     </span>
                                 )}
                             </div>
@@ -214,7 +217,7 @@ export function EventCard({ event, currentUser }: EventCardProps) {
 
                         <div className="flex items-center gap-1.5 text-sm font-medium text-text dark:text-dark-text">
                             <Users className="w-4 h-4 text-primary" />
-                            <span>{event.rsvp_count || 0} Attending</span>
+                            <span>{event.rsvp_count || 0} {t('attending')}</span>
                         </div>
                     </div>
 

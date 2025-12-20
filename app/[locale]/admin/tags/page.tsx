@@ -17,29 +17,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useTranslations } from 'next-intl'
 
 // Curated palette aligned with Syrian Identity design guidelines
-// Professional, muted colors suitable for academic/research context
 const TAG_COLORS = [
-    '#1A3D40', // Deep Teal (Primary)
-    '#4AA3A5', // Sage Teal (Secondary)
-    '#C41E3A', // Heritage Red (Accent)
-    '#475569', // Slate
-    '#4d7c6f', // Muted Sage
-    '#8b6f6f', // Dusty Rose
-    '#4f5d75', // Cool Indigo
-    '#8b7355', // Soft Brass
-    '#3b5f54', // Deep Sage
-    '#6b5454', // Warm Stone
-    '#3d4a5c', // Twilight Blue
-    '#57534e', // Warm Gray
-    '#5c6b5e', // Forest Sage
-    '#7a6e5d', // Olive Bronze
-    '#596e79', // Steel Teal
-    '#6b5b6b', // Mauve Gray
-    '#4a5d6b', // Dusk Blue
-    '#6b6b5b', // Moss
-    '#5b4d4d', // Umber
+    '#1A3D40', '#4AA3A5', '#C41E3A', '#475569', '#4d7c6f',
+    '#8b6f6f', '#4f5d75', '#8b7355', '#3b5f54', '#6b5454',
+    '#3d4a5c', '#57534e', '#5c6b5e', '#7a6e5d', '#596e79',
+    '#6b5b6b', '#4a5d6b', '#6b6b5b', '#5b4d4d',
 ]
 
 interface UnverifiedTag {
@@ -48,6 +33,8 @@ interface UnverifiedTag {
 }
 
 export default function AdminTagsPage() {
+    const t = useTranslations('Admin.tagsPage')
+    const tCommon = useTranslations('Common')
     const [unverifiedTags, setUnverifiedTags] = useState<UnverifiedTag[]>([])
     const [loading, setLoading] = useState(true)
     const [approvingTag, setApprovingTag] = useState<string | null>(null)
@@ -61,7 +48,6 @@ export default function AdminTagsPage() {
     const supabase = createClient()
     const { showToast } = useToast()
 
-    // Suggest next unused color from palette
     const suggestNextColor = useMemo(() => {
         const normalizedUsed = usedColors.map(c => c.toUpperCase())
         for (const color of TAG_COLORS) {
@@ -69,7 +55,6 @@ export default function AdminTagsPage() {
                 return color
             }
         }
-        // All colors used, generate a random one
         return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')
     }, [usedColors])
 
@@ -92,8 +77,7 @@ export default function AdminTagsPage() {
 
         if (error) {
             console.error('Error fetching tags:', error)
-            console.error('Error details:', error.message, error.details, error.hint, error.code)
-            showToast("Failed to fetch unverified tags.", "error")
+            showToast(t('fetchFail'), 'error')
         } else {
             setUnverifiedTags(data || [])
         }
@@ -102,7 +86,7 @@ export default function AdminTagsPage() {
 
     const handleApproveClick = (tag: string) => {
         setApprovingTag(tag)
-        setNewTagColor(suggestNextColor) // Suggest next unused color
+        setNewTagColor(suggestNextColor)
         setDialogOpen(true)
     }
 
@@ -116,13 +100,12 @@ export default function AdminTagsPage() {
 
             if (error) throw error
 
-            showToast(`Tag "${approvingTag}" approved successfully.`, "success")
-
+            showToast(t('approveSuccess', { tag: approvingTag }), 'success')
             setDialogOpen(false)
-            fetchUnverifiedTags() // Refresh list
+            fetchUnverifiedTags()
         } catch (error) {
             console.error('Error approving tag:', error)
-            showToast("Failed to approve tag.", "error")
+            showToast(t('approveFail'), 'error')
         }
     }
 
@@ -136,7 +119,6 @@ export default function AdminTagsPage() {
 
         setDeclining(true)
         try {
-            // Get all posts that use this tag
             const { data: posts, error: fetchError } = await supabase
                 .from('posts')
                 .select('id, tags')
@@ -144,21 +126,17 @@ export default function AdminTagsPage() {
 
             if (fetchError) throw fetchError
 
-            // Remove the tag from each post
             for (const post of posts || []) {
                 const newTags = (post.tags as string[]).filter(t => t !== decliningTag)
-                await supabase
-                    .from('posts')
-                    .update({ tags: newTags })
-                    .eq('id', post.id)
+                await supabase.from('posts').update({ tags: newTags }).eq('id', post.id)
             }
 
-            showToast(`Tag "${decliningTag}" has been declined and removed from ${posts?.length || 0} post(s).`, "success")
+            showToast(t('declineSuccess', { tag: decliningTag, count: posts?.length || 0 }), 'success')
             setDeclineDialogOpen(false)
-            fetchUnverifiedTags() // Refresh list
+            fetchUnverifiedTags()
         } catch (error) {
             console.error('Error declining tag:', error)
-            showToast("Failed to decline tag.", "error")
+            showToast(t('declineFail'), 'error')
         } finally {
             setDeclining(false)
         }
@@ -176,14 +154,14 @@ export default function AdminTagsPage() {
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
-                                    Tag Verification
+                                    {t('title')}
                                 </h1>
                                 <p className="text-text-light dark:text-dark-text-muted mt-2">
-                                    Review and approve user-generated tags to make them official.
+                                    {t('subtitle')}
                                 </p>
                             </div>
                             <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-4 py-2 rounded-lg font-medium">
-                                {unverifiedTags.length} Pending
+                                {t('pendingCount', { count: unverifiedTags.length })}
                             </div>
                         </div>
 
@@ -195,7 +173,7 @@ export default function AdminTagsPage() {
                             ) : unverifiedTags.length === 0 ? (
                                 <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
                                     <Check className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p>All tags verified! No pending tags found.</p>
+                                    <p>{t('noPending')}</p>
                                 </div>
                             ) : (
                                 <div className="divide-y divide-gray-100 dark:divide-dark-border">
@@ -208,7 +186,7 @@ export default function AdminTagsPage() {
                                                 <div>
                                                     <h3 className="font-medium text-text dark:text-dark-text">{item.tag}</h3>
                                                     <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                                        Used in {item.usage_count} post{item.usage_count !== 1 ? 's' : ''}
+                                                        {t('usedIn', { count: item.usage_count })}
                                                     </p>
                                                 </div>
                                             </div>
@@ -220,11 +198,11 @@ export default function AdminTagsPage() {
                                                     className="text-text-light dark:text-dark-text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                                                 >
                                                     <X className="w-4 h-4 mr-1" />
-                                                    Decline
+                                                    {t('decline')}
                                                 </Button>
                                                 <Button size="sm" onClick={() => handleApproveClick(item.tag)}>
                                                     <Check className="w-4 h-4 mr-1" />
-                                                    Approve
+                                                    {t('approve')}
                                                 </Button>
                                             </div>
                                         </div>
@@ -239,15 +217,15 @@ export default function AdminTagsPage() {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Approve Tag: {approvingTag}</DialogTitle>
+                        <DialogTitle>{t('approveDialogTitle', { tag: approvingTag })}</DialogTitle>
                         <DialogDescription>
-                            Add this tag to the official list. You can assign a specific color for the Knowledge Graph.
+                            {t('approveDialogDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
                             <Label htmlFor="color" className="text-text dark:text-dark-text font-medium">
-                                Tag Color
+                                {t('tagColor')}
                             </Label>
                             <div className="flex items-center gap-3">
                                 <label
@@ -268,7 +246,7 @@ export default function AdminTagsPage() {
                                     value={newTagColor}
                                     onChange={(e) => setNewTagColor(e.target.value)}
                                     className="flex-1 font-mono text-sm bg-white dark:bg-dark-bg border-gray-200 dark:border-dark-border text-text dark:text-dark-text"
-                                    placeholder="#3B82F6"
+                                    placeholder={t('colorPlaceholder')}
                                 />
                                 <div
                                     className="px-3 py-1.5 rounded-full text-sm font-medium"
@@ -279,11 +257,10 @@ export default function AdminTagsPage() {
                             </div>
                         </div>
 
-                        {/* Quick Color Palette */}
                         <div className="space-y-2">
                             <Label className="text-text dark:text-dark-text font-medium flex items-center gap-2">
                                 <Palette className="w-4 h-4" />
-                                Quick Select
+                                {t('quickSelect')}
                             </Label>
                             <div className="flex flex-wrap gap-2">
                                 {TAG_COLORS.map((color) => {
@@ -301,7 +278,7 @@ export default function AdminTagsPage() {
                                                     : 'border-transparent hover:scale-110 hover:border-gray-300'
                                                 }`}
                                             style={{ backgroundColor: color }}
-                                            title={isUsed ? `${color} (already used)` : color}
+                                            title={isUsed ? t('alreadyUsed', { color }) : color}
                                         >
                                             {isUsed && !isSelected && (
                                                 <X className="w-4 h-4 text-white absolute inset-0 m-auto opacity-70" />
@@ -314,37 +291,35 @@ export default function AdminTagsPage() {
                                 })}
                             </div>
                             <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                Grayed colors are already used. Click any color to select.
+                                {t('usedColorHint')}
                             </p>
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:gap-0">
-                        <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={confirmApproval}>Confirm Approval</Button>
+                        <Button variant="outline" onClick={() => setDialogOpen(false)}>{tCommon('cancel')}</Button>
+                        <Button onClick={confirmApproval}>{t('confirmApproval')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            {/* Decline Tag Dialog */}
             <Dialog open={declineDialogOpen} onOpenChange={setDeclineDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className="text-red-600 dark:text-red-400">Decline Tag: {decliningTag}</DialogTitle>
+                        <DialogTitle className="text-red-600 dark:text-red-400">{t('declineDialogTitle', { tag: decliningTag })}</DialogTitle>
                         <DialogDescription>
-                            This will remove the tag from all posts that currently use it. This action cannot be undone.
+                            {t('declineDialogDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4">
                         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                             <p className="text-sm text-red-700 dark:text-red-300">
-                                <strong>Warning:</strong> The tag &quot;{decliningTag}&quot; will be removed from all posts.
-                                Users who added this tag will no longer see it on their content.
+                                {t('declineWarning', { tag: decliningTag })}
                             </p>
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:gap-0">
                         <Button variant="outline" onClick={() => setDeclineDialogOpen(false)} disabled={declining}>
-                            Cancel
+                            {tCommon('cancel')}
                         </Button>
                         <Button
                             variant="destructive"
@@ -353,11 +328,11 @@ export default function AdminTagsPage() {
                             className="bg-red-600 hover:bg-red-700 text-white"
                         >
                             {declining ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <X className="w-4 h-4 mr-2" />}
-                            Decline Tag
+                            {t('confirmDecline')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div >
+        </div>
     )
 }

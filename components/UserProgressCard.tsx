@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { UserLevelBadge, getTierFromLevel } from './UserLevelBadge'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface UserProgress {
     xp_points: number
@@ -41,6 +42,8 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
     const [progress, setProgress] = useState<UserProgress | null>(null)
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
+    const t = useTranslations('Gamification')
+    const tCommon = useTranslations('Common')
 
     useEffect(() => {
         const fetchProgress = async () => {
@@ -118,13 +121,13 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
             <div className="p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Zap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">Your Progress</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('yourProgress')}</h3>
                 </div>
                 <Link
                     href="/achievements"
                     className="flex items-center gap-1 text-sm text-primary hover:underline"
                 >
-                    View All
+                    {tCommon('viewAll')}
                     <ChevronRight className="w-4 h-4" />
                 </Link>
             </div>
@@ -188,14 +191,14 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
                         <Zap className="w-5 h-5 text-yellow-500" />
                         {progress.xp_points.toLocaleString()}
                     </div>
-                    <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">Total XP</p>
+                    <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">{t('totalXp')}</p>
                 </div>
                 <div className="p-4 text-center">
                     <div className="flex items-center justify-center gap-1 text-2xl font-bold text-text dark:text-dark-text">
                         <Trophy className="w-5 h-5 text-primary" />
                         {progress.achievements_unlocked}/{progress.total_achievements}
                     </div>
-                    <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">Achievements</p>
+                    <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">{t('achievementsLabel')}</p>
                 </div>
             </div>
         </div>

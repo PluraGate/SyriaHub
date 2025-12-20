@@ -34,6 +34,7 @@ import {
     Legend
 } from 'recharts'
 import { format } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface AdminStats {
     users: {
@@ -89,6 +90,10 @@ interface ActivityDataPoint {
 }
 
 export function AnalyticsDashboard() {
+    const t = useTranslations('Admin.analyticsPage')
+    const tCommon = useTranslations('Common')
+    const tUser = useTranslations('UserManagement')
+
     const [stats, setStats] = useState<AdminStats | null>(null)
     const [userGrowth, setUserGrowth] = useState<GrowthDataPoint[]>([])
     const [contentActivity, setContentActivity] = useState<ActivityDataPoint[]>([])
@@ -145,7 +150,7 @@ export function AnalyticsDashboard() {
     if (!stats) {
         return (
             <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
-                Failed to load analytics data
+                {t('failedToLoad')}
             </div>
         )
     }
@@ -205,7 +210,7 @@ export function AnalyticsDashboard() {
             {/* Time Range Selector */}
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text">
-                    Platform Analytics
+                    {t('title')}
                 </h2>
                 <div className="flex items-center gap-2">
                     {[7, 14, 30, 90].map((days) => (
@@ -213,11 +218,11 @@ export function AnalyticsDashboard() {
                             key={days}
                             onClick={() => setDaysBack(days)}
                             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${daysBack === days
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border/80'
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border/80'
                                 }`}
                         >
-                            {days}d
+                            {days}{tCommon('days_short') || 'd'}
                         </button>
                     ))}
                 </div>
@@ -227,30 +232,30 @@ export function AnalyticsDashboard() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     icon={Users}
-                    label="Total Users"
+                    label={t('totalUsers')}
                     value={stats.users.total}
-                    subValue={`+${stats.users.new_period} in ${daysBack}d`}
+                    subValue={t('newInPeriod', { count: stats.users.new_period, days: daysBack })}
                     color="primary"
                 />
                 <StatCard
                     icon={FileText}
-                    label="Total Posts"
+                    label={t('totalPosts')}
                     value={stats.posts.total}
-                    subValue={`+${stats.posts.new_period} in ${daysBack}d`}
+                    subValue={t('newInPeriod', { count: stats.posts.new_period, days: daysBack })}
                     color="accent"
                 />
                 <StatCard
                     icon={MessageSquare}
-                    label="Total Comments"
+                    label={t('totalComments')}
                     value={stats.comments.total}
-                    subValue={`+${stats.comments.new_period} in ${daysBack}d`}
+                    subValue={t('newInPeriod', { count: stats.comments.new_period, days: daysBack })}
                     color="green"
                 />
                 <StatCard
                     icon={ThumbsUp}
-                    label="Total Votes"
+                    label={t('totalVotes')}
                     value={stats.engagement.total_votes}
-                    subValue={`+${stats.engagement.votes_period} in ${daysBack}d`}
+                    subValue={t('newInPeriod', { count: stats.engagement.votes_period, days: daysBack })}
                     color="purple"
                 />
             </div>
@@ -261,7 +266,7 @@ export function AnalyticsDashboard() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                     <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                         <TrendingUp className="w-5 h-5 text-primary" />
-                        User Growth
+                        {t('userGrowth')}
                     </h3>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
@@ -294,7 +299,7 @@ export function AnalyticsDashboard() {
                                     stroke="hsl(var(--color-primary))"
                                     fill="url(#userGradient)"
                                     strokeWidth={2}
-                                    name="Total Users"
+                                    name={t('totalUsers')}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -305,7 +310,7 @@ export function AnalyticsDashboard() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                     <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-accent" />
-                        Content Activity
+                        {t('contentActivity')}
                     </h3>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
@@ -327,9 +332,9 @@ export function AnalyticsDashboard() {
                                     labelFormatter={(date) => format(new Date(date), 'MMM d, yyyy')}
                                 />
                                 <Legend />
-                                <Bar dataKey="posts" fill="hsl(var(--color-primary))" name="Posts" radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="comments" fill="hsl(var(--color-accent))" name="Comments" radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="votes" fill="#8B5CF6" name="Votes" radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="posts" fill="hsl(var(--color-primary))" name={t('articles')} radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="comments" fill="hsl(var(--color-accent))" name={t('totalComments')} radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="votes" fill="#8B5CF6" name={t('totalVotes')} radius={[2, 2, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -342,15 +347,15 @@ export function AnalyticsDashboard() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                     <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                         <Shield className="w-5 h-5 text-primary" />
-                        User Roles
+                        {t('userRoles')}
                     </h3>
                     <div className="space-y-4">
                         {[
-                            { label: 'Researchers', count: stats.users.researchers, color: 'bg-blue-500' },
-                            { label: 'Moderators', count: stats.users.moderators, color: 'bg-green-500' },
-                            { label: 'Admins', count: stats.users.admins, color: 'bg-purple-500' },
-                            { label: 'Verified Authors', count: stats.users.verified_authors, color: 'bg-amber-500' },
-                            { label: 'Suspended', count: stats.users.suspended, color: 'bg-red-500' },
+                            { label: tUser('researchers'), count: stats.users.researchers, color: 'bg-blue-500' },
+                            { label: tUser('moderators'), count: stats.users.moderators, color: 'bg-green-500' },
+                            { label: tUser('admins'), count: stats.users.admins, color: 'bg-purple-500' },
+                            { label: tUser('verified'), count: stats.users.verified_authors, color: 'bg-amber-500' },
+                            { label: tUser('suspended'), count: stats.users.suspended, color: 'bg-red-500' },
                         ].map((item) => (
                             <div key={item.label} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -367,13 +372,13 @@ export function AnalyticsDashboard() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                     <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                         <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                        Moderation Queue
+                        {t('moderationQueue')}
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
                                 <AlertTriangle className="w-4 h-4" />
-                                <span className="text-sm font-medium">Pending Reports</span>
+                                <span className="text-sm font-medium">{t('pendingReports')}</span>
                             </div>
                             <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mt-2">
                                 {stats.moderation.pending_reports}
@@ -382,7 +387,7 @@ export function AnalyticsDashboard() {
                         <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
                                 <Scale className="w-4 h-4" />
-                                <span className="text-sm font-medium">Pending Appeals</span>
+                                <span className="text-sm font-medium">{t('pendingAppeals')}</span>
                             </div>
                             <p className="text-2xl font-bold text-orange-700 dark:text-orange-300 mt-2">
                                 {stats.moderation.pending_appeals}
@@ -391,7 +396,7 @@ export function AnalyticsDashboard() {
                         <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
                                 <UserPlus className="w-4 h-4" />
-                                <span className="text-sm font-medium">Waitlist</span>
+                                <span className="text-sm font-medium">{t('waitlist')}</span>
                             </div>
                             <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-2">
                                 {stats.moderation.waitlist_pending}
@@ -400,7 +405,7 @@ export function AnalyticsDashboard() {
                         <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
                                 <FileText className="w-4 h-4" />
-                                <span className="text-sm font-medium">Posts Pending</span>
+                                <span className="text-sm font-medium">{t('postsPending')}</span>
                             </div>
                             <p className="text-2xl font-bold text-green-700 dark:text-green-300 mt-2">
                                 {stats.posts.pending_approval}
@@ -414,26 +419,26 @@ export function AnalyticsDashboard() {
             <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                 <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-accent" />
-                    Content Distribution
+                    {t('contentDistribution')}
                 </h3>
                 <div className="grid grid-cols-3 gap-6">
                     <div className="text-center">
                         <p className="text-3xl font-bold text-primary dark:text-primary-light">
                             {stats.posts.articles}
                         </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">Articles</p>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('articles')}</p>
                     </div>
                     <div className="text-center">
                         <p className="text-3xl font-bold text-accent dark:text-accent-light">
                             {stats.posts.questions}
                         </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">Questions</p>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('questions')}</p>
                     </div>
                     <div className="text-center">
                         <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                             {stats.posts.discussions}
                         </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">Discussions</p>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('discussions')}</p>
                     </div>
                 </div>
             </div>

@@ -3,10 +3,12 @@ import { Plus, Users, Search } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { GroupCard } from '@/components/GroupCard'
+import { getTranslations } from 'next-intl/server'
 
 export default async function GroupsPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const t = await getTranslations('Groups')
 
     // Fetch user's groups
     const { data: myGroups } = await supabase
@@ -128,10 +130,10 @@ export default async function GroupsPage() {
                 <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-10">
                     <div>
                         <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                            Research Groups
+                            {t('title')}
                         </h1>
                         <p className="text-text-light dark:text-dark-text-muted max-w-2xl">
-                            Collaborate with peers, share private datasets, and coordinate reconstruction efforts in focused working groups.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -140,7 +142,7 @@ export default async function GroupsPage() {
                         className="btn btn-primary flex-shrink-0"
                     >
                         <Plus className="w-4 h-4 mr-2" />
-                        Create New Group
+                        {t('createGroup')}
                     </Link>
                 </div>
 
@@ -150,7 +152,7 @@ export default async function GroupsPage() {
                         <div className="flex items-center gap-2 mb-6">
                             <Users className="w-5 h-5 text-primary dark:text-accent-light" />
                             <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text">
-                                My Groups
+                                {t('myGroups')}
                             </h2>
                         </div>
 
@@ -163,12 +165,11 @@ export default async function GroupsPage() {
                         ) : (
                             <div className="card p-8 text-center bg-gray-50 dark:bg-dark-surface/50 border-dashed">
                                 <p className="text-text-light dark:text-dark-text-muted mb-4">
-                                    You haven&apos;t joined any groups yet.
+                                    {t('noGroupsDesc')}
                                 </p>
                                 <Link href="/groups/create" className="text-primary hover:underline font-medium">
-                                    Create one
+                                    {t('createGroup')}
                                 </Link>
-                                {' '}or browse public groups below.
                             </div>
                         )}
                     </section>
@@ -179,7 +180,7 @@ export default async function GroupsPage() {
                     <div className="flex items-center gap-2 mb-6">
                         <Search className="w-5 h-5 text-primary dark:text-accent-light" />
                         <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text">
-                            Discover Public Groups
+                            {t('discoverGroups')}
                         </h2>
                     </div>
 
@@ -192,7 +193,7 @@ export default async function GroupsPage() {
                     ) : (
                         <div className="card p-8 text-center">
                             <p className="text-text-light dark:text-dark-text-muted">
-                                No public groups found. Be the first to create one!
+                                {t('noGroups')}
                             </p>
                         </div>
                     )}
@@ -201,3 +202,4 @@ export default async function GroupsPage() {
         </div>
     )
 }
+

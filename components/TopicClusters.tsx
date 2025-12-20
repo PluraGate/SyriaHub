@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Maximize2, Minimize2, ZoomIn, ZoomOut, RefreshCw } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface TopicNode {
     id: string
@@ -150,6 +151,8 @@ function ConnectionLines({
 }
 
 export function TopicClusters() {
+    const t = useTranslations('Topics')
+    const tActions = useTranslations('Actions')
     const [data, setData] = useState<TopicClusterData | null>(null)
     const [loading, setLoading] = useState(true)
     const [hoveredNode, setHoveredNode] = useState<string | null>(null)
@@ -236,8 +239,7 @@ export function TopicClusters() {
     if (!data || data.nodes.length === 0) {
         return (
             <div className="card p-6 text-center text-text-light dark:text-dark-text-muted">
-                <p>Not enough data to generate topic clusters.</p>
-                <p className="text-sm mt-1">Topics will appear as more posts are created.</p>
+                <p>{t('noTopics')}</p>
             </div>
         )
     }
@@ -249,12 +251,12 @@ export function TopicClusters() {
         >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-dark-border">
-                <h3 className="font-semibold text-text dark:text-dark-text">Topic Map</h3>
+                <h3 className="font-semibold text-text dark:text-dark-text">{t('topicMap')}</h3>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleZoomOut}
                         className="p-2 rounded hover:bg-gray-100 dark:hover:bg-dark-surface transition-colors btn-press"
-                        aria-label="Zoom out"
+                        aria-label={tActions('zoomOut')}
                     >
                         <ZoomOut className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
                     </button>
@@ -264,7 +266,7 @@ export function TopicClusters() {
                     <button
                         onClick={handleZoomIn}
                         className="p-2 rounded hover:bg-gray-100 dark:hover:bg-dark-surface transition-colors btn-press"
-                        aria-label="Zoom in"
+                        aria-label={tActions('zoomIn')}
                     >
                         <ZoomIn className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
                     </button>
@@ -316,8 +318,7 @@ export function TopicClusters() {
 
                 {/* Legend */}
                 <div className="absolute bottom-4 left-4 text-xs text-text-light dark:text-dark-text-muted bg-white/80 dark:bg-dark-surface/80 backdrop-blur-sm p-2 rounded">
-                    <p>Click a topic to explore</p>
-                    <p className="opacity-70">Larger = more posts</p>
+                    <p className="opacity-70">{t('largerMorePosts')}</p>
                 </div>
             </div>
         </div>

@@ -26,6 +26,7 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { ThreadView } from './ThreadView'
 import { NewThreadDialog } from './NewThreadDialog'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface CoordinationThread {
     id: string
@@ -73,11 +74,11 @@ const priorityColors: Record<string, string> = {
 }
 
 const triggerEventLabels: Record<string, string> = {
-    manual: 'Manual',
-    auto_report: 'Report',
-    auto_appeal: 'Appeal',
-    auto_flag: 'Flagged',
-    auto_moderation: 'Moderation'
+    manual: 'manual',
+    auto_report: 'auto_report',
+    auto_appeal: 'auto_appeal',
+    auto_flag: 'auto_flag',
+    auto_moderation: 'auto_moderation'
 }
 
 export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
@@ -99,6 +100,8 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
 
     const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
+    const t = useTranslations('Coordination')
+    const tCommon = useTranslations('Common')
 
     const loadThreads = useCallback(async () => {
         setLoading(true)
@@ -116,7 +119,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to load threads')
+                throw new Error(data.error || t('loadError'))
             }
 
             setThreads(data.threads || [])
@@ -127,7 +130,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
         } finally {
             setLoading(false)
         }
-    }, [page, objectTypeFilter, stateFilter, priorityFilter, includeArchived, showToast])
+    }, [page, objectTypeFilter, stateFilter, priorityFilter, includeArchived, showToast, t])
 
     useEffect(() => {
         loadThreads()
@@ -136,7 +139,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
     const handleThreadCreated = () => {
         setShowNewThreadDialog(false)
         loadThreads()
-        showToast('Thread created successfully', 'success')
+        showToast(t('threadCreatedSuccess'), 'success')
     }
 
     if (selectedThreadId) {
@@ -159,38 +162,38 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                 <div>
                     <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
                         <MessagesSquare className="w-5 h-5 text-primary" />
-                        Coordination Center
+                        {t('coordinationCenter')}
                     </h2>
                     <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
-                        Structured decision-making for moderation and governance
+                        {t('description')}
                     </p>
                 </div>
                 <Button onClick={() => setShowNewThreadDialog(true)}>
                     <Plus className="w-4 h-4 mr-2" />
-                    New Thread
+                    {t('newThread')}
                 </Button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">Total Threads</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('totalThreads')}</p>
                     <p className="text-2xl font-bold text-text dark:text-dark-text">{total}</p>
                 </div>
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">Under Review</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('underReview')}</p>
                     <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                         {threads.filter(t => t.object_state === 'UNDER_REVIEW').length}
                     </p>
                 </div>
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">Urgent</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('urgent')}</p>
                     <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                         {threads.filter(t => t.priority === 'urgent').length}
                     </p>
                 </div>
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">Contested</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted">{t('contested')}</p>
                     <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                         {threads.filter(t => t.object_state === 'CONTESTED').length}
                     </p>
@@ -204,40 +207,40 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                 <select
                     value={objectTypeFilter || ''}
                     onChange={(e) => setObjectTypeFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                    <option value="">All Types</option>
-                    <option value="post">Posts</option>
-                    <option value="user">Users</option>
-                    <option value="comment">Comments</option>
-                    <option value="report">Reports</option>
-                    <option value="appeal">Appeals</option>
-                    <option value="event">Events</option>
-                    <option value="resource">Resources</option>
+                    <option value="">{t('allTypes')}</option>
+                    <option value="post">{t('types.post')}</option>
+                    <option value="user">{t('types.user')}</option>
+                    <option value="comment">{t('types.comment')}</option>
+                    <option value="report">{t('types.report')}</option>
+                    <option value="appeal">{t('types.appeal')}</option>
+                    <option value="event">{t('types.event')}</option>
+                    <option value="resource">{t('types.resource')}</option>
                 </select>
 
                 <select
                     value={stateFilter || ''}
                     onChange={(e) => setStateFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                    <option value="">All States</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="UNDER_REVIEW">Under Review</option>
-                    <option value="CONTESTED">Contested</option>
-                    <option value="REVOKED">Revoked</option>
+                    <option value="">{t('allStates')}</option>
+                    <option value="ACTIVE">{t('active')}</option>
+                    <option value="UNDER_REVIEW">{t('underReview')}</option>
+                    <option value="CONTESTED">{t('contested')}</option>
+                    <option value="REVOKED">{t('revoked')}</option>
                 </select>
 
                 <select
                     value={priorityFilter || ''}
                     onChange={(e) => setPriorityFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                    <option value="">All Priorities</option>
-                    <option value="low">Low</option>
-                    <option value="normal">Normal</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
+                    <option value="">{t('allPriorities')}</option>
+                    <option value="low">{t('low')}</option>
+                    <option value="normal">{t('normal')}</option>
+                    <option value="high">{t('high')}</option>
+                    <option value="urgent">{t('urgent')}</option>
                 </select>
 
                 <label className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted cursor-pointer">
@@ -247,7 +250,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                         onChange={(e) => setIncludeArchived(e.target.checked)}
                         className="rounded border-gray-300 dark:border-dark-border"
                     />
-                    Include Archived
+                    {t('includeArchived')}
                 </label>
             </div>
 
@@ -260,8 +263,8 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                 ) : threads.length === 0 ? (
                     <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
                         <MessagesSquare className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                        <p>No coordination threads found</p>
-                        <p className="text-sm mt-1">Create a new thread or adjust your filters</p>
+                        <p>{t('noThreads')}</p>
+                        <p className="text-sm mt-1">{t('createOrFilter')}</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-gray-100 dark:divide-dark-border">
@@ -281,17 +284,21 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                                                     'px-2 py-0.5 rounded-full text-xs font-medium',
                                                     stateColors[thread.object_state]
                                                 )}>
-                                                    {thread.object_state.replace('_', ' ')}
+                                                    {thread.object_state === 'UNDER_REVIEW' ? t('underReview') :
+                                                        thread.object_state === 'CONTESTED' ? t('contested') :
+                                                            thread.object_state === 'REVOKED' ? t('revoked') :
+                                                                thread.object_state === 'ACTIVE' ? t('active') :
+                                                                    thread.object_state}
                                                 </span>
                                                 <span className={cn(
                                                     'px-2 py-0.5 rounded-full text-xs font-medium capitalize',
                                                     priorityColors[thread.priority]
                                                 )}>
-                                                    {thread.priority}
+                                                    {t(thread.priority as any)}
                                                 </span>
                                                 {thread.trigger_event !== 'manual' && (
                                                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                                        {triggerEventLabels[thread.trigger_event]}
+                                                        {t(`triggers.${thread.trigger_event}` as any)}
                                                     </span>
                                                 )}
                                                 {thread.archived_at && (
@@ -302,7 +309,10 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                                                 {thread.title}
                                             </h3>
                                             <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
-                                                Created by {thread.created_by_name || 'System'} • {thread.message_count} messages
+                                                {t('createdWithMessages', {
+                                                    name: thread.created_by_name || t('system'),
+                                                    count: thread.message_count
+                                                })}
                                             </p>
                                         </div>
                                         <div className="text-right flex-shrink-0">
@@ -323,7 +333,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
             {totalPages > 1 && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-text-light dark:text-dark-text-muted">
-                        Page {page} of {totalPages}
+                        {tCommon('pagination', { current: page, total: totalPages })}
                     </p>
                     <div className="flex items-center gap-2">
                         <Button
@@ -333,7 +343,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                             disabled={page === 1 || loading}
                         >
                             <ChevronLeft className="w-4 h-4" />
-                            Previous
+                            {tCommon('previous')}
                         </Button>
                         <Button
                             variant="outline"
@@ -341,12 +351,13 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages || loading}
                         >
-                            Next
+                            {tCommon('next')}
                             <ChevronRight className="w-4 h-4" />
                         </Button>
                     </div>
                 </div>
             )}
+
 
             {/* New Thread Dialog */}
             {showNewThreadDialog && (
