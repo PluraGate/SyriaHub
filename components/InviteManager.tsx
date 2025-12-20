@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 type InviteTargetRole = 'member' | 'researcher'
 
@@ -42,6 +43,7 @@ export function InviteManager() {
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<InviteTargetRole>('researcher')
     const { showToast } = useToast()
+    const t = useTranslations('Settings.invitesSection')
 
     const fetchData = async () => {
         const supabase = createClient()
@@ -86,7 +88,7 @@ export function InviteManager() {
                 throw new Error(data.error || 'Failed to create invite')
             }
 
-            showToast(`${targetRole === 'researcher' ? 'Researcher' : 'Member'} invite created!`, 'success')
+            showToast(targetRole === 'researcher' ? t('researcherInviteCreated') : t('memberInviteCreated'), 'success')
             fetchData()
         } catch (error) {
             showToast(error instanceof Error ? error.message : 'Failed to create invite', 'error')
@@ -99,14 +101,14 @@ export function InviteManager() {
         const link = `${window.location.origin}/auth/signup?code=${code}`
         await navigator.clipboard.writeText(link)
         setCopiedId(id)
-        showToast('Invite link copied!', 'success')
+        showToast(t('inviteLinkCopied'), 'success')
         setTimeout(() => setCopiedId(null), 2000)
     }
 
     const copyCode = async (code: string, id: string) => {
         await navigator.clipboard.writeText(code)
         setCopiedId(id)
-        showToast('Code copied!', 'success')
+        showToast(t('codeCopied'), 'success')
         setTimeout(() => setCopiedId(null), 2000)
     }
 
@@ -131,11 +133,11 @@ export function InviteManager() {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <Ticket className="w-5 h-5 text-primary" />
-                        <h3 className="font-semibold text-text dark:text-dark-text">Your Invites</h3>
+                        <h3 className="font-semibold text-text dark:text-dark-text">{t('yourInvites')}</h3>
                     </div>
                     {stats && (
                         <span className="text-sm text-text-muted dark:text-dark-text-muted">
-                            {stats.people_invited} people invited
+                            {t('peopleInvited', { count: stats.people_invited })}
                         </span>
                     )}
                 </div>
@@ -152,7 +154,7 @@ export function InviteManager() {
                         )}
                     >
                         <GraduationCap className="w-4 h-4" />
-                        <span>Researchers</span>
+                        <span>{t('researchers')}</span>
                         {stats && (
                             <span className={cn(
                                 "px-1.5 py-0.5 rounded text-xs font-bold",
@@ -174,7 +176,7 @@ export function InviteManager() {
                         )}
                     >
                         <User className="w-4 h-4" />
-                        <span>Members</span>
+                        <span>{t('members')}</span>
                         {stats && (
                             <span className={cn(
                                 "px-1.5 py-0.5 rounded text-xs font-bold",
@@ -193,16 +195,16 @@ export function InviteManager() {
             {currentStats && (
                 <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-dark-bg">
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.used}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">Used</p>
+                        <p className="text-2xl font-bold text-primary">{currentStats.remaining}</p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('remaining')}</p>
                     </div>
                     <div className="text-center">
                         <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.active}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">Active</p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('active')}</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">{currentStats.remaining}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">Remaining</p>
+                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.used}</p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('used')}</p>
                     </div>
                 </div>
             )}
@@ -219,7 +221,7 @@ export function InviteManager() {
                     ) : (
                         <Plus className="w-4 h-4" />
                     )}
-                    Create {activeTab === 'researcher' ? 'Researcher' : 'Member'} Invite
+                    {activeTab === 'researcher' ? t('createResearcherInvite') : t('createMemberInvite')}
                 </Button>
             </div>
 
@@ -229,10 +231,10 @@ export function InviteManager() {
                     <div className="p-8 text-center">
                         <Users className="w-8 h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
                         <p className="text-text-light dark:text-dark-text-muted">
-                            No {activeTab} invites yet
+                            {activeTab === 'researcher' ? t('noResearcherInvites') : t('noMemberInvites')}
                         </p>
                         <p className="text-sm text-text-light/70 dark:text-dark-text-muted/70 mt-1">
-                            Create an invite to share with {activeTab === 'researcher' ? 'researchers' : 'community members'}
+                            {activeTab === 'researcher' ? t('createInviteForResearchers') : t('createInviteForMembers')}
                         </p>
                     </div>
                 ) : (
@@ -262,10 +264,10 @@ export function InviteManager() {
                                         <Clock className="w-3 h-3" />
                                         {new Date(invite.created_at).toLocaleDateString()}
                                         {invite.current_uses > 0 && (
-                                            <span className="text-green-600">• Used</span>
+                                            <span className="text-green-600">• {t('used')}</span>
                                         )}
                                         {!invite.is_active && (
-                                            <span className="text-red-500">• Expired</span>
+                                            <span className="text-red-500">• {t('expired')}</span>
                                         )}
                                     </p>
                                 </div>
@@ -284,7 +286,7 @@ export function InviteManager() {
                                         ) : (
                                             <Copy className="w-4 h-4" />
                                         )}
-                                        Code
+                                        {t('code')}
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -297,7 +299,7 @@ export function InviteManager() {
                                         ) : (
                                             <Send className="w-4 h-4" />
                                         )}
-                                        Share
+                                        {t('share')}
                                     </Button>
                                 </div>
                             )}
@@ -309,7 +311,7 @@ export function InviteManager() {
             {/* Footer hint */}
             <div className="p-4 bg-gray-50 dark:bg-dark-bg border-t border-gray-100 dark:border-dark-border">
                 <p className="text-xs text-text-light dark:text-dark-text-muted text-center">
-                    Each invite can be used once and expires after 30 days
+                    {t('expiresAfter')}
                 </p>
             </div>
         </div>

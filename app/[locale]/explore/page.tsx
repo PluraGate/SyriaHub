@@ -14,6 +14,7 @@ import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
 import { SearchBar } from '@/components/SearchBar'
 import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { Post } from '@/types'
 
@@ -38,6 +39,9 @@ function ExplorePageContent() {
   const [sortBy, setSortBy] = useState<SortOption>('recent')
   const [allTags, setAllTags] = useState<string[]>([])
   const supabase = createClient()
+  const t = useTranslations('Explore')
+  const tFeed = useTranslations('Feed')
+  const tCategories = useTranslations('Categories')
 
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
   const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
@@ -189,14 +193,14 @@ function ExplorePageContent() {
               <div className="flex items-center gap-2 mb-4">
                 <Compass className="w-5 h-5 text-white/80" />
                 <span className="text-sm font-semibold uppercase tracking-wider text-white/80">
-                  Discover
+                  {t('discover')}
                 </span>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
-                Explore Research
+                {t('exploreResearch')}
               </h1>
               <p className="text-xl text-white/80 mb-8">
-                Discover groundbreaking research by topic, discipline, or researcher
+                {t('discoverDescription')}
               </p>
 
               {/* Search */}
@@ -218,7 +222,7 @@ function ExplorePageContent() {
                   : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                   }`}
               >
-                All Topics
+                {tFeed('allTopics')}
               </button>
               {disciplines.map((discipline) => (
                 <button
@@ -229,7 +233,7 @@ function ExplorePageContent() {
                     : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                     }`}
                 >
-                  {discipline}
+                  {tCategories(discipline)}
                 </button>
               ))}
             </div>
@@ -268,8 +272,8 @@ function ExplorePageContent() {
                       <TrendingUp className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">Trending Now</h2>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">Hot research this week</p>
+                      <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('trendingNow')}</h2>
+                      <p className="text-sm text-text-light dark:text-dark-text-muted">{t('hotResearch')}</p>
                     </div>
                   </div>
 
@@ -312,7 +316,7 @@ function ExplorePageContent() {
                             <Calendar className="w-5 h-5 text-accent" />
                           </div>
                           <div>
-                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">Upcoming Events</h2>
+                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('upcomingEvents')}</h2>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">Don't miss out</p>
                           </div>
                         </div>
@@ -437,10 +441,10 @@ function ExplorePageContent() {
             </>
           )}
         </div>
-      </main>
+      </main >
 
       <Footer />
-    </div>
+    </div >
   )
 }
 

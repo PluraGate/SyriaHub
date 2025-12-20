@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, HelpCircle, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface RsvpButtonProps {
     eventId: string
@@ -18,6 +19,7 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
     const [loading, setLoading] = useState(false)
     const supabase = createClient()
     const { showToast } = useToast()
+    const t = useTranslations('RSVP')
 
     const handleRsvp = async (newStatus: 'going' | 'maybe' | 'not_going') => {
         if (loading) return
@@ -85,7 +87,7 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                     "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'going' && "scale-110"
                 )} />
-                <span className="font-medium">Going</span>
+                <span className="font-medium">{t('going')}</span>
                 {status === 'going' && (
                     <span className="absolute inset-0 border-2 border-emerald-500/50 rounded-md pointer-events-none" />
                 )}
@@ -107,7 +109,7 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                     "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'maybe' && "scale-110"
                 )} />
-                <span className="font-medium">Maybe</span>
+                <span className="font-medium">{t('maybe')}</span>
                 {status === 'maybe' && (
                     <span className="absolute inset-0 border-2 border-amber-500/50 rounded-md pointer-events-none" />
                 )}
@@ -129,7 +131,7 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
                     "w-4 h-4 mr-1.5 flex-shrink-0 transition-transform",
                     status === 'not_going' && "scale-110"
                 )} />
-                <span className="font-medium">Can&apos;t Go</span>
+                <span className="font-medium">{t('cantGo')}</span>
                 {status === 'not_going' && (
                     <span className="absolute inset-0 border-2 border-rose-500/50 rounded-md pointer-events-none" />
                 )}

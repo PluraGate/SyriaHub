@@ -16,6 +16,7 @@ import {
     Zap
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface QuestionAdvisorProps {
     userId?: string
@@ -46,6 +47,8 @@ interface AnalysisResult {
 }
 
 export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
+    const t = useTranslations('ResearchSearch')
+    const tCommon = useTranslations('Common')
     const [question, setQuestion] = useState('')
     const [context, setContext] = useState('')
     const [analyzing, setAnalyzing] = useState(false)
@@ -125,7 +128,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                 <div className="flex items-center justify-between mb-2">
                     <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text flex items-center gap-2">
                         <Sparkles className="w-6 h-6 text-amber-500" />
-                        Question Advisor
+                        {t('questionAdvisor')}
                     </h1>
                     <div className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted">
                         <Zap className="w-4 h-4" />
@@ -142,7 +145,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                 <div className="space-y-6">
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                            Research Question
+                            {t('researchQuestion')}
                         </label>
                         <textarea
                             value={question}
@@ -153,7 +156,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                         />
 
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-2 mt-4">
-                            Context (Optional)
+                            {t('contextOptional')}
                         </label>
                         <textarea
                             value={context}
@@ -176,7 +179,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                             ) : (
                                 <>
                                     <Send className="w-4 h-4 mr-2" />
-                                    Analyze Question
+                                    {t('analyzeQuestion')}
                                 </>
                             )}
                         </button>
@@ -188,12 +191,12 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                             {/* Scores Overview */}
                             <div className="grid grid-cols-2 gap-4">
                                 <ScoreCard
-                                    label="Clarity Score"
+                                    label={t('clarityScore')}
                                     score={result.clarity_score}
                                     icon={CheckCircle}
                                 />
                                 <ScoreCard
-                                    label="Measurability"
+                                    label={t('measurability')}
                                     score={result.measurability.score}
                                     icon={Target}
                                 />

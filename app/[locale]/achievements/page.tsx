@@ -103,6 +103,7 @@ export default function AchievementsPage() {
     const [checking, setChecking] = useState(false)
     const [activeTab, setActiveTab] = useState<'unlocked' | 'available'>('unlocked')
     const supabase = createClient()
+    const t = useTranslations('Gamification')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -164,10 +165,10 @@ export default function AchievementsPage() {
                     <div className="text-center py-16">
                         <Lock className="w-16 h-16 mx-auto text-text-light dark:text-dark-text-muted mb-4" />
                         <h1 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
-                            Sign in to view achievements
+                            {t('signInToView')}
                         </h1>
                         <p className="text-text-light dark:text-dark-text-muted">
-                            Track your progress and unlock badges by contributing to the community.
+                            {t('signInDescription')}
                         </p>
                     </div>
                 </main>
@@ -186,10 +187,10 @@ export default function AchievementsPage() {
                     <div>
                         <h1 className="text-3xl font-bold text-text dark:text-dark-text flex items-center gap-3">
                             <Trophy className="w-8 h-8 text-primary" />
-                            Achievements
+                            {t('pageTitle')}
                         </h1>
                         <p className="text-text-light dark:text-dark-text-muted mt-1">
-                            Track your progress and unlock badges
+                            {t('pageSubtitle')}
                         </p>
                     </div>
                     <button
@@ -202,7 +203,7 @@ export default function AchievementsPage() {
                         ) : (
                             <Zap className="w-4 h-4" />
                         )}
-                        Check for New
+                        {t('checkForNew')}
                     </button>
                 </div>
 
@@ -215,12 +216,12 @@ export default function AchievementsPage() {
                         {achievements && (
                             <div className="mt-6 p-6 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                                 <h3 className="font-semibold text-text dark:text-dark-text mb-4">
-                                    Achievement Progress
+                                    {t('achievementProgress')}
                                 </h3>
                                 <div className="space-y-4">
                                     <div>
                                         <div className="flex justify-between text-sm mb-1">
-                                            <span className="text-text-light dark:text-dark-text-muted">Completion</span>
+                                            <span className="text-text-light dark:text-dark-text-muted">{t('completion')}</span>
                                             <span className="font-medium text-text dark:text-dark-text">
                                                 {achievements.unlocked_count}/{achievements.total_count}
                                             </span>
@@ -235,13 +236,13 @@ export default function AchievementsPage() {
                                     <div className="grid grid-cols-2 gap-4 pt-2">
                                         <div className="text-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg">
                                             <p className="text-2xl font-bold text-primary">{achievements.unlocked_count}</p>
-                                            <p className="text-xs text-text-light dark:text-dark-text-muted">Unlocked</p>
+                                            <p className="text-xs text-text-light dark:text-dark-text-muted">{t('unlocked')}</p>
                                         </div>
                                         <div className="text-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg">
                                             <p className="text-2xl font-bold text-text dark:text-dark-text">
                                                 {achievements.total_count - achievements.unlocked_count}
                                             </p>
-                                            <p className="text-xs text-text-light dark:text-dark-text-muted">Remaining</p>
+                                            <p className="text-xs text-text-light dark:text-dark-text-muted">{t('remaining')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +264,7 @@ export default function AchievementsPage() {
                                 )}
                             >
                                 <CheckCircle2 className="w-4 h-4 inline mr-2" />
-                                Unlocked ({achievements?.unlocked?.length || 0})
+                                {t('unlocked')} ({achievements?.unlocked?.length || 0})
                             </button>
                             <button
                                 onClick={() => setActiveTab('available')}
@@ -275,7 +276,7 @@ export default function AchievementsPage() {
                                 )}
                             >
                                 <Lock className="w-4 h-4 inline mr-2" />
-                                Available ({achievements?.available?.length || 0})
+                                {t('available')} ({achievements?.available?.length || 0})
                             </button>
                         </div>
 
@@ -372,10 +373,10 @@ export default function AchievementsPage() {
                                 <div className="col-span-2 text-center py-12">
                                     <Trophy className="w-16 h-16 mx-auto text-text-light dark:text-dark-text-muted mb-4 opacity-50" />
                                     <h3 className="text-lg font-medium text-text dark:text-dark-text mb-2">
-                                        No achievements yet
+                                        {t('noAchievements')}
                                     </h3>
                                     <p className="text-text-light dark:text-dark-text-muted">
-                                        Start contributing to unlock your first badge!
+                                        {t('noAchievementsDesc')}
                                     </p>
                                 </div>
                             )}

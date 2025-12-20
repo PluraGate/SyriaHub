@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/components/ui/toast'
 import { Shield, ShieldCheck, Users, AlertTriangle, Loader2, Check, ArrowRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface User {
     id: string
@@ -29,33 +30,37 @@ interface RolePromotionDialogProps {
     onSuccess: () => void
 }
 
-const roles = [
-    {
-        value: 'researcher',
-        label: 'Researcher',
-        description: 'Standard user with posting and commenting privileges',
-        icon: Users,
-    },
-    {
-        value: 'moderator',
-        label: 'Moderator',
-        description: 'Can manage reports, approve content, and moderate discussions',
-        icon: Shield,
-    },
-    {
-        value: 'admin',
-        label: 'Admin',
-        description: 'Full platform access including user management and system settings',
-        icon: ShieldCheck,
-    }
-]
-
 export function RolePromotionDialog({
     open,
     onOpenChange,
     user,
     onSuccess
 }: RolePromotionDialogProps) {
+    const t = useTranslations('Promotion')
+    const tCommon = useTranslations('Common')
+    const tUser = useTranslations('UserManagement.roles')
+
+    const roles = useMemo(() => [
+        {
+            value: 'researcher',
+            label: tUser('researcher'),
+            description: t('researcherDesc'),
+            icon: Users,
+        },
+        {
+            value: 'moderator',
+            label: tUser('moderator'),
+            description: t('moderatorDesc'),
+            icon: Shield,
+        },
+        {
+            value: 'admin',
+            label: tUser('admin'),
+            description: t('adminDesc'),
+            icon: ShieldCheck,
+        }
+    ], [t, tUser])
+
     const [selectedRole, setSelectedRole] = useState(user.role)
     const [reason, setReason] = useState('')
     const [loading, setLoading] = useState(false)
@@ -82,7 +87,7 @@ export function RolePromotionDialog({
         }
 
         if (!reason.trim()) {
-            setError('Please provide a reason for this role change')
+            setError(t('reasonLabel')) // Or a more specific error key if available
             return
         }
 
@@ -102,16 +107,16 @@ export function RolePromotionDialog({
             }
 
             if (!data.success) {
-                setError(data.error || 'Failed to update role')
+                setError(data.error || t('processError'))
                 return
             }
 
-            showToast(`Successfully changed ${user.name || user.email}'s role to ${selectedRole}`, 'success')
+            showToast(t('requestProcessed', { decision: tUser(selectedRole) }), 'success')
             onSuccess()
             onOpenChange(false)
             setReason('')
         } catch (err) {
-            setError('An unexpected error occurred')
+            setError(tCommon('errors.unknown'))
         } finally {
             setLoading(false)
         }
@@ -131,10 +136,10 @@ export function RolePromotionDialog({
                         <div className="p-2 rounded-lg bg-primary/10 dark:bg-primary/20">
                             <Shield className="w-5 h-5 text-primary dark:text-primary-light" />
                         </div>
-                        Change User Role
+                        {t('changeRoleTitle')}
                     </DialogTitle>
                     <DialogDescription className="text-base text-text-light dark:text-dark-text-muted">
-                        Update the role for <span className="font-semibold text-text dark:text-dark-text">{user.name || 'Anonymous User'}</span>
+                        {t('changeRoleSubtitle', { name: user.name || tCommon('anonymous') })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -160,7 +165,7 @@ export function RolePromotionDialog({
 
                     {/* Role Selection */}
                     <div className="space-y-3">
-                        <Label className="text-sm font-semibold text-text dark:text-dark-text">Select New Role</Label>
+                        <Label className="text-sm font-semibold text-text dark:text-dark-text">{t('selectNewRole')}</Label>
                         <div className="space-y-2">
                             {roles.map((role) => {
                                 const Icon = role.icon
@@ -183,12 +188,12 @@ export function RolePromotionDialog({
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className={`p-2.5 rounded-xl transition-all ${isSelected
-                                                    ? 'bg-primary/10 dark:bg-primary/20'
-                                                    : 'bg-gray-100 dark:bg-dark-border'
+                                                ? 'bg-primary/10 dark:bg-primary/20'
+                                                : 'bg-gray-100 dark:bg-dark-border'
                                                 }`}>
                                                 <Icon className={`w-5 h-5 ${isSelected
-                                                        ? 'text-primary dark:text-primary-light'
-                                                        : 'text-text-light dark:text-dark-text-muted'
+                                                    ? 'text-primary dark:text-primary-light'
+                                                    : 'text-text-light dark:text-dark-text-muted'
                                                     }`} />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -199,7 +204,7 @@ export function RolePromotionDialog({
                                                     {isCurrent && (
                                                         <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light font-medium">
                                                             <Check className="w-3 h-3" />
-                                                            Current
+                                                            {tCommon('current')}
                                                         </span>
                                                     )}
                                                 </div>
@@ -228,9 +233,9 @@ export function RolePromotionDialog({
                                 <AlertTriangle className="w-4 h-4 text-accent dark:text-accent-light" />
                             </div>
                             <div>
-                                <p className="font-semibold text-accent dark:text-accent-light text-sm">Admin privileges are significant</p>
+                                <p className="font-semibold text-accent dark:text-accent-light text-sm">{t('adminWarningTitle')}</p>
                                 <p className="mt-1 text-sm text-text-light dark:text-dark-text-muted">
-                                    Admins can manage all users, content, and system settings. This action will be logged.
+                                    {t('adminWarningDesc')}
                                 </p>
                             </div>
                         </div>
@@ -243,9 +248,9 @@ export function RolePromotionDialog({
                                 <AlertTriangle className="w-4 h-4 text-accent dark:text-accent-light" />
                             </div>
                             <div>
-                                <p className="font-semibold text-accent dark:text-accent-light text-sm">This is a demotion</p>
+                                <p className="font-semibold text-accent dark:text-accent-light text-sm">{t('demotionWarningTitle')}</p>
                                 <p className="mt-1 text-sm text-text-light dark:text-dark-text-muted">
-                                    The user will lose their current privileges. Make sure this is intentional.
+                                    {t('demotionWarningDesc')}
                                 </p>
                             </div>
                         </div>
@@ -255,7 +260,7 @@ export function RolePromotionDialog({
                     {hasChange && (
                         <div className="space-y-2">
                             <Label htmlFor="reason" className="text-sm font-semibold text-text dark:text-dark-text">
-                                Reason for Change <span className="text-accent">*</span>
+                                {t('reasonLabel')} <span className="text-accent">*</span>
                             </Label>
                             <textarea
                                 id="reason"
@@ -264,13 +269,13 @@ export function RolePromotionDialog({
                                     setReason(e.target.value)
                                     setError(null)
                                 }}
-                                placeholder="Explain why this role change is being made..."
+                                placeholder={t('reasonPlaceholder')}
                                 rows={3}
                                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light dark:placeholder:text-dark-text-muted resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                             />
                             <p className="text-xs text-text-light dark:text-dark-text-muted flex items-center gap-1">
                                 <Shield className="w-3 h-3" />
-                                This reason will be recorded in the audit log
+                                {t('auditLogNote')}
                             </p>
                         </div>
                     )}
@@ -290,7 +295,7 @@ export function RolePromotionDialog({
                             disabled={loading}
                             className="flex-1 sm:flex-none"
                         >
-                            Cancel
+                            {tCommon('cancel')}
                         </Button>
                         <Button
                             type="submit"
@@ -299,12 +304,12 @@ export function RolePromotionDialog({
                         >
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                             {!hasChange
-                                ? 'No Change'
+                                ? t('noChange')
                                 : isPromotion
-                                    ? 'Promote User'
+                                    ? t('promoteAction')
                                     : isDemotion
-                                        ? 'Demote User'
-                                        : 'Update Role'}
+                                        ? t('demoteAction')
+                                        : t('updateAction')}
                         </Button>
                     </DialogFooter>
                 </form>

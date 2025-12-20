@@ -12,6 +12,7 @@ import { Pencil, Loader2, User, Building2, MapPin, Globe, Sparkles, ImageIcon } 
 import { useRouter } from 'next/navigation'
 import { ImageUpload } from '@/components/ImageUpload'
 import { CoverImageUpload } from '@/components/CoverImageUpload'
+import { useTranslations } from 'next-intl'
 
 interface Profile {
     id: string
@@ -46,6 +47,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
     const supabase = createClient()
     const { showToast } = useToast()
     const router = useRouter()
+    const t = useTranslations('Profile')
+    const tCommon = useTranslations('Common')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -129,7 +132,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                     <Pencil className="w-4 h-4" />
-                    Edit Profile
+                    {t('editProfile')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[540px] p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
@@ -157,8 +160,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     {/* Header text overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
                         <DialogHeader>
-                            <DialogTitle className="text-white text-xl font-bold">Edit Profile</DialogTitle>
-                            <p className="text-white/70 text-sm">Update your profile information</p>
+                            <DialogTitle className="text-white text-xl font-bold">{t('editProfile')}</DialogTitle>
+                            <p className="text-white/70 text-sm">{t('updateInfo')}</p>
                         </DialogHeader>
                     </div>
                 </div>
@@ -178,7 +181,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
                             <User className="w-4 h-4 text-gray-400" />
-                            Display Name
+                            {t('displayName')}
                         </Label>
                         <Input
                             id="name"
@@ -193,7 +196,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     {/* Bio field */}
                     <div className="space-y-2">
                         <Label htmlFor="bio" className="text-sm font-semibold">
-                            Bio
+                            {t('bio')}
                         </Label>
                         <Textarea
                             id="bio"
@@ -212,7 +215,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                         <div className="space-y-2">
                             <Label htmlFor="affiliation" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
                                 <Building2 className="w-4 h-4 text-gray-400" />
-                                Affiliation
+                                {t('affiliation')}
                             </Label>
                             <Input
                                 id="affiliation"
@@ -224,8 +227,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                         <div className="space-y-2">
                             <Label htmlFor="location" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
                                 <MapPin className="w-4 h-4 text-gray-400" />
-                                Location
-                                <span className="text-xs text-gray-400 font-normal">(optional)</span>
+                                {t('location')}
+                                <span className="text-xs text-gray-400 font-normal">({tCommon('optional')})</span>
                             </Label>
                             <Input
                                 id="location"
@@ -240,7 +243,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     <div className="space-y-2">
                         <Label htmlFor="website" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
                             <Globe className="w-4 h-4 text-gray-400" />
-                            Website
+                            {t('website')}
                         </Label>
                         <Input
                             id="website"
@@ -255,7 +258,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     <div className="space-y-2">
                         <Label htmlFor="interests" className="text-sm font-medium flex items-center gap-2 text-text dark:text-dark-text">
                             <Sparkles className="w-4 h-4 text-gray-400" />
-                            Research Interests
+                            {t('researchInterests')}
                         </Label>
                         <Input
                             id="interests"
@@ -285,7 +288,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                             onClick={() => setOpen(false)}
                             className="text-text-light dark:text-dark-text-muted"
                         >
-                            Cancel
+                            {tCommon('cancel')}
                         </Button>
                         <Button type="submit" disabled={loading} className="min-w-[120px]">
                             {loading ? (

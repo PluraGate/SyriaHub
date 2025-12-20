@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { getSessionContext, resetSessionContext, getTrailSummary, ResearchTrailItem } from '@/lib/sessionContext'
 import { History, RotateCcw, ChevronRight, Tag, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 
 export function SessionContextBar() {
+    const t = useTranslations('Session')
     const [trail, setTrail] = useState<ResearchTrailItem[]>([])
     const [summary, setSummary] = useState<{ totalViewed: number; disciplines: string[]; sessionDuration: string }>({
         totalViewed: 0,
@@ -43,7 +45,7 @@ export function SessionContextBar() {
                 <div className="flex items-center gap-2">
                     <History className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium text-text dark:text-dark-text">
-                        Research Trail
+                        {t('researchTrail')}
                     </span>
                     <span className="text-xs text-text-light dark:text-dark-text-muted">
                         {summary.totalViewed} viewed • {summary.sessionDuration}
@@ -60,7 +62,7 @@ export function SessionContextBar() {
                         className="h-7 px-2 text-xs text-text-light hover:text-accent"
                     >
                         <RotateCcw className="w-3 h-3 mr-1" />
-                        Reset Context
+                        {t('resetContext')}
                     </Button>
                     <ChevronRight className={`w-4 h-4 text-text-light transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                 </div>
@@ -74,7 +76,7 @@ export function SessionContextBar() {
                         <div className="px-4 py-2 border-b border-gray-100 dark:border-dark-border">
                             <div className="flex items-center gap-1 flex-wrap">
                                 <Tag className="w-3 h-3 text-text-light" />
-                                <span className="text-xs text-text-light dark:text-dark-text-muted mr-1">Topics explored:</span>
+                                <span className="text-xs text-text-light dark:text-dark-text-muted mr-1">{t('topicsExplored')}</span>
                                 {summary.disciplines.map(d => (
                                     <span key={d} className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-dark-border rounded-full text-text-light dark:text-dark-text-muted">
                                         {d}
@@ -111,7 +113,7 @@ export function SessionContextBar() {
                     {/* Footer Note */}
                     <div className="px-4 py-2 bg-gray-50 dark:bg-dark-bg/50 border-t border-gray-100 dark:border-dark-border">
                         <p className="text-[10px] text-text-light dark:text-dark-text-muted text-center">
-                            Session context is bounded to this tab. No long-term tracking.
+                            {t('privacyNote')}
                         </p>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface PromotionRequest {
     id: string
@@ -22,6 +23,8 @@ interface RolePromotionRequestProps {
 }
 
 export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
+    const t = useTranslations('Promotion')
+    const tCommon = useTranslations('Common')
     const [requests, setRequests] = useState<PromotionRequest[]>([])
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
@@ -98,7 +101,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
             <div className="p-4 border-b border-gray-100 dark:border-dark-border">
                 <div className="flex items-center gap-2">
                     <GraduationCap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">Become a Researcher</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('becomeResearcher')}</h3>
                 </div>
                 <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
                     Researchers can create articles, ask questions, and access the Research Lab.
@@ -112,7 +115,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                     <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                         <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-medium text-amber-800 dark:text-amber-200">Request Pending</p>
+                            <p className="font-medium text-amber-800 dark:text-amber-200">{t('requestPending')}</p>
                             <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
                                 Your request is being reviewed by the admin team. You'll be notified when there's an update.
                             </p>
@@ -168,7 +171,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                                 className="w-full gap-2"
                             >
                                 <GraduationCap className="w-4 h-4" />
-                                Request Researcher Access
+                                {t('requestAccess')}
                             </Button>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
@@ -197,7 +200,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                                         onClick={() => setShowForm(false)}
                                         className="flex-1"
                                     >
-                                        Cancel
+                                        {tCommon('cancel')}
                                     </Button>
                                     <Button
                                         type="submit"
@@ -209,7 +212,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                                         ) : (
                                             <Send className="w-4 h-4" />
                                         )}
-                                        Submit Request
+                                        {t('submitRequest')}
                                     </Button>
                                 </div>
                             </form>

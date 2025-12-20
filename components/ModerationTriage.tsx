@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 type Severity = 'low' | 'medium' | 'critical'
 type SortOption = 'severity' | 'time' | 'type'
@@ -67,28 +68,9 @@ function calculateSeverity(reason: string, confidenceScore?: number): Severity {
     return 'low'
 }
 
-const severityConfig = {
-    critical: {
-        label: 'Critical',
-        color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
-        dotColor: 'bg-red-500',
-        sortOrder: 0
-    },
-    medium: {
-        label: 'Medium',
-        color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800',
-        dotColor: 'bg-yellow-500',
-        sortOrder: 1
-    },
-    low: {
-        label: 'Low',
-        color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
-        dotColor: 'bg-green-500',
-        sortOrder: 2
-    }
-}
-
 export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
+    const t = useTranslations('ModerationTriage')
+    const tCommon = useTranslations('Common')
     const [reports, setReports] = useState<Report[]>([])
     const [loading, setLoading] = useState(true)
     const [sortBy, setSortBy] = useState<SortOption>('severity')
@@ -96,6 +78,27 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
     const [selectedReports, setSelectedReports] = useState<Set<string>>(new Set())
     const [processing, setProcessing] = useState(false)
     const supabase = useMemo(() => createClient(), [])
+
+    const severityConfig = {
+        critical: {
+            label: t('severity.critical'),
+            color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
+            dotColor: 'bg-red-500',
+            sortOrder: 0
+        },
+        medium: {
+            label: t('severity.medium'),
+            color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-amber-300 border-yellow-200 dark:border-yellow-800',
+            dotColor: 'bg-yellow-500',
+            sortOrder: 1
+        },
+        low: {
+            label: t('severity.low'),
+            color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-emerald-300 border-green-200 dark:border-green-800',
+            dotColor: 'bg-green-500',
+            sortOrder: 2
+        }
+    }
 
     useEffect(() => {
         fetchReports()
@@ -243,15 +246,15 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                         key={severity}
                         onClick={() => setFilterSeverity(filterSeverity === severity ? 'all' : severity)}
                         className={`p-4 rounded-xl border transition-all ${filterSeverity === severity
-                                ? severityConfig[severity].color + ' ring-2 ring-offset-2 dark:ring-offset-dark-bg ring-current'
-                                : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-dark-border hover:border-gray-300'
+                            ? severityConfig[severity].color + ' ring-2 ring-offset-2 dark:ring-offset-dark-bg ring-current'
+                            : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-dark-border hover:border-gray-300 text-text dark:text-gray-400'
                             }`}
                     >
                         <div className="flex items-center justify-between">
                             <span className="text-2xl font-bold">{severityCounts[severity]}</span>
                             <div className={`w-3 h-3 rounded-full ${severityConfig[severity].dotColor}`} />
                         </div>
-                        <span className="text-sm font-medium mt-1 block">{severityConfig[severity].label}</span>
+                        <span className="text-sm font-medium mt-1 block text-text-light dark:text-gray-300">{severityConfig[severity].label}</span>
                     </button>
                 ))}
             </div>
@@ -263,11 +266,11 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as SortOption)}
-                            className="appearance-none pl-3 pr-8 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="appearance-none pl-3 pr-8 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm text-text dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
                         >
-                            <option value="severity">Sort by Severity</option>
-                            <option value="time">Sort by Time</option>
-                            <option value="type">Sort by Type</option>
+                            <option value="severity">{t('sortBy.severity')}</option>
+                            <option value="time">{t('sortBy.time')}</option>
+                            <option value="type">{t('sortBy.type')}</option>
                         </select>
                         <ArrowUpDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
                     </div>
@@ -282,7 +285,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                 className="gap-1"
                             >
                                 <CheckCircle2 className="w-4 h-4" />
-                                Resolve ({selectedReports.size})
+                                {t('actions.resolve')} ({selectedReports.size})
                             </Button>
                             <Button
                                 size="sm"
@@ -292,7 +295,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                 className="gap-1"
                             >
                                 <XCircle className="w-4 h-4" />
-                                Dismiss ({selectedReports.size})
+                                {t('actions.dismiss')} ({selectedReports.size})
                             </Button>
                         </div>
                     )}
@@ -300,9 +303,9 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
 
                 <button
                     onClick={selectAll}
-                    className="text-sm text-primary hover:underline"
+                    className="text-sm text-text-light dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:underline"
                 >
-                    {selectedReports.size === processedReports.length ? 'Deselect All' : 'Select All'}
+                    {selectedReports.size === processedReports.length ? t('deselectAll') : t('selectAll')}
                 </button>
             </div>
 
@@ -310,7 +313,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
             {processedReports.length === 0 ? (
                 <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
                     <CheckCircle2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No reports to review!</p>
+                    <p>{t('noReports')}</p>
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -318,8 +321,8 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                         <div
                             key={report.id}
                             className={`p-4 rounded-xl border transition-all ${selectedReports.has(report.id)
-                                    ? 'border-primary bg-primary/5'
-                                    : 'border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface'
                                 }`}
                         >
                             <div className="flex items-start gap-4">
@@ -347,7 +350,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
                                             <h4 className="font-medium text-text dark:text-dark-text">
-                                                {report.post?.title || 'Deleted Post'}
+                                                {report.post?.title || tCommon('deletedPost')}
                                             </h4>
                                             <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
                                                 <span className="font-medium capitalize">{report.reason.replace('_', ' ')}</span>
@@ -361,7 +364,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
 
                                     {/* Reporter Info */}
                                     <p className="text-xs text-text-light dark:text-dark-text-muted mt-2">
-                                        Reported by: {report.reporter?.name || report.reporter?.email?.split('@')[0] || 'Anonymous'}
+                                        {t('reportedBy', { name: report.reporter?.name || report.reporter?.email?.split('@')[0] || tCommon('anonymous') })}
                                     </p>
 
                                     {/* Actions */}
@@ -369,7 +372,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                         <Link href={`/post/${report.post_id}`} target="_blank">
                                             <Button size="sm" variant="outline" className="gap-1">
                                                 <Eye className="w-3.5 h-3.5" />
-                                                View Post
+                                                {t('viewPost')}
                                             </Button>
                                         </Link>
                                         <Button
@@ -379,7 +382,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                             className="gap-1 text-green-600 hover:text-green-700 hover:bg-green-50"
                                         >
                                             <CheckCircle2 className="w-3.5 h-3.5" />
-                                            Resolve
+                                            {t('actions.resolve')}
                                         </Button>
                                         <Button
                                             size="sm"
@@ -388,7 +391,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                                             className="gap-1 text-gray-600 hover:text-gray-700"
                                         >
                                             <XCircle className="w-3.5 h-3.5" />
-                                            Dismiss
+                                            {t('actions.dismiss')}
                                         </Button>
                                     </div>
                                 </div>

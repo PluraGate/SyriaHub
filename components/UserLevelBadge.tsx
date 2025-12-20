@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { getTierFromLevel, tierConfig } from '@/lib/gamification'
 import { Medal, Award, Crown, Sparkles } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 // Re-export for backwards compatibility
 export { getTierFromLevel } from '@/lib/gamification'
@@ -51,6 +52,7 @@ export function UserLevelBadge({
     const config = tierConfig[tier]
     const sizeStyles = sizeConfig[size]
     const Icon = tierIcons[tier]
+    const t = useTranslations('Gamification')
 
     return (
         <div className="relative group inline-flex">
@@ -72,7 +74,7 @@ export function UserLevelBadge({
             {/* Tooltip */}
             {showTooltip && name && (
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                    <span className="font-medium">Level {level}</span>
+                    <span className="font-medium">{t('level', { number: level })}</span>
                     <span className="mx-1">·</span>
                     <span>{name}</span>
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full">

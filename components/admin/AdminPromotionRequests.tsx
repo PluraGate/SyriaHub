@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface PromotionRequest {
     id: string
@@ -26,6 +27,9 @@ interface PromotionRequest {
 }
 
 export function AdminPromotionRequests() {
+    const t = useTranslations('Promotion')
+    const tCommon = useTranslations('Common')
+    const tUser = useTranslations('UserManagement.roles')
     const [requests, setRequests] = useState<PromotionRequest[]>([])
     const [loading, setLoading] = useState(true)
     const [processingId, setProcessingId] = useState<string | null>(null)
@@ -66,13 +70,13 @@ export function AdminPromotionRequests() {
             if (error) throw error
 
             if (data?.success) {
-                showToast(`Request ${decision}!`, 'success')
+                showToast(t('requestProcessed', { decision: decision === 'approved' ? t('approve') : t('reject') }), 'success')
                 fetchRequests()
             } else {
-                throw new Error(data?.error || 'Failed to process request')
+                throw new Error(data?.error || t('processError'))
             }
         } catch (error) {
-            showToast(error instanceof Error ? error.message : 'Failed to process request', 'error')
+            showToast(error instanceof Error ? error.message : t('processError'), 'error')
         } finally {
             setProcessingId(null)
         }
@@ -95,11 +99,11 @@ export function AdminPromotionRequests() {
             <div className="p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <GraduationCap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">Role Promotion Requests</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('rolePromotionRequests')}</h3>
                 </div>
                 {requests.length > 0 && (
                     <span className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full">
-                        {requests.length} pending
+                        {t('pendingCount', { count: requests.length })}
                     </span>
                 )}
             </div>
@@ -109,7 +113,7 @@ export function AdminPromotionRequests() {
                 {requests.length === 0 ? (
                     <div className="p-8 text-center">
                         <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                        <p className="text-text-light dark:text-dark-text-muted">No pending requests</p>
+                        <p className="text-text-light dark:text-dark-text-muted">{t('noPending')}</p>
                     </div>
                 ) : (
                     requests.map((request) => (
@@ -130,12 +134,12 @@ export function AdminPromotionRequests() {
                                     </div>
                                     <div>
                                         <p className="font-medium text-text dark:text-dark-text">
-                                            {request.user?.name || 'Unknown User'}
+                                            {request.user?.name || tCommon('unknown')}
                                         </p>
                                         <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">
-                                            <span className="capitalize">{request.current_role}</span>
+                                            <span className="capitalize">{tUser(request.current_role as any)}</span>
                                             <span>→</span>
-                                            <span className="text-primary font-medium capitalize">{request.requested_role}</span>
+                                            <span className="text-primary font-medium capitalize">{tUser(request.requested_role as any)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -153,12 +157,12 @@ export function AdminPromotionRequests() {
                                 {expandedId === request.id ? (
                                     <>
                                         <ChevronUp className="w-4 h-4" />
-                                        Hide details
+                                        {t('hideDetails')}
                                     </>
                                 ) : (
                                     <>
                                         <ChevronDown className="w-4 h-4" />
-                                        Show reason
+                                        {t('showReason')}
                                     </>
                                 )}
                             </button>
@@ -176,12 +180,12 @@ export function AdminPromotionRequests() {
                                     {/* Admin Notes Input */}
                                     <div>
                                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                                            Admin Notes (optional)
+                                            {t('adminNotesLabel')}
                                         </label>
                                         <textarea
                                             value={adminNotes[request.id] || ''}
                                             onChange={(e) => setAdminNotes({ ...adminNotes, [request.id]: e.target.value })}
-                                            placeholder="Add notes that will be shared with the user..."
+                                            placeholder={t('adminNotesPlaceholder')}
                                             rows={2}
                                             className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light dark:placeholder:text-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
                                         />
@@ -200,7 +204,7 @@ export function AdminPromotionRequests() {
                                             ) : (
                                                 <XCircle className="w-4 h-4" />
                                             )}
-                                            Reject
+                                            {t('reject')}
                                         </Button>
                                         <Button
                                             onClick={() => handleDecision(request.id, 'approved')}
@@ -212,7 +216,7 @@ export function AdminPromotionRequests() {
                                             ) : (
                                                 <CheckCircle className="w-4 h-4" />
                                             )}
-                                            Approve
+                                            {t('approve')}
                                         </Button>
                                     </div>
                                 </div>

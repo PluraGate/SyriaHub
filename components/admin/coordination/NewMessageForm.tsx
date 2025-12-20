@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface NewMessageFormProps {
     threadId: string
@@ -23,42 +24,43 @@ interface NewMessageFormProps {
 }
 
 const messageTypes = [
-    { value: 'NOTE', label: 'Note', icon: FileText, description: 'Internal commentary' },
-    { value: 'FLAG', label: 'Flag', icon: Flag, description: 'Raise a concern' },
-    { value: 'DECISION', label: 'Decision', icon: CheckCircle, description: 'Record an action' },
-    { value: 'RATIONALE', label: 'Rationale', icon: HelpCircle, description: 'Justify a decision' },
-    { value: 'REQUEST_REVIEW', label: 'Request Review', icon: ArrowUpRight, description: 'Escalate or handover' }
+    { value: 'NOTE', labelKey: 'messageTypes.note', icon: FileText, descriptionKey: 'messageDescriptions.NOTE' },
+    { value: 'FLAG', labelKey: 'messageTypes.flag', icon: Flag, descriptionKey: 'messageDescriptions.FLAG' },
+    { value: 'DECISION', labelKey: 'messageTypes.decision', icon: CheckCircle, descriptionKey: 'messageDescriptions.DECISION' },
+    { value: 'RATIONALE', labelKey: 'messageTypes.rationale', icon: HelpCircle, descriptionKey: 'messageDescriptions.RATIONALE' },
+    { value: 'REQUEST_REVIEW', labelKey: 'messageTypes.request_review', icon: ArrowUpRight, descriptionKey: 'messageDescriptions.REQUEST_REVIEW' }
 ]
 
 const actionTypes = [
-    { value: '', label: 'No action' },
-    { value: 'revoke_content', label: 'Revoke Content' },
-    { value: 'reinstate_content', label: 'Reinstate Content' },
-    { value: 'suspend_user', label: 'Suspend User', adminOnly: true },
-    { value: 'reinstate_user', label: 'Reinstate User', adminOnly: true },
-    { value: 'lock_object', label: 'Lock Object' },
-    { value: 'unlock_object', label: 'Unlock Object' },
-    { value: 'change_state', label: 'Change State' },
-    { value: 'escalate', label: 'Escalate' },
-    { value: 'close_thread', label: 'Close Thread' }
+    { value: '', labelKey: 'actions.noAction' },
+    { value: 'revoke_content', labelKey: 'actions.revoke_content' },
+    { value: 'reinstate_content', labelKey: 'actions.reinstate_content' },
+    { value: 'suspend_user', labelKey: 'actions.suspend_user', adminOnly: true },
+    { value: 'reinstate_user', labelKey: 'actions.reinstate_user', adminOnly: true },
+    { value: 'lock_object', labelKey: 'actions.lock_object' },
+    { value: 'unlock_object', labelKey: 'actions.unlock_object' },
+    { value: 'change_state', labelKey: 'actions.change_state' },
+    { value: 'escalate', labelKey: 'actions.escalate' },
+    { value: 'close_thread', labelKey: 'actions.close_thread' }
 ]
 
 const confidenceLevels = [
-    { value: '', label: 'Not specified' },
-    { value: 'confident', label: 'Confident - Clear-cut decision' },
-    { value: 'provisional', label: 'Provisional - May be revisited' },
-    { value: 'contested', label: 'Contested - Disagreement exists' }
+    { value: '', labelKey: 'confidencesDesc.notSpecified' },
+    { value: 'confident', labelKey: 'confidencesDesc.confident' },
+    { value: 'provisional', labelKey: 'confidencesDesc.provisional' },
+    { value: 'contested', labelKey: 'confidencesDesc.contested' }
 ]
 
 const stateOptions = [
-    { value: '', label: 'No change' },
-    { value: 'ACTIVE', label: 'Active' },
-    { value: 'UNDER_REVIEW', label: 'Under Review' },
-    { value: 'CONTESTED', label: 'Contested' },
-    { value: 'REVOKED', label: 'Revoked' }
+    { value: '', labelKey: 'states.noChange' },
+    { value: 'ACTIVE', labelKey: 'states.ACTIVE' },
+    { value: 'UNDER_REVIEW', labelKey: 'states.UNDER_REVIEW' },
+    { value: 'CONTESTED', labelKey: 'states.CONTESTED' },
+    { value: 'REVOKED', labelKey: 'states.REVOKED' }
 ]
 
 export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: NewMessageFormProps) {
+    const t = useTranslations('Coordination')
     const [messageType, setMessageType] = useState('NOTE')
     const [content, setContent] = useState('')
     const [actionType, setActionType] = useState('')
@@ -75,7 +77,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
         e.preventDefault()
 
         if (!content.trim()) {
-            showToast('Content is required', 'error')
+            showToast(t('form.contentRequired'), 'error')
             return
         }
 
@@ -97,7 +99,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to add message')
+                throw new Error(data.error || t('loadError'))
             }
 
             // Reset form
@@ -110,7 +112,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
             setExpanded(false)
 
             onSuccess()
-            showToast('Message added successfully', 'success')
+            showToast(t('form.messageAddedSuccess'), 'success')
         } catch (error: any) {
             showToast(error.message, 'error')
         } finally {
@@ -139,7 +141,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                             )}
                         >
                             <Icon className="w-4 h-4" />
-                            {type.label}
+                            {t(type.labelKey as any)}
                         </button>
                     )
                 })}
@@ -147,7 +149,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
 
             {/* Content */}
             <textarea
-                placeholder={selectedType?.description || 'Enter your message...'}
+                placeholder={selectedType ? t(selectedType.descriptionKey as any) : t('form.enterMessage')}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="w-full p-3 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
@@ -161,7 +163,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                 className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text"
             >
                 <ChevronDown className={cn('w-4 h-4 transition-transform', expanded && 'rotate-180')} />
-                {expanded ? 'Hide options' : 'Show options (action, state change, confidence)'}
+                {expanded ? t('form.hideOptions') : t('form.showOptions')}
             </button>
 
             {/* Advanced Options */}
@@ -170,7 +172,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                     {/* Action Type */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Action (optional)
+                            {t('form.actionOptional')}
                         </label>
                         <select
                             value={actionType}
@@ -181,7 +183,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                 .filter(a => isAdmin || !a.adminOnly)
                                 .map(action => (
                                     <option key={action.value} value={action.value}>
-                                        {action.label}
+                                        {t(action.labelKey as any)}
                                     </option>
                                 ))
                             }
@@ -191,7 +193,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                     {/* State Change */}
                     <div>
                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Change State To (optional)
+                            {t('form.changeStateOptional')}
                         </label>
                         <select
                             value={newState}
@@ -204,7 +206,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                     value={state.value}
                                     disabled={state.value === currentState}
                                 >
-                                    {state.label} {state.value === currentState ? '(current)' : ''}
+                                    {t(state.labelKey as any)} {state.value === currentState ? t('states.current') : ''}
                                 </option>
                             ))}
                         </select>
@@ -215,7 +217,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                         <>
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                                    Decision Confidence
+                                    {t('form.decisionConfidence')}
                                 </label>
                                 <select
                                     value={decisionConfidence}
@@ -224,7 +226,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                 >
                                     {confidenceLevels.map(level => (
                                         <option key={level.value} value={level.value}>
-                                            {level.label}
+                                            {t(level.labelKey as any)}
                                         </option>
                                     ))}
                                 </select>
@@ -240,13 +242,13 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                         className="rounded border-gray-300 dark:border-dark-border"
                                     />
                                     <span className="text-sm text-text dark:text-dark-text">
-                                        Mark as pending review (cooling-off period)
+                                        {t('form.markAsPending')}
                                     </span>
                                 </label>
                                 {reviewPending && (
                                     <div className="ml-6">
                                         <label className="block text-sm text-text-light dark:text-dark-text-muted mb-1">
-                                            Review window (hours)
+                                            {t('form.reviewWindow')}
                                         </label>
                                         <input
                                             type="number"
@@ -273,7 +275,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                     ) : (
                         <Send className="w-4 h-4 mr-2" />
                     )}
-                    Add {selectedType?.label || 'Message'}
+                    {t('form.addMessage', { type: selectedType ? t(selectedType.labelKey as any) : t('types.post') })}
                 </Button>
             </div>
         </form>

@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
@@ -12,6 +13,8 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
+  const t = useTranslations('Auth')
+  const tForms = useTranslations('Forms')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -62,12 +65,12 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
-            {isLogin ? 'Welcome Back' : 'Get Started'}
+            {isLogin ? t('welcomeBack') : t('getStarted')}
           </h1>
           <p className="text-text-light dark:text-dark-text-muted">
             {isLogin
-              ? 'Sign in to your account to continue'
-              : 'Create your account to start sharing'}
+              ? t('signInSubtitle')
+              : t('signUpSubtitle')}
           </p>
         </div>
 
@@ -91,7 +94,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
               htmlFor="email"
               className="block text-sm font-medium text-text dark:text-dark-text mb-2"
             >
-              Email Address
+              {t('emailAddress')}
             </label>
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light dark:text-dark-text-muted">
@@ -103,7 +106,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={tForms('emailPlaceholder')}
                 className="input pl-11"
                 required
                 aria-required="true"
@@ -119,7 +122,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
               htmlFor="password"
               className="block text-sm font-medium text-text dark:text-dark-text mb-2"
             >
-              Password
+              {t('password')}
             </label>
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light dark:text-dark-text-muted">
@@ -131,7 +134,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
                 name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={isLogin ? 'Enter your password' : 'At least 6 characters'}
+                placeholder={isLogin ? tForms('passwordPlaceholder') : tForms('passwordCreate')}
                 className="input pl-11 pr-11"
                 required
                 aria-required="true"
@@ -162,7 +165,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
                 href="/auth/reset-password"
                 className="text-sm text-primary dark:text-primary-light hover:text-secondary dark:hover:text-secondary-light transition-colors focus-ring rounded px-1"
               >
-                Forgot password?
+                {t('forgotPassword')}
               </Link>
             </div>
           )}
@@ -176,10 +179,10 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
             {isLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                {isLogin ? 'Signing in...' : 'Creating account...'}
+                {isLogin ? t('signingIn') : t('creatingAccount')}
               </>
             ) : (
-              <>{isLogin ? 'Sign In' : 'Create Account'}</>
+              <>{isLogin ? t('signIn') : t('createAccount')}</>
             )}
           </button>
         </form>

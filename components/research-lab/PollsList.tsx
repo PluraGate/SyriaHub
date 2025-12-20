@@ -20,6 +20,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { ShareDialog } from './ShareDialog'
+import { useTranslations } from 'next-intl'
 
 interface PollOption {
     id: string
@@ -53,6 +54,9 @@ interface PollsListProps {
 }
 
 export function PollsList({ polls, userVotes, userId, showCreate = false }: PollsListProps) {
+    const t = useTranslations('Polls')
+    const tCommon = useTranslations('Common')
+    const tResearch = useTranslations('ResearchLab')
     const [isCreating, setIsCreating] = useState(showCreate)
     const [votingPollId, setVotingPollId] = useState<string | null>(null)
     const [localVotes, setLocalVotes] = useState<Record<string, string[]>>(userVotes)
@@ -234,7 +238,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text mb-1">
-                        Polls
+                        {tResearch('polls')}
                     </h1>
                     <p className="text-text-light dark:text-dark-text-muted">
                         Quick polls for instant community feedback
@@ -245,7 +249,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                     className="btn btn-primary flex items-center gap-2"
                 >
                     {isCreating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    {isCreating ? 'Cancel' : 'New Poll'}
+                    {isCreating ? tCommon('cancel') : t('createPoll')}
                 </button>
             </div>
 
@@ -253,19 +257,19 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
             {isCreating && (
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 mb-8">
                     <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">
-                        Create a New Poll
+                        {t('createPoll')}
                     </h3>
 
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                Question
+                                {t('question')}
                             </label>
                             <input
                                 type="text"
                                 value={newQuestion}
                                 onChange={(e) => setNewQuestion(e.target.value)}
-                                placeholder="What would you like to ask?"
+                                placeholder={t('questionPlaceholder')}
                                 className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                         </div>
@@ -278,7 +282,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                 type="text"
                                 value={newDescription}
                                 onChange={(e) => setNewDescription(e.target.value)}
-                                placeholder="Add more context..."
+                                placeholder={t('descriptionPlaceholder')}
                                 className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                         </div>
@@ -317,7 +321,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                     onClick={addOption}
                                     className="mt-2 text-sm text-primary hover:underline"
                                 >
-                                    + Add Option
+                                    + {t('addOption')}
                                 </button>
                             )}
                         </div>
@@ -330,7 +334,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                 className="rounded border-gray-300 text-primary focus:ring-primary"
                             />
                             <span className="text-sm text-text dark:text-dark-text">
-                                Allow multiple selections
+                                {t('multipleChoice')}
                             </span>
                         </label>
 
@@ -339,7 +343,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                 onClick={() => setIsCreating(false)}
                                 className="btn btn-ghost"
                             >
-                                Cancel
+                                {tCommon('cancel')}
                             </button>
                             <button
                                 onClick={handleCreatePoll}
@@ -349,7 +353,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                 {submitting ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                    'Create Poll'
+                                    t('createPoll')
                                 )}
                             </button>
                         </div>
@@ -388,7 +392,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                     <div className="text-center py-16 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                         <Vote className="w-12 h-12 mx-auto text-gray-300 dark:text-dark-text-muted mb-4" />
                         <h3 className="font-semibold text-text dark:text-dark-text mb-2">
-                            No polls yet
+                            {t('noPolls')}
                         </h3>
                         <p className="text-text-light dark:text-dark-text-muted mb-4">
                             Be the first to create a poll!
@@ -397,7 +401,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                             onClick={() => setIsCreating(true)}
                             className="btn btn-outline"
                         >
-                            Create Poll
+                            {t('createPoll')}
                         </button>
                     </div>
                 )}

@@ -4,10 +4,12 @@ import { Footer } from '@/components/Footer'
 import { QuestionCard } from '@/components/QuestionCard'
 import Link from 'next/link'
 import { PlusCircle, Search } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 export default async function QuestionsPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const t = await getTranslations('Questions')
 
     const { data: questions } = await supabase
         .from('posts')
@@ -36,10 +38,10 @@ export default async function QuestionsPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                     <div>
                         <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-2">
-                            Questions & Answers
+                            {t('title')}
                         </h1>
                         <p className="text-text-light dark:text-dark-text-muted">
-                            Ask questions, share knowledge, and collaborate with the community.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -48,7 +50,7 @@ export default async function QuestionsPage() {
                         className="btn btn-primary flex items-center justify-center gap-2"
                     >
                         <PlusCircle className="w-5 h-5" />
-                        Ask Question
+                        {t('askQuestion')}
                     </Link>
                 </div>
 
@@ -60,16 +62,16 @@ export default async function QuestionsPage() {
                     ) : (
                         <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                             <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
-                                No questions yet
+                                {t('noQuestions')}
                             </h3>
                             <p className="text-text-light dark:text-dark-text-muted mb-6">
-                                Be the first to ask a question!
+                                {t('noQuestionsDesc')}
                             </p>
                             <Link
                                 href="/questions/ask"
                                 className="btn btn-outline"
                             >
-                                Ask Question
+                                {t('askQuestion')}
                             </Link>
                         </div>
                     )}
@@ -80,3 +82,4 @@ export default async function QuestionsPage() {
         </div>
     )
 }
+

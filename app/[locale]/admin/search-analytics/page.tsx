@@ -35,9 +35,9 @@ export default async function SearchAnalyticsPage() {
             <Navbar user={{ id: user.id, email: user.email }} />
 
             <div className="flex pt-16">
-                <AdminSidebar className="fixed left-0 top-16 bottom-0" />
+                <AdminSidebar className="sticky top-0 h-[calc(100vh-64px)]" />
 
-                <main className="flex-1 ml-64 p-6">
+                <main className="flex-1 p-6">
                     <SearchAnalytics />
                 </main>
             </div>

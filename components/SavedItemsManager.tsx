@@ -7,6 +7,7 @@ import {
     Clock, AlertTriangle, Search, SortAsc, SortDesc, Filter
 } from 'lucide-react'
 import { CopyCitationButton } from '@/components/CopyCitationButton'
+import { useTranslations } from 'next-intl'
 
 interface SavedPost {
     id: string
@@ -48,6 +49,8 @@ type ItemType = 'all' | 'posts' | 'events' | 'web'
 type SortOrder = 'newest' | 'oldest' | 'alphabetical'
 
 export function SavedItemsManager({ posts, references, events = [] }: SavedItemsManagerProps) {
+    const t = useTranslations('Saved')
+    const tCommon = useTranslations('Common')
     const [activeFilter, setActiveFilter] = useState<ItemType>('all')
     const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
     const [localPosts, setLocalPosts] = useState(posts)
@@ -161,15 +164,15 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
 
                 {/* Sort dropdown */}
                 <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Sort:</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{t('sort')}:</span>
                     <select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as SortOrder)}
                         className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface"
                     >
-                        <option value="newest">Newest first</option>
-                        <option value="oldest">Oldest first</option>
-                        <option value="alphabetical">Alphabetical</option>
+                        <option value="newest">{t('newestFirst')}</option>
+                        <option value="oldest">{t('oldestFirst')}</option>
+                        <option value="alphabetical">{t('alphabetical')}</option>
                     </select>
                 </div>
             </div>

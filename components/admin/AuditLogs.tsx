@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface AuditLogEntry {
     id: string
@@ -40,6 +41,10 @@ interface AuditLogsResponse {
 }
 
 export function AuditLogs() {
+    const t = useTranslations('Admin.auditLogPage')
+    const tCommon = useTranslations('Common')
+    const tUser = useTranslations('UserManagement')
+
     const [logs, setLogs] = useState<AuditLogEntry[]>([])
     const [loading, setLoading] = useState(true)
     const [totalLogs, setTotalLogs] = useState(0)
@@ -93,7 +98,7 @@ export function AuditLogs() {
         return (
             <div className="flex items-center gap-2">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[oldRole as keyof typeof roleColors] || roleColors.researcher}`}>
-                    {oldRole}
+                    {tUser(oldRole as any)}
                 </span>
                 <div className={`${isPromotion ? 'text-green-500' : 'text-red-500'}`}>
                     {isPromotion ? (
@@ -103,7 +108,7 @@ export function AuditLogs() {
                     )}
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[newRole as keyof typeof roleColors] || roleColors.researcher}`}>
-                    {newRole}
+                    {tUser(newRole as any)}
                 </span>
             </div>
         )
@@ -111,14 +116,22 @@ export function AuditLogs() {
 
     const exportLogs = () => {
         const csvContent = [
-            ['Date', 'User', 'User Email', 'Changed By', 'Old Role', 'New Role', 'Reason'].join(','),
+            [
+                t('timestamp'),
+                t('user'),
+                tCommon('email'),
+                t('changedBy'),
+                tUser('oldRole') || 'Old Role',
+                tUser('newRole') || 'New Role',
+                t('reason')
+            ].join(','),
             ...logs.map(log => [
                 format(new Date(log.created_at), 'yyyy-MM-dd HH:mm:ss'),
-                log.user_name || 'Unknown',
-                log.user_email || 'Unknown',
-                log.changed_by_name || 'Unknown',
-                log.old_role,
-                log.new_role,
+                log.user_name || tCommon('unknown'),
+                log.user_email || tCommon('unknown'),
+                log.changed_by_name || tCommon('unknown'),
+                tUser(log.old_role as any),
+                tUser(log.new_role as any),
                 `"${(log.reason || '').replace(/"/g, '""')}"`
             ].join(','))
         ].join('\n')
@@ -141,22 +154,22 @@ export function AuditLogs() {
                 <div>
                     <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
                         <History className="w-5 h-5 text-primary" />
-                        Audit Logs
+                        {t('title')}
                     </h2>
                     <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
-                        Track all administrative role changes
+                        {t('subtitle')}
                     </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={exportLogs} disabled={logs.length === 0}>
                     <Download className="w-4 h-4 mr-2" />
-                    Export CSV
+                    {t('exportCsv')}
                 </Button>
             </div>
 
             {/* Stats */}
             <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
                 <p className="text-sm text-text-light dark:text-dark-text-muted">
-                    Total role changes recorded: <span className="font-semibold text-text dark:text-dark-text">{totalLogs}</span>
+                    {t('totalChanges')}: <span className="font-semibold text-text dark:text-dark-text">{totalLogs}</span>
                 </p>
             </div>
 
@@ -169,8 +182,8 @@ export function AuditLogs() {
                 ) : logs.length === 0 ? (
                     <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
                         <History className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                        <p>No audit logs found</p>
-                        <p className="text-sm mt-1">Role changes will appear here when they occur</p>
+                        <p>{t('noLogs')}</p>
+                        <p className="text-sm mt-1">{t('noLogsDesc')}</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-gray-100 dark:divide-dark-border">
@@ -188,7 +201,7 @@ export function AuditLogs() {
                                             </div>
                                             <div>
                                                 <p className="font-medium text-text dark:text-dark-text">
-                                                    {log.user_name || 'Unknown User'}
+                                                    {log.user_name || tCommon('unknown')}
                                                 </p>
                                                 <p className="text-xs text-text-light dark:text-dark-text-muted">
                                                     {log.user_email}
@@ -202,13 +215,13 @@ export function AuditLogs() {
 
                                             {log.reason && (
                                                 <div className="mt-2 p-2 bg-gray-50 dark:bg-dark-border/50 rounded-lg">
-                                                    <p className="text-xs text-text-light dark:text-dark-text-muted mb-0.5">Reason:</p>
+                                                    <p className="text-xs text-text-light dark:text-dark-text-muted mb-0.5">{t('reason')}:</p>
                                                     <p className="text-sm text-text dark:text-dark-text">{log.reason}</p>
                                                 </div>
                                             )}
 
                                             <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                                Changed by: <span className="font-medium">{log.changed_by_name || 'Unknown'}</span>
+                                                {t('changedBy')}: <span className="font-medium">{log.changed_by_name || tCommon('unknown')}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -234,7 +247,7 @@ export function AuditLogs() {
             {totalPages > 1 && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-text-light dark:text-dark-text-muted">
-                        Page {page} of {totalPages}
+                        {tCommon('pagination', { current: page, total: totalPages })}
                     </p>
                     <div className="flex items-center gap-2">
                         <Button
@@ -244,7 +257,7 @@ export function AuditLogs() {
                             disabled={page === 1 || loading}
                         >
                             <ChevronLeft className="w-4 h-4" />
-                            Previous
+                            {tCommon('previous')}
                         </Button>
                         <Button
                             variant="outline"
@@ -252,7 +265,7 @@ export function AuditLogs() {
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages || loading}
                         >
-                            Next
+                            {tCommon('next')}
                             <ChevronRight className="w-4 h-4" />
                         </Button>
                     </div>

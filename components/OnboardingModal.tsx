@@ -21,6 +21,7 @@ import {
     Upload,
     Check
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface OnboardingModalProps {
     userId: string
@@ -50,6 +51,9 @@ const ONBOARDING_STEPS = [
 ]
 
 export function OnboardingModal({ userId, userEmail, userName }: OnboardingModalProps) {
+    const t = useTranslations('Onboarding')
+    const tProfile = useTranslations('Profile')
+    const tCommon = useTranslations('Common')
     const [isOpen, setIsOpen] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
     const [name, setName] = useState(userName || '')
@@ -171,7 +175,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                                    Display Name
+                                    {tProfile('displayName')}
                                 </label>
                                 <input
                                     type="text"
@@ -183,7 +187,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                                    Bio
+                                    {tProfile('bio')}
                                 </label>
                                 <textarea
                                     value={bio}
@@ -195,7 +199,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1">
-                                    Affiliation
+                                    {tProfile('affiliation')}
                                 </label>
                                 <input
                                     type="text"
@@ -262,7 +266,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                             onClick={handlePrevious}
                             className="flex-1 sm:flex-none"
                         >
-                            Back
+                            {tCommon('back')}
                         </Button>
                     )}
 
@@ -271,13 +275,13 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                             onClick={handleSkip}
                             className="text-sm text-text-light dark:text-dark-text-muted hover:underline"
                         >
-                            Skip for now
+                            {t('skipForNow')}
                         </button>
                     )}
 
                     {currentStep < ONBOARDING_STEPS.length - 1 ? (
                         <Button onClick={handleNext} className="flex-1 sm:flex-none btn-press">
-                            Next
+                            {tCommon('next')}
                             <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                     ) : (
@@ -286,7 +290,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                             disabled={saving}
                             className="flex-1 sm:flex-none btn-press"
                         >
-                            {saving ? 'Saving...' : 'Get Started'}
+                            {saving ? t('saving') : t('getStarted')}
                             <Sparkles className="w-4 h-4 ml-2" />
                         </Button>
                     )}

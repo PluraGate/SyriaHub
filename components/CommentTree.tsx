@@ -7,6 +7,7 @@ import { UserAvatar } from '@/components/ui/UserAvatar'
 import { formatDistanceToNow } from 'date-fns'
 import { MessageSquare, ChevronDown, ChevronUp, CornerDownRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface Comment {
     id: string
@@ -38,6 +39,9 @@ interface CommentNodeProps {
 }
 
 function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
+    const t = useTranslations('Comments')
+    const tForms = useTranslations('Forms')
+    const tCommon = useTranslations('Common')
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isReplying, setIsReplying] = useState(false)
     const [replyContent, setReplyContent] = useState('')
@@ -92,7 +96,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                     className="text-xs text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text flex items-center gap-1"
                                 >
                                     <CornerDownRight className="w-3 h-3" />
-                                    Reply
+                                    {t('reply')}
                                 </button>
                             )}
 
@@ -109,7 +113,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                     ) : (
                                         <>
                                             <ChevronUp className="w-3 h-3" />
-                                            Hide replies
+                                            {t('hideReplies')}
                                         </>
                                     )}
                                 </button>
@@ -122,7 +126,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                 <textarea
                                     value={replyContent}
                                     onChange={(e) => setReplyContent(e.target.value)}
-                                    placeholder="Write a reply..."
+                                    placeholder={tForms('writeReply')}
                                     rows={2}
                                     className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                                 />
@@ -142,7 +146,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                         onClick={() => setIsReplying(false)}
                                         className="px-3 py-1 text-xs text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text"
                                     >
-                                        Cancel
+                                        {tCommon('cancel')}
                                     </button>
                                 </div>
                             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Users, TrendingUp, Zap } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface SocialProofStats {
     onlineNow: number
@@ -11,6 +12,7 @@ interface SocialProofStats {
 }
 
 export function SocialProofBanner() {
+    const t = useTranslations('SocialProof')
     const [stats, setStats] = useState<SocialProofStats>({
         onlineNow: 0,
         todayPosts: 0,
@@ -97,7 +99,7 @@ export function SocialProofBanner() {
                 </span>
                 <span>
                     <span className="font-medium text-text dark:text-dark-text">{stats.onlineNow}</span>
-                    {' '}researchers online
+                    {' '}{t('researchersOnline')}
                 </span>
             </div>
 
@@ -106,7 +108,7 @@ export function SocialProofBanner() {
             <div className="flex items-center gap-2">
                 <span>
                     <span className="font-medium text-text dark:text-dark-text">{stats.todayPosts}</span>
-                    {' '}posts today
+                    {' '}{t('postsToday')}
                 </span>
             </div>
 
@@ -115,7 +117,7 @@ export function SocialProofBanner() {
                     <span className="hidden sm:inline text-gray-300 dark:text-dark-border">·</span>
                     <div className="flex items-center gap-1">
                         <span className="font-medium text-text dark:text-dark-text">+{stats.weeklyGrowth}%</span>
-                        {' '}this week
+                        {' '}{t('thisWeek')}
                     </div>
                 </>
             )}

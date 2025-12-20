@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 interface BarData {
     type: 'bar'
     options: Array<{ label: string; value: number; percentage: number }>
@@ -82,6 +84,7 @@ function BarChart({ data }: { data: BarData }) {
 }
 
 function StatsDisplay({ data, questionType }: { data: StatsData; questionType: string }) {
+    const t = useTranslations('Statistics')
     const isRating = questionType === 'rating'
     const maxValue = isRating ? 5 : 10
 
@@ -91,22 +94,22 @@ function StatsDisplay({ data, questionType }: { data: StatsData; questionType: s
             <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-gray-50 dark:bg-dark-bg rounded-lg">
                     <div className="text-2xl font-bold text-primary">{data.average}</div>
-                    <div className="text-sm text-text-light dark:text-dark-text-muted">Average</div>
+                    <div className="text-sm text-text-light dark:text-dark-text-muted">{t('average')}</div>
                 </div>
                 <div className="text-center p-4 bg-gray-50 dark:bg-dark-bg rounded-lg">
                     <div className="text-2xl font-bold text-text dark:text-dark-text">{data.min}</div>
-                    <div className="text-sm text-text-light dark:text-dark-text-muted">Min</div>
+                    <div className="text-sm text-text-light dark:text-dark-text-muted">{t('minimum')}</div>
                 </div>
                 <div className="text-center p-4 bg-gray-50 dark:bg-dark-bg rounded-lg">
                     <div className="text-2xl font-bold text-text dark:text-dark-text">{data.max}</div>
-                    <div className="text-sm text-text-light dark:text-dark-text-muted">Max</div>
+                    <div className="text-sm text-text-light dark:text-dark-text-muted">{t('maximum')}</div>
                 </div>
             </div>
 
             {/* Distribution */}
             {data.distribution && data.distribution.length > 0 && (
                 <div>
-                    <p className="text-sm font-medium text-text dark:text-dark-text mb-2">Distribution</p>
+                    <p className="text-sm font-medium text-text dark:text-dark-text mb-2">{t('distribution')}</p>
                     <div className="flex items-end justify-between gap-1 h-24">
                         {data.distribution.map((item) => {
                             const maxCount = Math.max(...data.distribution.map(d => d.count), 1)
@@ -139,10 +142,11 @@ function StatsDisplay({ data, questionType }: { data: StatsData; questionType: s
 }
 
 function TextResponses({ data }: { data: TextData }) {
+    const tSurveys = useTranslations('Surveys')
     if (!data.responses || data.responses.length === 0) {
         return (
             <p className="text-text-light dark:text-dark-text-muted italic">
-                No responses yet
+                {tSurveys('noResponses')}
             </p>
         )
     }

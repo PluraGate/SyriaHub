@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Plus, ChevronDown, ChevronUp, Award, Users, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface Endorser {
     id: string
@@ -53,6 +54,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
 
     const supabase = createClient()
     const { showToast } = useToast()
+    const t = useTranslations('ProfileLabels')
 
     // Load user skills and endorsements
     useEffect(() => {
@@ -321,7 +323,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                 <div className="flex items-center gap-2">
                     <Award className="w-5 h-5 text-primary" />
                     <h3 className="text-lg font-semibold text-text dark:text-dark-text">
-                        Skills & Endorsements
+                        {t('skillsEndorsements')}
                     </h3>
                     {skills.length > 0 && (
                         <span className="text-sm text-text-light dark:text-dark-text-muted">
@@ -336,7 +338,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                         onClick={() => setShowAddSkill(!showAddSkill)}
                     >
                         <Plus className="w-4 h-4 mr-1" />
-                        Add Skill
+                        {t('addSkill')}
                     </Button>
                 )}
             </div>
@@ -475,7 +477,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                     {Object.entries(skillsByCategory).map(([category, catSkills]) => (
                         <div key={category}>
                             <h4 className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-2">
-                                {category}
+                                {t(category.toLowerCase().replace(' ', '') as any) || category}
                             </h4>
                             <div className="flex flex-wrap gap-2">
                                 {catSkills.map(skill => (

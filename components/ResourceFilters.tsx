@@ -7,6 +7,7 @@ import { Search, Filter, X, ChevronDown, Database, FileText, Wrench, Film, FileS
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTranslations } from 'next-intl'
 
 interface ResourceFiltersProps {
     onFiltersChange?: (filters: FilterState) => void
@@ -22,11 +23,11 @@ export interface FilterState {
 }
 
 const RESOURCE_TYPES = [
-    { value: 'dataset', label: 'Dataset', Icon: Database },
-    { value: 'paper', label: 'Paper', Icon: FileText },
-    { value: 'tool', label: 'Tool', Icon: Wrench },
-    { value: 'media', label: 'Media', Icon: Film },
-    { value: 'template', label: 'Template', Icon: FileSpreadsheet },
+    { value: 'dataset', Icon: Database },
+    { value: 'paper', Icon: FileText },
+    { value: 'tool', Icon: Wrench },
+    { value: 'media', Icon: Film },
+    { value: 'template', Icon: FileSpreadsheet },
 ]
 
 const LICENSES = [
@@ -40,12 +41,13 @@ const LICENSES = [
 ]
 
 const SORT_OPTIONS = [
-    { value: 'date', label: 'Newest First' },
-    { value: 'downloads', label: 'Most Downloads' },
-    { value: 'title', label: 'Title A-Z' },
+    { value: 'date', key: 'sortNewest' },
+    { value: 'downloads', key: 'sortDownloads' },
+    { value: 'title', key: 'sortTitle' },
 ]
 
 export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFiltersProps) {
+    const t = useTranslations('Resources')
     const router = useRouter()
     const searchParams = useSearchParams()
     const supabase = createClient()
@@ -136,7 +138,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light dark:text-dark-text-muted" />
                 <Input
                     type="text"
-                    placeholder="Search resources..."
+                    placeholder={t('searchPlaceholder')}
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     className="pl-10"
@@ -150,7 +152,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
             >
                 <span className="flex items-center gap-2">
                     <Filter className="w-4 h-4" />
-                    Filters
+                    {t('filters')}
                     {activeFilterCount > 0 && (
                         <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
                             {activeFilterCount}
@@ -166,7 +168,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                     {/* Resource Type */}
                     <div>
                         <Label className="text-xs text-text-light dark:text-dark-text-muted mb-2 block">
-                            Resource Type
+                            {t('resourceType')}
                         </Label>
                         <div className="flex flex-wrap gap-2">
                             {RESOURCE_TYPES.map((type) => {
@@ -183,7 +185,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                                             }`}
                                     >
                                         <Icon className="w-3.5 h-3.5" />
-                                        {type.label}
+                                        {t(`types.${type.value}`)}
                                     </button>
                                 )
                             })}
@@ -194,7 +196,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                     {disciplines.length > 0 && (
                         <div>
                             <Label className="text-xs text-text-light dark:text-dark-text-muted mb-2 block">
-                                Discipline
+                                {t('discipline')}
                             </Label>
                             <div className="flex flex-wrap gap-2">
                                 {disciplines.map((d) => (
@@ -219,14 +221,14 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                     {/* License */}
                     <div>
                         <Label className="text-xs text-text-light dark:text-dark-text-muted mb-2 block">
-                            License
+                            {t('license')}
                         </Label>
                         <select
                             value={filters.license || ''}
                             onChange={(e) => updateFilters({ license: e.target.value || null })}
                             className="w-full h-10 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 text-sm text-text dark:text-dark-text"
                         >
-                            <option value="">All Licenses</option>
+                            <option value="">{t('allLicenses')}</option>
                             {LICENSES.map((license) => (
                                 <option key={license.value} value={license.value}>
                                     {license.label}
@@ -238,7 +240,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                     {/* Sort */}
                     <div>
                         <Label className="text-xs text-text-light dark:text-dark-text-muted mb-2 block">
-                            Sort By
+                            {t('sortBy')}
                         </Label>
                         <select
                             value={filters.sort}
@@ -247,7 +249,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                         >
                             {SORT_OPTIONS.map((option) => (
                                 <option key={option.value} value={option.value}>
-                                    {option.label}
+                                    {t(option.key)}
                                 </option>
                             ))}
                         </select>
@@ -262,7 +264,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                             className="w-full"
                         >
                             <X className="w-4 h-4 mr-2" />
-                            Clear All Filters
+                            {t('clearFilters')}
                         </Button>
                     )}
                 </div>

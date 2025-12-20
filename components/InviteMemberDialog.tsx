@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { X, Mail, Send } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface InviteMemberDialogProps {
     groupId: string
@@ -12,6 +13,8 @@ interface InviteMemberDialogProps {
 }
 
 export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDialogProps) {
+    const t = useTranslations('Groups')
+    const tCommon = useTranslations('Common')
     const { showToast } = useToast()
     const supabase = createClient()
 
@@ -69,7 +72,7 @@ export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDia
             <div className="bg-white dark:bg-dark-surface rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-dark-border">
                     <h3 className="font-semibold text-lg text-text dark:text-dark-text">
-                        Invite Member
+                        {t('inviteMember')}
                     </h3>
                     <button
                         onClick={onClose}
@@ -81,7 +84,7 @@ export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDia
 
                 <form onSubmit={handleInvite} className="p-6">
                     <p className="text-sm text-text-light dark:text-dark-text-muted mb-6">
-                        Enter the email address of the person you want to invite to this group.
+                        {t('inviteDescription')}
                     </p>
 
                     <div className="space-y-4">
@@ -103,7 +106,7 @@ export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDia
                                 onClick={onClose}
                                 className="px-4 py-2 text-sm font-medium text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text transition-colors"
                             >
-                                Cancel
+                                {tCommon('cancel')}
                             </button>
                             <button
                                 type="submit"
@@ -115,7 +118,7 @@ export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDia
                                 ) : (
                                     <>
                                         <Send className="w-4 h-4" />
-                                        Send Invite
+                                        {t('sendInvite')}
                                     </>
                                 )}
                             </button>

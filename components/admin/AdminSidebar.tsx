@@ -20,6 +20,7 @@ import {
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 interface AdminSidebarProps {
     className?: string
@@ -91,6 +92,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
     const [collapsed, setCollapsed] = useState(false)
     const [userRole, setUserRole] = useState<'admin' | 'moderator' | null>(null)
     const supabase = useMemo(() => createClient(), [])
+    const t = useTranslations('Admin')
 
     // Fetch current user's role
     useEffect(() => {
@@ -126,12 +128,12 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
         return true
     })
 
-    const panelTitle = userRole === 'admin' ? 'Admin Panel' : 'Moderation'
+    const panelTitle = userRole === 'admin' ? t('adminPanel') : t('moderation')
 
     return (
         <aside
             className={cn(
-                'bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border',
+                'bg-white dark:bg-dark-surface border-e border-gray-200 dark:border-dark-border',
                 'transition-all duration-300 ease-in-out flex flex-col',
                 collapsed ? 'w-16' : 'w-64',
                 className
@@ -147,7 +149,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                 <button
                     onClick={() => setCollapsed(!collapsed)}
                     className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-text-light dark:text-dark-text-muted transition-colors"
-                    title={collapsed ? 'Expand' : 'Collapse'}
+                    title={collapsed ? t('expand') : t('collapse')}
                 >
                     {collapsed ? (
                         <ChevronRight className="w-4 h-4" />
@@ -162,6 +164,22 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                 {filteredNavItems.map((item) => {
                     const active = isActive(item.href, item.exact)
                     const Icon = item.icon
+                    // Map label to translation key
+                    const keyMap: Record<string, string> = {
+                        'Overview': 'overview',
+                        'Analytics': 'analytics',
+                        'Search Analytics': 'searchAnalytics',
+                        'Users': 'users',
+                        'Content': 'content',
+                        'Reports': 'reports',
+                        'Appeals': 'appeals',
+                        'Tags': 'tags',
+                        'Waitlist': 'waitlist',
+                        'Coordination': 'coordination',
+                        'Audit Logs': 'auditLog'
+                    }
+                    const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')
+                    const label = t(translationKey) || item.label
 
                     return (
                         <Link
@@ -173,10 +191,10 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                                     ? 'bg-primary/10 text-primary dark:bg-primary-light/10 dark:text-primary-light font-medium'
                                     : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border hover:text-text dark:hover:text-dark-text'
                             )}
-                            title={collapsed ? item.label : undefined}
+                            title={collapsed ? label : undefined}
                         >
                             <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-primary-light')} />
-                            {!collapsed && <span>{item.label}</span>}
+                            {!collapsed && <span>{label}</span>}
                         </Link>
                     )
                 })}
@@ -192,7 +210,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                     )}
                 >
                     <ChevronLeft className="w-4 h-4" />
-                    {!collapsed && <span>Back to Site</span>}
+                    {!collapsed && <span>{t('backToSite')}</span>}
                 </Link>
             </div>
         </aside>

@@ -13,6 +13,7 @@ import {
     Calendar
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface TopSearch {
     query_normalized: string
@@ -35,6 +36,8 @@ interface SearchTrend {
 }
 
 export function SearchAnalytics() {
+    const t = useTranslations('Admin.searchAnalyticsPage')
+    const tCommon = useTranslations('Common')
     const [topSearches, setTopSearches] = useState<TopSearch[]>([])
     const [zeroResultSearches, setZeroResultSearches] = useState<ZeroResultSearch[]>([])
     const [trends, setTrends] = useState<SearchTrend[]>([])
@@ -89,9 +92,9 @@ export function SearchAnalytics() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-text dark:text-dark-text">Search Analytics</h1>
+                    <h1 className="text-2xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
                     <p className="text-text-light dark:text-dark-text-muted">
-                        Understand what users are searching for
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -100,13 +103,13 @@ export function SearchAnalytics() {
                         onChange={(e) => setDays(Number(e.target.value))}
                         className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm"
                     >
-                        <option value={7}>Last 7 days</option>
-                        <option value={14}>Last 14 days</option>
-                        <option value={30}>Last 30 days</option>
-                        <option value={90}>Last 90 days</option>
+                        <option value={7}>{t('last7Days')}</option>
+                        <option value={14}>{t('last14Days')}</option>
+                        <option value={30}>{t('last30Days')}</option>
+                        <option value={90}>{t('last90Days')}</option>
                     </select>
                     <Button variant="outline" size="sm" onClick={fetchAnalytics} disabled={loading}>
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : tCommon('refresh')}
                     </Button>
                 </div>
             </div>
@@ -116,7 +119,7 @@ export function SearchAnalytics() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Total Searches</p>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">{t('totalSearches')}</p>
                             <p className="text-2xl font-bold text-text dark:text-dark-text">
                                 {totalSearches.toLocaleString()}
                             </p>
@@ -130,7 +133,7 @@ export function SearchAnalytics() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Avg Click Rate</p>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">{t('avgClickRate')}</p>
                             <p className="text-2xl font-bold text-text dark:text-dark-text">
                                 {avgClickRate.toFixed(1)}%
                             </p>
@@ -144,7 +147,7 @@ export function SearchAnalytics() {
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Zero Results</p>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">{t('zeroResults')}</p>
                             <p className="text-2xl font-bold text-text dark:text-dark-text">
                                 {zeroResultTotal.toLocaleString()}
                             </p>
@@ -165,7 +168,7 @@ export function SearchAnalytics() {
                     className="gap-2"
                 >
                     <TrendingUp className="w-4 h-4" />
-                    Top Searches
+                    {t('topSearches')}
                 </Button>
                 <Button
                     variant={activeTab === 'gaps' ? 'default' : 'ghost'}
@@ -174,7 +177,7 @@ export function SearchAnalytics() {
                     className="gap-2"
                 >
                     <AlertCircle className="w-4 h-4" />
-                    Content Gaps
+                    {t('contentGaps')}
                 </Button>
                 <Button
                     variant={activeTab === 'trends' ? 'default' : 'ghost'}
@@ -183,7 +186,7 @@ export function SearchAnalytics() {
                     className="gap-2"
                 >
                     <BarChart3 className="w-4 h-4" />
-                    Trends
+                    {t('trends')}
                 </Button>
             </div>
 
@@ -198,13 +201,13 @@ export function SearchAnalytics() {
                     {activeTab === 'top' && (
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                             <div className="p-6 border-b border-gray-100 dark:border-dark-border">
-                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">Top Search Terms</h3>
-                                <p className="text-sm text-text-light dark:text-dark-text-muted">Most popular searches in the selected period</p>
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">{t('topSearchTerms')}</h3>
+                                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('topSearchTermsDesc')}</p>
                             </div>
                             <div className="p-6">
                                 {topSearches.length === 0 ? (
                                     <p className="text-center text-text-light dark:text-dark-text-muted py-8">
-                                        No search data available yet
+                                        {t('noData')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -222,7 +225,7 @@ export function SearchAnalytics() {
                                                             {search.query_normalized}
                                                         </p>
                                                         <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                                            {search.search_count} searches · {search.avg_results} avg results
+                                                            {search.search_count} {t('searches')} · {search.avg_results} {t('avgResults')}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -230,7 +233,7 @@ export function SearchAnalytics() {
                                                     <span className={`text-sm font-medium ${search.click_rate > 20 ? 'text-green-600' :
                                                         search.click_rate > 5 ? 'text-yellow-600' : 'text-red-500'
                                                         }`}>
-                                                        {search.click_rate}% CTR
+                                                        {search.click_rate}% {t('ctr')}
                                                     </span>
                                                 </div>
                                             </div>
@@ -245,15 +248,15 @@ export function SearchAnalytics() {
                     {activeTab === 'gaps' && (
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                             <div className="p-6 border-b border-gray-100 dark:border-dark-border">
-                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">Content Gaps</h3>
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">{t('contentGaps')}</h3>
                                 <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                    Searches that returned no results - potential topics to cover
+                                    {t('contentGapsDesc')}
                                 </p>
                             </div>
                             <div className="p-6">
                                 {zeroResultSearches.length === 0 ? (
                                     <p className="text-center text-text-light dark:text-dark-text-muted py-8">
-                                        No zero-result searches found
+                                        {t('noGaps')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -269,7 +272,7 @@ export function SearchAnalytics() {
                                                             &quot;{search.query_normalized}&quot;
                                                         </p>
                                                         <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                                            {search.search_count} searches
+                                                            {search.search_count} {t('searches')}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -289,13 +292,13 @@ export function SearchAnalytics() {
                     {activeTab === 'trends' && (
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                             <div className="p-6 border-b border-gray-100 dark:border-dark-border">
-                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">Search Trends</h3>
-                                <p className="text-sm text-text-light dark:text-dark-text-muted">Daily search activity over time</p>
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text">{t('trends')}</h3>
+                                <p className="text-sm text-text-light dark:text-dark-text-muted">{t('trendsDesc')}</p>
                             </div>
                             <div className="p-6">
                                 {trends.length === 0 ? (
                                     <p className="text-center text-text-light dark:text-dark-text-muted py-8">
-                                        No trend data available yet
+                                        {t('noTrends')}
                                     </p>
                                 ) : (
                                     <div className="space-y-2">
@@ -309,7 +312,7 @@ export function SearchAnalytics() {
                                                         key={trend.search_date}
                                                         className="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t"
                                                         style={{ height: `${Math.max(height, 4)}%` }}
-                                                        title={`${trend.search_date}: ${trend.search_count} searches`}
+                                                        title={`${trend.search_date}: ${trend.search_count} ${t('searches')}`}
                                                     />
                                                 )
                                             })}
@@ -319,10 +322,10 @@ export function SearchAnalytics() {
                                             <table className="w-full text-sm">
                                                 <thead>
                                                     <tr className="border-b border-gray-200 dark:border-dark-border">
-                                                        <th className="text-left py-2 px-2 text-text-light dark:text-dark-text-muted">Date</th>
-                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">Searches</th>
-                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">Unique</th>
-                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">Avg Results</th>
+                                                        <th className="text-left py-2 px-2 text-text-light dark:text-dark-text-muted">{tCommon('date')}</th>
+                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">{t('searches')}</th>
+                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">{t('unique')}</th>
+                                                        <th className="text-right py-2 px-2 text-text-light dark:text-dark-text-muted">{t('avgResults')}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

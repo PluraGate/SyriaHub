@@ -5,6 +5,7 @@ import { MagazineCard } from '@/components/MagazineCard'
 import { GroupCard } from '@/components/GroupCard'
 import { EventCard } from '@/components/EventCard'
 import { FileText, Users, BookOpen, Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface UserActivityFeedProps {
     posts: any[]
@@ -14,6 +15,8 @@ interface UserActivityFeedProps {
 type TabType = 'posts' | 'events' | 'groups'
 
 export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
+    const t = useTranslations('Gamification')
+    const tNav = useTranslations('Navigation')
     const researchPosts = posts.filter(p => !p.content_type || p.content_type === 'article' || p.content_type === 'question' || p.content_type === 'answer')
     const eventPosts = posts.filter(p => p.content_type === 'event')
 
@@ -62,9 +65,9 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-dark-bg rounded-full flex items-center justify-center">
                     <BookOpen className="w-8 h-8 text-text-light dark:text-dark-text-muted" />
                 </div>
-                <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No activity yet</h3>
+                <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">{t('noActivity')}</h3>
                 <p className="text-text-light dark:text-dark-text-muted">
-                    Research, events, and groups will appear here
+                    {t('startActivity')}
                 </p>
             </div>
         )
