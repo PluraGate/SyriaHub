@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, Share2, Bookmark, MessageSquare, GraduationCap } from 'lucide-react'
+import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -20,6 +21,8 @@ import { BookmarkButton } from '@/components/BookmarkButton'
 import { EditButton } from '@/components/EditButton'
 import { LinkedResourcesSection } from '@/components/LinkedResourcesSection'
 import { EpistemicRecommendations } from '@/components/EpistemicRecommendations'
+import { ReferencesSection } from '@/components/ReferencesSection'
+import { CiteButton } from '@/components/CiteButton'
 import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { GitFork } from 'lucide-react'
@@ -42,12 +45,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const { data: post } = await supabase
     .from('posts')
     .select(`
-      id,
-      title,
-      content,
-      tags,
-      content_type,
-      author:users!posts_author_id_fkey(name, email)
+id,
+  title,
+  content,
+  tags,
+  content_type,
+  author: users!posts_author_id_fkey(name, email)
     `)
     .eq('id', id)
     .single()
@@ -219,6 +222,9 @@ export default async function PostPage(props: PostPageProps) {
       .filter((r: any) => r !== null)
   }
 
+  const t = await getTranslations('Post')
+  const tc = await getTranslations('Common')
+
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
       <Navbar user={user} />
@@ -248,7 +254,7 @@ export default async function PostPage(props: PostPageProps) {
                 }`}
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Feed
+              {t('backToFeed')}
             </Link>
 
             {/* Content Type Badge */}
@@ -256,7 +262,7 @@ export default async function PostPage(props: PostPageProps) {
               <div className="mb-4">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/20 text-secondary-dark dark:text-secondary text-sm font-semibold">
                   <MessageSquare className="w-4 h-4" />
-                  Question
+                  {t('question')}
                 </span>
               </div>
             )}
@@ -271,7 +277,7 @@ export default async function PostPage(props: PostPageProps) {
             {post.forked_from && (
               <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-text-light dark:text-dark-text-muted bg-gray-50 dark:bg-dark-bg p-3 rounded-xl border border-gray-100 dark:border-dark-border w-fit">
                 <GitFork className="w-4 h-4 text-secondary" />
-                <span>Remixed from</span>
+                <span>{t('remixedFrom')}</span>
                 <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-primary dark:text-primary-light hover:underline">
                   {post.forked_from.title}
                 </Link>
@@ -347,7 +353,7 @@ export default async function PostPage(props: PostPageProps) {
               {/* Reading Time */}
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>{readingTime} min read</span>
+                <span>{t('minRead', { count: readingTime })}</span>
               </div>
 
               {/* Academic Impact Score - if available */}
@@ -359,7 +365,7 @@ export default async function PostPage(props: PostPageProps) {
                     title="Academic Impact Score: Based on quality citations and scholarly engagement"
                   >
                     <GraduationCap className="w-3.5 h-3.5" />
-                    <span>Impact: {post.academic_impact_score.toFixed(1)}</span>
+                    <span>{t('impact')}: {post.academic_impact_score.toFixed(1)}</span>
                   </div>
                 </>
               )}
@@ -387,7 +393,7 @@ export default async function PostPage(props: PostPageProps) {
                   <Link href={`/post/${post.id}/suggestions`}>
                     <Button variant="outline" className="gap-2">
                       <GitPullRequest className="w-4 h-4" />
-                      Suggestions
+                      {t('suggestions')}
                     </Button>
                   </Link>
                 </>
@@ -401,10 +407,20 @@ export default async function PostPage(props: PostPageProps) {
                   />
                   <SuggestionDialog
                     postId={post.id}
-                    currentContent={post.content}
+                    originalContent={post.content}
                   />
                 </>
               )}
+
+              {/* Cite Button - visible for all users */}
+              <CiteButton
+                postId={post.id}
+                postTitle={post.title}
+                postAuthor={post.author}
+                postCreatedAt={post.created_at}
+                postContent={post.content}
+                postTags={post.tags}
+              />
 
               <div className="flex-1" />
 
@@ -447,12 +463,16 @@ export default async function PostPage(props: PostPageProps) {
               </TextSelectionHandler>
             </div>
 
+            {/* References Section - what this post cites */}
+            <ReferencesSection postId={post.id} />
+
+
             {/* Answers Section for Questions */}
             {post.content_type === 'question' && (
               <section className="space-y-8">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-text dark:text-dark-text">
-                    {answers.length} {answers.length === 1 ? 'Answer' : 'Answers'}
+                    {t('answers', { count: answers.length })}
                   </h2>
                 </div>
 
@@ -464,16 +484,16 @@ export default async function PostPage(props: PostPageProps) {
                 {/* Answer Form */}
                 {user ? (
                   <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">Your Answer</h3>
+                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">{t('yourAnswer')}</h3>
                     <AnswerForm questionId={post.id} />
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface rounded-2xl">
                     <p className="text-text-light dark:text-dark-text-muted mb-4">
-                      Sign in to answer this question.
+                      {t('signInToAnswer')}
                     </p>
                     <Link href="/auth/login">
-                      <Button>Sign In</Button>
+                      <Button>{tc('signIn')}</Button>
                     </Link>
                   </div>
                 )}
@@ -489,7 +509,7 @@ export default async function PostPage(props: PostPageProps) {
             {/* Author Card */}
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                About the Author
+                {t('aboutAuthor')}
               </h3>
               <Link
                 href={`/profile/${post.author_id}`}
@@ -528,7 +548,7 @@ export default async function PostPage(props: PostPageProps) {
             {relatedPosts.length > 0 && (
               <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                  Related Research
+                  {t('relatedResearch')}
                 </h3>
                 <div className="space-y-4">
                   {relatedPosts.slice(0, 4).map((relPost: any) => (
@@ -553,7 +573,7 @@ export default async function PostPage(props: PostPageProps) {
             {citationBacklinks.length > 0 && (
               <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                  Cited By
+                  {t('citedBy')}
                 </h3>
                 <div className="space-y-4">
                   {citationBacklinks.slice(0, 4).map((citation: any) => (
@@ -582,7 +602,7 @@ export default async function PostPage(props: PostPageProps) {
             {/* Knowledge Graph */}
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                Knowledge Graph
+                {t('knowledgeGraph')}
               </h3>
               <KnowledgeGraph centerPostId={post.id} />
             </div>

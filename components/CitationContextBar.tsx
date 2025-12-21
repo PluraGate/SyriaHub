@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Link2, ArrowRight, X, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface RelatedPost {
     id: string
@@ -27,6 +28,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
     const [loading, setLoading] = useState(true)
     const [animatedTextIndex, setAnimatedTextIndex] = useState(0)
     const supabase = useMemo(() => createClient(), [])
+    const t = useTranslations('Post')
 
     // Animated text cycling
     useEffect(() => {
@@ -160,10 +162,10 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
 
     const getConnectionLabel = (type: string) => {
         switch (type) {
-            case 'citation': return 'cites'
-            case 'tag-overlap': return 'relates to'
-            case 'fork': return 'inspired'
-            default: return 'connects to'
+            case 'citation': return t('cites') // Check if 'cites' exists or add it
+            case 'tag-overlap': return t('relatedTo')
+            case 'fork': return t('inspired') // Check if 'inspired' exists or add it
+            default: return t('connectsTo') // Check if 'connectsTo' exists or add it
         }
     }
 
@@ -182,8 +184,8 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
 
     // Animated text options
     const animatedTexts = [
-        `${relatedPosts.length} connections across ${disciplineCount} discipline${disciplineCount > 1 ? 's' : ''}`,
-        `Related: ${firstPostTitle.length > 40 ? firstPostTitle.slice(0, 37) + '...' : firstPostTitle}`
+        t('connectionsAcross', { count: relatedPosts.length, disciplines: disciplineCount }),
+        `${t('relatedTo')}: ${firstPostTitle.length > 40 ? firstPostTitle.slice(0, 37) + '...' : firstPostTitle}`
     ]
 
     // Limit displayed items based on showAll state
@@ -204,7 +206,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                             <Link2 className="w-4 h-4 text-primary" />
                         </div>
                         <span className="text-sm font-semibold text-text dark:text-dark-text">
-                            Contextual Threads
+                            {t('contextualThreads')}
                         </span>
                         {/* Animated text with fixed width and horizontal scroll for long text */}
                         <div className="relative overflow-hidden w-[280px] h-5">
@@ -275,7 +277,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                         ))}
                                         {!showAll && posts.length > 2 && (
                                             <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                +{posts.length - 2} more
+                                                +{posts.length - 2} {t('more')}
                                             </span>
                                         )}
                                     </div>
@@ -291,7 +293,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                     className="flex items-center gap-2 text-sm text-primary hover:text-primary-dark transition-colors mx-auto"
                                 >
                                     <MoreHorizontal className="w-4 h-4" />
-                                    View all {Object.keys(disciplineGroups).length} disciplines
+                                    {t('viewAllDisciplines', { count: Object.keys(disciplineGroups).length })}
                                 </button>
                             )}
 
@@ -302,7 +304,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                     className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-text transition-colors mx-auto"
                                 >
                                     <ChevronUp className="w-4 h-4" />
-                                    Show less
+                                    {t('showLess')}
                                 </button>
                             )}
                         </div>

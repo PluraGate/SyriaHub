@@ -1,6 +1,7 @@
 'use client'
 
-import { MoreHorizontal, MessageSquareQuote } from 'lucide-react'
+import { MoreHorizontal, MessageSquareQuote, History, Flag } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -15,9 +16,12 @@ import { ReportButton } from './ReportButton'
 
 interface PostMoreOptionsProps {
     postId: string
+    asButton?: boolean
 }
 
-export function PostMoreOptions({ postId }: PostMoreOptionsProps) {
+export function PostMoreOptions({ postId, asButton }: PostMoreOptionsProps) {
+    const t = useTranslations('Post')
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -29,7 +33,7 @@ export function PostMoreOptions({ postId }: PostMoreOptionsProps) {
                 <DropdownMenuItem asChild>
                     <Link href={`/editor?critique_of=${postId}`} className="flex items-center gap-2 cursor-pointer">
                         <MessageSquareQuote className="w-4 h-4" />
-                        <span>Write a Critique</span>
+                        <span>{t('writeCritique')}</span>
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

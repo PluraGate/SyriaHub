@@ -6,22 +6,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/toast'
-import { FileEdit, Loader2 } from 'lucide-react'
+import { PenSquare, Loader2 } from 'lucide-react'
 
 interface SuggestionDialogProps {
     postId: string
-    currentContent: string
+    originalContent: string
 }
 
-export function SuggestionDialog({ postId, currentContent }: SuggestionDialogProps) {
+export function SuggestionDialog({ postId, originalContent }: SuggestionDialogProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [content, setContent] = useState(currentContent)
+    const [content, setContent] = useState(originalContent)
     const [reason, setReason] = useState('')
 
     const supabase = createClient()
     const { showToast } = useToast()
+    const t = useTranslations('Post')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,7 +33,7 @@ export function SuggestionDialog({ postId, currentContent }: SuggestionDialogPro
             const { data: { user } } = await supabase.auth.getUser()
 
             if (!user) {
-                showToast('You must be logged in to suggest edits.', 'error')
+                showToast(t('loginRequired'), 'error')
                 return
             }
 
@@ -47,12 +49,12 @@ export function SuggestionDialog({ postId, currentContent }: SuggestionDialogPro
 
             if (error) throw error
 
-            showToast('Suggestion submitted successfully.', 'success')
+            showToast(t('suggestionSuccess'), 'success')
             setOpen(false)
             setReason('')
         } catch (error) {
             console.error('Error submitting suggestion:', error)
-            showToast('Failed to submit suggestion.', 'error')
+            showToast(t('suggestionError'), 'error')
         } finally {
             setLoading(false)
         }
@@ -62,33 +64,32 @@ export function SuggestionDialog({ postId, currentContent }: SuggestionDialogPro
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
-                    <FileEdit className="w-4 h-4" />
-                    Suggest Edit
+                    <PenSquare className="w-4 h-4" />
+                    {t('suggestEdit')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[625px]">
                 <DialogHeader>
-                    <DialogTitle>Suggest an Edit</DialogTitle>
+                    <DialogTitle>{t('suggestEditTitle')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-4">
                     <div className="space-y-2">
-                        <Label htmlFor="content">Proposed Content</Label>
+                        <Label htmlFor="content">{t('proposedContent')}</Label>
                         <Textarea
                             id="content"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="min-h-[200px] font-mono text-sm"
-                            required
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="reason">Reason for Change (Optional)</Label>
+                        <Label htmlFor="reason">{t('reasonForChange')}</Label>
                         <Textarea
                             id="reason"
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            placeholder="e.g. Fixed typo, added clarification..."
+                            placeholder={t('reasonPlaceholder')}
                             className="resize-none"
                         />
                     </div>
@@ -96,7 +97,7 @@ export function SuggestionDialog({ postId, currentContent }: SuggestionDialogPro
                     <div className="flex justify-end pt-4">
                         <Button type="submit" disabled={loading}>
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Submit Suggestion
+                            {t('submitSuggestion')}
                         </Button>
                     </div>
                 </form>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Calendar, MapPin, Users, Clock, AlertTriangle, Trash2, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
+import { BookmarkButton } from './BookmarkButton'
 import { getAvatarGradient, getInitials } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -106,37 +107,41 @@ export function EventCard({ event, currentUser }: EventCardProps) {
 
     return (
         <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden relative">
-            {/* Delete Button / Confirmation for Author */}
-            {isAuthor && (
-                <div className="absolute top-2 right-2 z-20">
-                    {showConfirmation ? (
-                        <div className="flex items-center gap-1 bg-white dark:bg-dark-surface rounded-full shadow-md border border-gray-200 dark:border-dark-border p-1">
+            {/* Actions for Author (Delete) and all users (Bookmark) */}
+            <div className="absolute top-2 right-2 z-20 flex items-center gap-2">
+                <BookmarkButton postId={event.id} className="bg-white/80 dark:bg-dark-surface/80 shadow-sm border border-gray-100 dark:border-dark-border" />
+
+                {isAuthor && (
+                    <>
+                        {showConfirmation ? (
+                            <div className="flex items-center gap-1 bg-white dark:bg-dark-surface rounded-full shadow-md border border-gray-200 dark:border-dark-border p-1">
+                                <button
+                                    onClick={handleCancelDelete}
+                                    className="p-1.5 text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text rounded-full hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
+                                    title={t('cancel')}
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={handleConfirmDelete}
+                                    className="px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
+                                >
+                                    <Trash2 className="w-3 h-3" />
+                                    {t('delete')}
+                                </button>
+                            </div>
+                        ) : (
                             <button
-                                onClick={handleCancelDelete}
-                                className="p-1.5 text-text-light hover:text-text dark:text-dark-text-muted dark:hover:text-dark-text rounded-full hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
-                                title={t('cancel')}
+                                onClick={handleDeleteClick}
+                                className="p-2.5 text-text-light hover:text-red-600 dark:text-dark-text-muted dark:hover:text-red-400 bg-white/80 dark:bg-dark-surface/80 rounded-full shadow-sm border border-gray-100 dark:border-dark-border hover:border-red-200 dark:hover:border-red-800 transition-colors"
+                                title={tEvents('deleteEvent')}
                             >
-                                <X className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4" />
                             </button>
-                            <button
-                                onClick={handleConfirmDelete}
-                                className="px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
-                            >
-                                <Trash2 className="w-3 h-3" />
-                                {t('delete')}
-                            </button>
-                        </div>
-                    ) : (
-                        <button
-                            onClick={handleDeleteClick}
-                            className="p-2 text-text-light hover:text-red-600 dark:text-dark-text-muted dark:hover:text-red-400 bg-white/80 dark:bg-dark-surface/80 rounded-full shadow-sm border border-gray-100 dark:border-dark-border hover:border-red-200 dark:hover:border-red-800 transition-colors"
-                            title={tEvents('deleteEvent')}
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                    )}
-                </div>
-            )}
+                        )}
+                    </>
+                )}
+            </div>
 
             {/* Date Badge with optional background image */}
             <div className={`
