@@ -1,14 +1,19 @@
 'use client'
 
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { useTheme } from 'next-themes'
 import {
-    Loader2,
-    Maximize2,
-    RotateCcw,
     ZoomIn,
     ZoomOut,
+    RotateCcw,
+    Info,
+    ExternalLink,
+    Maximize2,
+    Minimize2,
+    Search,
+    Loader2,
     X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -97,6 +102,22 @@ function DialogGraphCanvas({
     const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null) // For click-to-show-info panel
     const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null)
     const hasDragged = useRef(false)
+
+    const t = useTranslations('KnowledgeGraph')
+
+    const RELATION_LABELS: Record<RelationType, string> = {
+        fork: t('relations.fork'),
+        citation: t('relations.citation'),
+        shared_tag: t('relations.shared_tag'),
+        shared_author: t('relations.shared_author')
+    }
+
+    const EDGE_DESCRIPTIONS: Record<RelationType, string> = {
+        fork: t('highlightFork'), // Need to make sure these match or add to en/ar.json
+        citation: t('highlightCitation'),
+        shared_tag: t('highlightTopic'),
+        shared_author: t('highlightAuthor')
+    }
 
     // Initialize positions when dialog opens
     useEffect(() => {
@@ -392,7 +413,7 @@ function DialogGraphCanvas({
             <div className="absolute top-3 left-3 z-10 bg-[#1A2028]/95 backdrop-blur-md rounded-lg border border-dark-border p-4 shadow-lg w-[280px]">
                 {/* Header */}
                 <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-3 pb-2 border-b border-dark-border">
-                    Node Details
+                    {t('nodeDetails')}
                 </div>
 
                 {selectedNode ? (
@@ -433,13 +454,13 @@ function DialogGraphCanvas({
 
                         {/* Relationship Explanation */}
                         <div className="bg-dark-border/20 rounded p-2 mb-3">
-                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-1">Connection</div>
+                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-1">{t('connection')}</div>
                             <div className="text-xs text-dark-text">
-                                {selectedNode.group === 'center' && "This is the current post you're viewing"}
-                                {selectedNode.group === 'fork' && "This work was derived from or built upon the original"}
-                                {selectedNode.group === 'citation' && "This work references or cites the original"}
-                                {selectedNode.group === 'related' && "Shares common topics or themes"}
-                                {selectedNode.group === 'author' && "Written by the same author"}
+                                {selectedNode.group === 'center' && t('currentlyViewing')}
+                                {selectedNode.group === 'fork' && t('highlightFork')}
+                                {selectedNode.group === 'citation' && t('highlightCitation')}
+                                {selectedNode.group === 'related' && t('highlightTopic')}
+                                {selectedNode.group === 'author' && t('highlightAuthor')}
                             </div>
                         </div>
 
@@ -449,12 +470,12 @@ function DialogGraphCanvas({
                                 onClick={() => window.location.href = `/post/${selectedNode.id}`}
                                 className="w-full bg-secondary hover:bg-secondary/80 text-white text-sm h-9 font-medium"
                             >
-                                View Post →
+                                {t('viewPost')} →
                             </Button>
                         )}
                         {selectedNode.group === 'center' && (
                             <div className="text-center text-xs text-secondary py-2">
-                                Currently viewing this post
+                                {t('currentlyViewing')}
                             </div>
                         )}
                     </>
@@ -479,23 +500,23 @@ function DialogGraphCanvas({
                         {/* Empty State - Instructions */}
                         <div className="text-center py-4">
                             <div className="text-4xl mb-3 opacity-40">🔍</div>
-                            <div className="text-sm text-dark-text mb-2">Select a Node</div>
+                            <div className="text-sm text-dark-text mb-2">{t('selectNode')}</div>
                             <div className="text-xs text-dark-text-muted leading-relaxed">
-                                Click on any node to see details about how it connects to this work
+                                {t('exploreHint')}
                             </div>
                         </div>
 
                         {/* Quick Stats */}
                         <div className="border-t border-dark-border pt-3 mt-3">
-                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-2">Graph Overview</div>
+                            <div className="text-[10px] text-dark-text-muted uppercase tracking-wider mb-2">{t('graphOverview')}</div>
                             <div className="grid grid-cols-2 gap-2 text-xs">
                                 <div className="bg-dark-border/30 rounded p-2 text-center">
                                     <div className="text-lg font-bold text-dark-text">{nodes.length}</div>
-                                    <div className="text-dark-text-muted">Nodes</div>
+                                    <div className="text-dark-text-muted">{t('nodes')}</div>
                                 </div>
                                 <div className="bg-dark-border/30 rounded p-2 text-center">
                                     <div className="text-lg font-bold text-dark-text">{edges.length}</div>
-                                    <div className="text-dark-text-muted">Connections</div>
+                                    <div className="text-dark-text-muted">{t('connections')}</div>
                                 </div>
                             </div>
                         </div>
@@ -519,31 +540,33 @@ function DialogGraphCanvas({
 
             {/* Legend */}
             <div className="absolute top-3 right-3 z-10 bg-[#1A2028]/90 backdrop-blur-md rounded-lg border border-dark-border p-3 shadow-sm">
-                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">Node Types</div>
+                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">{t('nodeTypes')}</div>
                 <div className="flex flex-wrap gap-3 text-xs mb-3">
-                    {Object.entries(NODE_COLORS).slice(0, 4).map(([key, colors]) => (
+                    {Object.entries(NODE_COLORS).filter(([key]) => key !== 'center').map(([key, colors]) => (
                         <div key={key} className="flex items-center gap-1.5">
                             <div className="w-3 h-3 rounded" style={{ backgroundColor: colors.bg }} />
-                            <span className="text-dark-text-muted capitalize">{key === 'related' ? 'Topic' : key}</span>
+                            <span className="text-dark-text-muted capitalize">
+                                {key === 'related' ? t('relations.shared_tag') : (RELATION_LABELS[key as RelationType] || key)}
+                            </span>
                         </div>
                     ))}
                 </div>
-                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">Edge Types</div>
+                <div className="text-[10px] text-dark-text-muted uppercase tracking-wide mb-2">{t('edgeTypes')}</div>
                 <div className="flex flex-col gap-1.5 text-xs">
                     <div className="flex items-center gap-2">
                         <div className="w-5 h-0.5 bg-dark-text-muted" />
-                        <span className="text-dark-text-muted">Solid = Derived (Fork)</span>
+                        <span className="text-dark-text-muted">{t('legendSolid')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-5 h-0 border-t-2 border-dashed border-dark-text-muted" />
-                        <span className="text-dark-text-muted">Dashed = Citation</span>
+                        <span className="text-dark-text-muted">{t('legendDashed')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Purpose Hint */}
             <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 text-xs text-dark-text-muted/70 text-center">
-                Explore how this work connects, diverges, or is contested
+                {t('exploreHint')}
             </div>
         </div>
     )
@@ -556,6 +579,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
     const [expanded, setExpanded] = useState(false)
     const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null)
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
+    const t = useTranslations('KnowledgeGraph')
 
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -1009,7 +1033,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
     if (nodes.length <= 1) {
         return (
             <div className="relative border border-dark-border rounded-xl overflow-hidden bg-[#0F1419] h-[200px] w-full flex items-center justify-center">
-                <p className="text-dark-text-muted text-sm">No connections found for this post</p>
+                <p className="text-dark-text-muted text-sm">{t('noConnections')}</p>
             </div>
         )
     }
@@ -1054,8 +1078,11 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                         {Object.entries(NODE_COLORS).slice(0, 4).map(([key, colors]) => (
                             <div key={key} className="flex items-center gap-1">
                                 <div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: colors.bg }} />
-                                <span className="text-dark-text-muted capitalize">
-                                    {key === 'related' ? 'Topic' : key}
+                                <span className="text-dark-text-muted">
+                                    {key === 'center' ? t('legend.center') :
+                                        key === 'fork' ? t('legend.fork') :
+                                            key === 'citation' ? t('legend.citation') :
+                                                key === 'related' ? t('legend.topic') : key}
                                 </span>
                             </div>
                         ))}
@@ -1077,11 +1104,11 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                             </div>
                             {hoveredNode.authorName && (
                                 <div className="text-xs text-text-light dark:text-dark-text-muted mt-1">
-                                    by {hoveredNode.authorName}
+                                    {t('byAuthor', { author: hoveredNode.authorName })}
                                 </div>
                             )}
                             <div className="text-xs text-secondary dark:text-secondary-light mt-1">
-                                Click to view →
+                                {t('viewPost')} →
                             </div>
                         </div>
                     </div>
@@ -1093,7 +1120,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                 <DialogContent className="max-w-[95vw] w-[95vw] h-[90vh] flex flex-col p-0 gap-0 bg-[#0F1419] overflow-hidden">
                     <DialogHeader className="p-4 border-b border-dark-border flex-shrink-0">
                         <div className="flex items-center justify-between">
-                            <DialogTitle className="text-dark-text">Knowledge Graph Explorer</DialogTitle>
+                            <DialogTitle className="text-dark-text">{t('explorerTitle')}</DialogTitle>
                         </div>
                     </DialogHeader>
                     <div className="flex-1 relative overflow-hidden bg-[#0F1419]">

@@ -16,6 +16,7 @@ import { useCollaboration } from '@/lib/hooks/useCollaboration'
 import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecoveryBanner'
 import { ResourceLinker } from '@/components/ResourceLinker'
 import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
+import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { useTranslations } from 'next-intl'
 
 // Dynamic import for RichEditor to avoid SSR issues
@@ -24,6 +25,19 @@ const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false
 type EditorErrors = {
   title?: string
   content?: string
+}
+
+interface Citation {
+  type: 'internal' | 'external'
+  target_post_id?: string
+  target_post?: { id: string; title: string; author?: { name?: string | null; email?: string | null } | null; created_at: string }
+  quote_content?: string
+  external_url?: string
+  external_doi?: string
+  external_title?: string
+  external_author?: string
+  external_year?: number
+  external_source?: string
 }
 
 function parseTags(input: string): string[] {
@@ -51,7 +65,7 @@ export default function EditorPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
-  const [citations, setCitations] = useState<string[]>([])
+  const [citations, setCitations] = useState<Citation[]>([])
   const [contentType, setContentType] = useState<'article' | 'question' | 'trace'>('article')
   const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
@@ -147,9 +161,21 @@ export default function EditorPage() {
   // Handle critique_of param and quote param
   useEffect(() => {
     if (critiqueOfParam) {
-      setCitations([critiqueOfParam])
-      supabase.from('posts').select('title').eq('id', critiqueOfParam).single().then(({ data }) => {
+      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name, email)').eq('id', critiqueOfParam).single().then(({ data }) => {
         if (data) {
+          // Add as internal citation - author may be array from join, extract first
+          const authorData = Array.isArray(data.author) ? data.author[0] : data.author
+          setCitations([{
+            type: 'internal',
+            target_post_id: data.id,
+            target_post: {
+              id: data.id,
+              title: data.title,
+              created_at: data.created_at,
+              author: authorData
+            },
+            quote_content: quoteParam ? decodeURIComponent(quoteParam) : undefined,
+          }])
           setTitle(`Critique of: ${data.title}`)
           setTags('critique, review')
           if (quoteParam) {
@@ -316,15 +342,42 @@ export default function EditorPage() {
         if (error) throw error
 
         if (citations.length > 0) {
-          const citationInserts = citations.map(targetId => ({
-            source_post_id: data.id,
-            target_post_id: targetId,
-            quote_content: quoteParam ? decodeURIComponent(quoteParam) : null
-          }))
+          // Delete existing citations if editing
           if (postIdParam) {
             await supabase.from('citations').delete().eq('source_post_id', data.id)
           }
-          await supabase.from('citations').insert(citationInserts)
+
+          // Insert internal citations
+          const internalCitations = citations
+            .filter(c => c.type === 'internal' && c.target_post_id)
+            .map(c => ({
+              source_post_id: data.id,
+              target_post_id: c.target_post_id,
+              quote_content: c.quote_content || null,
+              type: 'internal',
+              created_by: user.id,
+            }))
+
+          // Insert external citations
+          const externalCitations = citations
+            .filter(c => c.type === 'external')
+            .map(c => ({
+              source_post_id: data.id,
+              target_post_id: null,
+              type: 'external',
+              created_by: user.id,
+              external_url: c.external_url || null,
+              external_doi: c.external_doi || null,
+              external_title: c.external_title || null,
+              external_author: c.external_author || null,
+              external_year: c.external_year || null,
+              external_source: c.external_source || null,
+            }))
+
+          const allCitations = [...internalCitations, ...externalCitations]
+          if (allCitations.length > 0) {
+            await supabase.from('citations').insert(allCitations)
+          }
         }
 
         // Save resource links
@@ -642,6 +695,52 @@ export default function EditorPage() {
                 onChange={setLinkedResources}
                 userId={user?.id}
               />
+
+              {/* References / Citations */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-semibold text-text dark:text-dark-text">
+                    References
+                  </label>
+                  <AddCitationDialog
+                    citations={citations}
+                    onCitationsChange={setCitations}
+                  />
+                </div>
+                {citations.length > 0 && (
+                  <div className="space-y-2 p-3 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border">
+                    {citations.map((citation, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-2 p-2 bg-white dark:bg-dark-surface rounded-lg text-sm"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          {citation.type === 'internal' ? (
+                            <BookOpen className="w-4 h-4 text-primary flex-shrink-0" />
+                          ) : (
+                            <span className="w-4 h-4 text-secondary flex-shrink-0">🔗</span>
+                          )}
+                          <span className="truncate text-text dark:text-dark-text">
+                            {citation.type === 'internal'
+                              ? citation.target_post?.title
+                              : citation.external_title || citation.external_doi || citation.external_url}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCitations(citations.filter((_, i) => i !== index))}
+                          className="p-1 text-text-light hover:text-red-500 transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-text-light dark:text-dark-text-muted">
+                  Add references to SyriaHub posts or external sources (DOI, URL).
+                </p>
+              </div>
 
               {/* License */}
               <div className="space-y-2">

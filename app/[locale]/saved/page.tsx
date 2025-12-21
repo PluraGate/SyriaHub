@@ -22,6 +22,8 @@ async function getSavedContent(userId: string, supabase: any) {
                 content,
                 tags,
                 status,
+                content_type,
+                metadata,
                 created_at,
                 updated_at,
                 author_id,
@@ -67,13 +69,23 @@ export default async function SavedPage() {
 
     const { bookmarks, references, events } = await getSavedContent(user.id, supabase)
 
-    // Transform bookmarks to posts format with bookmark_id for removal
+    // Filter and transform bookmarks by content_type
     const savedPosts = bookmarks
-        .filter((b: any) => b.post)
+        .filter((b: any) => b.post && b.post.content_type !== 'event')
         .map((b: any) => ({
             ...b.post,
             bookmark_id: b.id,
-            created_at: b.created_at // Use bookmark date for sorting
+            created_at: b.created_at
+        }))
+
+    const savedEvents = bookmarks
+        .filter((b: any) => b.post && b.post.content_type === 'event')
+        .map((b: any) => ({
+            ...b.post,
+            bookmark_id: b.id,
+            event_date: b.post.metadata?.start_time,
+            location: b.post.metadata?.location,
+            created_at: b.created_at
         }))
 
     return (
@@ -92,7 +104,7 @@ export default async function SavedPage() {
                                 Saved Items
                             </h1>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                {savedPosts.length + references.length + events.length} items saved
+                                {savedPosts.length + references.length + savedEvents.length} items saved
                             </p>
                         </div>
                     </div>
@@ -101,7 +113,7 @@ export default async function SavedPage() {
                     <SavedItemsManager
                         posts={savedPosts}
                         references={references}
-                        events={events}
+                        events={savedEvents}
                     />
                 </div>
             </main>

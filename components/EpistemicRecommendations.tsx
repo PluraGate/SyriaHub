@@ -31,53 +31,6 @@ interface EpistemicRecommendationsProps {
     postTags?: string[]
 }
 
-// Category metadata for UI
-const CATEGORY_CONFIG = {
-    contrasting_findings: {
-        label: 'Contrasting Findings',
-        icon: Scale,
-        color: 'text-amber-600 dark:text-amber-400',
-        bgColor: 'bg-amber-50 dark:bg-amber-900/20',
-        description: 'Content that challenges or contradicts this work'
-    },
-    methodological_critiques: {
-        label: 'Alternative Approaches',
-        icon: Lightbulb,
-        color: 'text-blue-600 dark:text-blue-400',
-        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-        description: 'Different methodological or disciplinary perspectives'
-    },
-    same_site_different_view: {
-        label: 'Same Site, Different View',
-        icon: MapPin,
-        color: 'text-green-600 dark:text-green-400',
-        bgColor: 'bg-green-50 dark:bg-green-900/20',
-        description: 'Same geographic focus with alternative interpretations'
-    },
-    negative_failed_outcomes: {
-        label: 'Negative or Failed Outcomes',
-        icon: AlertTriangle,
-        color: 'text-red-600 dark:text-red-400',
-        bgColor: 'bg-red-50 dark:bg-red-900/20',
-        description: 'Documented failures, limitations, or negative results'
-    },
-    what_is_still_unknown: {
-        label: 'What Is Still Unknown',
-        icon: HelpCircle,
-        color: 'text-purple-600 dark:text-purple-400',
-        bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-        description: 'Gaps in knowledge, unvalidated claims, open questions'
-    }
-}
-
-const DIVERSITY_LABELS: Record<string, string> = {
-    disciplinary: 'Cross-discipline',
-    evidence_type: 'Different evidence',
-    temporal: 'Different time period',
-    institutional: 'Different source',
-    methodological: 'Different method'
-}
-
 export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRecommendationsProps) {
     const t = useTranslations('Recommendations')
     const [recommendations, setRecommendations] = useState<Recommendation[]>([])
@@ -86,28 +39,55 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
     const [activeCategory, setActiveCategory] = useState<string | null>(null)
     const [showReasoning, setShowReasoning] = useState<string | null>(null)
 
-    // Category config with translated labels
-    const getCategoryConfig = (cat: string) => {
-        const configs: Record<string, { labelKey: string; descKey: string; icon: any; color: string; bgColor: string }> = {
-            contrasting_findings: { labelKey: 'contrastingFindings', descKey: 'contrastingDesc', icon: Scale, color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-900/20' },
-            methodological_critiques: { labelKey: 'alternativeApproaches', descKey: 'alternativeDesc', icon: Lightbulb, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-50 dark:bg-blue-900/20' },
-            same_site_different_view: { labelKey: 'sameSite', descKey: 'sameSiteDesc', icon: MapPin, color: 'text-green-600 dark:text-green-400', bgColor: 'bg-green-50 dark:bg-green-900/20' },
-            negative_failed_outcomes: { labelKey: 'negativeOutcomes', descKey: 'negativeDesc', icon: AlertTriangle, color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-50 dark:bg-red-900/20' },
-            what_is_still_unknown: { labelKey: 'stillUnknown', descKey: 'stillUnknownDesc', icon: HelpCircle, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-50 dark:bg-purple-900/20' }
+    // Category metadata for UI
+    const CATEGORY_CONFIG = {
+        contrasting_findings: {
+            labelKey: 'contrastingFindings',
+            icon: Scale,
+            color: 'text-amber-600 dark:text-amber-400',
+            bgColor: 'bg-amber-50 dark:bg-amber-900/20',
+            descriptionKey: 'contrastingDesc'
+        },
+        methodological_critiques: {
+            labelKey: 'alternativeApproaches',
+            icon: Lightbulb,
+            color: 'text-blue-600 dark:text-blue-400',
+            bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+            descriptionKey: 'alternativeDesc'
+        },
+        same_site_different_view: {
+            labelKey: 'sameSite',
+            icon: MapPin,
+            color: 'text-green-600 dark:text-green-400',
+            bgColor: 'bg-green-50 dark:bg-green-900/20',
+            descriptionKey: 'sameSiteDesc'
+        },
+        negative_failed_outcomes: {
+            labelKey: 'negativeOutcomes',
+            icon: AlertTriangle,
+            color: 'text-red-600 dark:text-red-400',
+            bgColor: 'bg-red-50 dark:bg-red-900/20',
+            descriptionKey: 'negativeDesc'
+        },
+        what_is_still_unknown: {
+            labelKey: 'stillUnknown',
+            icon: HelpCircle,
+            color: 'text-purple-600 dark:text-purple-400',
+            bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+            descriptionKey: 'stillUnknownDesc'
         }
-        return configs[cat] || configs.contrasting_findings
     }
 
-    // Diversity labels translated
+    const DIVERSITY_LABELS: Record<string, string> = {
+        disciplinary: t('crossDiscipline'),
+        evidence_type: t('differentEvidence'),
+        temporal: t('differentPeriod'),
+        institutional: t('differentSource'),
+        methodological: t('differentMethod')
+    }
+
     const getDiversityLabel = (objective: string) => {
-        const keys: Record<string, string> = {
-            disciplinary: 'crossDiscipline',
-            evidence_type: 'differentEvidence',
-            temporal: 'differentPeriod',
-            institutional: 'differentSource',
-            methodological: 'differentMethod'
-        }
-        return t(keys[objective] || objective)
+        return DIVERSITY_LABELS[objective] || objective
     }
 
     useEffect(() => {
@@ -123,14 +103,11 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                 })
 
                 if (error) {
-                    // RPC function may not exist yet (migration not applied)
-                    // Silently fall back to tag-based recommendations
                     await loadFallbackRecommendations()
                 } else {
                     setRecommendations(data || [])
                 }
             } catch (err) {
-                // Network or other error - use fallback
                 await loadFallbackRecommendations()
             } finally {
                 setLoading(false)
@@ -164,11 +141,7 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
         fetchRecommendations()
     }, [postId, postTags])
 
-    if (loading) {
-        return null
-    }
-
-    if (recommendations.length === 0) {
+    if (loading || recommendations.length === 0) {
         return null
     }
 
@@ -216,21 +189,21 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                     {/* Category Tabs */}
                     <div className="flex overflow-x-auto border-b border-gray-100 dark:border-dark-border">
                         {categories.map(cat => {
-                            const catConfig = getCategoryConfig(cat)
-                            const Icon = catConfig.icon
+                            const catConfig = CATEGORY_CONFIG[cat as keyof typeof CATEGORY_CONFIG]
+                            const Icon = catConfig?.icon || HelpCircle
                             const isActive = cat === displayCategory
                             return (
                                 <button
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
                                     className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${isActive
-                                        ? `${catConfig.color} border-b-2 border-current`
+                                        ? `${catConfig?.color || 'text-primary'} border-b-2 border-current`
                                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />
-                                    {t(catConfig.labelKey)}
-                                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? catConfig.bgColor : 'bg-gray-100 dark:bg-dark-border'}`}>
+                                    {catConfig ? t(catConfig.labelKey) : cat}
+                                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? (catConfig?.bgColor || 'bg-primary/10') : 'bg-gray-100 dark:bg-dark-border'}`}>
                                         {byCategory[cat]?.length || 0}
                                     </span>
                                 </button>
@@ -239,11 +212,11 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                     </div>
 
                     {/* Category Description */}
-                    {displayCategory && (
-                        <div className={`px-5 py-2 text-xs ${getCategoryConfig(displayCategory).bgColor}`}>
+                    {displayCategory && CATEGORY_CONFIG[displayCategory as keyof typeof CATEGORY_CONFIG] && (
+                        <div className={`px-5 py-2 text-xs ${CATEGORY_CONFIG[displayCategory as keyof typeof CATEGORY_CONFIG].bgColor}`}>
                             <p className="text-text-light dark:text-dark-text-muted flex items-center gap-1">
                                 <Info className="w-3 h-3" />
-                                {t(getCategoryConfig(displayCategory).descKey)}
+                                {t(CATEGORY_CONFIG[displayCategory as keyof typeof CATEGORY_CONFIG].descriptionKey)}
                             </p>
                         </div>
                     )}

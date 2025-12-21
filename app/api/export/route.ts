@@ -82,14 +82,37 @@ export async function GET(request: NextRequest) {
           'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.html"`,
         },
       })
+    } else if (format === 'bibtex') {
+      // Generate BibTeX export for academic references
+      const bibtex = generateBibTeX(post, authorName, postId)
+
+      return new NextResponse(bibtex, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/x-bibtex; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.bib"`,
+        },
+      })
+    } else if (format === 'ris') {
+      // Generate RIS export for reference managers
+      const ris = generateRIS(post, authorName, postId)
+
+      return new NextResponse(ris, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/x-research-info-systems; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${sanitizeFilename(post.title)}.ris"`,
+        },
+      })
     }
 
-    return NextResponse.json({ error: 'Invalid format. Use markdown, json, or html.' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid format. Use markdown, json, html, bibtex, or ris.' }, { status: 400 })
   } catch (error) {
     console.error('Export error:', error)
     return NextResponse.json({ error: 'Failed to export post' }, { status: 500 })
   }
 }
+
 
 function sanitizeFilename(title: string): string {
   return title
@@ -269,4 +292,104 @@ function convertMarkdownToBasicHTML(markdown: string): string {
     .replace(/<p><\/p>/g, '')
     .replace(/<p>(<h[1-6]>)/g, '$1')
     .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+}
+
+/**
+ * Generate BibTeX format for academic citation managers
+ * Uses stable citation ID: syriahub:{post_id} to prevent duplicates on re-import
+ */
+function generateBibTeX(post: any, authorName: string, postId: string): string {
+  const date = new Date(post.created_at)
+  const year = date.getFullYear()
+  const month = date.toLocaleString('en-US', { month: 'short' }).toLowerCase()
+
+  // Stable citation key: syriahub-{post_id} (deterministic, prevents duplicates)
+  const citeKey = `syriahub-${postId}`
+
+  // Escape special BibTeX characters
+  const escapeTeX = (str: string) => str
+    .replace(/[&%$#_{}~^\\]/g, (char) => `\\${char}`)
+    .replace(/"/g, "''")
+
+  // Determine entry type based on content_type
+  const entryType = post.content_type === 'question' ? 'misc' : 'article'
+
+  // Extract first ~200 chars of content as abstract
+  const abstract = post.content
+    ? escapeTeX(post.content.substring(0, 200).replace(/\n/g, ' ').trim()) + '...'
+    : ''
+
+  const keywords = post.tags?.length
+    ? post.tags.map((t: string) => escapeTeX(t)).join(', ')
+    : ''
+
+  return `@${entryType}{${citeKey},
+  author = {${escapeTeX(authorName)}},
+  title = {${escapeTeX(post.title)}},
+  journal = {SyriaHub Research Platform},
+  year = {${year}},
+  month = {${month}},
+  url = {${process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.com'}/post/${postId}},
+  urldate = {${new Date().toISOString().split('T')[0]}},${abstract ? `
+  abstract = {${abstract}},` : ''}${keywords ? `
+  keywords = {${keywords}},` : ''}
+  note = {Content type: ${post.content_type || 'article'}. License: ${post.license || 'CC-BY-4.0'}}
+}
+`
+}
+
+/**
+ * Generate RIS format for reference managers (Zotero, Mendeley, EndNote)
+ * Uses stable ID format for deduplication
+ */
+function generateRIS(post: any, authorName: string, postId: string): string {
+  const date = new Date(post.created_at)
+  const year = date.getFullYear()
+  // RIS date format: YYYY/MM/DD
+  const risDate = `${year}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
+
+  // Determine RIS type based on content_type
+  // TY - Type: JOUR (Journal), BLOG, ELEC (Electronic), GEN (Generic)
+  let risType = 'JOUR'
+  if (post.content_type === 'question') {
+    risType = 'GEN'
+  } else if (post.content_type === 'trace') {
+    risType = 'ELEC'
+  }
+
+  // Extract abstract (first 500 chars)
+  const abstract = post.content
+    ? post.content.substring(0, 500).replace(/\n/g, ' ').trim()
+    : ''
+
+  // Build tags as keywords
+  const keywords = post.tags?.map((t: string) => `KW  - ${t}`).join('\n') || ''
+
+  // Build RIS format (each field on its own line, ER marks end)
+  const lines = [
+    `TY  - ${risType}`,
+    `TI  - ${post.title}`,
+    `AU  - ${authorName}`,
+    `PY  - ${year}`,
+    `DA  - ${risDate}`,
+    `JO  - SyriaHub Research Platform`,
+    `UR  - ${process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.com'}/post/${postId}`,
+    `ID  - syriahub:${postId}`, // Stable ID for deduplication
+  ]
+
+  if (abstract) {
+    lines.push(`AB  - ${abstract}`)
+  }
+
+  if (keywords) {
+    lines.push(keywords)
+  }
+
+  lines.push(
+    `N1  - Content type: ${post.content_type || 'article'}`,
+    `N1  - License: ${post.license || 'CC-BY-4.0'}`,
+    `ER  - ` // End of record
+  )
+
+  return lines.join('\n') + '\n'
 }

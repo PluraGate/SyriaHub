@@ -1,6 +1,6 @@
 # System Gap Analysis
 
-**Last Updated:** December 18, 2025
+**Last Updated:** December 21, 2025
 
 This document tracks the system capabilities, completed features, and remaining gaps for the SyriaHub research platform.
 
@@ -126,8 +126,8 @@ This document tracks the system capabilities, completed features, and remaining 
 | Email Configuration | ✅ Complete | Templates, Edge Functions, and DB logs integrated. |
 | API Rate Limiting | ✅ Complete | Integrated into Auth, Research Lab, and Public APIs |
 | CAPTCHA Integration | ✅ Complete | Cloudflare Turnstile on signup/login forms |
-| Performance Monitoring | 🔵 Low | ⚠️ Partial | Vercel Analytics active. Sentry/APM missing. |
-| Data Export (GDPR) | 🔵 Low | ⚠️ Partial | Basic export exists. Need full portability & BibTeX/RIS. |
+| Performance Monitoring | ✅ Complete | Sentry integration with 10% sampling, PII discipline, Vercel Analytics |
+| Data Export (GDPR) | ✅ Complete | BibTeX/RIS formats, stable citation IDs, markdown/JSON/HTML export |
 
 ### Documentation & Architecture
 - [x] Complete WCAG 2.1 AA compliance audit

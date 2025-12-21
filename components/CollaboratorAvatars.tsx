@@ -1,6 +1,6 @@
 'use client'
 
-import { Users } from 'lucide-react'
+import { Eye } from 'lucide-react'
 
 interface CollaboratorAvatarsProps {
     collaborators: {
@@ -40,13 +40,13 @@ export function CollaboratorAvatars({ collaborators, isConnected, userColor }: C
 
             {/* Avatars */}
             <div className="flex -space-x-2">
-                {/* Current user (you) */}
+                {/* Current user (YOU) */}
                 <div
-                    className="w-8 h-8 rounded-full border-2 border-white dark:border-dark-surface flex items-center justify-center text-white text-xs font-bold z-10"
+                    className="w-8 h-8 rounded-full border-2 border-white dark:border-dark-surface flex items-center justify-center text-white text-[10px] font-bold z-10 shadow-sm"
                     style={{ backgroundColor: userColor }}
-                    title="You"
+                    title="You (Editor)"
                 >
-                    You
+                    YOU
                 </div>
 
                 {/* Collaborators */}
@@ -83,9 +83,9 @@ export function CollaboratorAvatars({ collaborators, isConnected, userColor }: C
             </div>
 
             {/* Viewer count */}
-            <div className="flex items-center gap-1.5 text-sm text-text-light dark:text-dark-text-muted">
-                <Users className="w-4 h-4" />
-                <span>{totalCount} {totalCount === 1 ? 'viewer' : 'viewers'}</span>
+            <div className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                <Eye className="w-3.5 h-3.5" />
+                <span className="tabular-nums">{totalCount} {totalCount === 1 ? 'viewer' : 'viewers'}</span>
             </div>
         </div>
     )

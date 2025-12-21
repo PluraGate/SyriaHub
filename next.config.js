@@ -1,4 +1,5 @@
 const createNextIntlPlugin = require('next-intl/plugin');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 const withNextIntl = createNextIntlPlugin();
 
@@ -8,6 +9,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Enable instrumentation hook for Sentry
+    instrumentationHook: true,
   },
   images: {
     remotePatterns: [
@@ -38,4 +41,28 @@ const nextConfig = {
   },
 }
 
-module.exports = withNextIntl(nextConfig);
+// Sentry configuration with org/project settings
+const sentryWebpackPluginOptions = {
+  org: "lavart-studio",
+  project: "javascript-nextjs",
+
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+
+  // Upload a larger set of source maps for prettier stack traces
+  widenClientFileUpload: true,
+
+  // Route browser requests through Next.js to circumvent ad-blockers
+  tunnelRoute: "/monitoring",
+
+  webpack: {
+    // Automatic instrumentation for Vercel Cron Monitors
+    automaticVercelMonitors: true,
+    // Tree-shaking for reduced bundle size
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+};
+
+module.exports = withSentryConfig(withNextIntl(nextConfig), sentryWebpackPluginOptions);

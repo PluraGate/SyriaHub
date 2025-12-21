@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { History } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { PostHistoryDialog } from './PostHistoryDialog'
 import { Button } from './ui/button'
 
@@ -12,6 +13,7 @@ interface PostHistoryButtonProps {
 
 export function PostHistoryButton({ postId, asMenuItem }: PostHistoryButtonProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const t = useTranslations('Post')
 
     return (
         <>
@@ -21,7 +23,7 @@ export function PostHistoryButton({ postId, asMenuItem }: PostHistoryButtonProps
                     className="flex items-center gap-2 w-full"
                 >
                     <History className="w-4 h-4" />
-                    <span>View History</span>
+                    <span>{t('viewHistory')}</span>
                 </div>
             ) : (
                 <Button
@@ -29,10 +31,10 @@ export function PostHistoryButton({ postId, asMenuItem }: PostHistoryButtonProps
                     size="sm"
                     onClick={() => setIsOpen(true)}
                     className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light"
-                    title="View Edit History"
+                    title={t('viewHistory')}
                 >
                     <History className="w-4 h-4 mr-2" />
-                    History
+                    {t('history')}
                 </Button>
             )}
 

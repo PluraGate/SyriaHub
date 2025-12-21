@@ -11,6 +11,7 @@ import { ViewTracker } from '@/components/ViewTracker'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { EventActions } from '@/components/EventActions'
 import { UserAvatar } from '@/components/ui/UserAvatar'
+import { BookmarkButton } from '@/components/BookmarkButton'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -177,10 +178,13 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                     <div className="space-y-6">
                         {/* RSVP Card */}
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 sticky top-24">
-                            <EventActions
-                                eventId={id}
-                                isAuthor={user?.id === event.author_id}
-                            />
+                            <div className="flex items-center justify-between mb-6">
+                                <EventActions
+                                    eventId={id}
+                                    isAuthor={user?.id === event.author_id}
+                                />
+                                <BookmarkButton postId={id} className="p-2 hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg border border-gray-100 dark:border-dark-border" />
+                            </div>
 
                             <h3 className="text-lg font-bold text-text dark:text-dark-text mb-4">
                                 {t('areYouGoing')}
