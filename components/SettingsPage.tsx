@@ -13,12 +13,14 @@ import {
     Monitor,
     Check,
     RotateCcw,
-    Ticket
+    Ticket,
+    MessageSquarePlus
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
 import { useToast } from '@/components/ui/toast'
 import { InviteManager } from '@/components/InviteManager'
+import { FeedbackSection } from '@/components/feedback'
 import { useTranslations } from 'next-intl'
 
 interface SettingsPageProps {
@@ -32,7 +34,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
     const { preferences, updatePreference, updateNestedPreference, resetToDefaults, loading } = usePreferences()
     const { showToast } = useToast()
     const t = useTranslations('Settings')
-    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites'>('appearance')
+    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites' | 'feedback'>('appearance')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
@@ -69,6 +71,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
         { id: 'privacy', label: t('privacyTab'), icon: Lock },
         { id: 'editor', label: t('editorSettings.title'), icon: FileEdit },
         { id: 'invites', label: t('invitesSection.title'), icon: Ticket },
+        { id: 'feedback', label: t('feedbackSection.title'), icon: MessageSquarePlus },
     ] as const
 
     return (
@@ -336,6 +339,11 @@ export function SettingsPage({ user }: SettingsPageProps) {
                             </p>
                             <InviteManager />
                         </div>
+                    )}
+
+                    {/* Feedback */}
+                    {activeSection === 'feedback' && (
+                        <FeedbackSection />
                     )}
                 </div>
             </div>

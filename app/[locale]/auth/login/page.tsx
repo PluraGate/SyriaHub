@@ -134,7 +134,7 @@ export default async function LoginPage({
                 Sign in to your account
               </h2>
               <p className="text-text-light dark:text-dark-text-muted mb-8">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/auth/signup" className="font-semibold text-primary hover:text-primary-dark transition-colors">
                   Sign up
                 </Link>

@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, Share2, Bookmark, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Calendar, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, Share2, Bookmark, MessageSquare, GraduationCap } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -350,6 +350,20 @@ export default async function PostPage(props: PostPageProps) {
                 <span>{readingTime} min read</span>
               </div>
 
+              {/* Academic Impact Score - if available */}
+              {post.academic_impact_score && post.academic_impact_score > 0 && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-700">•</span>
+                  <div
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold"
+                    title="Academic Impact Score: Based on quality citations and scholarly engagement"
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Impact: {post.academic_impact_score.toFixed(1)}</span>
+                  </div>
+                </>
+              )}
+
               {/* License */}
               {post.license && (
                 <>
@@ -553,7 +567,7 @@ export default async function PostPage(props: PostPageProps) {
                       </h4>
                       {citation.quote_content && (
                         <p className="text-xs text-text-light dark:text-dark-text-muted mt-1 italic line-clamp-2">
-                          "{citation.quote_content}"
+                          &quot;{citation.quote_content}&quot;
                         </p>
                       )}
                     </Link>

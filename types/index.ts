@@ -3,6 +3,66 @@
 export type UserRole = 'member' | 'researcher' | 'moderator' | 'admin'
 export type ReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed'
 
+// Epistemic Architecture Types
+export type ContentType = 'article' | 'question' | 'answer' | 'resource' | 'event' | 'trace'
+export type CitationType = 'supports' | 'disputes' | 'extends' | 'mentions'
+export type ResearchGapStatus = 'identified' | 'investigating' | 'addressed' | 'closed'
+export type ResearchGapPriority = 'low' | 'medium' | 'high' | 'critical'
+export type TraceArtifactType = 'photo' | 'audio' | 'document' | 'video' | 'handwritten'
+export type TracePreservationStatus = 'original' | 'copy' | 'transcription'
+
+// Metadata interfaces for specialized content types
+export interface TraceMetadata {
+  artifact_type: TraceArtifactType
+  source_context?: string
+  collection_date?: string
+  preservation_status: TracePreservationStatus
+  language?: string
+  file_url?: string
+  thumbnail_url?: string
+}
+
+export interface EventMetadata {
+  start_time: string
+  end_time?: string
+  location?: string
+  link?: string
+  status?: 'scheduled' | 'cancelled' | 'postponed'
+}
+
+// Research Gap interface (The "Absence" Model)
+export interface ResearchGap {
+  id: string
+  title: string
+  description?: string
+  discipline?: string
+  status: ResearchGapStatus
+  priority: ResearchGapPriority
+  created_by?: string
+  created_at: string
+  updated_at: string
+  claimed_by?: string
+  claimed_at?: string
+  addressed_by_post_id?: string
+  addressed_at?: string
+  upvote_count: number
+  temporal_context_start?: string
+  temporal_context_end?: string
+  spatial_context?: string
+  tags?: string[]
+  // Relations
+  creator?: User
+  claimer?: User
+  addressed_by_post?: Post
+}
+
+export interface ResearchGapUpvote {
+  id: string
+  gap_id: string
+  user_id: string
+  created_at: string
+}
+
 export interface User {
   id: string
   name: string
@@ -26,7 +86,7 @@ export interface Post {
   updated_at: string
 
   // Forum & Workflow fields
-  content_type: 'article' | 'question' | 'answer'
+  content_type: ContentType
   status: 'draft' | 'queued' | 'published' | 'archived'
   parent_id?: string | null
   forked_from_id?: string | null
@@ -34,6 +94,18 @@ export interface Post {
   is_accepted?: boolean
   accepted_answer_id?: string | null
   license?: string | null
+
+  // Epistemic fields (temporal & spatial coverage)
+  temporal_coverage_start?: string | null
+  temporal_coverage_end?: string | null
+  spatial_coverage?: string | null
+
+  // Impact metrics (shift from gamification)
+  academic_impact_score?: number
+  reuse_count?: number
+
+  // Metadata (structure varies by content_type: TraceMetadata | EventMetadata | generic)
+  metadata?: Record<string, any>
 
   // Stats
   view_count?: number
@@ -101,6 +173,8 @@ export interface Citation {
   id: string
   source_post_id: string
   target_post_id: string
+  quote_content?: string
+  citation_type: CitationType
   created_at: string
 }
 

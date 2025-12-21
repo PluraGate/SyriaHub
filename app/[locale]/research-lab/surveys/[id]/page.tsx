@@ -228,7 +228,7 @@ export default async function SurveyPage({ params }: PageProps) {
                                 </div>
                             ) : (
                                 <p className="text-center text-text-light dark:text-dark-text-muted py-8">
-                                    No questions added yet. Click "Edit" to add questions.
+                                    No questions added yet. Click &quot;Edit&quot; to add questions.
                                 </p>
                             )}
                         </div>

@@ -11,60 +11,15 @@ import {
     ArrowRight,
     TrendingUp,
     Users,
-    Search
+    Search,
+    CircleDashed
 } from 'lucide-react'
-
-const features = [
-    {
-        id: 'search',
-        title: 'Search Engine',
-        description: 'AI-powered semantic search across internal posts and external sources. Get explainable, evidence-ranked results.',
-        icon: Search,
-        href: '/research-lab/search',
-        color: 'bg-teal-500',
-        stats: { label: 'Sources', value: 'Multi' }
-    },
-    {
-        id: 'surveys',
-        title: 'Survey Builder',
-        description: 'Create comprehensive surveys with multiple question types, conditional logic, and advanced analytics.',
-        icon: ClipboardList,
-        href: '/research-lab/surveys',
-        color: 'bg-blue-500',
-        stats: { label: 'Question Types', value: '10+' }
-    },
-    {
-        id: 'polls',
-        title: 'Quick Polls',
-        description: 'Create instant polls for quick feedback. Embed in posts or share standalone with real-time results.',
-        icon: Vote,
-        href: '/research-lab/polls',
-        color: 'bg-emerald-500',
-        stats: { label: 'Real-time', value: 'Updates' }
-    },
-    {
-        id: 'statistics',
-        title: 'Statistics Tools',
-        description: 'Visualize data with interactive charts, calculate statistics, and import datasets from various formats.',
-        icon: BarChart3,
-        href: '/research-lab/statistics',
-        color: 'bg-purple-500',
-        stats: { label: 'Chart Types', value: '6+' }
-    },
-    {
-        id: 'question-advisor',
-        title: 'Question Advisor',
-        description: 'AI-powered assistant to refine your research questions. Get clarity scores, bias detection, and alternatives.',
-        icon: Sparkles,
-        href: '/research-lab/question-advisor',
-        color: 'bg-amber-500',
-        stats: { label: 'AI-Powered', value: 'GPT-4' }
-    }
-]
+import { getTranslations } from 'next-intl/server'
 
 export default async function ResearchLabPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const t = await getTranslations('ResearchLab')
 
     // Get some stats
     const [surveysResult, pollsResult] = await Promise.all([
@@ -74,6 +29,63 @@ export default async function ResearchLabPage() {
 
     const activeSurveys = surveysResult.count || 0
     const activePolls = pollsResult.count || 0
+
+    const features = [
+        {
+            id: 'search',
+            title: t('features.searchEngine.title'),
+            description: t('features.searchEngine.description'),
+            icon: Search,
+            href: '/research-lab/search',
+            color: 'bg-teal-500',
+            stats: t('features.searchEngine.stats')
+        },
+        {
+            id: 'research-gaps',
+            title: t('features.researchGaps.title'),
+            description: t('features.researchGaps.description'),
+            icon: CircleDashed,
+            href: '/research-gaps',
+            color: 'bg-orange-500',
+            stats: t('features.researchGaps.stats')
+        },
+        {
+            id: 'surveys',
+            title: t('features.surveys.title'),
+            description: t('features.surveys.description'),
+            icon: ClipboardList,
+            href: '/research-lab/surveys',
+            color: 'bg-blue-500',
+            stats: t('features.surveys.stats')
+        },
+        {
+            id: 'polls',
+            title: t('features.polls.title'),
+            description: t('features.polls.description'),
+            icon: Vote,
+            href: '/research-lab/polls',
+            color: 'bg-emerald-500',
+            stats: t('features.polls.stats')
+        },
+        {
+            id: 'statistics',
+            title: t('features.statistics.title'),
+            description: t('features.statistics.description'),
+            icon: BarChart3,
+            href: '/research-lab/statistics',
+            color: 'bg-purple-500',
+            stats: t('features.statistics.stats')
+        },
+        {
+            id: 'question-advisor',
+            title: t('features.questionAdvisor.title'),
+            description: t('features.questionAdvisor.description'),
+            icon: Sparkles,
+            href: '/research-lab/question-advisor',
+            color: 'bg-amber-500',
+            stats: t('features.questionAdvisor.stats')
+        }
+    ]
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
@@ -86,14 +98,13 @@ export default async function ResearchLabPage() {
                         <div className="max-w-3xl">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
                                 <Sparkles className="w-4 h-4" />
-                                Research Tools
+                                {t('researchTools')}
                             </div>
                             <h1 className="text-4xl md:text-5xl font-display font-bold text-text dark:text-dark-text mb-6">
-                                Research Lab
+                                {t('title')}
                             </h1>
                             <p className="text-xl text-text-light dark:text-dark-text-muted mb-8 leading-relaxed">
-                                Powerful tools for researchers: create surveys, run polls, analyze data,
-                                and refine your research questions with AI assistance.
+                                {t('heroSubtitle')}
                             </p>
 
                             {/* Quick Stats */}
@@ -102,14 +113,14 @@ export default async function ResearchLabPage() {
                                     <TrendingUp className="w-5 h-5 text-primary" />
                                     <div>
                                         <div className="text-lg font-bold text-text dark:text-dark-text">{activeSurveys}</div>
-                                        <div className="text-xs text-text-light dark:text-dark-text-muted">Active Surveys</div>
+                                        <div className="text-xs text-text-light dark:text-dark-text-muted">{t('activeSurveys')}</div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 px-4 py-2 bg-white dark:bg-dark-surface rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
                                     <Users className="w-5 h-5 text-emerald-500" />
                                     <div>
                                         <div className="text-lg font-bold text-text dark:text-dark-text">{activePolls}</div>
-                                        <div className="text-xs text-text-light dark:text-dark-text-muted">Active Polls</div>
+                                        <div className="text-xs text-text-light dark:text-dark-text-muted">{t('activePolls')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -147,7 +158,7 @@ export default async function ResearchLabPage() {
                                             </p>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-dark-bg rounded-full text-text-light dark:text-dark-text-muted">
-                                                    {feature.stats.label}: {feature.stats.value}
+                                                    {feature.stats}
                                                 </span>
                                                 <ArrowRight className="w-5 h-5 text-gray-300 dark:text-dark-border group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                             </div>
@@ -170,18 +181,17 @@ export default async function ResearchLabPage() {
                             </div>
                             <div className="flex-1 text-center md:text-left">
                                 <h3 className="text-xl font-display font-semibold text-text dark:text-dark-text mb-2">
-                                    Integrate Your Datasets
+                                    {t('datasets.title')}
                                 </h3>
                                 <p className="text-text-light dark:text-dark-text-muted">
-                                    Link your datasets from the Resources section to create visualizations,
-                                    run statistical analyses, and enrich your surveys with real data.
+                                    {t('datasets.description')}
                                 </p>
                             </div>
                             <Link
                                 href="/resources"
                                 className="btn btn-outline whitespace-nowrap"
                             >
-                                Browse Resources
+                                {t('datasets.browseResources')}
                             </Link>
                         </div>
                     </div>

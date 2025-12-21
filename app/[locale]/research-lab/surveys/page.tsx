@@ -15,6 +15,7 @@ import {
     ExternalLink
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { getTranslations } from 'next-intl/server'
 
 const statusColors = {
     draft: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
@@ -26,6 +27,7 @@ const statusColors = {
 export default async function SurveysPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const t = await getTranslations('ResearchLab')
 
     // Fetch user's surveys and active surveys from others
     const { data: mySurveys } = await supabase
@@ -63,10 +65,10 @@ export default async function SurveysPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                         <div>
                             <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text mb-1">
-                                Surveys
+                                {t('surveys')}
                             </h1>
                             <p className="text-text-light dark:text-dark-text-muted">
-                                Create and manage research surveys with multiple question types
+                                {t('surveysPage.subtitle')}
                             </p>
                         </div>
                         <Link
@@ -74,7 +76,7 @@ export default async function SurveysPage() {
                             className="btn btn-primary flex items-center gap-2"
                         >
                             <Plus className="w-4 h-4" />
-                            New Survey
+                            {t('newSurvey')}
                         </Link>
                     </div>
 
@@ -83,7 +85,7 @@ export default async function SurveysPage() {
                         <section className="mb-12">
                             <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                                 <ClipboardList className="w-5 h-5 text-primary" />
-                                My Surveys
+                                {t('mySurveys')}
                             </h2>
 
                             {mySurveys && mySurveys.length > 0 ? (
@@ -114,7 +116,7 @@ export default async function SurveysPage() {
                                                     <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
                                                         <span className="flex items-center gap-1.5">
                                                             <Users className="w-4 h-4" />
-                                                            {survey.response_count || 0} responses
+                                                            {survey.response_count || 0} {t('responses')}
                                                         </span>
                                                         <span className="flex items-center gap-1.5">
                                                             <Calendar className="w-4 h-4" />
@@ -126,14 +128,14 @@ export default async function SurveysPage() {
                                                     <Link
                                                         href={`/research-lab/surveys/${survey.id}/results`}
                                                         className="p-2 text-text-light dark:text-dark-text-muted hover:text-primary hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-colors"
-                                                        title="View Results"
+                                                        title={t('surveysPage.viewResults')}
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </Link>
                                                     <Link
                                                         href={`/research-lab/surveys/${survey.id}/edit`}
                                                         className="p-2 text-text-light dark:text-dark-text-muted hover:text-primary hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-colors"
-                                                        title="Edit Survey"
+                                                        title={t('surveysPage.editSurvey')}
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </Link>
@@ -146,16 +148,16 @@ export default async function SurveysPage() {
                                 <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                                     <ClipboardList className="w-12 h-12 mx-auto text-gray-300 dark:text-dark-text-muted mb-4" />
                                     <h3 className="font-semibold text-text dark:text-dark-text mb-2">
-                                        No surveys yet
+                                        {t('surveysPage.noSurveys')}
                                     </h3>
                                     <p className="text-text-light dark:text-dark-text-muted mb-4">
-                                        Create your first survey to start collecting responses
+                                        {t('surveysPage.createFirst')}
                                     </p>
                                     <Link
                                         href="/research-lab/surveys/create"
                                         className="btn btn-outline"
                                     >
-                                        Create Survey
+                                        {t('createSurvey')}
                                     </Link>
                                 </div>
                             )}
@@ -166,7 +168,7 @@ export default async function SurveysPage() {
                     <section>
                         <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <ExternalLink className="w-5 h-5 text-emerald-500" />
-                            Active Surveys to Participate
+                            {t('surveysPage.activeSurveysToParticipate')}
                         </h2>
 
                         {activeSurveys && activeSurveys.length > 0 ? (
@@ -189,16 +191,16 @@ export default async function SurveysPage() {
                                                 )}
                                                 <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
                                                     <span>
-                                                        By {survey.author?.name || survey.author?.email?.split('@')[0] || 'Anonymous'}
+                                                        {t('pollsPage.by')} {survey.author?.name || survey.author?.email?.split('@')[0] || 'Anonymous'}
                                                     </span>
                                                     <span className="flex items-center gap-1.5">
                                                         <Users className="w-4 h-4" />
-                                                        {survey.response_count || 0} responses
+                                                        {survey.response_count || 0} {t('responses')}
                                                     </span>
                                                 </div>
                                             </div>
                                             <span className="btn btn-outline btn-sm whitespace-nowrap">
-                                                Take Survey
+                                                {t('surveysPage.takeSurvey')}
                                             </span>
                                         </div>
                                     </Link>
@@ -207,7 +209,7 @@ export default async function SurveysPage() {
                         ) : (
                             <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface/50 rounded-xl border border-gray-200 dark:border-dark-border">
                                 <p className="text-text-light dark:text-dark-text-muted">
-                                    No active surveys available right now
+                                    {t('surveysPage.noActiveSurveys')}
                                 </p>
                             </div>
                         )}
@@ -219,3 +221,4 @@ export default async function SurveysPage() {
         </div>
     )
 }
+

@@ -13,55 +13,7 @@ import {
     ChevronLeft,
     Search
 } from 'lucide-react'
-
-const navItems = [
-    {
-        label: 'Overview',
-        href: '/research-lab',
-        icon: Home,
-        exact: true
-    },
-    {
-        label: 'Search Engine',
-        href: '/research-lab/search',
-        icon: Search,
-    },
-    {
-        label: 'Surveys',
-        href: '/research-lab/surveys',
-        icon: ClipboardList,
-    },
-    {
-        label: 'Polls',
-        href: '/research-lab/polls',
-        icon: Vote,
-    },
-    {
-        label: 'Statistics',
-        href: '/research-lab/statistics',
-        icon: BarChart3,
-    },
-    {
-        label: 'Question Advisor',
-        href: '/research-lab/question-advisor',
-        icon: Sparkles,
-    },
-]
-
-const quickActions = [
-    {
-        label: 'Survey',
-        href: '/research-lab/surveys/create',
-        icon: Plus,
-        color: 'bg-blue-500 hover:bg-blue-600'
-    },
-    {
-        label: 'Poll',
-        href: '/research-lab/polls?create=true',
-        icon: Plus,
-        color: 'bg-emerald-500 hover:bg-emerald-600'
-    }
-]
+import { useTranslations } from 'next-intl'
 
 interface ResearchLabNavProps {
     className?: string
@@ -69,9 +21,59 @@ interface ResearchLabNavProps {
 
 export function ResearchLabNav({ className }: ResearchLabNavProps) {
     const pathname = usePathname()
+    const t = useTranslations('ResearchLab')
 
     // Remove locale prefix from pathname for comparison
     const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '')
+
+    const navItems = [
+        {
+            label: t('nav.overview'),
+            href: '/research-lab',
+            icon: Home,
+            exact: true
+        },
+        {
+            label: t('nav.searchEngine'),
+            href: '/research-lab/search',
+            icon: Search,
+        },
+        {
+            label: t('nav.surveys'),
+            href: '/research-lab/surveys',
+            icon: ClipboardList,
+        },
+        {
+            label: t('nav.polls'),
+            href: '/research-lab/polls',
+            icon: Vote,
+        },
+        {
+            label: t('nav.statistics'),
+            href: '/research-lab/statistics',
+            icon: BarChart3,
+        },
+        {
+            label: t('nav.questionAdvisor'),
+            href: '/research-lab/question-advisor',
+            icon: Sparkles,
+        },
+    ]
+
+    const quickActions = [
+        {
+            label: t('nav.survey'),
+            href: '/research-lab/surveys/create',
+            icon: Plus,
+            color: 'bg-blue-500 hover:bg-blue-600'
+        },
+        {
+            label: t('nav.poll'),
+            href: '/research-lab/polls?create=true',
+            icon: Plus,
+            color: 'bg-emerald-500 hover:bg-emerald-600'
+        }
+    ]
 
     const isActive = (href: string, exact?: boolean) => {
         if (exact) {
@@ -94,10 +96,10 @@ export function ResearchLabNav({ className }: ResearchLabNavProps) {
                 <Link
                     href="/research-lab"
                     className="flex items-center justify-center xl:justify-start gap-2 text-lg font-display font-semibold text-text dark:text-dark-text"
-                    title="Research Lab"
+                    title={t('title')}
                 >
                     <Sparkles className="w-5 h-5 text-primary shrink-0" />
-                    <span className="hidden xl:inline">Research Lab</span>
+                    <span className="hidden xl:inline">{t('title')}</span>
                 </Link>
             </div>
 
@@ -147,12 +149,13 @@ export function ResearchLabNav({ className }: ResearchLabNavProps) {
                         'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm',
                         'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
                     )}
-                    title="Back to Feed"
+                    title={t('nav.backToFeed')}
                 >
                     <ChevronLeft className="w-4 h-4 shrink-0" />
-                    <span className="hidden xl:inline">Back to Feed</span>
+                    <span className="hidden xl:inline">{t('nav.backToFeed')}</span>
                 </Link>
             </div>
         </aside>
     )
 }
+

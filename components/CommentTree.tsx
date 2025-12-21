@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { formatDistanceToNow } from 'date-fns'
+import { ar, enUS } from 'date-fns/locale'
 import { MessageSquare, ChevronDown, ChevronUp, CornerDownRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface Comment {
     id: string
@@ -42,6 +43,8 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
     const t = useTranslations('Comments')
     const tForms = useTranslations('Forms')
     const tCommon = useTranslations('Common')
+    const locale = useLocale()
+    const dateLocale = locale === 'ar' ? ar : enUS
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isReplying, setIsReplying] = useState(false)
     const [replyContent, setReplyContent] = useState('')
@@ -63,7 +66,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
     const maxDepth = 4 // Max visual nesting depth
 
     return (
-        <div className={cn('relative', depth > 0 && 'ml-4 pl-4 border-l border-gray-200 dark:border-dark-border')}>
+        <div className={cn('relative', depth > 0 && 'ms-4 ps-4 border-s border-gray-200 dark:border-dark-border')}>
             <div className="py-3">
                 {/* Comment Header */}
                 <div className="flex items-start gap-3">
@@ -76,10 +79,10 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-sm font-medium text-text dark:text-dark-text">
-                                {comment.user?.name || 'Anonymous'}
+                                {comment.user?.name || t('anonymous')}
                             </span>
                             <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: dateLocale })}
                             </span>
                         </div>
 
@@ -108,7 +111,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                     {isCollapsed ? (
                                         <>
                                             <ChevronDown className="w-3 h-3" />
-                                            Show {comment.children!.length} {comment.children!.length === 1 ? 'reply' : 'replies'}
+                                            {t('showReplies', { count: comment.children!.length })}
                                         </>
                                     ) : (
                                         <>
@@ -139,7 +142,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                         {submitting ? (
                                             <Loader2 className="w-3 h-3 animate-spin" />
                                         ) : (
-                                            'Reply'
+                                            t('reply')
                                         )}
                                     </button>
                                     <button
@@ -156,19 +159,20 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
             </div>
 
             {/* Children */}
-            {hasChildren && !isCollapsed && (
-                <div>
-                    {comment.children!.map((child) => (
-                        <CommentNode
-                            key={child.id}
-                            comment={child}
-                            depth={depth + 1}
-                            postId={postId}
-                            onReply={onReply}
-                        />
-                    ))}
-                </div>
-            )}
+            {
+                hasChildren && !isCollapsed && (
+                    <div>
+                        {comment.children!.map((child) => (
+                            <CommentNode
+                                key={child.id}
+                                comment={child}
+                                depth={depth + 1}
+                                postId={postId}
+                                onReply={onReply}
+                            />
+                        ))}
+                    </div>
+                )}
         </div>
     )
 }
@@ -179,6 +183,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
     const [user, setUser] = useState<any>(null)
     const [newComment, setNewComment] = useState('')
     const [submitting, setSubmitting] = useState(false)
+    const t = useTranslations('Comments')
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -225,10 +230,13 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 parent_id: parentId,
             })
 
-            if (error) throw error
+            if (error) {
+                console.error('Supabase error adding comment:', error.message, error.code, error.details)
+                throw error
+            }
             onCommentAdded?.()
-        } catch (error) {
-            console.error('Error adding comment:', error)
+        } catch (error: any) {
+            console.error('Error adding comment:', error?.message || error?.code || JSON.stringify(error))
         }
     }
 
@@ -249,7 +257,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
             <div className="space-y-3">
                 <h3 className="text-sm font-medium text-text dark:text-dark-text flex items-center gap-2">
                     <MessageSquare className="w-4 h-4" />
-                    {comments.length} Comment{comments.length !== 1 ? 's' : ''}
+                    {comments.length === 1 ? t('commentsCount', { count: comments.length }) : t('commentsCountPlural', { count: comments.length })}
                 </h3>
 
                 {user ? (
@@ -264,7 +272,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                             <textarea
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
-                                placeholder="Write a comment..."
+                                placeholder={t('writeComment')}
                                 rows={3}
                                 className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                             />
@@ -276,7 +284,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                                 {submitting ? (
                                     <Loader2 className="w-4 h-4 animate-spin inline mr-1" />
                                 ) : null}
-                                Post Comment
+                                {t('postComment')}
                             </button>
                         </div>
                     </div>
@@ -305,7 +313,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 </div>
             ) : (
                 <p className="text-center py-8 text-sm text-text-light dark:text-dark-text-muted">
-                    No comments yet. Be the first to share your thoughts.
+                    {t('noCommentsDesc')}
                 </p>
             )}
         </div>

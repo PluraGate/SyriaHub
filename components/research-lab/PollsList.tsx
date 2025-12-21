@@ -241,7 +241,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                         {tResearch('polls')}
                     </h1>
                     <p className="text-text-light dark:text-dark-text-muted">
-                        Quick polls for instant community feedback
+                        {tResearch('pollsPage.subtitle')}
                     </p>
                 </div>
                 <button
@@ -276,7 +276,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
 
                         <div>
                             <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                Description (optional)
+                                {tResearch('pollsPage.descriptionOptional')}
                             </label>
                             <input
                                 type="text"
@@ -289,7 +289,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
 
                         <div>
                             <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                Options
+                                {tResearch('options')}
                             </label>
                             <div className="space-y-2">
                                 {newOptions.map((option, index) => (
@@ -395,7 +395,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                             {t('noPolls')}
                         </h3>
                         <p className="text-text-light dark:text-dark-text-muted mb-4">
-                            Be the first to create a poll!
+                            {tResearch('pollsPage.beFirstPoll')}
                         </p>
                         <button
                             onClick={() => setIsCreating(true)}
@@ -412,6 +412,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
 
 // Poll Results Modal
 function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }) {
+    const t = useTranslations('ResearchLab')
     const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote_count, 0)
 
     return (
@@ -421,10 +422,10 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                     <div className="flex items-start justify-between mb-4">
                         <div>
                             <h2 className="text-lg font-semibold text-text dark:text-dark-text">
-                                Poll Results
+                                {t('pollsPage.pollResults')}
                             </h2>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                {totalVotes} total votes
+                                {totalVotes} {t('pollsPage.totalVotesLabel')}
                             </p>
                         </div>
                         <button
@@ -453,7 +454,7 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                                             <span className="text-sm text-text dark:text-dark-text flex items-center gap-2">
                                                 {index === 0 && totalVotes > 0 && (
                                                     <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
-                                                        Leading
+                                                        {t('pollsPage.leading')}
                                                     </span>
                                                 )}
                                                 {option.text}
@@ -506,6 +507,8 @@ function PollCard({
     isLoggedIn,
     isAuthor
 }: PollCardProps) {
+    const t = useTranslations('ResearchLab')
+    const tCommon = useTranslations('Common')
     const [selectedOptions, setSelectedOptions] = useState<string[]>(userVote || [])
     const [showMenu, setShowMenu] = useState(false)
     const [confirmDelete, setConfirmDelete] = useState(false)
@@ -545,7 +548,7 @@ function PollCard({
                         </h3>
                         {!poll.is_active && (
                             <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 rounded-full">
-                                Closed
+                                {t('pollsPage.closed')}
                             </span>
                         )}
                     </div>
@@ -558,7 +561,7 @@ function PollCard({
                 <div className="flex items-center gap-2">
                     {poll.is_multiple_choice && !hasVoted && poll.is_active && (
                         <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
-                            Multiple choice
+                            {t('pollsPage.multipleChoice')}
                         </span>
                     )}
                     {isAuthor && (
@@ -584,7 +587,7 @@ function PollCard({
                                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
                                         >
                                             <Share2 className="w-4 h-4" />
-                                            Share
+                                            {t('pollsPage.share')}
                                         </button>
                                         <button
                                             onClick={() => {
@@ -594,7 +597,7 @@ function PollCard({
                                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
                                         >
                                             <BarChart2 className="w-4 h-4" />
-                                            View Results
+                                            {t('pollsPage.viewResults')}
                                         </button>
                                         {poll.total_votes === 0 && (
                                             <button
@@ -605,7 +608,7 @@ function PollCard({
                                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border"
                                             >
                                                 <Edit className="w-4 h-4" />
-                                                Edit Poll
+                                                {t('pollsPage.editPoll')}
                                             </button>
                                         )}
                                         {poll.is_active && (
@@ -617,7 +620,7 @@ function PollCard({
                                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-amber-600 hover:bg-gray-100 dark:hover:bg-dark-border"
                                             >
                                                 <XCircle className="w-4 h-4" />
-                                                Close Poll
+                                                {t('pollsPage.closePoll')}
                                             </button>
                                         )}
                                         <button
@@ -628,7 +631,7 @@ function PollCard({
                                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-dark-border"
                                         >
                                             <Trash2 className="w-4 h-4" />
-                                            Delete
+                                            {t('pollsPage.deletePoll')}
                                         </button>
                                     </div>
                                 </>
@@ -642,14 +645,14 @@ function PollCard({
             {confirmDelete && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
                     <p className="text-sm text-red-700 dark:text-red-300 mb-3">
-                        Are you sure you want to delete this poll? This action cannot be undone.
+                        {t('pollsPage.confirmDeletePoll')}
                     </p>
                     <div className="flex gap-2">
                         <button
                             onClick={() => setConfirmDelete(false)}
                             className="btn btn-ghost btn-sm"
                         >
-                            Cancel
+                            {tCommon('cancel')}
                         </button>
                         <button
                             onClick={() => {
@@ -662,7 +665,7 @@ function PollCard({
                             {isDeleting ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                'Delete'
+                                t('pollsPage.deletePoll')
                             )}
                         </button>
                     </div>
@@ -746,7 +749,7 @@ function PollCard({
                     </span>
                     {poll.author && (
                         <span>
-                            by {poll.author.name || poll.author.email?.split('@')[0]}
+                            {t('pollsPage.by')} {poll.author.name || poll.author.email?.split('@')[0]}
                         </span>
                     )}
                     <span className="flex items-center gap-1.5">
@@ -762,7 +765,7 @@ function PollCard({
                             className="btn btn-ghost btn-sm flex items-center gap-1"
                         >
                             <BarChart2 className="w-4 h-4" />
-                            Results
+                            {t('results')}
                         </button>
                     )}
 
@@ -775,14 +778,14 @@ function PollCard({
                             {isVoting ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                'Vote'
+                                t('vote')
                             )}
                         </button>
                     )}
 
                     {!isLoggedIn && !hasVoted && poll.is_active && (
                         <span className="text-sm text-text-light dark:text-dark-text-muted">
-                            Log in to vote
+                            {t('pollsPage.loginToVote')}
                         </span>
                     )}
                 </div>

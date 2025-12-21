@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { FeedbackButton } from "@/components/feedback"
 
 interface NavbarProps {
   user?: {
@@ -400,6 +401,9 @@ export function Navbar({ user }: NavbarProps) {
           </div>
         )}
       </div>
+
+      {/* Global Floating Feedback Button */}
+      <FeedbackButton />
     </nav>
   )
 }

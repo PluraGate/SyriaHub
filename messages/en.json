@@ -120,6 +120,33 @@
         "inviteRequired": "An invitation code is required to sign up",
         "invalidInvite": "Invalid or expired invitation code"
     },
+    "Feed": {
+        "title": "Feed",
+        "liveFeed": "Live Feed",
+        "yourFeed": "Your Feed",
+        "discoverResearch": "Discover the latest research and insights from the community",
+        "writePost": "Write a Post",
+        "noResults": "No posts found",
+        "loadMore": "Load More",
+        "filter": "Filter",
+        "sort": "Sort",
+        "newest": "Newest",
+        "popular": "Most Popular",
+        "trending": "Trending",
+        "allPosts": "All Posts",
+        "following": "Following",
+        "all": "All",
+        "article": "Articles",
+        "question": "Questions",
+        "allTopics": "All Topics",
+        "featured": "Featured",
+        "latestResearch": "Latest Research",
+        "sortNew": "Newest",
+        "sortHot": "Hot",
+        "sortTopWeek": "Top This Week",
+        "sortTopMonth": "Top This Month",
+        "sortTopAll": "Top All Time"
+    },
     "Post": {
         "edit": "Edit",
         "history": "History",
@@ -205,8 +232,10 @@
             "remove": "Remove",
             "article": "Article",
             "question": "Question",
+            "trace": "Trace",
             "titlePlaceholderArticle": "What are you researching today?",
             "titlePlaceholderQuestion": "What's your question?",
+            "titlePlaceholderTrace": "What memory or evidence are you documenting?",
             "writePlaceholder": "Write your content here...",
             "writePlaceholderMarkdown": "Write your content here. Markdown is supported...",
             "tagsPlaceholder": "methodology, ethics, syria",
@@ -221,7 +250,19 @@
             "inspirationDesc": "Explore recent research in the feed or discover trending topics.",
             "browsePosts": "Browse Posts",
             "markdownSupported": "Markdown Supported",
-            "markdownHelp": "Use **bold**, *italic*, # headings, - lists, and `code` in your content."
+            "markdownHelp": "Use **bold**, *italic*, # headings, - lists, and `code` in your content.",
+            "researchCoverage": "Research Coverage",
+            "researchCoverageOptional": "Research Coverage (Optional)",
+            "periodStart": "Period Start",
+            "periodEnd": "Period End",
+            "geographicRegion": "Geographic Region",
+            "geographicPlaceholder": "e.g., Aleppo, Idlib, Damascus",
+            "coverageHelp": "Specify the time period and location your research covers to enable temporal and geographic filtering.",
+            "contentTypeHelp": {
+                "article": "In-depth research articles, analysis, or reports. Ideal for publishing findings with citations.",
+                "question": "Research questions seeking answers from the community. Great for crowdsourcing knowledge.",
+                "trace": "Collective memory artefacts: photos, audio, documents, testimonies. Fragments of evidence that aren't full articles."
+            }
         }
     },
     "Profile": {
@@ -402,7 +443,16 @@
         "freeEvent": "Free",
         "paidEvent": "Paid",
         "limitedSeats": "Limited seats available",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "areYouGoing": "Are you going?",
+        "organizedBy": "Organized by",
+        "eventHost": "Event Host",
+        "onlineLink": "Online Link",
+        "goingCount": "{count} going",
+        "moreAttendees": "+{count} more",
+        "beFirstToRsvp": "Be the first to RSVP!",
+        "eventCancelled": "This event has been cancelled",
+        "eventPostponed": "This event has been postponed"
     },
     "Groups": {
         "title": "Groups",
@@ -521,6 +571,10 @@
     },
     "Comments": {
         "title": "Comments",
+        "discussion": "Discussion",
+        "loadingComments": "Loading comments...",
+        "commentsCount": "{count} Comment",
+        "commentsCountPlural": "{count} Comments",
         "writeComment": "Write a comment...",
         "postComment": "Post Comment",
         "reply": "Reply",
@@ -528,14 +582,18 @@
         "delete": "Delete",
         "report": "Report",
         "noComments": "No comments yet",
+        "noCommentsDesc": "Be the first to share your thoughts",
         "beFirst": "Be the first to comment",
         "loadMore": "Load more comments",
         "showReplies": "Show {count} replies",
+        "showReply": "Show {count} reply",
         "hideReplies": "Hide replies",
         "edited": "edited",
         "deleted": "This comment has been deleted",
         "replyTo": "Replying to {name}",
-        "cancelReply": "Cancel reply"
+        "cancelReply": "Cancel reply",
+        "signInToComment": "Sign in to join the discussion",
+        "anonymous": "Anonymous"
     },
     "Settings": {
         "title": "Settings",
@@ -647,7 +705,10 @@
         "confirmReset": "Are you sure you want to reset all settings to defaults?",
         "settingsReset": "Settings reset to defaults",
         "saved": "Settings saved",
-        "saveChanges": "Save Changes"
+        "saveChanges": "Save Changes",
+        "feedbackSection": {
+            "title": "Feedback"
+        }
     },
     "Analytics": {
         "title": "Research Analytics",
@@ -831,6 +892,7 @@
         "settings": "Platform Settings",
         "auditLog": "Audit Log",
         "coordination": "Coordination",
+        "feedback": "Feedback",
         "tags": "Tag Management",
         "waitlist": "Waitlist",
         "expand": "Expand sidebar",
@@ -1084,13 +1146,18 @@
     "ResearchLab": {
         "title": "Research Lab",
         "subtitle": "Tools for research, surveys, and data analysis.",
+        "heroSubtitle": "Powerful tools for researchers: create surveys, run polls, analyze data, and refine your research questions with AI assistance.",
+        "researchTools": "Research Tools",
         "polls": "Polls",
         "surveys": "Surveys",
         "statistics": "Statistics",
         "questionAdvisor": "Question Advisor",
         "search": "Research Search",
+        "overview": "Overview",
+        "backToFeed": "Back to Feed",
         "createPoll": "Create Poll",
         "createSurvey": "Create Survey",
+        "newSurvey": "New Survey",
         "myPolls": "My Polls",
         "mySurveys": "My Surveys",
         "responses": "Responses",
@@ -1109,12 +1176,98 @@
         "surveyTitle": "Survey Title",
         "surveyDescription": "Survey Description",
         "addQuestion": "Add Question",
+        "activeSurveys": "Active Surveys",
+        "activePolls": "Active Polls",
         "questionTypes": {
             "text": "Text Answer",
             "multipleChoice": "Multiple Choice",
             "checkbox": "Checkboxes",
             "scale": "Scale (1-10)",
             "rating": "Star Rating"
+        },
+        "features": {
+            "searchEngine": {
+                "title": "Search Engine",
+                "description": "AI-powered semantic search across internal posts and external sources. Get explainable, evidence-ranked results.",
+                "stats": "Sources: Multi"
+            },
+            "researchGaps": {
+                "title": "Research Gap Marketplace",
+                "description": "Identify gaps in collective knowledge. Claim research areas, upvote important gaps, and link your work when you address them.",
+                "stats": "The Absence Model: ?"
+            },
+            "surveys": {
+                "title": "Survey Builder",
+                "description": "Create comprehensive surveys with multiple question types, conditional logic, and advanced analytics.",
+                "stats": "Question Types: 10+"
+            },
+            "polls": {
+                "title": "Quick Polls",
+                "description": "Create instant polls for quick feedback. Embed in posts or share standalone with real-time results.",
+                "stats": "Real-time Updates"
+            },
+            "statistics": {
+                "title": "Statistics Tools",
+                "description": "Visualize data with interactive charts, calculate statistics, and import datasets from various formats.",
+                "stats": "Chart Types: 6+"
+            },
+            "questionAdvisor": {
+                "title": "Question Advisor",
+                "description": "AI-powered assistant to refine your research questions. Get clarity scores, bias detection, and alternatives.",
+                "stats": "AI-Powered: GPT-4"
+            }
+        },
+        "datasets": {
+            "title": "Integrate Your Datasets",
+            "description": "Link your datasets from the Resources section to create visualizations, run statistical analyses, and enrich your surveys with real data.",
+            "browseResources": "Browse Resources"
+        },
+        "pollsPage": {
+            "subtitle": "Quick polls for instant community feedback",
+            "noPolls": "No polls yet",
+            "beFirstPoll": "Be the first to create a poll!",
+            "descriptionOptional": "Description (optional)",
+            "closed": "Closed",
+            "multipleChoice": "Multiple choice",
+            "pollResults": "Poll Results",
+            "totalVotesLabel": "total votes",
+            "leading": "Leading",
+            "share": "Share",
+            "viewResults": "View Results",
+            "editPoll": "Edit Poll",
+            "closePoll": "Close Poll",
+            "deletePoll": "Delete",
+            "confirmDeletePoll": "Are you sure you want to delete this poll? This action cannot be undone.",
+            "voteRecorded": "Vote recorded!",
+            "loginToVote": "Log in to vote",
+            "loginToCreate": "Please log in to create a poll",
+            "enterQuestion": "Please enter a question",
+            "atLeastTwoOptions": "Please add at least 2 options",
+            "pollCreated": "Poll created!",
+            "pollDeleted": "Poll deleted successfully",
+            "pollClosed": "Poll closed",
+            "by": "by"
+        },
+        "surveysPage": {
+            "subtitle": "Create and manage research surveys with multiple question types",
+            "noSurveys": "No surveys yet",
+            "createFirst": "Create your first survey to start collecting responses",
+            "activeSurveysToParticipate": "Active Surveys to Participate",
+            "noActiveSurveys": "No active surveys available right now",
+            "takeSurvey": "Take Survey",
+            "viewResults": "View Results",
+            "editSurvey": "Edit Survey"
+        },
+        "nav": {
+            "overview": "Overview",
+            "searchEngine": "Search Engine",
+            "surveys": "Surveys",
+            "polls": "Polls",
+            "statistics": "Statistics",
+            "questionAdvisor": "Question Advisor",
+            "survey": "Survey",
+            "poll": "Poll",
+            "backToFeed": "Back to Feed"
         }
     },
     "Trending": {
@@ -1124,6 +1277,63 @@
         "week": "Week",
         "month": "Month",
         "today": "Today"
+    },
+    "ResearchGaps": {
+        "title": "Research Gap Marketplace",
+        "subtitle": "What Don't We Know?",
+        "description": "Identify gaps in our collective knowledge about Syria. Claim research areas, collaborate with others, and help address the most pressing unknowns.",
+        "searchPlaceholder": "Search research gaps...",
+        "identifyGap": "Identify a Gap",
+        "filters": "Filters",
+        "allStatuses": "All Statuses",
+        "allPriorities": "All Priorities",
+        "gapsFound": "{count} gap(s) found",
+        "noGaps": "No research gaps found",
+        "noGapsDesc": "Be the first to identify a gap in our collective knowledge.",
+        "submitGap": "Submit",
+        "cancel": "Cancel",
+        "form": {
+            "title": "Identify a Research Gap",
+            "titleLabel": "Title",
+            "titlePlaceholder": "e.g., Lack of data on water access in Idlib (2020-2023)",
+            "description": "Description",
+            "descriptionPlaceholder": "Describe what we don't know and why it matters...",
+            "discipline": "Discipline",
+            "disciplinePlaceholder": "e.g., Public Health",
+            "priority": "Priority",
+            "spatialContext": "Geographic Context",
+            "spatialPlaceholder": "e.g., Aleppo, Idlib"
+        },
+        "status": {
+            "identified": "Identified",
+            "investigating": "In Progress",
+            "addressed": "Addressed",
+            "closed": "Closed"
+        },
+        "priority": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "actions": {
+            "claim": "Claim this gap",
+            "upvote": "Upvote",
+            "viewResearch": "View the addressing research"
+        },
+        "messages": {
+            "signInToUpvote": "Sign in to upvote",
+            "signInToClaim": "Sign in to claim a research gap",
+            "signInToSubmit": "Sign in to submit a research gap",
+            "claimed": "You have claimed this research gap!",
+            "submitSuccess": "Research gap submitted successfully!",
+            "provideTitle": "Please provide a title"
+        },
+        "investigating": "Being investigated by {name}",
+        "help": {
+            "title": "About Research Gaps",
+            "description": "Research gaps represent 'The Absence Model' - acknowledging what we don't know is as important as what we do. Upvote gaps you think are important, claim ones you want to work on, and link your research when you address them."
+        }
     },
     "Recommendations": {
         "title": "To Broaden This Inquiry",
@@ -1532,16 +1742,57 @@
     },
     "QuestionAdvisor": {
         "title": "Question Advisor",
+        "subtitle": "AI-powered analysis to refine your research questions for clarity, scope, and measurability",
         "placeholder": "Enter your research question here...",
         "contextPlaceholder": "Provide additional context about your research field, methodology, or constraints...",
         "analyze": "Analyze Question",
-        "analyzing": "Analyzing..."
+        "analyzing": "Analyzing...",
+        "usesRemaining": "{count} uses remaining today",
+        "researchQuestion": "Research Question",
+        "contextOptional": "Context (optional)",
+        "clarityScore": "Clarity Score",
+        "measurability": "Measurability",
+        "scopeAnalysis": "Scope Analysis",
+        "biasDetected": "Potential Biases Detected",
+        "suggestions": "Suggestions",
+        "refinedAlternatives": "Refined Alternatives",
+        "analyzeToGetAlternatives": "Analyze your question to get refined alternatives",
+        "copy": "Copy",
+        "useThis": "Use this",
+        "copied": "Copied to clipboard!",
+        "questionUpdated": "Question updated!",
+        "tips": {
+            "title": "Tips for Good Research Questions",
+            "specific": "Be specific and focused",
+            "clear": "Use clear, unambiguous language",
+            "measurable": "Ensure it's measurable or testable",
+            "neutral": "Avoid leading or loaded terms",
+            "scope": "Define your scope clearly"
+        },
+        "errors": {
+            "enterQuestion": "Please enter a research question",
+            "loginRequired": "Please log in to use the Question Advisor",
+            "dailyLimit": "Daily limit reached. Try again tomorrow!"
+        }
     },
     "EditorExtras": {
         "dropImageHere": "Drop image here",
         "markdownTips": "Markdown Tips:",
         "headingsHelp": "for headings",
         "formattingHelp": "for formatting",
+        "imageAdded": "Image added!",
+        "uploading": "Uploading...",
+        "insertImage": "Insert image",
+        "heading1": "Heading 1 (Ctrl+Alt+1)",
+        "heading2": "Heading 2 (Ctrl+Alt+2)",
+        "bold": "Bold (Ctrl+B)",
+        "italic": "Italic (Ctrl+I)",
+        "inlineCode": "Inline code",
+        "bulletList": "Bullet list",
+        "numberedList": "Numbered list",
+        "quote": "Quote",
+        "horizontalLine": "Horizontal line",
+        "addLink": "Add link to selected text",
         "toolbar": {
             "heading1": "Heading 1 (Ctrl+Alt+1)",
             "heading2": "Heading 2 (Ctrl+Alt+2)",
@@ -1561,7 +1812,8 @@
         "maybe": "Maybe",
         "cantGo": "Can't Go",
         "respond": "Respond",
-        "changeResponse": "Change Response"
+        "changeResponse": "Change Response",
+        "eventEnded": "This event has ended"
     },
     "Verification": {
         "verifiedContributor": "Verified Contributor",
@@ -1758,5 +2010,69 @@
             "medium": "Medium",
             "low": "Low"
         }
+    },
+    "Feedback": {
+        "title": "Submit Feedback",
+        "sectionTitle": "Feedback & Suggestions",
+        "sectionDescription": "Report bugs, suggest improvements, or share your ideas with the team.",
+        "adminTitle": "Feedback Management",
+        "adminDescription": "Review and manage feedback tickets from the community.",
+        "buttonTitle": "Send Feedback",
+        "buttonLabel": "Feedback",
+        "newTicket": "New Ticket",
+        "category": "What type of feedback?",
+        "categories": {
+            "bug": "Bug",
+            "ux": "UX",
+            "section": "Section",
+            "alternative": "Alternative",
+            "other": "Other"
+        },
+        "titleLabel": "Title",
+        "titlePlaceholder": "Brief summary of your feedback",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Please describe in detail. Include steps to reproduce if reporting a bug.",
+        "pageUrl": "Page URL",
+        "cancel": "Cancel",
+        "submit": "Submit Feedback",
+        "submitting": "Submitting...",
+        "fillRequired": "Please fill in all required fields",
+        "submitSuccess": "Feedback submitted successfully!",
+        "submitError": "Failed to submit feedback. Please try again.",
+        "thankYou": "Thank you for your feedback!",
+        "reviewSoon": "Our team will review it soon.",
+        "filters": "Filters",
+        "clearFilters": "Clear filters",
+        "filterStatus": "Status",
+        "filterCategory": "Category",
+        "allStatuses": "All Statuses",
+        "allCategories": "All Categories",
+        "noTickets": "No feedback tickets yet",
+        "submittedBy": "Submitted by",
+        "unknown": "Unknown",
+        "status": {
+            "label": "Status",
+            "open": "Open",
+            "in_progress": "In Progress",
+            "resolved": "Resolved",
+            "closed": "Closed",
+            "deferred": "Deferred"
+        },
+        "priority": {
+            "label": "Priority",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "adminControls": "Admin Controls",
+        "adminNotes": "Admin Notes",
+        "adminNotesPlaceholder": "Add notes about this ticket...",
+        "close": "Close",
+        "update": "Update Ticket",
+        "updating": "Updating...",
+        "updateSuccess": "Ticket updated successfully",
+        "updateError": "Failed to update ticket",
+        "fetchError": "Failed to load tickets"
     }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessageSquare, Quote, Calendar, User, Tag, GitFork } from 'lucide-react'
+import { MessageSquare, Quote, Calendar, User, Tag, GitFork, GraduationCap } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
@@ -36,6 +36,10 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
     post.author?.email?.split('@')[0] ||
     'Anonymous'
 
+  // Academic impact score display helper
+  const impactScore = post.academic_impact_score || 0
+  const hasImpact = impactScore > 0
+
   return (
     <article className="card card-premium card-glow card-hover p-6 group">
       <Link
@@ -60,6 +64,16 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
                 approverRole={post.approved_by_role}
                 isVerifiedAuthor={post.author?.is_verified_author}
               />
+              {/* Academic Impact Badge - shows when score > 0 */}
+              {hasImpact && (
+                <span
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                  title={`Academic Impact Score: ${impactScore.toFixed(1)} - Based on quality citations and scholarly engagement`}
+                >
+                  <GraduationCap className="w-3 h-3" />
+                  {impactScore.toFixed(1)}
+                </span>
+              )}
             </div>
           </div>
           {post.license && (

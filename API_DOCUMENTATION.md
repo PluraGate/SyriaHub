@@ -1,5 +1,8 @@
 # API Documentation
 
+> **Note:** This document focuses specifically on the API. For a complete platform overview including architecture, features, and non-technical guides, see **[COMPREHENSIVE_PLATFORM_DOCUMENTATION.md](docs/COMPREHENSIVE_PLATFORM_DOCUMENTATION.md)**.
+
+
 ## Base URL
 ```
 Development: http://localhost:3000/api
