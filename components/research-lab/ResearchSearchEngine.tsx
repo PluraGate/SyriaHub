@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { TrustBadge } from '@/components/TrustProfileCard'
 import { InlineConflictBadge } from '@/components/ConflictWarning'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import type {
     SearchResult, SearchFilters, Discipline, EvidenceTier, ConflictPhase,
     DisciplineCategory
@@ -65,6 +66,7 @@ function stripMarkdown(text: string): string {
 }
 
 export function ResearchSearchEngine() {
+    const t = useTranslations('ResearchLab.searchEnginePage')
     const [query, setQuery] = useState('')
     const [filters, setFilters] = useState<SearchFilters>({})
     const [results, setResults] = useState<SearchResult[]>([])
@@ -284,7 +286,7 @@ export function ResearchSearchEngine() {
             {/* Header with Tabs */}
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Search Engine</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('title')}</h1>
 
                     {/* Tab Buttons */}
                     <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg">
@@ -296,7 +298,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Search className="w-4 h-4" />
-                            Search
+                            {t('search')}
                         </button>
                         <button
                             onClick={() => {
@@ -309,7 +311,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Bookmark className="w-4 h-4" />
-                            Saved
+                            {t('saved')}
                             {savedSearches.length > 0 && (
                                 <span className="px-1.5 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
                                     {savedSearches.length}
@@ -332,7 +334,7 @@ export function ResearchSearchEngine() {
                             ) : (
                                 <Plus className="w-4 h-4" />
                             )}
-                            {savingSearch ? 'Saving...' : 'Save This Search'}
+                            {savingSearch ? 'Saving...' : t('saveThisSearch')}
                         </button>
                     </div>
                 )}
@@ -348,9 +350,9 @@ export function ResearchSearchEngine() {
                     ) : savedSearches.length === 0 ? (
                         <div className="text-center py-12 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border">
                             <Bookmark className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                            <p className="text-gray-500 dark:text-gray-400">No saved searches yet</p>
+                            <p className="text-gray-500 dark:text-gray-400">{t('noSavedSearches')}</p>
                             <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                                Search for something and click "Save This Search" to save it here
+                                {t('saveSearchHint')}
                             </p>
                         </div>
                     ) : (
@@ -370,7 +372,7 @@ export function ResearchSearchEngine() {
                                             </span>
                                             {search.is_pinned && (
                                                 <span className="text-xs px-1.5 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded">
-                                                    Pinned
+                                                    {t('pinned')}
                                                 </span>
                                             )}
                                         </div>
@@ -378,7 +380,7 @@ export function ResearchSearchEngine() {
                                             <Clock className="w-3 h-3" />
                                             {new Date(search.created_at).toLocaleDateString()}
                                             <span>•</span>
-                                            <span>{search.result_count} results</span>
+                                            <span>{search.result_count} {t('results')}</span>
                                             {search.notes && (
                                                 <>
                                                     <span>•</span>
@@ -429,7 +431,7 @@ export function ResearchSearchEngine() {
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >
-                            All Sources
+                            {t('sources.allSources')}
                         </button>
                         <button
                             onClick={() => setSearchSource('internal')}
@@ -439,7 +441,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Database className="w-3.5 h-3.5" />
-                            Internal
+                            {t('sources.internal')}
                         </button>
                         <button
                             onClick={() => setSearchSource('web')}
@@ -449,7 +451,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Globe className="w-3.5 h-3.5" />
-                            Web
+                            {t('sources.web')}
                         </button>
                     </div>
 
@@ -457,16 +459,16 @@ export function ResearchSearchEngine() {
                     <div className="relative mb-4">
                         <div className="relative bg-white dark:bg-dark-surface rounded-2xl shadow-lg dark:shadow-none border border-gray-100 dark:border-dark-border overflow-hidden">
                             <div className="flex items-center">
-                                <Search className="absolute left-5 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                                <Search className="absolute start-5 w-5 h-5 text-gray-400 dark:text-gray-500" />
                                 <input
                                     type="text"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    placeholder="Search for reconstruction knowledge, policies, surveys..."
-                                    className="flex-1 pl-14 pr-4 py-4 bg-transparent text-gray-900 dark:text-gray-100 text-lg placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none"
+                                    placeholder={t('searchPlaceholder')}
+                                    className="flex-1 ps-14 pe-4 py-4 bg-transparent text-gray-900 dark:text-gray-100 text-lg placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none"
                                 />
-                                <div className="flex items-center gap-2 pr-3">
+                                <div className="flex items-center gap-2 pe-3">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -474,7 +476,7 @@ export function ResearchSearchEngine() {
                                         className="gap-1.5 border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg"
                                     >
                                         <Filter className="w-4 h-4" />
-                                        Filters
+                                        {t('filters')}
                                         {activeFilterCount > 0 && (
                                             <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-white rounded-full">
                                                 {activeFilterCount}
@@ -486,7 +488,7 @@ export function ResearchSearchEngine() {
                                         disabled={loading || !query.trim()}
                                         className="px-5"
                                     >
-                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
+                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('search')}
                                     </Button>
                                 </div>
                             </div>
@@ -497,10 +499,10 @@ export function ResearchSearchEngine() {
                     {showFilters && (
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5 mb-6 animate-in fade-in slide-in-from-top-2 duration-200">
                             <div className="flex items-center justify-between mb-5">
-                                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Search Filters</h3>
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100">{t('searchFilters')}</h3>
                                 {activeFilterCount > 0 && (
                                     <button onClick={clearFilters} className="text-sm text-primary hover:text-primary/80 transition-colors font-medium">
-                                        Clear all
+                                        {t('clearAll')}
                                     </button>
                                 )}
                             </div>
@@ -508,7 +510,7 @@ export function ResearchSearchEngine() {
                             <div className="grid gap-6 md:grid-cols-2">
                                 {/* Disciplines */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Disciplines</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('disciplines')}</label>
                                     <div className="space-y-4 max-h-56 overflow-y-auto pr-2 scrollbar-thin">
                                         {DISCIPLINE_CATEGORIES.map(cat => (
                                             <div key={cat.id} className="space-y-2">
@@ -543,7 +545,7 @@ export function ResearchSearchEngine() {
                                 {/* Evidence Tiers & Phase */}
                                 <div className="space-y-5">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Evidence Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('evidenceType')}</label>
                                         <div className="flex flex-wrap gap-2">
                                             {EVIDENCE_TIERS.map(tier => (
                                                 <button
@@ -573,19 +575,19 @@ export function ResearchSearchEngine() {
                                                 className="rounded border-gray-300 dark:border-dark-border text-primary focus:ring-primary"
                                             />
                                             <span className="group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors">
-                                                Primary evidence only (highest reliability)
+                                                {t('primaryEvidenceOnly')}
                                             </span>
                                         </label>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Temporal Phase</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('temporalPhase')}</label>
                                         <select
                                             value={filters.conflict_phase || ''}
                                             onChange={(e) => updateFilter('conflict_phase', e.target.value as ConflictPhase || undefined)}
                                             className="w-full px-3 py-2.5 rounded-md border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                         >
-                                            <option value="">All phases</option>
+                                            <option value="">{t('allPhases')}</option>
                                             {CONFLICT_PHASES.map(p => (
                                                 <option key={p.value} value={p.value}>{p.label}</option>
                                             ))}
@@ -593,7 +595,7 @@ export function ResearchSearchEngine() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Minimum Trust Score</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('minTrustScore')}</label>
                                         <div className="space-y-2">
                                             <div className="relative">
                                                 <input
@@ -607,7 +609,7 @@ export function ResearchSearchEngine() {
                                                 />
                                             </div>
                                             <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                                                <span>Any</span>
+                                                <span>{t('any')}</span>
                                                 <span className="font-medium text-primary">{filters.min_trust_score || 0}+</span>
                                                 <span>100</span>
                                             </div>
@@ -629,18 +631,18 @@ export function ResearchSearchEngine() {
                                             <Database className="w-4 h-4 text-primary" />
                                         </div>
                                         <div>
-                                            <span className="font-semibold text-primary dark:text-primary">Internal Evidence Space</span>
-                                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Curated · Versioned · Trust-Scored</span>
+                                            <span className="font-semibold text-primary dark:text-primary">{t('internalEvidenceSpace')}</span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{t('internalDesc')}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {isFromCache && (
                                             <span className="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium flex items-center gap-1">
                                                 <Database className="w-3 h-3" />
-                                                Cached
+                                                {t('cached')}
                                             </span>
                                         )}
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">{results.length} results</span>
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">{results.length} {t('results')}</span>
                                         {searchDuration && <span className="text-xs text-gray-400">{searchDuration}ms</span>}
                                     </div>
                                 </div>
@@ -672,23 +674,23 @@ export function ResearchSearchEngine() {
                                             <Globe className="w-4 h-4 text-blue-500" />
                                         </div>
                                         <div>
-                                            <span className="font-semibold text-blue-600 dark:text-blue-400">Open Web</span>
-                                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Unverified · External · Unassessed</span>
+                                            <span className="font-semibold text-blue-600 dark:text-blue-400">{t('openWeb')}</span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{t('webDesc')}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {isFromCache && (
                                             <span className="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium flex items-center gap-1">
                                                 <Globe className="w-3 h-3" />
-                                                Cached
+                                                {t('cached')}
                                             </span>
                                         )}
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">{webResults.length} results</span>
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">{webResults.length} {t('results')}</span>
                                     </div>
                                 </div>
                                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
                                     <AlertTriangle className="w-3 h-3" />
-                                    Web sources require independent verification. Save as reference to track provenance.
+                                    {t('webWarning')}
                                 </p>
                             </div>
 
@@ -709,7 +711,7 @@ export function ResearchSearchEngine() {
                     {!loading && query && results.length === 0 && webResults.length === 0 && (
                         <div className="text-center py-12">
                             <Search className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                            <p className="text-gray-500 dark:text-gray-400">No results found. Try adjusting your search or filters.</p>
+                            <p className="text-gray-500 dark:text-gray-400">{t('noResults')}</p>
                         </div>
                     )}
                 </>
