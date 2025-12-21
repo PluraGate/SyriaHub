@@ -21,9 +21,16 @@ import {
     AlertCircle,
     CheckCircle2,
     Loader2,
-    ArrowRight
+    ArrowRight,
+    Star,
+    Database,
+    FlaskConical,
+    Users,
+    History,
+    FileText,
+    Users2
 } from 'lucide-react'
-import { ResearchGap, ResearchGapPriority, ResearchGapStatus } from '@/types'
+import { ResearchGap, ResearchGapPriority, ResearchGapStatus, ResearchGapType } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -48,6 +55,30 @@ const statusLabels: Record<ResearchGapStatus, string> = {
     closed: 'Closed'
 }
 
+const gapTypeColors: Record<ResearchGapType, string> = {
+    topical: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    data: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    methodological: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+    population: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+    outdated: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+}
+
+const gapTypeLabels: Record<ResearchGapType, string> = {
+    topical: 'Topical Gap',
+    data: 'Data Gap',
+    methodological: 'Methodological',
+    population: 'Population Gap',
+    outdated: 'Outdated Research'
+}
+
+const gapTypeIcons: Record<ResearchGapType, React.ElementType> = {
+    topical: FileText,
+    data: Database,
+    methodological: FlaskConical,
+    population: Users,
+    outdated: History
+}
+
 export default function ResearchGapsPage() {
     const supabase = createClient()
     const router = useRouter()
@@ -59,14 +90,19 @@ export default function ResearchGapsPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState<ResearchGapStatus | 'all'>('all')
     const [priorityFilter, setPriorityFilter] = useState<ResearchGapPriority | 'all'>('all')
+    const [gapTypeFilter, setGapTypeFilter] = useState<ResearchGapType | 'all'>('all')
+    const [strategicOnly, setStrategicOnly] = useState(false)
     const [showNewGapForm, setShowNewGapForm] = useState(false)
     const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set())
+    const [userInterests, setUserInterests] = useState<Set<string>>(new Set())
 
     // Form state for new gap
     const [newGapTitle, setNewGapTitle] = useState('')
     const [newGapDescription, setNewGapDescription] = useState('')
     const [newGapDiscipline, setNewGapDiscipline] = useState('')
     const [newGapPriority, setNewGapPriority] = useState<ResearchGapPriority>('medium')
+    const [newGapType, setNewGapType] = useState<ResearchGapType>('topical')
+    const [newGapIsStrategic, setNewGapIsStrategic] = useState(false)
     const [newGapSpatialContext, setNewGapSpatialContext] = useState('')
     const [submitting, setSubmitting] = useState(false)
 
@@ -96,6 +132,12 @@ export default function ResearchGapsPage() {
             if (priorityFilter !== 'all') {
                 query = query.eq('priority', priorityFilter)
             }
+            if (gapTypeFilter !== 'all') {
+                query = query.eq('gap_type', gapTypeFilter)
+            }
+            if (strategicOnly) {
+                query = query.eq('is_strategic', true)
+            }
             if (searchQuery) {
                 query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
             }
@@ -110,7 +152,7 @@ export default function ResearchGapsPage() {
         } finally {
             setLoading(false)
         }
-    }, [supabase, statusFilter, priorityFilter, searchQuery, showToast])
+    }, [supabase, statusFilter, priorityFilter, gapTypeFilter, strategicOnly, searchQuery, showToast])
 
     // Fetch user upvotes
     useEffect(() => {
@@ -218,6 +260,8 @@ export default function ResearchGapsPage() {
                     description: newGapDescription.trim() || null,
                     discipline: newGapDiscipline.trim() || null,
                     priority: newGapPriority,
+                    gap_type: newGapType,
+                    is_strategic: newGapIsStrategic,
                     spatial_context: newGapSpatialContext.trim() || null,
                     created_by: user.id,
                     status: 'identified'
@@ -231,6 +275,8 @@ export default function ResearchGapsPage() {
             setNewGapDescription('')
             setNewGapDiscipline('')
             setNewGapPriority('medium')
+            setNewGapType('topical')
+            setNewGapIsStrategic(false)
             setNewGapSpatialContext('')
             fetchGaps()
         } catch (error) {
@@ -322,6 +368,30 @@ export default function ResearchGapsPage() {
                         <option value="low">Low</option>
                     </select>
 
+                    <select
+                        value={gapTypeFilter}
+                        onChange={e => setGapTypeFilter(e.target.value as ResearchGapType | 'all')}
+                        className="px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text"
+                    >
+                        <option value="all">All Types</option>
+                        <option value="topical">Topical Gap</option>
+                        <option value="data">Data Gap</option>
+                        <option value="methodological">Methodological</option>
+                        <option value="population">Population Gap</option>
+                        <option value="outdated">Outdated Research</option>
+                    </select>
+
+                    <button
+                        onClick={() => setStrategicOnly(!strategicOnly)}
+                        className={`px-4 py-2 text-sm rounded-lg border flex items-center gap-2 transition-all ${strategicOnly
+                            ? 'bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-400'
+                            : 'border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg'
+                            }`}
+                    >
+                        <Star className={`w-4 h-4 ${strategicOnly ? 'fill-current' : ''}`} />
+                        Strategic
+                    </button>
+
                     <div className="flex-1" />
 
                     <div className="text-sm text-text-light dark:text-dark-text-muted">
@@ -395,6 +465,23 @@ export default function ResearchGapsPage() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                        Gap Type
+                                    </label>
+                                    <select
+                                        value={newGapType}
+                                        onChange={e => setNewGapType(e.target.value as ResearchGapType)}
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
+                                    >
+                                        <option value="topical">Topical Gap - Missing coverage of a topic</option>
+                                        <option value="data">Data Gap - Missing datasets or quality issues</option>
+                                        <option value="methodological">Methodological Dispute - Debates about research methods</option>
+                                        <option value="population">Population Gap - Under-represented groups</option>
+                                        <option value="outdated">Outdated Research - Existing research needs updating</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
                                         Geographic Context
                                     </label>
                                     <input
@@ -404,6 +491,26 @@ export default function ResearchGapsPage() {
                                         placeholder="e.g., Aleppo, Idlib"
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
                                     />
+                                </div>
+
+                                {/* Strategic Checkbox */}
+                                <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                    <input
+                                        type="checkbox"
+                                        id="strategic-checkbox"
+                                        checked={newGapIsStrategic}
+                                        onChange={e => setNewGapIsStrategic(e.target.checked)}
+                                        className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                                    />
+                                    <label htmlFor="strategic-checkbox" className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                                            <span className="font-medium text-amber-800 dark:text-amber-300">Mark as Strategic Priority</span>
+                                        </div>
+                                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                                            Strategic gaps are highlighted for community attention
+                                        </p>
+                                    </label>
                                 </div>
 
                                 <div className="flex gap-3 pt-4">
@@ -463,8 +570,8 @@ export default function ResearchGapsPage() {
                                         <button
                                             onClick={() => handleUpvote(gap.id)}
                                             className={`p-2 rounded-lg transition-all ${userUpvotes.has(gap.id)
-                                                    ? 'bg-primary text-white'
-                                                    : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-primary/10 hover:text-primary'
+                                                ? 'bg-primary text-white'
+                                                : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-primary/10 hover:text-primary'
                                                 }`}
                                         >
                                             <ChevronUp className="w-5 h-5" />
@@ -477,6 +584,19 @@ export default function ResearchGapsPage() {
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
+                                            {/* Strategic Star */}
+                                            {gap.is_strategic && (
+                                                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-medium flex items-center gap-1">
+                                                    <Star className="w-3 h-3 fill-current" />
+                                                    Strategic
+                                                </span>
+                                            )}
+                                            {/* Gap Type Badge */}
+                                            {gap.gap_type && (
+                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${gapTypeColors[gap.gap_type]}`}>
+                                                    {gapTypeLabels[gap.gap_type]}
+                                                </span>
+                                            )}
                                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[gap.status]}`}>
                                                 {statusLabels[gap.status]}
                                             </span>

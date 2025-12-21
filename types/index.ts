@@ -8,6 +8,8 @@ export type ContentType = 'article' | 'question' | 'answer' | 'resource' | 'even
 export type CitationType = 'supports' | 'disputes' | 'extends' | 'mentions'
 export type ResearchGapStatus = 'identified' | 'investigating' | 'addressed' | 'closed'
 export type ResearchGapPriority = 'low' | 'medium' | 'high' | 'critical'
+export type ResearchGapType = 'topical' | 'data' | 'methodological' | 'population' | 'outdated'
+export type ResearchGapSource = 'manual' | 'ai_suggested' | 'failed_query'
 export type TraceArtifactType = 'photo' | 'audio' | 'document' | 'video' | 'handwritten'
 export type TracePreservationStatus = 'original' | 'copy' | 'transcription'
 
@@ -38,6 +40,9 @@ export interface ResearchGap {
   discipline?: string
   status: ResearchGapStatus
   priority: ResearchGapPriority
+  gap_type?: ResearchGapType
+  is_strategic?: boolean
+  source?: ResearchGapSource
   created_by?: string
   created_at: string
   updated_at: string
@@ -46,10 +51,12 @@ export interface ResearchGap {
   addressed_by_post_id?: string
   addressed_at?: string
   upvote_count: number
+  interest_count?: number
   temporal_context_start?: string
   temporal_context_end?: string
   spatial_context?: string
   tags?: string[]
+  linked_failed_queries?: string[]
   // Relations
   creator?: User
   claimer?: User
@@ -61,6 +68,28 @@ export interface ResearchGapUpvote {
   gap_id: string
   user_id: string
   created_at: string
+}
+
+export interface ResearchGapInterest {
+  id: string
+  gap_id: string
+  user_id: string
+  note?: string
+  created_at: string
+  user?: User
+}
+
+export interface ResearchGapSuggestion {
+  id: string
+  gap_id: string
+  suggested_by?: string
+  title: string
+  url?: string
+  post_id?: string
+  note?: string
+  created_at: string
+  suggestor?: User
+  post?: Post
 }
 
 export interface User {
