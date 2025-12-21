@@ -37,6 +37,7 @@ import {
 } from 'recharts'
 import { useToast } from '@/components/ui/toast'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 interface Survey {
     id: string
@@ -63,14 +64,9 @@ interface StatisticsToolsProps {
     userPolls?: Poll[]
 }
 
-const CHART_TYPES = [
-    { id: 'bar', label: 'Bar Chart', icon: BarChart3 },
-    { id: 'line', label: 'Line Chart', icon: LineChart },
-    { id: 'pie', label: 'Pie Chart', icon: PieChart },
-    { id: 'area', label: 'Area Chart', icon: AreaChart },
-]
 
 const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16']
+
 
 // Sample demo data
 const DEMO_DATA = [
@@ -83,6 +79,7 @@ const DEMO_DATA = [
 ]
 
 export function StatisticsTools({ userId, savedAnalyses, availableDatasets, userSurveys = [], userPolls = [] }: StatisticsToolsProps) {
+    const t = useTranslations('ResearchLab.statisticsPage')
     const [activeTab, setActiveTab] = useState<'charts' | 'calculator' | 'import'>('charts')
     const [chartType, setChartType] = useState('bar')
     const [chartData, setChartData] = useState(DEMO_DATA)
@@ -90,6 +87,15 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
     const [loadingSurvey, setLoadingSurvey] = useState<string | null>(null)
     const [loadingPoll, setLoadingPoll] = useState<string | null>(null)
     const { showToast } = useToast()
+
+    // Chart types with localized labels
+    const CHART_TYPES = [
+        { id: 'bar', label: t('chartTypes.bar'), icon: BarChart3 },
+        { id: 'line', label: t('chartTypes.line'), icon: LineChart },
+        { id: 'pie', label: t('chartTypes.pie'), icon: PieChart },
+        { id: 'area', label: t('chartTypes.area'), icon: AreaChart },
+    ]
+
 
     // Statistics calculator state
     const [calculatorData, setCalculatorData] = useState('')
@@ -362,19 +368,19 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
         <div>
             <div className="mb-8">
                 <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text mb-1">
-                    Statistics Tools
+                    {t('title')}
                 </h1>
                 <p className="text-text-light dark:text-dark-text-muted">
-                    Visualize data, calculate statistics, and import datasets
+                    {t('subtitle')}
                 </p>
             </div>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-dark-border">
                 {[
-                    { id: 'charts', label: 'Chart Builder', icon: BarChart3 },
-                    { id: 'calculator', label: 'Calculator', icon: Calculator },
-                    { id: 'import', label: 'Import Data', icon: Upload },
+                    { id: 'charts', label: t('tabs.chartBuilder'), icon: BarChart3 },
+                    { id: 'calculator', label: t('tabs.calculator'), icon: Calculator },
+                    { id: 'import', label: t('tabs.importData'), icon: Upload },
                 ].map((tab) => (
                     <button
                         key={tab.id}
@@ -409,7 +415,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     <div className="space-y-4">
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
                             <h3 className="font-medium text-text dark:text-dark-text mb-3">
-                                Chart Type
+                                {t('chartType')}
                             </h3>
                             <div className="grid grid-cols-2 gap-2">
                                 {CHART_TYPES.map((type) => (
@@ -433,7 +439,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
 
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
                             <h3 className="font-medium text-text dark:text-dark-text mb-3">
-                                Options
+                                {t('options')}
                             </h3>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -443,7 +449,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                     className="rounded border-gray-300 text-primary focus:ring-primary"
                                 />
                                 <span className="text-sm text-text dark:text-dark-text">
-                                    Show secondary data
+                                    {t('showSecondary')}
                                 </span>
                             </label>
                         </div>
@@ -456,15 +462,15 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                 <div className="grid lg:grid-cols-2 gap-6">
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-3">
-                            Enter Numbers
+                            {t('enterNumbers')}
                         </h3>
                         <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
-                            Enter numbers separated by commas, spaces, or new lines
+                            {t('enterNumbersDesc')}
                         </p>
                         <textarea
                             value={calculatorData}
                             onChange={(e) => setCalculatorData(e.target.value)}
-                            placeholder="e.g., 10, 20, 30, 40, 50"
+                            placeholder={t('enterNumbersPlaceholder')}
                             rows={6}
                             className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                         />
@@ -473,28 +479,28 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                             className="btn btn-primary w-full mt-4"
                         >
                             <Calculator className="w-4 h-4 mr-2" />
-                            Calculate Statistics
+                            {t('calculateStatistics')}
                         </button>
                     </div>
 
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-4">
-                            Results
+                            {t('results')}
                         </h3>
                         {statistics ? (
                             <div className="grid grid-cols-2 gap-4">
-                                <StatBox label="Count" value={statistics.count} />
-                                <StatBox label="Sum" value={statistics.sum} />
-                                <StatBox label="Mean" value={statistics.mean} />
-                                <StatBox label="Median" value={statistics.median} />
-                                <StatBox label="Std Dev" value={statistics.stdDev} />
-                                <StatBox label="Min" value={statistics.min} />
-                                <StatBox label="Max" value={statistics.max} />
-                                <StatBox label="Mode" value={statistics.mode?.join(', ') || 'N/A'} />
+                                <StatBox label={t('stats.count')} value={statistics.count} />
+                                <StatBox label={t('stats.sum')} value={statistics.sum} />
+                                <StatBox label={t('stats.mean')} value={statistics.mean} />
+                                <StatBox label={t('stats.median')} value={statistics.median} />
+                                <StatBox label={t('stats.stdDev')} value={statistics.stdDev} />
+                                <StatBox label={t('stats.min')} value={statistics.min} />
+                                <StatBox label={t('stats.max')} value={statistics.max} />
+                                <StatBox label={t('stats.mode')} value={statistics.mode?.join(', ') || 'N/A'} />
                             </div>
                         ) : (
                             <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
-                                Enter numbers and click calculate to see statistics
+                                {t('noResultsYet')}
                             </div>
                         )}
                     </div>
@@ -508,15 +514,15 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <Upload className="w-5 h-5 text-gray-500" />
-                            Import from File
+                            {t('importFromFile')}
                         </h3>
                         <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 dark:border-dark-border rounded-xl cursor-pointer hover:border-primary transition-colors">
                             <Upload className="w-10 h-10 text-gray-400 mb-3" />
                             <span className="text-sm text-text dark:text-dark-text font-medium">
-                                Drop CSV or JSON file here
+                                {t('dropFileHere')}
                             </span>
                             <span className="text-xs text-text-light dark:text-dark-text-muted mt-1">
-                                or click to browse
+                                {t('orClickToBrowse')}
                             </span>
                             <input
                                 type="file"
@@ -531,7 +537,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <FileSpreadsheet className="w-5 h-5 text-emerald-500" />
-                            Import from Resources
+                            {t('importFromResources')}
                         </h3>
                         {availableDatasets.length > 0 ? (
                             <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -549,7 +555,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                             </div>
                         ) : (
                             <div className="text-center py-8 text-text-light dark:text-dark-text-muted">
-                                No datasets available in Resources
+                                {t('noDatasets')}
                             </div>
                         )}
                     </div>
@@ -558,7 +564,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <ClipboardList className="w-5 h-5 text-primary" />
-                            Import from Surveys
+                            {t('importFromSurveys')}
                         </h3>
                         {userSurveys.length > 0 ? (
                             <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -583,7 +589,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                                     {survey.title}
                                                 </span>
                                                 <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                    {survey.response_count} responses
+                                                    {survey.response_count} {t('responses')}
                                                 </span>
                                             </div>
                                         </div>
@@ -591,14 +597,14 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                             ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                             : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
                                             }`}>
-                                            {survey.status}
+                                            {survey.status === 'active' ? t('active') : t('closed')}
                                         </span>
                                     </button>
                                 ))}
                             </div>
                         ) : (
                             <div className="text-center py-8 text-text-light dark:text-dark-text-muted">
-                                {userId ? 'No surveys created yet' : 'Log in to see your surveys'}
+                                {userId ? t('noSurveys') : t('loginToSeeSurveys')}
                             </div>
                         )}
                     </div>
@@ -607,7 +613,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="font-medium text-text dark:text-dark-text mb-4 flex items-center gap-2">
                             <Vote className="w-5 h-5 text-amber-500" />
-                            Import from Polls
+                            {t('importFromPolls')}
                         </h3>
                         {userPolls.length > 0 ? (
                             <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -632,7 +638,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                                     {poll.question}
                                                 </span>
                                                 <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                    {poll.total_votes} votes • {poll.options.length} options
+                                                    {poll.total_votes} {t('votes')} • {poll.options.length} {t('optionsCount')}
                                                 </span>
                                             </div>
                                         </div>
@@ -640,14 +646,14 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                             ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                             : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
                                             }`}>
-                                            {poll.is_active ? 'active' : 'closed'}
+                                            {poll.is_active ? t('active') : t('closed')}
                                         </span>
                                     </button>
                                 ))}
                             </div>
                         ) : (
                             <div className="text-center py-8 text-text-light dark:text-dark-text-muted">
-                                {userId ? 'No polls created yet' : 'Log in to see your polls'}
+                                {userId ? t('noPolls') : t('loginToSeePolls')}
                             </div>
                         )}
                     </div>

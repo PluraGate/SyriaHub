@@ -39,15 +39,15 @@ interface Question {
     description?: string
 }
 
-const QUESTION_TYPES = [
-    { id: 'single_choice', label: 'Single Choice', icon: List },
-    { id: 'multiple_choice', label: 'Multiple Choice', icon: CheckSquare },
-    { id: 'text', label: 'Short Text', icon: Type },
-    { id: 'long_text', label: 'Long Text', icon: AlignLeft },
-    { id: 'scale', label: 'Scale (1-10)', icon: Sliders },
-    { id: 'rating', label: 'Rating (Stars)', icon: Star },
-    { id: 'number', label: 'Number', icon: Hash },
-    { id: 'date', label: 'Date', icon: Calendar },
+const QUESTION_TYPES_CONFIG = [
+    { id: 'single_choice', labelKey: 'questionTypes.singleChoice', icon: List },
+    { id: 'multiple_choice', labelKey: 'questionTypes.multipleChoice', icon: CheckSquare },
+    { id: 'text', labelKey: 'questionTypes.shortText', icon: Type },
+    { id: 'long_text', labelKey: 'questionTypes.longText', icon: AlignLeft },
+    { id: 'scale', labelKey: 'questionTypes.scale', icon: Sliders },
+    { id: 'rating', labelKey: 'questionTypes.rating', icon: Star },
+    { id: 'number', labelKey: 'questionTypes.number', icon: Hash },
+    { id: 'date', labelKey: 'questionTypes.date', icon: Calendar },
 ]
 
 export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
@@ -193,7 +193,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
     }
 
     const getQuestionTypeIcon = (type: string) => {
-        const config = QUESTION_TYPES.find(t => t.id === type)
+        const config = QUESTION_TYPES_CONFIG.find(t => t.id === type)
         return config?.icon || Type
     }
 
@@ -201,38 +201,38 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
-                    {existingSurvey ? 'Edit Survey' : 'Create Survey'}
+                    {existingSurvey ? t('editSurvey') : t('createSurvey')}
                 </h1>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setShowSettings(!showSettings)}
                         className="btn btn-ghost"
                     >
-                        <Settings className="w-4 h-4 mr-2" />
-                        Settings
+                        <Settings className="w-4 h-4 me-2" />
+                        {t('settings')}
                     </button>
                     <button
                         onClick={() => setShowPreview(!showPreview)}
                         className="btn btn-ghost"
                     >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Preview
+                        <Eye className="w-4 h-4 me-2" />
+                        {t('preview')}
                     </button>
                     <button
                         onClick={() => handleSave(false)}
                         disabled={saving}
                         className="btn btn-outline"
                     >
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        Save Draft
+                        {saving ? <Loader2 className="w-4 h-4 animate-spin me-2" /> : <Save className="w-4 h-4 me-2" />}
+                        {t('saveDraft')}
                     </button>
                     <button
                         onClick={() => handleSave(true)}
                         disabled={saving}
                         className="btn btn-primary"
                     >
-                        <Send className="w-4 h-4 mr-2" />
-                        Publish
+                        <Send className="w-4 h-4 me-2" />
+                        {t('publish')}
                     </button>
                 </div>
             </div>
@@ -241,7 +241,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
             {showSettings && (
                 <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 mb-6">
                     <h3 className="font-semibold text-text dark:text-dark-text mb-4">
-                        Survey Settings
+                        {t('surveySettings')}
                     </h3>
                     <div className="space-y-4">
                         <label className="flex items-center gap-3 cursor-pointer">
@@ -254,7 +254,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                             <div>
                                 <span className="text-text dark:text-dark-text font-medium">{tPolls('anonymous')}</span>
                                 <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                    Respondent identities will not be recorded
+                                    {t('anonymousDesc')}
                                 </p>
                             </div>
                         </label>
@@ -302,7 +302,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                     <div className="flex items-center gap-2 flex-1 min-w-0">
                                         <QuestionIcon className="w-4 h-4 text-primary flex-shrink-0" />
                                         <span className="text-sm text-text dark:text-dark-text truncate">
-                                            {question.question_text || `Question ${index + 1}`}
+                                            {question.question_text || t('questionPlaceholder2', { number: index + 1 })}
                                         </span>
                                         {question.required && (
                                             <span className="text-xs text-red-500">*</span>
@@ -344,11 +344,10 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                                 className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
                                             />
 
-                                            {/* Options for choice questions */}
                                             {question.options && (
                                                 <div className="space-y-2">
                                                     <label className="text-sm font-medium text-text dark:text-dark-text">
-                                                        Options
+                                                        {t('optionsLabel')}
                                                     </label>
                                                     {question.options.map((option, optIndex) => (
                                                         <div key={option.id} className="flex items-center gap-2">
@@ -357,7 +356,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                                                 type="text"
                                                                 value={option.text}
                                                                 onChange={(e) => updateOption(question.id, option.id, e.target.value)}
-                                                                placeholder={`Option ${optIndex + 1}`}
+                                                                placeholder={t('optionPlaceholder', { number: optIndex + 1 })}
                                                                 className="flex-1 px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
                                                             />
                                                             {question.options && question.options.length > 2 && (
@@ -374,7 +373,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                                         onClick={() => addOption(question.id)}
                                                         className="text-sm text-primary hover:underline"
                                                     >
-                                                        + Add Option
+                                                        + {t('addOption')}
                                                     </button>
                                                 </div>
                                             )}
@@ -387,7 +386,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                                     className="rounded border-gray-300 text-primary focus:ring-primary"
                                                 />
                                                 <span className="text-sm text-text dark:text-dark-text">
-                                                    Required question
+                                                    {t('requiredQuestion')}
                                                 </span>
                                             </label>
                                         </div>
@@ -402,10 +401,10 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                         <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-dark-border">
                             <List className="w-10 h-10 mx-auto text-gray-300 dark:text-dark-text-muted mb-3" />
                             <p className="text-text-light dark:text-dark-text-muted mb-2">
-                                No questions yet
+                                {t('noQuestions')}
                             </p>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                Add questions from the sidebar to start building your survey
+                                {t('addQuestionsHint')}
                             </p>
                         </div>
                     )}
@@ -415,18 +414,18 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                 <div className="space-y-4">
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 sticky top-24">
                         <h3 className="font-semibold text-text dark:text-dark-text mb-4">
-                            Add Question
+                            {t('addQuestionTitle')}
                         </h3>
                         <div className="space-y-2">
-                            {QUESTION_TYPES.map((type) => (
+                            {QUESTION_TYPES_CONFIG.map((type) => (
                                 <button
                                     key={type.id}
                                     onClick={() => addQuestion(type.id)}
-                                    className="w-full flex items-center gap-3 p-3 text-left rounded-lg border border-gray-200 dark:border-dark-border hover:border-primary hover:bg-primary/5 transition-colors"
+                                    className="w-full flex items-center gap-3 p-3 text-start rounded-lg border border-gray-200 dark:border-dark-border hover:border-primary hover:bg-primary/5 transition-colors"
                                 >
                                     <type.icon className="w-4 h-4 text-primary" />
                                     <span className="text-sm text-text dark:text-dark-text">
-                                        {type.label}
+                                        {t(type.labelKey)}
                                     </span>
                                 </button>
                             ))}

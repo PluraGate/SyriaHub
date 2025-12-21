@@ -17,10 +17,11 @@ import {
     Share2
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { ar, enUS } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { ShareDialog } from './ShareDialog'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface PollOption {
     id: string
@@ -302,7 +303,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                                                 updated[index] = e.target.value
                                                 setNewOptions(updated)
                                             }}
-                                            placeholder={`Option ${index + 1}`}
+                                            placeholder={t('optionPlaceholder', { number: index + 1 })}
                                             className="flex-1 px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
                                         />
                                         {newOptions.length > 2 && (
@@ -509,6 +510,8 @@ function PollCard({
 }: PollCardProps) {
     const t = useTranslations('ResearchLab')
     const tCommon = useTranslations('Common')
+    const locale = useLocale()
+    const dateLocale = locale === 'ar' ? ar : enUS
     const [selectedOptions, setSelectedOptions] = useState<string[]>(userVote || [])
     const [showMenu, setShowMenu] = useState(false)
     const [confirmDelete, setConfirmDelete] = useState(false)
@@ -754,7 +757,7 @@ function PollCard({
                     )}
                     <span className="flex items-center gap-1.5">
                         <Clock className="w-4 h-4" />
-                        {formatDistanceToNow(new Date(poll.created_at), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(poll.created_at), { addSuffix: true, locale: dateLocale })}
                     </span>
                 </div>
 
