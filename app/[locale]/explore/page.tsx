@@ -83,7 +83,7 @@ function ExplorePageContent() {
           .from('posts')
           .select(`
             *,
-            author:users!posts_author_id_fkey(id, name, email)
+            author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
           .eq('status', 'published')
           .neq('approval_status', 'rejected') // Hide rejected posts
@@ -123,7 +123,7 @@ function ExplorePageContent() {
           .from('posts')
           .select(`
             *,
-            author:users!posts_author_id_fkey(id, name, email)
+            author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
           .neq('content_type', 'event') // Exclude events
           .neq('approval_status', 'rejected') // Hide rejected posts
@@ -141,7 +141,7 @@ function ExplorePageContent() {
           .from('posts')
           .select(`
             *,
-            author:users!posts_author_id_fkey(id, name, email)
+            author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
           .eq('content_type', 'event')
           .neq('approval_status', 'rejected')

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -722,6 +722,21 @@ export default function EditorPage() {
                   <p className="text-xs text-text-light dark:text-dark-text-muted">
                     {t('page.coverageHelp')}
                   </p>
+                </div>
+              )}
+
+              {/* 24-Hour Edit Window Notice */}
+              {!postIdParam && (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-amber-800 dark:text-amber-300">
+                      {t('page.editWindowTitle')}
+                    </p>
+                    <p className="text-amber-700 dark:text-amber-400 opacity-90 mt-1">
+                      {t('page.editWindowDescription')}
+                    </p>
+                  </div>
                 </div>
               )}
 

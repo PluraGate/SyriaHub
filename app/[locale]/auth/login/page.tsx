@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { LoginForm } from '@/components/auth/LoginForm'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 import { AlertCircle, BookOpen, Users, Sparkles } from 'lucide-react'
 
 export default async function LoginPage({
@@ -23,6 +25,13 @@ export default async function LoginPage({
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
+    const turnstileToken = formData.get('cf-turnstile-response') as string
+
+    // Verify CAPTCHA if configured
+    const captchaValid = await verifyTurnstileToken(turnstileToken)
+    if (!captchaValid) {
+      redirect('/auth/login?error=Security verification failed. Please try again.')
+    }
 
     if (!email || !password) {
       redirect('/auth/login?error=Email and password are required')
@@ -140,43 +149,7 @@ export default async function LoginPage({
                 </Link>
               </p>
 
-              <form className="space-y-5" action={handleLogin}>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Email address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                    placeholder="Enter your password"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
-                >
-                  Sign In
-                </button>
-              </form>
+              <LoginForm action={handleLogin} />
 
               <div className="mt-6 text-center">
                 <Link href="/auth/forgot-password" className="text-sm text-text-light dark:text-dark-text-muted hover:text-primary transition-colors">

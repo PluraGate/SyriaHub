@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessageSquare, Quote, Calendar, User, Tag, GitFork, GraduationCap } from 'lucide-react'
+import { MessageSquare, Quote, Clock, GitFork, GraduationCap } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
@@ -7,14 +7,16 @@ import { BookmarkButton } from '@/components/BookmarkButton'
 import { ReviewBadgeInline } from '@/components/ReviewBadge'
 import { PlagiarismDetails } from '@/components/PlagiarismDetails'
 import { Post } from '@/types'
-import { stripMarkdown } from '@/lib/utils'
+import { stripMarkdown, cn, getInitials, getAvatarGradient } from '@/lib/utils'
 
 interface PostCardProps {
   post: Post & {
     author?: {
+      id?: string
       name?: string
       full_name?: string
       email?: string
+      avatar_url?: string
       is_verified_author?: boolean
     } | null
     approval_status?: 'pending' | 'approved' | 'flagged' | 'rejected'
@@ -35,6 +37,14 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
     post.author?.full_name ||
     post.author?.email?.split('@')[0] ||
     'Anonymous'
+
+  // Reading time calculation
+  const getReadingTime = (content: string): number => {
+    const wordsPerMinute = 200
+    const words = content.trim().split(/\s+/).length
+    return Math.max(1, Math.ceil(words / wordsPerMinute))
+  }
+  const readingTime = getReadingTime(post.content)
 
   // Academic impact score display helper
   const impactScore = post.academic_impact_score || 0
@@ -103,22 +113,41 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
         )}
 
         {/* Post Meta */}
-        <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted mb-4">
-          {showAuthor && (
-            <div className="flex items-center gap-1.5">
-              <User className="w-4 h-4" aria-hidden="true" />
+        <div className="flex items-center gap-3 text-sm text-text-light dark:text-dark-text-muted mb-4">
+          {showAuthor && post.author && (
+            <div className="flex items-center gap-2">
+              {post.author.avatar_url ? (
+                <img
+                  src={post.author.avatar_url}
+                  alt={displayAuthor}
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div className={cn(
+                  'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white',
+                  getAvatarGradient(post.author.id || post.author_id)
+                )}>
+                  {getInitials(post.author.name, post.author.email)}
+                </div>
+              )}
               <span className="hover:text-primary dark:hover:text-accent-light transition-colors">
                 {displayAuthor}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" aria-hidden="true" />
-            <time dateTime={post.created_at}>
-              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </time>
+          <span className="text-text-muted/50">·</span>
+
+          <div className="flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>{readingTime} min read</span>
           </div>
+
+          <span className="text-text-muted/50">·</span>
+
+          <time dateTime={post.created_at}>
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+          </time>
         </div>
       </Link>
 
