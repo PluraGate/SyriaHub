@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { SignupForm } from '@/components/auth/SignupForm'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen, Ticket, Gift } from 'lucide-react'
 
 export default async function SignupPage({
@@ -47,6 +49,13 @@ export default async function SignupPage({
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const inviteCode = formData.get('inviteCode') as string
+    const turnstileToken = formData.get('cf-turnstile-response') as string
+
+    // Verify CAPTCHA if configured
+    const captchaValid = await verifyTurnstileToken(turnstileToken)
+    if (!captchaValid) {
+      redirect('/auth/signup?error=Security verification failed. Please try again.')
+    }
 
     if (!email || !password) {
       redirect('/auth/signup?error=Email and password are required')
@@ -232,71 +241,7 @@ export default async function SignupPage({
                 </Link>
               </p>
 
-              <form className="space-y-5" action={handleSignup}>
-                {/* Invite Code */}
-                <div>
-                  <label htmlFor="inviteCode" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Invite Code *
-                  </label>
-                  <input
-                    id="inviteCode"
-                    name="inviteCode"
-                    type="text"
-                    required
-                    defaultValue={preValidatedCode}
-                    placeholder="XXXX-XXXX"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all uppercase tracking-widest font-mono text-center text-lg"
-                  />
-                  <p className="text-xs text-text-light dark:text-dark-text-muted mt-1.5">
-                    Don&apos;t have a code?{' '}
-                    <Link href="/waitlist" className="text-primary hover:underline">
-                      Join the waitlist
-                    </Link>
-                  </p>
-                </div>
-
-                <hr className="border-gray-200 dark:border-dark-border" />
-
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Email address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                    placeholder="you@example.com"
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    minLength={6}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                    placeholder="At least 6 characters"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
-                >
-                  Create Account
-                </button>
-              </form>
+              <SignupForm preValidatedCode={preValidatedCode} action={handleSignup} />
 
               <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
                 By signing up, you agree to our terms of service and privacy policy.

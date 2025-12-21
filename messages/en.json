@@ -262,7 +262,9 @@
                 "article": "In-depth research articles, analysis, or reports. Ideal for publishing findings with citations.",
                 "question": "Research questions seeking answers from the community. Great for crowdsourcing knowledge.",
                 "trace": "Collective memory artefacts: photos, audio, documents, testimonies. Fragments of evidence that aren't full articles."
-            }
+            },
+            "editWindowTitle": "24-Hour Edit Window",
+            "editWindowDescription": "Once published, you can edit this post for 24 hours. After that, it will be locked for transparency and academic integrity."
         }
     },
     "Profile": {
@@ -334,23 +336,20 @@
         "upcomingEvents": "Upcoming Events"
     },
     "Footer": {
-        "description": "A collaborative research platform for knowledge sharing. Create, discover, and organize research with clarity and focus.",
+        "description": "A collaborative research commons for Syrian knowledge, context, and memory.",
         "quickLinks": "Quick Links",
         "browseFeed": "Browse Feed",
         "writePost": "Write a Post",
-        "getStarted": "Get Started",
+        "howItWorks": "How SyriaHub Works",
+        "contact": "Contact",
         "resources": "Resources",
         "github": "GitHub",
-        "company": "Company",
+        "githubTooltip": "Open-source components",
         "about": "About",
-        "mission": "Our Mission",
-        "ethics": "Ethics",
-        "contact": "Contact",
-        "legal": "Legal",
+        "governance": "Governance & Trust",
         "privacy": "Privacy Policy",
-        "terms": "Terms of Service",
-        "copyright": "© {year} SyriaHub. All rights reserved.",
-        "madeWith": "Made with dedication for the research community"
+        "spatialTeaser": "Spatial knowledge tools coming soon",
+        "licensingNote": "Content licensed per author terms."
     },
     "Resources": {
         "title": "Resource Library",

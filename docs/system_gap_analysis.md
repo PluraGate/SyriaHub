@@ -125,7 +125,7 @@ This document tracks the system capabilities, completed features, and remaining 
 |-----|----------|--------|-------|
 | Email Configuration | ✅ Complete | Templates, Edge Functions, and DB logs integrated. |
 | API Rate Limiting | ✅ Complete | Integrated into Auth, Research Lab, and Public APIs |
-| CAPTCHA Integration | 🟡 Medium | ❌ Missing | Required for sensitive operations (Auth, Surveys). |
+| CAPTCHA Integration | ✅ Complete | Cloudflare Turnstile on signup/login forms |
 | Performance Monitoring | 🔵 Low | ⚠️ Partial | Vercel Analytics active. Sentry/APM missing. |
 | Data Export (GDPR) | 🔵 Low | ⚠️ Partial | Basic export exists. Need full portability & BibTeX/RIS. |
 

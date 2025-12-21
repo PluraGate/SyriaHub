@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { ProfileHeader } from '@/components/ProfileHeader'
 import { EndorsementSection } from '@/components/EndorsementSection'
 import { UserActivityFeed } from '@/components/UserActivityFeed'
@@ -119,6 +120,8 @@ export default async function ProfilePage(props: ProfilePageProps) {
           groups={groups}
         />
       </main>
+
+      <Footer />
     </div>
   )
 }

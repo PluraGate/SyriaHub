@@ -121,7 +121,7 @@ export default function FeedPage() {
           const authorIds = [...new Set(postsData.map(p => p.author_id).filter(Boolean))]
           const { data: authors } = await supabase
             .from('users')
-            .select('id, name, email')
+            .select('id, name, email, avatar_url')
             .in('id', authorIds)
 
           // Map authors to posts

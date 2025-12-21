@@ -129,12 +129,20 @@ export function MagazineCard({
                     <div className="flex items-center gap-4 text-sm text-white/70">
                         {post.author && (
                             <div className="flex items-center gap-2">
-                                <div className={cn(
-                                    'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white',
-                                    getAvatarGradient(post.author.id)
-                                )}>
-                                    {getInitials(post.author.name, post.author.email)}
-                                </div>
+                                {post.author.avatar_url ? (
+                                    <img
+                                        src={post.author.avatar_url}
+                                        alt={post.author.name || ''}
+                                        className="w-6 h-6 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className={cn(
+                                        'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white',
+                                        getAvatarGradient(post.author.id)
+                                    )}>
+                                        {getInitials(post.author.name, post.author.email)}
+                                    </div>
+                                )}
                                 <span>{post.author.name || post.author.email?.split('@')[0]}</span>
                             </div>
                         )}
@@ -144,10 +152,14 @@ export function MagazineCard({
                                 <span className="text-primary-light font-medium">{eventDate}</span>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>{readingTime} min read</span>
-                            </div>
+                            <>
+                                <div className="flex items-center gap-1">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    <span>{readingTime} min read</span>
+                                </div>
+                                <span className="text-white/50">·</span>
+                                <span>{formatRelativeTime(post.created_at)}</span>
+                            </>
                         )}
                     </div>
                 </div>
@@ -195,9 +207,12 @@ export function MagazineCard({
                     </h3>
 
                     <div className="flex items-center gap-3 mt-2 text-xs text-text-muted dark:text-dark-text-muted">
+                        <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{readingTime} min read</span>
+                        </div>
+                        <span>·</span>
                         <span>{formatRelativeTime(post.created_at)}</span>
-                        <span>•</span>
-                        <span>{readingTime} min</span>
                     </div>
                 </div>
             </Link>
@@ -232,8 +247,11 @@ export function MagazineCard({
                 </p>
 
                 <div className="mt-3 flex items-center justify-between text-xs text-text-muted dark:text-dark-text-muted">
+                    <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>{readingTime} min read</span>
+                    </div>
                     <span>{formatRelativeTime(post.created_at)}</span>
-                    <span>{readingTime} min read</span>
                 </div>
             </Link>
         )
@@ -312,12 +330,20 @@ export function MagazineCard({
                     {/* Author */}
                     {post.author && (
                         <div className="flex items-center gap-2">
-                            <div className={cn(
-                                'w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium text-white',
-                                getAvatarGradient(post.author.id)
-                            )}>
-                                {getInitials(post.author.name, post.author.email)}
-                            </div>
+                            {post.author.avatar_url ? (
+                                <img
+                                    src={post.author.avatar_url}
+                                    alt={post.author.name || ''}
+                                    className="w-7 h-7 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className={cn(
+                                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium text-white',
+                                    getAvatarGradient(post.author.id)
+                                )}>
+                                    {getInitials(post.author.name, post.author.email)}
+                                </div>
+                            )}
                             <span className="text-sm text-text-light dark:text-dark-text-muted truncate max-w-[100px]">
                                 {post.author.name || post.author.email?.split('@')[0]}
                             </span>
@@ -325,16 +351,21 @@ export function MagazineCard({
                     )}
 
                     {/* Meta */}
-                    <div className="flex items-center gap-3 text-xs text-text-muted dark:text-dark-text-muted">
+                    <div className="flex items-center gap-2 text-xs text-text-muted dark:text-dark-text-muted">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
-                            <span>{readingTime}m</span>
+                            <span>{readingTime} min</span>
                         </div>
-                        {post.views !== undefined && (
-                            <div className="flex items-center gap-1">
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>{post.views}</span>
-                            </div>
+                        <span>·</span>
+                        <span>{formatRelativeTime(post.created_at)}</span>
+                        {post.views !== undefined && post.views > 0 && (
+                            <>
+                                <span>·</span>
+                                <div className="flex items-center gap-1">
+                                    <Eye className="w-3.5 h-3.5" />
+                                    <span>{post.views}</span>
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>

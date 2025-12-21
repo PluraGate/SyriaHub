@@ -30,6 +30,7 @@
     "url": "https://github.com/lAvArt/SyriaHub.git"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.4.0",
     "@milkdown/core": "^7.17.3",
     "@milkdown/ctx": "^7.17.3",
     "@milkdown/plugin-history": "^7.17.3",
