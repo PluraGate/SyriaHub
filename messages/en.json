@@ -1287,6 +1287,8 @@
         "filters": "Filters",
         "allStatuses": "All Statuses",
         "allPriorities": "All Priorities",
+        "allTypes": "All Types",
+        "strategicOnly": "Strategic Only",
         "gapsFound": "{count} gap(s) found",
         "noGaps": "No research gaps found",
         "noGapsDesc": "Be the first to identify a gap in our collective knowledge.",
@@ -1301,8 +1303,26 @@
             "discipline": "Discipline",
             "disciplinePlaceholder": "e.g., Public Health",
             "priority": "Priority",
+            "gapType": "Gap Type",
+            "gapTypeHelp": "What kind of gap is this?",
             "spatialContext": "Geographic Context",
-            "spatialPlaceholder": "e.g., Aleppo, Idlib"
+            "spatialPlaceholder": "e.g., Aleppo, Idlib",
+            "markStrategic": "Mark as Strategic Priority",
+            "strategicHelp": "Strategic gaps are highlighted for community attention"
+        },
+        "gapTypes": {
+            "topical": "Topical Gap",
+            "data": "Data Gap",
+            "methodological": "Methodological Dispute",
+            "population": "Under-Represented Population",
+            "outdated": "Outdated Research"
+        },
+        "gapTypeDescriptions": {
+            "topical": "Missing coverage of a topic or area",
+            "data": "Missing datasets or data quality issues",
+            "methodological": "Disputes about research methods or approaches",
+            "population": "Under-represented groups in existing research",
+            "outdated": "Existing research needs updating"
         },
         "status": {
             "identified": "Identified",
@@ -1319,15 +1339,54 @@
         "actions": {
             "claim": "Claim this gap",
             "upvote": "Upvote",
-            "viewResearch": "View the addressing research"
+            "viewResearch": "View the addressing research",
+            "expressInterest": "Express Interest",
+            "suggestReading": "Suggest Related Reading"
         },
+        "collaboration": {
+            "interestedCount": "{count} interested",
+            "interestedResearchers": "{count} researcher(s) interested in collaborating",
+            "expressInterestTitle": "Express Interest",
+            "expressInterestDesc": "Let others know you're interested in collaborating on this gap",
+            "yourNote": "Your Note (optional)",
+            "yourNotePlaceholder": "e.g., I have access to relevant datasets...",
+            "alreadyInterested": "You've expressed interest",
+            "removeInterest": "Remove Interest",
+            "viewInterested": "View Interested Researchers"
+        },
+        "suggestions": {
+            "relatedReadings": "Related Readings",
+            "noSuggestions": "No related readings yet",
+            "suggestTitle": "Suggest a Related Reading",
+            "suggestDesc": "Help others by sharing relevant resources",
+            "readingTitle": "Title",
+            "readingTitlePlaceholder": "e.g., WHO Report on Syria Water Access",
+            "externalUrl": "External URL",
+            "urlPlaceholder": "https://...",
+            "orLinkPost": "Or link an internal post",
+            "selectPost": "Select a post...",
+            "whyRelevant": "Why is this relevant?",
+            "whyRelevantPlaceholder": "Brief note on how this relates to the gap...",
+            "addSuggestion": "Add Suggestion",
+            "suggestedBy": "Suggested by {name}"
+        },
+        "sources": {
+            "manual": "User Identified",
+            "ai_suggested": "AI Suggested",
+            "failed_query": "From Failed Search"
+        },
+        "strategicBadge": "Strategic",
         "messages": {
             "signInToUpvote": "Sign in to upvote",
             "signInToClaim": "Sign in to claim a research gap",
             "signInToSubmit": "Sign in to submit a research gap",
+            "signInToInteract": "Sign in to interact with research gaps",
             "claimed": "You have claimed this research gap!",
             "submitSuccess": "Research gap submitted successfully!",
-            "provideTitle": "Please provide a title"
+            "provideTitle": "Please provide a title",
+            "interestAdded": "Your interest has been recorded",
+            "interestRemoved": "Your interest has been removed",
+            "suggestionAdded": "Reading suggestion added"
         },
         "investigating": "Being investigated by {name}",
         "help": {

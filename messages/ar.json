@@ -1325,6 +1325,8 @@
         "filters": "الفلاتر",
         "allStatuses": "جميع الحالات",
         "allPriorities": "جميع الأولويات",
+        "allTypes": "جميع الأنواع",
+        "strategicOnly": "الاستراتيجية فقط",
         "gapsFound": "تم العثور على {count} فجوة",
         "noGaps": "لم يتم العثور على فجوات بحثية",
         "noGapsDesc": "كن أول من يحدد فجوة في معرفتنا الجماعية.",
@@ -1339,8 +1341,26 @@
             "discipline": "التخصص",
             "disciplinePlaceholder": "مثال: الصحة العامة",
             "priority": "الأولوية",
+            "gapType": "نوع الفجوة",
+            "gapTypeHelp": "ما نوع هذه الفجوة؟",
             "spatialContext": "السياق الجغرافي",
-            "spatialPlaceholder": "مثال: حلب، إدلب"
+            "spatialPlaceholder": "مثال: حلب، إدلب",
+            "markStrategic": "تحديد كأولوية استراتيجية",
+            "strategicHelp": "الفجوات الاستراتيجية يتم إبرازها لجذب اهتمام المجتمع"
+        },
+        "gapTypes": {
+            "topical": "فجوة موضوعية",
+            "data": "فجوة بيانات",
+            "methodological": "خلاف منهجي",
+            "population": "فئة سكانية ممثلة بشكل ناقص",
+            "outdated": "بحث قديم"
+        },
+        "gapTypeDescriptions": {
+            "topical": "غياب تغطية لموضوع أو منطقة معينة",
+            "data": "نقص مجموعات البيانات أو مشاكل في جودة البيانات",
+            "methodological": "خلافات حول طرق أو مناهج البحث",
+            "population": "مجموعات ممثلة بشكل ناقص في الأبحاث القائمة",
+            "outdated": "الأبحاث الموجودة تحتاج للتحديث"
         },
         "status": {
             "identified": "محددة",
@@ -1357,15 +1377,54 @@
         "actions": {
             "claim": "المطالبة بهذه الفجوة",
             "upvote": "تصويت إيجابي",
-            "viewResearch": "عرض البحث المعالج"
+            "viewResearch": "عرض البحث المعالج",
+            "expressInterest": "إبداء الاهتمام",
+            "suggestReading": "اقتراح قراءة ذات صلة"
         },
+        "collaboration": {
+            "interestedCount": "{count} مهتم",
+            "interestedResearchers": "{count} باحث مهتم بالتعاون",
+            "expressInterestTitle": "إبداء الاهتمام",
+            "expressInterestDesc": "أعلم الآخرين أنك مهتم بالتعاون في هذه الفجوة",
+            "yourNote": "ملاحظتك (اختياري)",
+            "yourNotePlaceholder": "مثال: لدي وصول لمجموعات بيانات ذات صلة...",
+            "alreadyInterested": "لقد أبديت اهتمامك",
+            "removeInterest": "إزالة الاهتمام",
+            "viewInterested": "عرض الباحثين المهتمين"
+        },
+        "suggestions": {
+            "relatedReadings": "قراءات ذات صلة",
+            "noSuggestions": "لا توجد قراءات ذات صلة بعد",
+            "suggestTitle": "اقتراح قراءة ذات صلة",
+            "suggestDesc": "ساعد الآخرين بمشاركة موارد ذات صلة",
+            "readingTitle": "العنوان",
+            "readingTitlePlaceholder": "مثال: تقرير منظمة الصحة العالمية حول الوصول للمياه في سوريا",
+            "externalUrl": "رابط خارجي",
+            "urlPlaceholder": "https://...",
+            "orLinkPost": "أو ربط منشور داخلي",
+            "selectPost": "اختر منشوراً...",
+            "whyRelevant": "لماذا هذا ذو صلة؟",
+            "whyRelevantPlaceholder": "ملاحظة موجزة عن علاقته بالفجوة...",
+            "addSuggestion": "إضافة اقتراح",
+            "suggestedBy": "اقترحه {name}"
+        },
+        "sources": {
+            "manual": "حددها المستخدم",
+            "ai_suggested": "اقترحها الذكاء الاصطناعي",
+            "failed_query": "من بحث فاشل"
+        },
+        "strategicBadge": "استراتيجية",
         "messages": {
             "signInToUpvote": "سجل دخولك للتصويت",
             "signInToClaim": "سجل دخولك للمطالبة بفجوة بحثية",
             "signInToSubmit": "سجل دخولك لإرسال فجوة بحثية",
+            "signInToInteract": "سجل دخولك للتفاعل مع الفجوات البحثية",
             "claimed": "لقد طالبت بهذه الفجوة البحثية!",
             "submitSuccess": "تم إرسال الفجوة البحثية بنجاح!",
-            "provideTitle": "يرجى تقديم عنوان"
+            "provideTitle": "يرجى تقديم عنوان",
+            "interestAdded": "تم تسجيل اهتمامك",
+            "interestRemoved": "تم إزالة اهتمامك",
+            "suggestionAdded": "تم إضافة اقتراح القراءة"
         },
         "investigating": "يتم البحث فيها بواسطة {name}",
         "help": {
