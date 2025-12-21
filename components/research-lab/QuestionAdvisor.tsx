@@ -47,7 +47,7 @@ interface AnalysisResult {
 }
 
 export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
-    const t = useTranslations('ResearchSearch')
+    const t = useTranslations('QuestionAdvisor')
     const tCommon = useTranslations('Common')
     const [question, setQuestion] = useState('')
     const [context, setContext] = useState('')
@@ -59,17 +59,17 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
 
     const handleAnalyze = async () => {
         if (!question.trim()) {
-            showToast('Please enter a research question', 'error')
+            showToast(t('errors.enterQuestion'), 'error')
             return
         }
 
         if (!userId) {
-            showToast('Please log in to use the Question Advisor', 'error')
+            showToast(t('errors.loginRequired'), 'error')
             return
         }
 
         if (remainingUses <= 0) {
-            showToast('Daily limit reached. Try again tomorrow!', 'error')
+            showToast(t('errors.dailyLimit'), 'error')
             return
         }
 
@@ -101,13 +101,13 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
         navigator.clipboard.writeText(text)
         setCopiedIndex(index)
         setTimeout(() => setCopiedIndex(null), 2000)
-        showToast('Copied to clipboard!', 'success')
+        showToast(t('copied'), 'success')
     }
 
     const useRefinedVersion = (text: string) => {
         setQuestion(text)
         setResult(null)
-        showToast('Question updated!', 'success')
+        showToast(t('questionUpdated'), 'success')
     }
 
     const getScoreColor = (score: number) => {
@@ -128,15 +128,15 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                 <div className="flex items-center justify-between mb-2">
                     <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text flex items-center gap-2">
                         <Sparkles className="w-6 h-6 text-amber-500" />
-                        {t('questionAdvisor')}
+                        {t('title')}
                     </h1>
                     <div className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted">
                         <Zap className="w-4 h-4" />
-                        {remainingUses} uses remaining today
+                        {remainingUses} {t('usesRemaining', { count: remainingUses })}
                     </div>
                 </div>
                 <p className="text-text-light dark:text-dark-text-muted">
-                    AI-powered analysis to refine your research questions for clarity, scope, and measurability
+                    {t('subtitle')}
                 </p>
             </div>
 
@@ -150,7 +150,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                         <textarea
                             value={question}
                             onChange={(e) => setQuestion(e.target.value)}
-                            placeholder="Enter your research question here..."
+                            placeholder={t('placeholder')}
                             rows={4}
                             className="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-lg"
                         />
@@ -161,7 +161,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                         <textarea
                             value={context}
                             onChange={(e) => setContext(e.target.value)}
-                            placeholder="Provide additional context about your research field, methodology, or constraints..."
+                            placeholder={t('contextPlaceholder')}
                             rows={2}
                             className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                         />
@@ -174,12 +174,12 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                             {analyzing ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                    Analyzing...
+                                    {t('analyzing')}
                                 </>
                             ) : (
                                 <>
                                     <Send className="w-4 h-4 mr-2" />
-                                    {t('analyzeQuestion')}
+                                    {t('analyze')}
                                 </>
                             )}
                         </button>
@@ -207,7 +207,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                 <div className="flex items-center gap-2 mb-3">
                                     <Scale className="w-5 h-5 text-blue-500" />
                                     <h3 className="font-semibold text-text dark:text-dark-text">
-                                        Scope Analysis
+                                        {t('scopeAnalysis')}
                                     </h3>
                                     <span className={`
                                         px-2 py-0.5 rounded-full text-xs font-medium
@@ -230,7 +230,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                     <div className="flex items-center gap-2 mb-3">
                                         <AlertCircle className="w-5 h-5 text-amber-600" />
                                         <h3 className="font-semibold text-amber-800 dark:text-amber-200">
-                                            Potential Biases Detected
+                                            {t('biasDetected')}
                                         </h3>
                                     </div>
                                     <ul className="space-y-2">
@@ -250,7 +250,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                     <div className="flex items-center gap-2 mb-3">
                                         <Lightbulb className="w-5 h-5 text-amber-500" />
                                         <h3 className="font-semibold text-text dark:text-dark-text">
-                                            Suggestions
+                                            {t('suggestions')}
                                         </h3>
                                     </div>
                                     <ul className="space-y-2">
@@ -272,7 +272,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                     <div className="bg-gradient-to-br from-primary/5 to-purple-50 dark:from-primary/10 dark:to-purple-900/10 rounded-xl border border-gray-200 dark:border-dark-border p-5">
                         <h3 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
                             <RefreshCw className="w-5 h-5 text-primary" />
-                            Refined Alternatives
+                            {t('refinedAlternatives')}
                         </h3>
 
                         {result?.refined_versions && result.refined_versions.length > 0 ? (
@@ -295,14 +295,14 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                                 ) : (
                                                     <Copy className="w-3.5 h-3.5" />
                                                 )}
-                                                Copy
+                                                {t('copy')}
                                             </button>
                                             <button
                                                 onClick={() => useRefinedVersion(version)}
                                                 className="flex items-center gap-1.5 px-2 py-1 text-xs text-primary hover:underline"
                                             >
                                                 <RefreshCw className="w-3.5 h-3.5" />
-                                                Use this
+                                                {t('useThis')}
                                             </button>
                                         </div>
                                     </div>
@@ -310,7 +310,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                             </div>
                         ) : (
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                Analyze your question to get refined alternatives
+                                {t('analyzeToGetAlternatives')}
                             </p>
                         )}
                     </div>
@@ -318,28 +318,28 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                     {/* Tips Card */}
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
                         <h3 className="font-semibold text-text dark:text-dark-text mb-3">
-                            Tips for Good Research Questions
+                            {t('tips.title')}
                         </h3>
                         <ul className="space-y-2 text-sm text-text-light dark:text-dark-text-muted">
                             <li className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                Be specific and focused
+                                {t('tips.specific')}
                             </li>
                             <li className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                Use clear, unambiguous language
+                                {t('tips.clear')}
                             </li>
                             <li className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                Ensure it&apos;s measurable or testable
+                                {t('tips.measurable')}
                             </li>
                             <li className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                Avoid leading or loaded terms
+                                {t('tips.neutral')}
                             </li>
                             <li className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                Define your scope clearly
+                                {t('tips.scope')}
                             </li>
                         </ul>
                     </div>

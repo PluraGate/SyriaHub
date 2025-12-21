@@ -233,6 +233,12 @@ The platform uses a comprehensive PostgreSQL schema with Row Level Security (RLS
 For detailed schema documentation, migration instructions, and queries, see:
 **📚 [supabase/README.md](supabase/README.md)**
 
+## Comprehensive Documentation
+
+For a single, all-encompassing guide covering every feature, system architecture, API, and user guide, please refer to:
+**📖 [COMPREHENSIVE_PLATFORM_DOCUMENTATION.md](docs/COMPREHENSIVE_PLATFORM_DOCUMENTATION.md)**
+
+
 ## API Endpoints
 
 Complete RESTful API with Role-Based Access Control (RBAC):

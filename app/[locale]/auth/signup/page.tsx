@@ -186,7 +186,7 @@ export default async function SignupPage({
                 <div className="flex items-center gap-3">
                   <Gift className="w-5 h-5 text-primary" />
                   <p className="text-sm text-text dark:text-dark-text">
-                    You've been invited by <strong>{inviterName}</strong>
+                    You&apos;ve been invited by <strong>{inviterName}</strong>
                   </p>
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default async function SignupPage({
                   <div>
                     <h3 className="font-semibold text-text dark:text-dark-text">Check your email</h3>
                     <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
-                      We've sent you a confirmation link. Please check your inbox to verify your account.
+                      We&apos;ve sent you a confirmation link. Please check your inbox to verify your account.
                     </p>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export default async function SignupPage({
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all uppercase tracking-widest font-mono text-center text-lg"
                   />
                   <p className="text-xs text-text-light dark:text-dark-text-muted mt-1.5">
-                    Don't have a code?{' '}
+                    Don&apos;t have a code?{' '}
                     <Link href="/waitlist" className="text-primary hover:underline">
                       Join the waitlist
                     </Link>

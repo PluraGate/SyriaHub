@@ -13,6 +13,7 @@ This document tracks the system capabilities, completed features, and remaining 
 |---------|--------|-------|
 | User Authentication | ✅ Complete | Supabase Auth with invite-only signup |
 | User Roles | ✅ Complete | Admin, Moderator, Researcher, Member roles |
+| Feedback System | ✅ Complete | Ticketing for bugs, UX suggestions, and feedback (admin, moderator, researcher access) |
 | Content Publishing | ✅ Complete | Articles, Questions, Events with markdown |
 | Content Moderation | ✅ Complete | Admin review, appeals, revision requests |
 | Comments & Replies | ✅ Complete | Threaded comments with reply-to |
@@ -41,6 +42,17 @@ This document tracks the system capabilities, completed features, and remaining 
 | Surveys | ✅ Complete | Professional survey builder |
 | Knowledge Graph | ✅ Complete | Topic visualization with D3.js |
 | Statistics Tools | ✅ Complete | Data visualization with Recharts |
+| Research Gap Marketplace | ✅ Complete | Identify and claim knowledge gaps ("The Absence Model") |
+
+### Epistemic Architecture Upgrade
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Trace Content Type | ✅ Complete | Collective memory artefacts (photos, documents, testimonies) |
+| Temporal Coverage | ✅ Complete | Start/end date for research periods |
+| Spatial Coverage | ✅ Complete | Geographic region fields |
+| Content Type Tooltips | ✅ Complete | Help text explaining Article vs Question vs Trace |
+| Research Gaps Table | ✅ Complete | DB table with status, priority, upvotes, and claims |
+| Academic Impact Score | ✅ Complete | Citation-based impact metric for posts |
 
 ### Events System
 | Feature | Status | Notes |
@@ -133,8 +145,10 @@ This document tracks the system capabilities, completed features, and remaining 
 | Migration | Status | Notes |
 |-----------|--------|-------|
 | `20251217160000_diversity_recommendations.sql` | ✅ Applied | Diversity recommendations functions and ENUMs |
+| `20251220200000_epistemic_architecture.sql` | ✅ Applied | Research gaps table, temporal/spatial coverage, academic impact |
+| `20251221000000_update_user_stats.sql` | ⏳ Pending | Adds academic_impact and follower_count to get_user_stats function |
 
-**Note:** Migration has been applied to the database.
+**Note:** Run `supabase db push` or apply migrations via the Supabase dashboard.
 
 ### Data Population Required
 | Data | Status | Notes |
@@ -185,9 +199,9 @@ Components updated to use `useTranslations` hook:
 ### Translation File Structure
 ```
 messages/
-├── en.json (810+ lines)
-└── ar.json (810+ lines)
+├── en.json (900+ lines)
+└── ar.json (900+ lines)
 ```
 
-Key sections: Common, Navigation, Auth, Post, Editor, Profile, Landing, Footer, Resources, Events, Groups, Notifications, Search, Comments, Settings, Admin, ResearchLab, Trending, Recommendations, Onboarding, Errors, About, Faq, Roles
+Key sections: Common, Navigation, Auth, Post, Editor, Profile, Landing, Footer, Resources, Events, Groups, Notifications, Search, Comments, Settings, Admin, ResearchLab, Trending, Recommendations, ResearchGaps, Onboarding, Errors, About, Faq, Roles
 

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -52,7 +52,7 @@ export default function EditorPage() {
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
   const [citations, setCitations] = useState<string[]>([])
-  const [contentType, setContentType] = useState<'article' | 'question'>('article')
+  const [contentType, setContentType] = useState<'article' | 'question' | 'trace'>('article')
   const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
   const [group, setGroup] = useState<any>(null)
@@ -60,6 +60,11 @@ export default function EditorPage() {
   const [useRichEditor, setUseRichEditor] = useState(true)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
   const [linkedResources, setLinkedResources] = useState<any[]>([])
+
+  // Epistemic Architecture fields
+  const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
+  const [temporalCoverageEnd, setTemporalCoverageEnd] = useState('')
+  const [spatialCoverage, setSpatialCoverage] = useState('')
 
   // Real-time collaboration for editing existing posts
   const { collaborators, isConnected, userColor } = useCollaboration({
@@ -287,6 +292,17 @@ export default function EditorPage() {
           postData.cover_image_url = coverImage
         }
 
+        // Include temporal/spatial coverage if set (Epistemic Architecture)
+        if (temporalCoverageStart) {
+          postData.temporal_coverage_start = temporalCoverageStart
+        }
+        if (temporalCoverageEnd) {
+          postData.temporal_coverage_end = temporalCoverageEnd
+        }
+        if (spatialCoverage.trim()) {
+          postData.spatial_coverage = spatialCoverage.trim()
+        }
+
         console.log('Saving post with data:', postData)
 
         let result;
@@ -472,29 +488,51 @@ export default function EditorPage() {
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
 
               {/* Content Type Toggle */}
-              <div className="flex gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
-                <button
-                  type="button"
-                  onClick={() => setContentType('article')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
-                    ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
-                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
-                    }`}
-                >
-                  <BookOpen className="w-4 h-4" />
-                  {t('page.article')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setContentType('question')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
-                    ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
-                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
-                    }`}
-                >
-                  <HelpCircle className="w-4 h-4" />
-                  {t('page.question')}
-                </button>
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
+                  <button
+                    type="button"
+                    onClick={() => setContentType('article')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
+                      ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                      }`}
+                    title={t('page.contentTypeHelp.article')}
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    {t('page.article')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContentType('question')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
+                      ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                      }`}
+                    title={t('page.contentTypeHelp.question')}
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    {t('page.question')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContentType('trace')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
+                      ? 'bg-white dark:bg-dark-surface text-secondary-dark shadow-sm'
+                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                      }`}
+                    title={t('page.contentTypeHelp.trace')}
+                  >
+                    <Camera className="w-4 h-4" />
+                    {t('page.trace')}
+                  </button>
+                </div>
+                {/* Help text for selected content type */}
+                <p className="text-xs text-text-light dark:text-dark-text-muted italic">
+                  {contentType === 'article' && t('page.contentTypeHelp.article')}
+                  {contentType === 'question' && t('page.contentTypeHelp.question')}
+                  {contentType === 'trace' && t('page.contentTypeHelp.trace')}
+                </p>
               </div>
 
               {/* Cover Image */}
@@ -626,6 +664,66 @@ export default function EditorPage() {
                   {t('page.licenseHelp')}
                 </p>
               </div>
+
+              {/* Temporal & Spatial Coverage - for Articles and Traces */}
+              {(contentType === 'article' || contentType === 'trace') && (
+                <div className="space-y-4 p-4 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-dark-text">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    {t('page.researchCoverageOptional')}
+                  </div>
+
+                  {/* Temporal Coverage */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label htmlFor="temporalStart" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {t('page.periodStart')}
+                      </label>
+                      <input
+                        id="temporalStart"
+                        type="date"
+                        value={temporalCoverageStart}
+                        onChange={e => setTemporalCoverageStart(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="temporalEnd" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {t('page.periodEnd')}
+                      </label>
+                      <input
+                        id="temporalEnd"
+                        type="date"
+                        value={temporalCoverageEnd}
+                        onChange={e => setTemporalCoverageEnd(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Spatial Coverage */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="spatialCoverage" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {t('page.geographicRegion')}
+                    </label>
+                    <input
+                      id="spatialCoverage"
+                      type="text"
+                      value={spatialCoverage}
+                      onChange={e => setSpatialCoverage(e.target.value)}
+                      placeholder={t('page.geographicPlaceholder')}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                    />
+                  </div>
+
+                  <p className="text-xs text-text-light dark:text-dark-text-muted">
+                    {t('page.coverageHelp')}
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-dark-border">

@@ -217,7 +217,7 @@ export default function AdminTagsPage() {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{t('approveDialogTitle', { tag: approvingTag })}</DialogTitle>
+                        <DialogTitle>{t('approveDialogTitle', { tag: approvingTag ?? '' })}</DialogTitle>
                         <DialogDescription>
                             {t('approveDialogDesc')}
                         </DialogDescription>
@@ -305,7 +305,7 @@ export default function AdminTagsPage() {
             <Dialog open={declineDialogOpen} onOpenChange={setDeclineDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className="text-red-600 dark:text-red-400">{t('declineDialogTitle', { tag: decliningTag })}</DialogTitle>
+                        <DialogTitle className="text-red-600 dark:text-red-400">{t('declineDialogTitle', { tag: decliningTag ?? '' })}</DialogTitle>
                         <DialogDescription>
                             {t('declineDialogDesc')}
                         </DialogDescription>
@@ -313,7 +313,7 @@ export default function AdminTagsPage() {
                     <div className="py-4">
                         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                             <p className="text-sm text-red-700 dark:text-red-300">
-                                {t('declineWarning', { tag: decliningTag })}
+                                {t('declineWarning', { tag: decliningTag ?? '' })}
                             </p>
                         </div>
                     </div>

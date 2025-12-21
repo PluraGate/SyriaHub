@@ -4,7 +4,7 @@ import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
 import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
-import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap } from 'lucide-react'
+import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap } from 'lucide-react'
 import { format } from 'date-fns'
 import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
@@ -22,27 +22,31 @@ function StatItem({
     value,
     label,
     maxValue = 100,
-    color = 'primary'
+    color = 'primary',
+    tooltip
 }: {
     icon: React.ElementType
-    value: number
+    value: number | string
     label: string
     maxValue?: number
-    color?: 'primary' | 'secondary' | 'accent'
+    color?: 'primary' | 'secondary' | 'accent' | 'emerald'
+    tooltip?: string
 }) {
-    const percentage = Math.min((value / maxValue) * 100, 100)
+    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0
+    const percentage = Math.min((numValue / maxValue) * 100, 100)
     const colorClasses = {
         primary: 'bg-primary dark:bg-primary-light',
         secondary: 'bg-secondary dark:bg-secondary-light',
-        accent: 'bg-accent dark:bg-accent-light'
+        accent: 'bg-accent dark:bg-accent-light',
+        emerald: 'bg-emerald-500 dark:bg-emerald-400'
     }
 
     return (
-        <div className="flex-1 min-w-[100px]">
+        <div className="flex-1 min-w-[100px]" title={tooltip}>
             <div className="flex items-center gap-2 mb-2">
                 <Icon className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
                 <span className="text-2xl font-bold text-text dark:text-dark-text">
-                    {value}
+                    {typeof value === 'number' ? value.toLocaleString() : value}
                 </span>
             </div>
             <div className="h-1.5 bg-gray-100 dark:bg-dark-border rounded-full overflow-hidden mb-1">
@@ -220,6 +224,14 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                         label="Followers"
                         maxValue={200}
                         color="accent"
+                    />
+                    <StatItem
+                        icon={GraduationCap}
+                        value={(stats?.academic_impact || 0).toFixed(1)}
+                        label="Academic Impact"
+                        maxValue={100}
+                        color="emerald"
+                        tooltip="Aggregate scholarly impact score based on quality citations across all posts"
                     />
                 </div>
             </div>

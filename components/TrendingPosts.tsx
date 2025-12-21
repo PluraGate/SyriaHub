@@ -56,17 +56,28 @@ export function TrendingPosts() {
           created_at,
           vote_count,
           tags,
+          content_type,
+          metadata,
           author:users!posts_author_id_fkey(id, name, email)
         `)
                 .eq('status', 'published')
                 .neq('approval_status', 'rejected')
                 .gte('created_at', since.toISOString())
                 .order('vote_count', { ascending: false, nullsFirst: false })
-                .limit(10)
+                .limit(20) // Fetch more to allow filtering
 
             if (!error && data) {
+                // Filter out past events (events whose start_time has passed)
+                const filteredData = data.filter(post => {
+                    if (post.content_type === 'event' && post.metadata?.start_time) {
+                        const eventDate = new Date(post.metadata.start_time)
+                        return eventDate >= now // Only include future events
+                    }
+                    return true // Include all non-event posts
+                })
+
                 // Calculate hot score and transform data
-                const postsWithScore = data.map(post => {
+                const postsWithScore = filteredData.map(post => {
                     const createdAt = new Date(post.created_at)
                     const ageHours = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60)
                     const gravity = 1.8

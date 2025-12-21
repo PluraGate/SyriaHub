@@ -120,6 +120,33 @@
         "inviteRequired": "يلزم رمز دعوة للتسجيل",
         "invalidInvite": "رمز الدعوة غير صالح أو منتهي الصلاحية"
     },
+    "Feed": {
+        "title": "الموجز",
+        "liveFeed": "الموجز المباشر",
+        "yourFeed": "موجزك",
+        "discoverResearch": "اكتشف أحدث الأبحاث والرؤى من المجتمع",
+        "writePost": "اكتب منشوراً",
+        "noResults": "لا توجد منشورات",
+        "loadMore": "تحميل المزيد",
+        "filter": "تصفية",
+        "sort": "ترتيب",
+        "newest": "الأحدث",
+        "popular": "الأكثر شعبية",
+        "trending": "الأكثر رواجاً",
+        "allPosts": "جميع المنشورات",
+        "following": "المتابَعون",
+        "all": "الكل",
+        "article": "مقالات",
+        "question": "أسئلة",
+        "allTopics": "جميع المواضيع",
+        "featured": "المميزة",
+        "latestResearch": "أحدث الأبحاث",
+        "sortNew": "الأحدث",
+        "sortHot": "الساخن",
+        "sortTopWeek": "الأعلى هذا الأسبوع",
+        "sortTopMonth": "الأعلى هذا الشهر",
+        "sortTopAll": "الأعلى على الإطلاق"
+    },
     "Post": {
         "edit": "تعديل",
         "history": "السجل",
@@ -205,8 +232,10 @@
             "remove": "إزالة",
             "article": "مقال",
             "question": "سؤال",
+            "trace": "أثر",
             "titlePlaceholderArticle": "ما الذي تبحث عنه اليوم؟",
             "titlePlaceholderQuestion": "ما سؤالك؟",
+            "titlePlaceholderTrace": "ما الذاكرة أو الدليل الذي توثقه؟",
             "writePlaceholder": "اكتب محتواك هنا...",
             "writePlaceholderMarkdown": "اكتب محتواك هنا. Markdown مدعوم...",
             "tagsPlaceholder": "منهجية، أخلاقيات، سوريا",
@@ -221,7 +250,19 @@
             "inspirationDesc": "استكشف الأبحاث الحديثة في الموجز أو اكتشف المواضيع الرائجة.",
             "browsePosts": "تصفح المنشورات",
             "markdownSupported": "Markdown مدعوم",
-            "markdownHelp": "استخدم **عريض**، *مائل*، # عناوين، - قوائم، و`كود` في محتواك."
+            "markdownHelp": "استخدم **عريض**، *مائل*، # عناوين، - قوائم، و`كود` في محتواك.",
+            "researchCoverage": "التغطية البحثية",
+            "researchCoverageOptional": "التغطية البحثية (اختياري)",
+            "periodStart": "بداية الفترة",
+            "periodEnd": "نهاية الفترة",
+            "geographicRegion": "المنطقة الجغرافية",
+            "geographicPlaceholder": "مثال: حلب، إدلب، دمشق",
+            "coverageHelp": "حدد الفترة الزمنية والموقع الذي يغطيه بحثك لتمكين التصفية الزمنية والجغرافية.",
+            "contentTypeHelp": {
+                "article": "مقالات بحثية معمقة أو تحليلات أو تقارير. مثالية لنشر النتائج مع الاستشهادات.",
+                "question": "أسئلة بحثية تبحث عن إجابات من المجتمع. رائعة للتعهيد الجماعي للمعرفة.",
+                "trace": "آثار الذاكرة الجماعية: صور، تسجيلات صوتية، وثائق، شهادات. شظايا أدلة ليست مقالات كاملة."
+            }
         }
     },
     "Profile": {
@@ -402,7 +443,16 @@
         "freeEvent": "مجاني",
         "paidEvent": "مدفوع",
         "limitedSeats": "المقاعد محدودة",
-        "rejected": "مرفوض"
+        "rejected": "مرفوض",
+        "areYouGoing": "هل ستحضر؟",
+        "organizedBy": "المُنظّمون",
+        "eventHost": "منظم الحدث",
+        "onlineLink": "رابط الإنترنت",
+        "goingCount": "{count} سيحضر",
+        "moreAttendees": "+{count} آخرين",
+        "beFirstToRsvp": "كن أول من يحجز!",
+        "eventCancelled": "تم إلغاء هذا الحدث",
+        "eventPostponed": "تم تأجيل هذا الحدث"
     },
     "Groups": {
         "title": "المجموعات",
@@ -521,6 +571,10 @@
     },
     "Comments": {
         "title": "التعليقات",
+        "discussion": "النقاش",
+        "loadingComments": "جارٍ تحميل التعليقات...",
+        "commentsCount": "{count} تعليق",
+        "commentsCountPlural": "{count} تعليقات",
         "writeComment": "اكتب تعليقاً...",
         "postComment": "نشر التعليق",
         "reply": "رد",
@@ -528,14 +582,18 @@
         "delete": "حذف",
         "report": "إبلاغ",
         "noComments": "لا توجد تعليقات بعد",
+        "noCommentsDesc": "كن أول من يشارك أفكاره",
         "beFirst": "كن أول من يعلق",
         "loadMore": "تحميل المزيد من التعليقات",
-        "showReplies": "عرض {count} رد",
+        "showReplies": "عرض {count} ردود",
+        "showReply": "عرض {count} رد",
         "hideReplies": "إخفاء الردود",
         "edited": "معدّل",
         "deleted": "تم حذف هذا التعليق",
         "replyTo": "رد على {name}",
-        "cancelReply": "إلغاء الرد"
+        "cancelReply": "إلغاء الرد",
+        "signInToComment": "سجّل الدخول للمشاركة في النقاش",
+        "anonymous": "مجهول"
     },
     "Settings": {
         "title": "الإعدادات",
@@ -647,7 +705,10 @@
         "confirmReset": "هل أنت متأكد من إعادة جميع الإعدادات للافتراضي؟",
         "settingsReset": "تمت إعادة الإعدادات للافتراضي",
         "saved": "تم حفظ الإعدادات",
-        "saveChanges": "حفظ التغييرات"
+        "saveChanges": "حفظ التغييرات",
+        "feedbackSection": {
+            "title": "الملاحظات"
+        }
     },
     "Analytics": {
         "title": "تحليلات البحث",
@@ -865,6 +926,7 @@
         "settings": "إعدادات المنصة",
         "auditLog": "سجل التدقيق",
         "coordination": "التنسيق",
+        "feedback": "الملاحظات",
         "tags": "إدارة الأوسمة",
         "waitlist": "قائمة الانتظار",
         "expand": "توسيع الشريط الجانبي",
@@ -1122,13 +1184,18 @@
     "ResearchLab": {
         "title": "مختبر البحث",
         "subtitle": "أدوات للبحث والاستطلاعات وتحليل البيانات.",
+        "heroSubtitle": "أدوات قوية للباحثين: أنشئ استبيانات، وأجرِ استطلاعات، وحلّل البيانات، وحسّن أسئلتك البحثية بمساعدة الذكاء الاصطناعي.",
+        "researchTools": "أدوات البحث",
         "polls": "استطلاعات الرأي",
         "surveys": "الاستبيانات",
         "statistics": "الإحصائيات",
         "questionAdvisor": "مستشار الأسئلة",
         "search": "محرك البحث العلمي",
+        "overview": "نظرة عامة",
+        "backToFeed": "العودة للموجز",
         "createPoll": "إنشاء استطلاع",
         "createSurvey": "إنشاء استبيان",
+        "newSurvey": "استبيان جديد",
         "myPolls": "استطلاعاتي",
         "mySurveys": "استبياناتي",
         "responses": "الردود",
@@ -1147,12 +1214,98 @@
         "surveyTitle": "عنوان الاستبيان",
         "surveyDescription": "وصف الاستبيان",
         "addQuestion": "إضافة سؤال",
+        "activeSurveys": "الاستبيانات النشطة",
+        "activePolls": "الاستطلاعات النشطة",
         "questionTypes": {
             "text": "إجابة نصية",
             "multipleChoice": "اختيار من متعدد",
             "checkbox": "مربعات اختيار",
             "scale": "مقياس (1-10)",
             "rating": "تقييم بالنجوم"
+        },
+        "features": {
+            "searchEngine": {
+                "title": "محرك البحث",
+                "description": "بحث دلالي مدعوم بالذكاء الاصطناعي عبر المنشورات الداخلية والمصادر الخارجية. احصل على نتائج مرتبة حسب الأدلة.",
+                "stats": "المصادر: متعددة"
+            },
+            "researchGaps": {
+                "title": "سوق الفجوات البحثية",
+                "description": "حدد الفجوات في المعرفة الجماعية. اطلب مجالات بحثية، وصوّت للفجوات المهمة، واربط عملك عند معالجتها.",
+                "stats": "نموذج الغياب: ؟"
+            },
+            "surveys": {
+                "title": "منشئ الاستبيانات",
+                "description": "أنشئ استبيانات شاملة مع أنواع أسئلة متعددة ومنطق شرطي وتحليلات متقدمة.",
+                "stats": "أنواع الأسئلة: +10"
+            },
+            "polls": {
+                "title": "استطلاعات سريعة",
+                "description": "أنشئ استطلاعات فورية للحصول على ملاحظات سريعة. ادمجها في المنشورات أو شاركها مستقلة مع نتائج فورية.",
+                "stats": "تحديثات فورية"
+            },
+            "statistics": {
+                "title": "أدوات الإحصاء",
+                "description": "تصور البيانات مع مخططات تفاعلية، واحسب الإحصائيات، واستورد مجموعات البيانات من تنسيقات مختلفة.",
+                "stats": "أنواع المخططات: +6"
+            },
+            "questionAdvisor": {
+                "title": "مستشار الأسئلة",
+                "description": "مساعد مدعوم بالذكاء الاصطناعي لتحسين أسئلتك البحثية. احصل على درجات الوضوح واكتشاف التحيز والبدائل.",
+                "stats": "مدعوم بالذكاء: GPT-4"
+            }
+        },
+        "datasets": {
+            "title": "ادمج مجموعات بياناتك",
+            "description": "اربط مجموعات بياناتك من قسم الموارد لإنشاء تصورات وإجراء تحليلات إحصائية وإثراء استبياناتك ببيانات حقيقية.",
+            "browseResources": "تصفح الموارد"
+        },
+        "pollsPage": {
+            "subtitle": "استطلاعات سريعة للحصول على ملاحظات المجتمع الفورية",
+            "noPolls": "لا توجد استطلاعات بعد",
+            "beFirstPoll": "كن أول من ينشئ استطلاعاً!",
+            "descriptionOptional": "الوصف (اختياري)",
+            "closed": "مغلق",
+            "multipleChoice": "اختيار متعدد",
+            "pollResults": "نتائج الاستطلاع",
+            "totalVotesLabel": "إجمالي الأصوات",
+            "leading": "متصدر",
+            "share": "مشاركة",
+            "viewResults": "عرض النتائج",
+            "editPoll": "تعديل الاستطلاع",
+            "closePoll": "إغلاق الاستطلاع",
+            "deletePoll": "حذف",
+            "confirmDeletePoll": "هل أنت متأكد من حذف هذا الاستطلاع؟ لا يمكن التراجع عن هذا الإجراء.",
+            "voteRecorded": "تم تسجيل صوتك!",
+            "loginToVote": "سجّل الدخول للتصويت",
+            "loginToCreate": "سجّل الدخول لإنشاء استطلاع",
+            "enterQuestion": "أدخل سؤالاً",
+            "atLeastTwoOptions": "أضف خيارين على الأقل",
+            "pollCreated": "تم إنشاء الاستطلاع!",
+            "pollDeleted": "تم حذف الاستطلاع بنجاح",
+            "pollClosed": "تم إغلاق الاستطلاع",
+            "by": "بواسطة"
+        },
+        "surveysPage": {
+            "subtitle": "أنشئ وأدر استبيانات البحث مع أنواع أسئلة متعددة",
+            "noSurveys": "لا توجد استبيانات بعد",
+            "createFirst": "أنشئ أول استبيان لبدء جمع الردود",
+            "activeSurveysToParticipate": "استبيانات نشطة للمشاركة",
+            "noActiveSurveys": "لا توجد استبيانات نشطة حالياً",
+            "takeSurvey": "شارك في الاستبيان",
+            "viewResults": "عرض النتائج",
+            "editSurvey": "تعديل الاستبيان"
+        },
+        "nav": {
+            "overview": "نظرة عامة",
+            "searchEngine": "محرك البحث",
+            "surveys": "الاستبيانات",
+            "polls": "الاستطلاعات",
+            "statistics": "الإحصائيات",
+            "questionAdvisor": "مستشار الأسئلة",
+            "survey": "استبيان",
+            "poll": "استطلاع",
+            "backToFeed": "العودة للموجز"
         }
     },
     "Trending": {
@@ -1162,6 +1315,63 @@
         "week": "أسبوع",
         "month": "شهر",
         "today": "اليوم"
+    },
+    "ResearchGaps": {
+        "title": "سوق الفجوات البحثية",
+        "subtitle": "ما الذي لا نعرفه؟",
+        "description": "حدد الفجوات في معرفتنا الجماعية عن سوريا. اطلب مجالات بحثية، وتعاون مع الآخرين، وساعد في معالجة المجهولات الأكثر إلحاحاً.",
+        "searchPlaceholder": "البحث في الفجوات البحثية...",
+        "identifyGap": "تحديد فجوة",
+        "filters": "الفلاتر",
+        "allStatuses": "جميع الحالات",
+        "allPriorities": "جميع الأولويات",
+        "gapsFound": "تم العثور على {count} فجوة",
+        "noGaps": "لم يتم العثور على فجوات بحثية",
+        "noGapsDesc": "كن أول من يحدد فجوة في معرفتنا الجماعية.",
+        "submitGap": "إرسال",
+        "cancel": "إلغاء",
+        "form": {
+            "title": "تحديد فجوة بحثية",
+            "titleLabel": "العنوان",
+            "titlePlaceholder": "مثال: نقص البيانات حول الوصول للمياه في إدلب (2020-2023)",
+            "description": "الوصف",
+            "descriptionPlaceholder": "صف ما لا نعرفه ولماذا هو مهم...",
+            "discipline": "التخصص",
+            "disciplinePlaceholder": "مثال: الصحة العامة",
+            "priority": "الأولوية",
+            "spatialContext": "السياق الجغرافي",
+            "spatialPlaceholder": "مثال: حلب، إدلب"
+        },
+        "status": {
+            "identified": "محددة",
+            "investigating": "قيد البحث",
+            "addressed": "تمت معالجتها",
+            "closed": "مغلقة"
+        },
+        "priority": {
+            "low": "منخفضة",
+            "medium": "متوسطة",
+            "high": "عالية",
+            "critical": "حرجة"
+        },
+        "actions": {
+            "claim": "المطالبة بهذه الفجوة",
+            "upvote": "تصويت إيجابي",
+            "viewResearch": "عرض البحث المعالج"
+        },
+        "messages": {
+            "signInToUpvote": "سجل دخولك للتصويت",
+            "signInToClaim": "سجل دخولك للمطالبة بفجوة بحثية",
+            "signInToSubmit": "سجل دخولك لإرسال فجوة بحثية",
+            "claimed": "لقد طالبت بهذه الفجوة البحثية!",
+            "submitSuccess": "تم إرسال الفجوة البحثية بنجاح!",
+            "provideTitle": "يرجى تقديم عنوان"
+        },
+        "investigating": "يتم البحث فيها بواسطة {name}",
+        "help": {
+            "title": "حول الفجوات البحثية",
+            "description": "تمثل الفجوات البحثية 'نموذج الغياب' - الاعتراف بما لا نعرفه بنفس أهمية ما نعرفه. صوّت للفجوات التي تعتقد أنها مهمة، واطلب العمل على الفجوات التي تريدها، واربط بحثك عند معالجتها."
+        }
     },
     "Recommendations": {
         "title": "لتوسيع هذا البحث",
@@ -1571,16 +1781,57 @@
     },
     "QuestionAdvisor": {
         "title": "مستشار الأسئلة",
+        "subtitle": "تحليل مدعوم بالذكاء الاصطناعي لتحسين أسئلتك البحثية من حيث الوضوح والنطاق وقابلية القياس",
         "placeholder": "أدخل سؤالك البحثي هنا...",
         "contextPlaceholder": "قدّم سياقاً إضافياً حول مجال بحثك أو منهجيتك أو قيودك...",
         "analyze": "تحليل السؤال",
-        "analyzing": "جارٍ التحليل..."
+        "analyzing": "جارٍ التحليل...",
+        "usesRemaining": "{count} استخدام متبقي اليوم",
+        "researchQuestion": "السؤال البحثي",
+        "contextOptional": "السياق (اختياري)",
+        "clarityScore": "درجة الوضوح",
+        "measurability": "قابلية القياس",
+        "scopeAnalysis": "تحليل النطاق",
+        "biasDetected": "تم اكتشاف تحيزات محتملة",
+        "suggestions": "الاقتراحات",
+        "refinedAlternatives": "البدائل المُحسّنة",
+        "analyzeToGetAlternatives": "حلّل سؤالك للحصول على بدائل مُحسّنة",
+        "copy": "نسخ",
+        "useThis": "استخدم هذا",
+        "copied": "تم النسخ!",
+        "questionUpdated": "تم تحديث السؤال!",
+        "tips": {
+            "title": "نصائح لأسئلة بحثية جيدة",
+            "specific": "كن محدداً ومركّزاً",
+            "clear": "استخدم لغة واضحة لا لبس فيها",
+            "measurable": "تأكد من قابليتها للقياس أو الاختبار",
+            "neutral": "تجنب المصطلحات الموجهة أو المحملة",
+            "scope": "حدد نطاقك بوضوح"
+        },
+        "errors": {
+            "enterQuestion": "أدخل سؤالاً بحثياً",
+            "loginRequired": "سجّل الدخول لاستخدام مستشار الأسئلة",
+            "dailyLimit": "تم الوصول للحد اليومي. حاول مرة أخرى غداً!"
+        }
     },
     "EditorExtras": {
         "dropImageHere": "أسقط الصورة هنا",
         "markdownTips": "نصائح Markdown:",
         "headingsHelp": "للعناوين",
         "formattingHelp": "للتنسيق",
+        "imageAdded": "تمت إضافة الصورة!",
+        "uploading": "جارٍ الرفع...",
+        "insertImage": "إدراج صورة",
+        "heading1": "عنوان 1 (Ctrl+Alt+1)",
+        "heading2": "عنوان 2 (Ctrl+Alt+2)",
+        "bold": "عريض (Ctrl+B)",
+        "italic": "مائل (Ctrl+I)",
+        "inlineCode": "كود مضمّن",
+        "bulletList": "قائمة نقطية",
+        "numberedList": "قائمة مرقمة",
+        "quote": "اقتباس",
+        "horizontalLine": "خط أفقي",
+        "addLink": "إضافة رابط للنص المحدد",
         "toolbar": {
             "heading1": "عنوان 1 (Ctrl+Alt+1)",
             "heading2": "عنوان 2 (Ctrl+Alt+2)",
@@ -1600,7 +1851,8 @@
         "maybe": "ربما",
         "cantGo": "لن أستطيع الحضور",
         "respond": "الرد",
-        "changeResponse": "تغيير الرد"
+        "changeResponse": "تغيير الرد",
+        "eventEnded": "انتهى هذا الحدث"
     },
     "Verification": {
         "verifiedContributor": "مساهم موثّق",
@@ -1797,5 +2049,69 @@
             "medium": "متوسط",
             "low": "منخفض"
         }
+    },
+    "Feedback": {
+        "title": "إرسال ملاحظات",
+        "sectionTitle": "الملاحظات والاقتراحات",
+        "sectionDescription": "أبلغ عن الأخطاء، اقترح تحسينات، أو شارك أفكارك مع الفريق.",
+        "adminTitle": "إدارة الملاحظات",
+        "adminDescription": "مراجعة وإدارة تذاكر الملاحظات من المجتمع.",
+        "buttonTitle": "إرسال ملاحظات",
+        "buttonLabel": "ملاحظات",
+        "newTicket": "تذكرة جديدة",
+        "category": "ما نوع الملاحظات؟",
+        "categories": {
+            "bug": "خلل",
+            "ux": "تجربة المستخدم",
+            "section": "قسم",
+            "alternative": "بديل",
+            "other": "أخرى"
+        },
+        "titleLabel": "العنوان",
+        "titlePlaceholder": "ملخص موجز لملاحظاتك",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "يرجى الوصف بالتفصيل. اذكر خطوات إعادة الإنتاج إذا كنت تبلغ عن خلل.",
+        "pageUrl": "رابط الصفحة",
+        "cancel": "إلغاء",
+        "submit": "إرسال الملاحظات",
+        "submitting": "جارٍ الإرسال...",
+        "fillRequired": "يرجى ملء جميع الحقول المطلوبة",
+        "submitSuccess": "تم إرسال الملاحظات بنجاح!",
+        "submitError": "فشل إرسال الملاحظات. يرجى المحاولة مرة أخرى.",
+        "thankYou": "شكراً لملاحظاتك!",
+        "reviewSoon": "سيقوم فريقنا بمراجعتها قريباً.",
+        "filters": "الفلاتر",
+        "clearFilters": "مسح الفلاتر",
+        "filterStatus": "الحالة",
+        "filterCategory": "الفئة",
+        "allStatuses": "جميع الحالات",
+        "allCategories": "جميع الفئات",
+        "noTickets": "لا توجد تذاكر ملاحظات بعد",
+        "submittedBy": "مقدم من",
+        "unknown": "غير معروف",
+        "status": {
+            "label": "الحالة",
+            "open": "مفتوح",
+            "in_progress": "قيد المعالجة",
+            "resolved": "تم الحل",
+            "closed": "مغلق",
+            "deferred": "مؤجل"
+        },
+        "priority": {
+            "label": "الأولوية",
+            "low": "منخفض",
+            "medium": "متوسط",
+            "high": "مرتفع",
+            "critical": "حرج"
+        },
+        "adminControls": "تحكم المشرف",
+        "adminNotes": "ملاحظات المشرف",
+        "adminNotesPlaceholder": "إضافة ملاحظات حول هذه التذكرة...",
+        "close": "إغلاق",
+        "update": "تحديث التذكرة",
+        "updating": "جارٍ التحديث...",
+        "updateSuccess": "تم تحديث التذكرة بنجاح",
+        "updateError": "فشل تحديث التذكرة",
+        "fetchError": "فشل تحميل التذاكر"
     }
 }

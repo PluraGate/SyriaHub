@@ -10,8 +10,9 @@ import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { EventActions } from '@/components/EventActions'
-import { getAvatarGradient, getInitials } from '@/lib/utils'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -23,7 +24,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
         .from('posts')
         .select(`
       *,
-      author:users!author_id(name, email)
+      author:users!author_id(name, email, avatar_url)
     `)
         .eq('id', id)
         .single()
@@ -49,6 +50,9 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
     const startDate = new Date(event.metadata.start_time)
     const endDate = event.metadata.end_time ? new Date(event.metadata.end_time) : null
+
+    // Get translations
+    const t = await getTranslations('Events')
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
@@ -76,7 +80,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                     ? 'bg-red-500 text-white'
                                     : 'bg-amber-500 text-white'
                                     }`}>
-                                    This event has been {event.metadata.status}
+                                    {event.metadata.status === 'cancelled' ? t('eventCancelled') : t('eventPostponed')}
                                 </div>
                             )}
 
@@ -115,7 +119,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                     <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border">
                                         <Calendar className="w-5 h-5 text-primary" />
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Date</span>
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">{t('date')}</span>
                                             <span className="font-medium text-text dark:text-dark-text">{format(startDate, 'MMM d, yyyy')}</span>
                                         </div>
                                     </div>
@@ -123,7 +127,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                     <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border">
                                         <Clock className="w-5 h-5 text-primary" />
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Time</span>
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">{t('time')}</span>
                                             <span className="font-medium text-text dark:text-dark-text">
                                                 {format(startDate, 'h:mm a')}
                                                 {endDate && ` - ${format(endDate, 'h:mm a')}`}
@@ -134,7 +138,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                     <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border flex-1 min-w-[200px]">
                                         <MapPin className="w-5 h-5 text-primary" />
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Location</span>
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">{t('location')}</span>
                                             <span className="font-medium text-text dark:text-dark-text truncate">{event.metadata.location}</span>
                                         </div>
                                     </div>
@@ -143,7 +147,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                         <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-bg p-3 rounded-lg border border-gray-100 dark:border-dark-border w-full md:w-auto">
                                             <LinkIcon className="w-5 h-5 text-primary" />
                                             <div className="flex flex-col min-w-0">
-                                                <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">Online Link</span>
+                                                <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-dark-text-muted">{t('onlineLink')}</span>
                                                 <a href={event.metadata.link} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline truncate max-w-[200px]">
                                                     {event.metadata.link.replace(/^https?:\/\//, '')}
                                                 </a>
@@ -179,28 +183,32 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                             />
 
                             <h3 className="text-lg font-bold text-text dark:text-dark-text mb-4">
-                                Are you going?
+                                {t('areYouGoing')}
                             </h3>
 
                             <RsvpButton
                                 eventId={id}
                                 initialStatus={userRsvp}
+                                eventDate={event.metadata.start_time}
                             />
 
                             <div className="mt-6 pt-6 border-t border-gray-100 dark:border-dark-border">
                                 <h4 className="font-semibold text-text dark:text-dark-text mb-3">
-                                    Organized by
+                                    {t('organizedBy')}
                                 </h4>
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white ${getAvatarGradient(event.author_id)}`}>
-                                        {getInitials(event.author.name || undefined, event.author.email || undefined)}
-                                    </div>
+                                    <UserAvatar
+                                        name={event.author.name}
+                                        email={event.author.email}
+                                        avatarUrl={event.author.avatar_url}
+                                        size="md"
+                                    />
                                     <div className="flex flex-col">
                                         <span className="font-medium text-text dark:text-dark-text">
                                             {event.author.name || event.author.email?.split('@')[0]}
                                         </span>
                                         <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                            Event Host
+                                            {t('eventHost')}
                                         </span>
                                     </div>
                                 </div>
@@ -210,10 +218,10 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                 <div className="flex items-center justify-between mb-4">
                                     <h4 className="font-semibold text-text dark:text-dark-text flex items-center gap-2">
                                         <Users className="w-4 h-4" />
-                                        Attendees
+                                        {t('attendees')}
                                     </h4>
                                     <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                        {going.length} going
+                                        {t('goingCount', { count: going.length })}
                                     </span>
                                 </div>
 
@@ -229,13 +237,13 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                         ))}
                                         {going.length > 5 && (
                                             <li className="text-xs text-text-light dark:text-dark-text-muted pl-8">
-                                                +{going.length - 5} more
+                                                {t('moreAttendees', { count: going.length - 5 })}
                                             </li>
                                         )}
                                     </ul>
                                 ) : (
                                     <p className="text-sm text-text-light dark:text-dark-text-muted italic">
-                                        Be the first to RSVP!
+                                        {t('beFirstToRsvp')}
                                     </p>
                                 )}
                             </div>

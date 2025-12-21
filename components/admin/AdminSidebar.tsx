@@ -15,7 +15,8 @@ import {
     ChevronRight,
     MessageSquareWarning,
     MessagesSquare,
-    Search
+    Search,
+    MessageSquarePlus
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
@@ -78,6 +79,11 @@ const navItems = [
         label: 'Coordination',
         href: '/admin/coordination',
         icon: MessagesSquare,
+    },
+    {
+        label: 'Feedback',
+        href: '/admin/feedback',
+        icon: MessageSquarePlus,
     },
     {
         label: 'Audit Logs',
@@ -176,6 +182,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                         'Tags': 'tags',
                         'Waitlist': 'waitlist',
                         'Coordination': 'coordination',
+                        'Feedback': 'feedback',
                         'Audit Logs': 'auditLog'
                     }
                     const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')

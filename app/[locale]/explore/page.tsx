@@ -146,10 +146,18 @@ function ExplorePageContent() {
           .eq('content_type', 'event')
           .neq('approval_status', 'rejected')
           .order('metadata->>start_time', { ascending: true }) // Sort by event start time
-          .gt('metadata->>start_time', new Date().toISOString()) // Only future events
-          .limit(3)
+          .limit(10) // Fetch more to allow filtering
 
-        setComingEvents(eventsData as Post[] || [])
+        // Client-side filter to ensure only future events are shown
+        const now = new Date()
+        const futureEvents = (eventsData || []).filter((event: any) => {
+          if (event.metadata?.start_time) {
+            return new Date(event.metadata.start_time) >= now
+          }
+          return false
+        }).slice(0, 3)
+
+        setComingEvents(futureEvents as Post[])
 
         // Fetch Profiles
         const { data: profilesData } = await supabase
@@ -317,7 +325,7 @@ function ExplorePageContent() {
                           </div>
                           <div>
                             <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('upcomingEvents')}</h2>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Don't miss out</p>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">Don&apos;t miss out</p>
                           </div>
                         </div>
                         <Link

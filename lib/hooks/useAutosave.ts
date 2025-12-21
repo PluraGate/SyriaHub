@@ -6,7 +6,7 @@ export interface DraftData {
     title: string
     content: string
     tags: string
-    contentType: 'article' | 'question'
+    contentType: 'article' | 'question' | 'trace'
     coverImage: string | null
     license: string
     lastSaved: number

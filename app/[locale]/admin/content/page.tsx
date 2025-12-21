@@ -479,7 +479,7 @@ export default function AdminContentPage() {
                     <DialogHeader>
                         <DialogTitle className="text-red-600 dark:text-red-400">{t('rejectDialogTitle')}</DialogTitle>
                         <DialogDescription>
-                            {t('rejectDialogDesc', { title: rejectingPost?.title })}
+                            {t('rejectDialogDesc', { title: rejectingPost?.title ?? '' })}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
@@ -524,7 +524,7 @@ export default function AdminContentPage() {
                     <DialogHeader>
                         <DialogTitle>{t('deleteDialogTitle')}</DialogTitle>
                         <DialogDescription>
-                            {t('deleteDialogDesc', { title: deletingPost?.title })}
+                            {t('deleteDialogDesc', { title: deletingPost?.title ?? '' })}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">

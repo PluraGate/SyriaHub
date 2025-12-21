@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, HelpCircle, XCircle } from 'lucide-react'
+import { CheckCircle, HelpCircle, XCircle, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -12,17 +12,21 @@ interface RsvpButtonProps {
     eventId: string
     initialStatus?: 'going' | 'maybe' | 'not_going' | null
     onRsvpChange?: (status: string) => void
+    eventDate?: string // ISO date string for the event start time
 }
 
-export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonProps) {
+export function RsvpButton({ eventId, initialStatus, onRsvpChange, eventDate }: RsvpButtonProps) {
     const [status, setStatus] = useState(initialStatus)
     const [loading, setLoading] = useState(false)
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('RSVP')
 
+    // Check if event has passed
+    const isPastEvent = eventDate ? new Date(eventDate) < new Date() : false
+
     const handleRsvp = async (newStatus: 'going' | 'maybe' | 'not_going') => {
-        if (loading) return
+        if (loading || isPastEvent) return
         setLoading(true)
 
         try {
@@ -67,6 +71,16 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
         } finally {
             setLoading(false)
         }
+    }
+
+    // Show "Event has ended" message for past events
+    if (isPastEvent) {
+        return (
+            <div className="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg bg-gray-100 dark:bg-dark-surface text-gray-500 dark:text-gray-400 text-sm">
+                <Clock className="w-4 h-4" />
+                <span>{t('eventEnded')}</span>
+            </div>
+        )
     }
 
     return (
@@ -139,3 +153,4 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange }: RsvpButtonP
         </div>
     )
 }
+

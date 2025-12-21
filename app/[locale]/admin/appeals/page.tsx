@@ -349,7 +349,7 @@ export default function AdminAppealsPage() {
                     <DialogHeader>
                         <DialogTitle>{t('reviewDialogTitle')}</DialogTitle>
                         <DialogDescription>
-                            {t('reviewDialogDesc', { title: selectedAppeal?.post?.title })}
+                            {t('reviewDialogDesc', { title: selectedAppeal?.post?.title ?? '' })}
                         </DialogDescription>
                     </DialogHeader>
 

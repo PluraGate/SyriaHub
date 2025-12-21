@@ -5,6 +5,7 @@ import { MessageCircle, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { CommentTree } from '@/components/CommentTree'
+import { useTranslations } from 'next-intl'
 
 interface Comment {
   id: string
@@ -30,6 +31,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
   const supabase = useMemo(() => createClient(), [])
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
+  const t = useTranslations('Comments')
 
   const fetchComments = useCallback(async () => {
     try {
@@ -133,12 +135,12 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
         <div className="flex items-center gap-2 mb-6">
           <MessageCircle className="w-5 h-5 text-primary dark:text-accent-light" />
           <h2 className="text-xl font-display font-semibold text-primary dark:text-dark-text">
-            Discussion
+            {t('discussion')}
           </h2>
         </div>
         <div className="flex items-center justify-center py-8 text-text-light dark:text-dark-text-muted">
           <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          Loading comments...
+          {t('loadingComments')}
         </div>
       </section>
     )
@@ -149,7 +151,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
       <div className="flex items-center gap-2 mb-6">
         <MessageCircle className="w-5 h-5 text-primary dark:text-accent-light" />
         <h2 className="text-xl font-display font-semibold text-primary dark:text-dark-text">
-          Discussion
+          {t('discussion')}
         </h2>
         <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-primary/10 dark:bg-accent-light/20 text-primary dark:text-accent-light">
           {comments.length}
@@ -166,4 +168,5 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
     </section>
   )
 }
+
 

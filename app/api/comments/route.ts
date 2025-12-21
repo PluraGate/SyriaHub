@@ -33,7 +33,7 @@ async function handleGetComments(request: Request): Promise<NextResponse> {
     .from('comments')
     .select(`
       *,
-      user:users!comments_user_id_fkey(id, name, email, role),
+      user:users!comments_user_id_fkey(id, name, email, role, avatar_url),
       post:posts!comments_post_id_fkey(id, title)
     `)
     .order('created_at', { ascending: true })
@@ -151,7 +151,7 @@ async function handleCreateComment(request: Request): Promise<NextResponse> {
     })
     .select(`
       *,
-      user:users!comments_user_id_fkey(id, name, email, role),
+      user:users!comments_user_id_fkey(id, name, email, role, avatar_url),
       post:posts!comments_post_id_fkey(id, title)
     `)
     .single()
