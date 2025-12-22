@@ -10,6 +10,11 @@ export interface DraftData {
     coverImage: string | null
     license: string
     lastSaved: number
+    // Spatial Insight Engine fields
+    temporalCoverageStart?: string
+    temporalCoverageEnd?: string
+    spatialCoverage?: string
+    spatialGeometry?: any // GeoJSON geometry object
 }
 
 interface UseAutosaveOptions {

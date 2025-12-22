@@ -5,7 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle, Table } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -17,6 +17,7 @@ import { DraftRecoveryBanner, AutosaveIndicator } from '@/components/DraftRecove
 import { ResourceLinker } from '@/components/ResourceLinker'
 import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 import { AddCitationDialog } from '@/components/AddCitationDialog'
+import { SpatialEditor } from '@/components/spatial'
 import { useTranslations } from 'next-intl'
 
 // Dynamic import for RichEditor to avoid SSR issues
@@ -79,6 +80,7 @@ export default function EditorPage() {
   const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
   const [temporalCoverageEnd, setTemporalCoverageEnd] = useState('')
   const [spatialCoverage, setSpatialCoverage] = useState('')
+  const [spatialGeometry, setSpatialGeometry] = useState<any>(null)
 
   // Real-time collaboration for editing existing posts
   const { collaborators, isConnected, userColor } = useCollaboration({
@@ -118,6 +120,11 @@ export default function EditorPage() {
       setContentType(draft.contentType)
       setCoverImage(draft.coverImage)
       setLicense(draft.license)
+      // Restore spatial/temporal data
+      if (draft.temporalCoverageStart) setTemporalCoverageStart(draft.temporalCoverageStart)
+      if (draft.temporalCoverageEnd) setTemporalCoverageEnd(draft.temporalCoverageEnd)
+      if (draft.spatialCoverage) setSpatialCoverage(draft.spatialCoverage)
+      if (draft.spatialGeometry) setSpatialGeometry(draft.spatialGeometry)
       setShowDraftBanner(false)
       showToast('Draft restored successfully', 'success')
     }
@@ -141,8 +148,12 @@ export default function EditorPage() {
       contentType,
       coverImage,
       license,
+      temporalCoverageStart,
+      temporalCoverageEnd,
+      spatialCoverage,
+      spatialGeometry,
     })
-  }, [title, content, tags, contentType, coverImage, license, postIdParam, saveDraft])
+  }, [title, content, tags, contentType, coverImage, license, postIdParam, saveDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry])
 
   // Fetch group details if groupId is present
   useEffect(() => {
@@ -320,13 +331,16 @@ export default function EditorPage() {
 
         // Include temporal/spatial coverage if set (Epistemic Architecture)
         if (temporalCoverageStart) {
-          postData.temporal_coverage_start = temporalCoverageStart
+          postData.temporal_start = temporalCoverageStart
         }
         if (temporalCoverageEnd) {
-          postData.temporal_coverage_end = temporalCoverageEnd
+          postData.temporal_end = temporalCoverageEnd
         }
         if (spatialCoverage.trim()) {
           postData.spatial_coverage = spatialCoverage.trim()
+        }
+        if (spatialGeometry) {
+          postData.spatial_geometry = spatialGeometry
         }
 
         console.log('Saving post with data:', postData)
@@ -802,19 +816,19 @@ export default function EditorPage() {
                     </div>
                   </div>
 
-                  {/* Spatial Coverage */}
-                  <div className="space-y-1.5">
-                    <label htmlFor="spatialCoverage" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                  {/* Spatial Coverage - Map-based editor */}
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
                       <MapPin className="w-3.5 h-3.5" />
                       {t('page.geographicRegion')}
                     </label>
-                    <input
-                      id="spatialCoverage"
-                      type="text"
+                    <SpatialEditor
                       value={spatialCoverage}
-                      onChange={e => setSpatialCoverage(e.target.value)}
-                      placeholder={t('page.geographicPlaceholder')}
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      geometry={spatialGeometry}
+                      onChange={(placeName, geo) => {
+                        setSpatialCoverage(placeName)
+                        setSpatialGeometry(geo || null)
+                      }}
                     />
                   </div>
 
@@ -906,12 +920,7 @@ export default function EditorPage() {
               </Link>
             </div>
 
-            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl border border-primary/10 p-6">
-              <h3 className="font-semibold text-text dark:text-dark-text mb-2">{t('page.markdownSupported')}</h3>
-              <p className="text-xs text-text-light dark:text-dark-text-muted">
-                {t('page.markdownHelp')}
-              </p>
-            </div>
+
           </aside>
         </div>
       </main>

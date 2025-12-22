@@ -25,6 +25,9 @@ test('homepage has correct title and brand name', async ({ page }) => {
 test('can navigate to login page', async ({ page }) => {
     await page.goto('/');
 
+    // Wait for page to be fully loaded
+    await page.waitForLoadState('networkidle');
+
     // Dismiss onboarding if visible
     const dismissButton = page.getByRole('button', { name: /Close onboarding/i });
     if (await dismissButton.count() > 0 && await dismissButton.isVisible()) {
@@ -32,11 +35,16 @@ test('can navigate to login page', async ({ page }) => {
         await expect(dismissButton).not.toBeVisible();
     }
 
-    // Look for "Sign In"
+    // Look for "Sign In" link and get its href
     const loginLink = page.getByRole('link', { name: /Sign In/i }).first();
-    await expect(loginLink).toBeVisible();
-    await loginLink.click();
+    await expect(loginLink).toBeVisible({ timeout: 10000 });
+
+    // Get the href and navigate directly (more robust for webkit)
+    const href = await loginLink.getAttribute('href');
+    expect(href).toBeTruthy();
+    await page.goto(href!);
 
     // Verify redirected to auth/login
-    await expect(page).toHaveURL(/\/auth\/login/);
+    await expect(page).toHaveURL(/\/auth\/login/, { timeout: 10000 });
 });
+

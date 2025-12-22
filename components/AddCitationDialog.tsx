@@ -59,6 +59,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
     const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
     const t = useTranslations('Editor')
+    const tr = useTranslations('Resources')
 
     // Internal search state
     const [searchQuery, setSearchQuery] = useState('')
@@ -116,7 +117,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
     const addInternalCitation = useCallback((post: InternalPost) => {
         // Check if already added
         if (citations.some(c => c.type === 'internal' && c.target_post_id === post.id)) {
-            showToast('This reference is already added', 'warning')
+            showToast(tr('alreadyAdded'), 'warning')
             return
         }
 
@@ -128,8 +129,8 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
         onCitationsChange([...citations, newCitation])
         setSearchQuery('')
         setSearchResults([])
-        showToast('Reference added', 'success')
-    }, [citations, onCitationsChange, showToast])
+        showToast(tr('referenceAdded'), 'success')
+    }, [citations, onCitationsChange, showToast, tr])
 
     // Resolve DOI
     const resolveDOI = async () => {
@@ -143,7 +144,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
             const data = await res.json()
 
             if (!res.ok) {
-                setDoiError(data.error || 'Failed to resolve DOI')
+                setDoiError(data.error || tr('doiResolveFailed'))
                 return
             }
 
@@ -155,10 +156,10 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                 source: data.source || prev.source,
                 url: data.url || prev.url,
             }))
-            showToast('DOI resolved successfully', 'success')
+            showToast(tr('doiResolved'), 'success')
         } catch (error) {
             console.error('Error resolving DOI:', error)
-            setDoiError('Failed to resolve DOI')
+            setDoiError(tr('doiResolveFailed'))
         } finally {
             setResolvingDOI(false)
         }
@@ -167,7 +168,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
     // Add external citation
     const addExternalCitation = useCallback(() => {
         if (!externalData.doi.trim() && !externalData.url.trim()) {
-            showToast('Please enter a DOI or URL', 'warning')
+            showToast(tr('enterDoiOrUrl'), 'warning')
             return
         }
 
@@ -178,7 +179,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                 (externalData.url && c.external_url === externalData.url))
         )
         if (isDuplicate) {
-            showToast('This reference is already added', 'warning')
+            showToast(tr('alreadyAdded'), 'warning')
             return
         }
 
@@ -202,8 +203,8 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
             year: '',
             source: '',
         })
-        showToast('External reference added', 'success')
-    }, [citations, externalData, onCitationsChange, showToast])
+        showToast(tr('externalReferenceAdded'), 'success')
+    }, [citations, externalData, onCitationsChange, showToast, tr])
 
     // Remove citation
     const removeCitation = (index: number) => {
@@ -216,12 +217,12 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                     <Plus className="w-4 h-4" />
-                    Add Reference
+                    {tr('addReference')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
                 <DialogHeader>
-                    <DialogTitle>Add Reference</DialogTitle>
+                    <DialogTitle>{tr('addReference')}</DialogTitle>
                 </DialogHeader>
 
                 {/* Tabs */}
@@ -229,22 +230,22 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                     <button
                         onClick={() => setActiveTab('internal')}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'internal'
-                                ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
-                                : 'text-text-light dark:text-dark-text-muted hover:text-text'
+                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
+                            : 'text-text-light dark:text-dark-text-muted hover:text-text'
                             }`}
                     >
                         <BookOpen className="w-4 h-4" />
-                        SyriaHub
+                        {tr('syriaHub')}
                     </button>
                     <button
                         onClick={() => setActiveTab('external')}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'external'
-                                ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
-                                : 'text-text-light dark:text-dark-text-muted hover:text-text'
+                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
+                            : 'text-text-light dark:text-dark-text-muted hover:text-text'
                             }`}
                     >
                         <ExternalLink className="w-4 h-4" />
-                        External
+                        {tr('external')}
                     </button>
                 </div>
 
@@ -259,7 +260,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search SyriaHub posts..."
+                                    placeholder={tr('searchPostsPlaceholder')}
                                     className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
@@ -279,8 +280,8 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                                 onClick={() => !isAdded && addInternalCitation(post)}
                                                 disabled={isAdded}
                                                 className={`w-full text-left p-3 rounded-lg border transition-colors ${isAdded
-                                                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                                                        : 'border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                                    ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                                                    : 'border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
                                                 <div className="flex items-start justify-between gap-2">
@@ -300,11 +301,11 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                 </div>
                             ) : searchQuery.length >= 2 ? (
                                 <p className="text-center text-sm text-text-light dark:text-dark-text-muted py-4">
-                                    No posts found
+                                    {tr('noPostsFound')}
                                 </p>
                             ) : (
                                 <p className="text-center text-sm text-text-light dark:text-dark-text-muted py-4">
-                                    Type at least 2 characters to search
+                                    {tr('typeToSearch')}
                                 </p>
                             )}
                         </>
@@ -330,7 +331,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                         onClick={resolveDOI}
                                         disabled={resolvingDOI || !externalData.doi.trim()}
                                     >
-                                        {resolvingDOI ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lookup'}
+                                        {resolvingDOI ? <Loader2 className="w-4 h-4 animate-spin" /> : tr('lookup')}
                                     </Button>
                                 </div>
                                 {doiError && (
@@ -358,17 +359,17 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                             {/* Metadata Fields */}
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="col-span-2 space-y-1.5">
-                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">Title</label>
+                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">{t('title')}</label>
                                     <input
                                         type="text"
                                         value={externalData.title}
                                         onChange={(e) => setExternalData(prev => ({ ...prev, title: e.target.value }))}
-                                        placeholder="Source title"
+                                        placeholder={tr('resourceTitle')}
                                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">Author(s)</label>
+                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">{tr('author')}</label>
                                     <input
                                         type="text"
                                         value={externalData.author}
@@ -378,7 +379,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">Year</label>
+                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">{tr('year')}</label>
                                     <input
                                         type="text"
                                         value={externalData.year}
@@ -388,7 +389,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                                     />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
-                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">Source/Journal</label>
+                                    <label className="text-xs font-medium text-text-light dark:text-dark-text-muted">{tr('sourceJournal')}</label>
                                     <input
                                         type="text"
                                         value={externalData.source}
@@ -401,7 +402,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
 
                             <Button onClick={addExternalCitation} className="w-full">
                                 <Plus className="w-4 h-4 mr-2" />
-                                Add External Reference
+                                {tr('addReference')}
                             </Button>
                         </>
                     )}
@@ -411,7 +412,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                 {citations.length > 0 && (
                     <div className="border-t border-gray-200 dark:border-dark-border pt-4">
                         <h4 className="text-sm font-medium text-text dark:text-dark-text mb-2">
-                            Added References ({citations.length})
+                            {tr('addedReferences', { count: citations.length })}
                         </h4>
                         <div className="space-y-2 max-h-32 overflow-y-auto">
                             {citations.map((citation, index) => (
@@ -446,3 +447,4 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
         </Dialog>
     )
 }
+

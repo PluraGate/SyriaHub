@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { RefreshCw, X, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DraftData, formatTimeSince } from '@/lib/hooks/useAutosave'
+import { useTranslations } from 'next-intl'
 
 interface DraftRecoveryBannerProps {
     draftData: DraftData
@@ -16,6 +17,7 @@ export function DraftRecoveryBanner({
     onRestore,
     onDiscard,
 }: DraftRecoveryBannerProps) {
+    const t = useTranslations('Editor')
     const [timeAgo, setTimeAgo] = useState('')
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export function DraftRecoveryBanner({
                 </div>
                 <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-                        Unsaved draft found
+                        {t('draft.unsavedDraftFound')}
                     </h3>
                     <p className="text-sm text-amber-700 dark:text-amber-300/80 mt-0.5">
                         {draftData.title ? (
@@ -46,7 +48,7 @@ export function DraftRecoveryBanner({
                         ) : null}
                         <span className="inline-flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            Saved {timeAgo}
+                            {t('draft.savedTimeAgo', { time: timeAgo })}
                         </span>
                     </p>
                 </div>
@@ -58,7 +60,7 @@ export function DraftRecoveryBanner({
                         className="border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-800/30"
                     >
                         <X className="w-4 h-4 mr-1" />
-                        Discard
+                        {t('draft.discard')}
                     </Button>
                     <Button
                         size="sm"
@@ -66,7 +68,7 @@ export function DraftRecoveryBanner({
                         className="bg-amber-600 hover:bg-amber-700 text-white"
                     >
                         <RefreshCw className="w-4 h-4 mr-1" />
-                        Restore
+                        {t('draft.restore')}
                     </Button>
                 </div>
             </div>
@@ -80,6 +82,7 @@ interface AutosaveIndicatorProps {
 }
 
 export function AutosaveIndicator({ lastSaved, isSaving }: AutosaveIndicatorProps) {
+    const t = useTranslations('Editor')
     const [timeAgo, setTimeAgo] = useState('')
 
     useEffect(() => {
@@ -88,7 +91,7 @@ export function AutosaveIndicator({ lastSaved, isSaving }: AutosaveIndicatorProp
             setTimeAgo(formatTimeSince(lastSaved))
         }
         updateTime()
-        const interval = setInterval(updateTime, 10000) // Update every 10s
+        const interval = setInterval(updateTime, 10000)
         return () => clearInterval(interval)
     }, [lastSaved])
 
@@ -99,14 +102,15 @@ export function AutosaveIndicator({ lastSaved, isSaving }: AutosaveIndicatorProp
             {isSaving ? (
                 <>
                     <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                    <span>Saving...</span>
+                    <span>{t('draft.saving')}</span>
                 </>
             ) : lastSaved ? (
                 <>
                     <div className="w-2 h-2 rounded-full bg-green-400" />
-                    <span>Draft saved {timeAgo}</span>
+                    <span>{t('draft.savedTimeAgo', { time: timeAgo })}</span>
                 </>
             ) : null}
         </div>
     )
 }
+
