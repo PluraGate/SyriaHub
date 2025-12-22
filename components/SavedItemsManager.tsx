@@ -7,7 +7,8 @@ import {
     Clock, AlertTriangle, Search, SortAsc, SortDesc, Filter
 } from 'lucide-react'
 import { CopyCitationButton } from '@/components/CopyCitationButton'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { formatLocalizedDate } from '@/lib/formatDate'
 
 interface SavedPost {
     id: string
@@ -51,6 +52,7 @@ type SortOrder = 'newest' | 'oldest' | 'alphabetical'
 export function SavedItemsManager({ posts, references, events = [] }: SavedItemsManagerProps) {
     const t = useTranslations('Saved')
     const tCommon = useTranslations('Common')
+    const locale = useLocale()
     const [activeFilter, setActiveFilter] = useState<ItemType>('all')
     const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
     const [localPosts, setLocalPosts] = useState(posts)
@@ -206,7 +208,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                         {post.author?.name && <span>{post.author.name}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            {t('savedOn', { date: new Date(post.created_at).toLocaleDateString() })}
+                                            {t('savedOn', { date: formatLocalizedDate(post.created_at, locale, 'short') })}
                                         </span>
                                     </div>
                                 </div>
@@ -247,11 +249,11 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                                        {event.event_date && <span>{new Date(event.event_date).toLocaleDateString()}</span>}
+                                        {event.event_date && <span>{formatLocalizedDate(event.event_date, locale, 'medium')}</span>}
                                         {event.location && <span>• {event.location}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            {t('savedOn', { date: new Date(event.created_at).toLocaleDateString() })}
+                                            {t('savedOn', { date: formatLocalizedDate(event.created_at, locale, 'short') })}
                                         </span>
                                     </div>
                                 </div>
@@ -266,9 +268,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                             </button>
                         </div>
                     </div>
-                ))}
-
-                {/* Web References */}
+                ))}           {/* Web References */}
                 {(activeFilter === 'all' || activeFilter === 'web') && sortItems(localReferences).map((ref) => (
                     <div
                         key={ref.id}
@@ -304,7 +304,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                         {ref.source && <span className="flex items-center gap-1"><Globe className="w-3 h-3 text-blue-500" />{ref.source}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            {t('savedOn', { date: new Date(ref.created_at).toLocaleDateString() })}
+                                            {t('savedOn', { date: formatLocalizedDate(ref.created_at, locale, 'short') })}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 mt-2">
@@ -349,6 +349,6 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }
