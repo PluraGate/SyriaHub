@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { SavedItemsManager } from '@/components/SavedItemsManager'
 import { Bookmark } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 export const metadata = {
     title: 'Saved | SyriaHub',
@@ -61,6 +62,7 @@ async function getSavedContent(userId: string, supabase: any) {
 
 export default async function SavedPage() {
     const supabase = await createClient()
+    const t = await getTranslations('Saved')
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -101,10 +103,10 @@ export default async function SavedPage() {
                         </div>
                         <div>
                             <h1 className="text-2xl font-display font-semibold text-primary dark:text-dark-text">
-                                Saved Items
+                                {t('title')}
                             </h1>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                {savedPosts.length + references.length + savedEvents.length} items saved
+                                {t('itemsCount', { count: savedPosts.length + references.length + savedEvents.length })}
                             </p>
                         </div>
                     </div>

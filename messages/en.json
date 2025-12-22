@@ -2119,10 +2119,40 @@
         "distribution": "Distribution"
     },
     "Saved": {
+        "title": "Saved Items",
+        "itemsCount": "{count} items saved",
         "sort": "Sort",
         "newestFirst": "Newest first",
         "oldestFirst": "Oldest first",
-        "alphabetical": "Alphabetical"
+        "alphabetical": "Alphabetical",
+        "tabs": {
+            "all": "All",
+            "posts": "Posts",
+            "events": "Events",
+            "web": "Web"
+        },
+        "types": {
+            "post": "Post",
+            "event": "Event",
+            "web": "Web"
+        },
+        "savedOn": "Saved {date}",
+        "removeFromSaved": "Remove from saved",
+        "unassessed": "Unassessed",
+        "open": "Open",
+        "empty": {
+            "title": "No {type} yet",
+            "items": "saved items",
+            "posts": "posts",
+            "events": "events",
+            "web": "web references",
+            "postsDesc": "Bookmark posts from the feed to save them here.",
+            "eventsDesc": "Save events from the events page to see them here.",
+            "webDesc": "Save web search results from the Research Lab.",
+            "allDesc": "Start saving posts, events, and web references to see them here.",
+            "goToSearch": "Go to Search Engine",
+            "exploreContent": "Explore Content"
+        }
     },
     "Waitlist": {
         "onTheList": "You're on the list!",
