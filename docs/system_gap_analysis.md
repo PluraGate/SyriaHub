@@ -146,7 +146,7 @@ This document tracks the system capabilities, completed features, and remaining 
 |-----------|--------|-------|
 | `20251217160000_diversity_recommendations.sql` | ✅ Applied | Diversity recommendations functions and ENUMs |
 | `20251220200000_epistemic_architecture.sql` | ✅ Applied | Research gaps table, temporal/spatial coverage, academic impact |
-| `20251221000000_update_user_stats.sql` | ⏳ Pending | Adds academic_impact and follower_count to get_user_stats function |
+| `20251221000000_update_user_stats.sql` | ✅ Applied | Adds academic_impact and follower_count to get_user_stats function |
 
 **Note:** Run `supabase db push` or apply migrations via the Supabase dashboard.
 
@@ -172,7 +172,7 @@ This document tracks the system capabilities, completed features, and remaining 
 
 ### Internationalization
 - [ ] Additional languages (French, Turkish)
-- [ ] Locale-specific date formatting
+- [x] Locale-specific date formatting
 - [ ] Translation coverage reporting
 
 ---
