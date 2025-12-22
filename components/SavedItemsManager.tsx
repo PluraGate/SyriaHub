@@ -125,10 +125,10 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
 
     // Filter buttons configuration
     const filterButtons: { type: ItemType; icon: typeof Database; label: string; color: string }[] = [
-        { type: 'all', icon: Bookmark, label: 'All', color: 'gray' },
-        { type: 'posts', icon: Database, label: 'Posts', color: 'primary' },
-        { type: 'events', icon: Calendar, label: 'Events', color: 'purple' },
-        { type: 'web', icon: Globe, label: 'Web', color: 'blue' }
+        { type: 'all', icon: Bookmark, label: t('tabs.all'), color: 'gray' },
+        { type: 'posts', icon: Database, label: t('tabs.posts'), color: 'primary' },
+        { type: 'events', icon: Calendar, label: t('tabs.events'), color: 'purple' },
+        { type: 'web', icon: Globe, label: t('tabs.web'), color: 'blue' }
     ]
 
     const getColorClasses = (color: string, isActive: boolean) => {
@@ -199,14 +199,14 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                             {post.title}
                                         </Link>
                                         <span className="text-xs px-1.5 py-0.5 bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 rounded font-medium">
-                                            Post
+                                            {t('types.post')}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                                         {post.author?.name && <span>{post.author.name}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            Saved {new Date(post.created_at).toLocaleDateString()}
+                                            {t('savedOn', { date: new Date(post.created_at).toLocaleDateString() })}
                                         </span>
                                     </div>
                                 </div>
@@ -215,7 +215,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                 onClick={() => removePost(post.bookmark_id)}
                                 disabled={deleting === post.bookmark_id}
                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors disabled:opacity-50"
-                                title="Remove from saved"
+                                title={t('removeFromSaved')}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
@@ -243,7 +243,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                             {event.title}
                                         </Link>
                                         <span className="text-xs px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded font-medium">
-                                            Event
+                                            {t('types.event')}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
@@ -251,7 +251,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                         {event.location && <span>• {event.location}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            Saved {new Date(event.created_at).toLocaleDateString()}
+                                            {t('savedOn', { date: new Date(event.created_at).toLocaleDateString() })}
                                         </span>
                                     </div>
                                 </div>
@@ -260,7 +260,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                 onClick={() => removeEvent(event.bookmark_id)}
                                 disabled={deleting === event.bookmark_id}
                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors disabled:opacity-50"
-                                title="Remove from saved"
+                                title={t('removeFromSaved')}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
@@ -290,11 +290,11 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                             {ref.title}
                                         </a>
                                         <span className="text-xs px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded font-medium">
-                                            Web
+                                            {t('types.web')}
                                         </span>
                                         <span className="text-xs px-1.5 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded flex items-center gap-1">
                                             <AlertTriangle className="w-3 h-3" />
-                                            Unassessed
+                                            {t('unassessed')}
                                         </span>
                                     </div>
                                     {ref.snippet && (
@@ -304,7 +304,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                         {ref.source && <span className="flex items-center gap-1"><Globe className="w-3 h-3 text-blue-500" />{ref.source}</span>}
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            Saved {new Date(ref.created_at).toLocaleDateString()}
+                                            {t('savedOn', { date: new Date(ref.created_at).toLocaleDateString() })}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 mt-2">
@@ -315,7 +315,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                             className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-600 transition-colors"
                                         >
                                             <ExternalLink className="w-3 h-3" />
-                                            Open
+                                            {t('open')}
                                         </a>
                                         {ref.citation && <CopyCitationButton citation={ref.citation} />}
                                     </div>
@@ -325,7 +325,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                                 onClick={() => removeReference(ref.id)}
                                 disabled={deleting === ref.id}
                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors disabled:opacity-50"
-                                title="Remove from saved"
+                                title={t('removeFromSaved')}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
@@ -338,16 +338,13 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                     <div className="text-center py-16">
                         <Bookmark className="w-12 h-12 mx-auto text-gray-300 dark:text-dark-border mb-4" />
                         <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                            No {activeFilter === 'all' ? 'saved items' : activeFilter} yet
+                            {t('empty.title', { type: t(`empty.${activeFilter}`) })}
                         </h2>
                         <p className="text-gray-500 dark:text-gray-400 mb-6">
-                            {activeFilter === 'posts' && 'Bookmark posts from the feed to save them here.'}
-                            {activeFilter === 'events' && 'Save events from the events page to see them here.'}
-                            {activeFilter === 'web' && 'Save web search results from the Research Lab.'}
-                            {activeFilter === 'all' && 'Start saving posts, events, and web references to see them here.'}
+                            {t(`empty.${activeFilter}Desc`)}
                         </p>
                         <Link href={activeFilter === 'web' ? '/research-lab/search' : '/feed'} className="btn btn-primary">
-                            {activeFilter === 'web' ? 'Go to Search Engine' : 'Explore Content'}
+                            {activeFilter === 'web' ? t('empty.goToSearch') : t('empty.exploreContent')}
                         </Link>
                     </div>
                 )}
