@@ -5,6 +5,7 @@ import { ImagePlus, X, Loader2, Camera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 
 interface CoverImageUploadProps {
     value: string | null
@@ -18,19 +19,21 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
     const supabase = createClient()
     const { showToast } = useToast()
     const inputRef = useRef<HTMLInputElement>(null)
+    const t = useTranslations('Editor')
+    const tCommon = useTranslations('Common')
 
     const handleUpload = useCallback(async (file: File) => {
         if (!file) return
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            showToast('Please upload an image file', 'error')
+            showToast(t('upload.invalidType'), 'error')
             return
         }
 
         // Validate file size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
-            showToast('Image must be smaller than 5MB', 'error')
+            showToast(t('upload.tooLarge'), 'error')
             return
         }
 
@@ -51,14 +54,14 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                 .getPublicUrl(fileName)
 
             onChange(publicUrl)
-            showToast('Cover image uploaded!', 'success')
+            showToast(t('upload.success'), 'success')
         } catch (error) {
             console.error('Upload failed:', error)
-            showToast('Failed to upload image', 'error')
+            showToast(t('upload.failed'), 'error')
         } finally {
             setUploading(false)
         }
-    }, [supabase, userId, onChange, showToast])
+    }, [supabase, userId, onChange, showToast, t])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -92,7 +95,7 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                     ) : (
                         <Camera className="w-4 h-4" />
                     )}
-                    {value ? 'Change Cover' : 'Add Cover'}
+                    {value ? t('changeCover') : t('addCover')}
                 </Button>
                 {value && (
                     <Button
@@ -133,7 +136,7 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                             className="bg-white text-gray-900 hover:bg-gray-100"
                         >
                             <Camera className="w-4 h-4 mr-2" />
-                            Change
+                            {tCommon('edit')}
                         </Button>
                         <Button
                             type="button"
@@ -141,12 +144,12 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                             variant="destructive"
                         >
                             <X className="w-4 h-4 mr-2" />
-                            Remove
+                            {tCommon('remove')}
                         </Button>
                     </div>
                 </div>
                 <p className="text-xs text-text-light dark:text-dark-text-muted mt-2 text-center">
-                    Recommended: 1200×514px (21:9 aspect ratio)
+                    {t('recommendedAspect')}
                 </p>
             </div>
         )
@@ -169,7 +172,7 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                 {uploading ? (
                     <>
                         <Loader2 className="w-10 h-10 text-primary animate-spin mb-3" />
-                        <p className="text-sm font-medium text-text dark:text-dark-text">Uploading...</p>
+                        <p className="text-sm font-medium text-text dark:text-dark-text">{t('draft.saving')}</p>
                     </>
                 ) : (
                     <>
@@ -177,13 +180,13 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                             <ImagePlus className="w-7 h-7 text-text-light dark:text-dark-text-muted" />
                         </div>
                         <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
-                            Add a cover image
+                            {t('addCoverImage')}
                         </p>
                         <p className="text-xs text-text-light dark:text-dark-text-muted">
-                            Click to upload
+                            {t('clickToUpload')}
                         </p>
                         <p className="text-xs text-text-muted mt-2">
-                            PNG, JPG, GIF, WEBP • Max 5MB
+                            {t('imageFormats')}
                         </p>
                     </>
                 )}

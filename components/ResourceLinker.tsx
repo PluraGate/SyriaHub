@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Search, X, Link2, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, Plus, Loader2, Upload, UploadCloud } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 interface ResourceMetadata {
     url?: string
@@ -78,6 +79,7 @@ export function ResourceLinker({
     const [isUploading, setIsUploading] = useState(false)
 
     const supabase = createClient()
+    const t = useTranslations('Resources')
 
     // Debounced search
     useEffect(() => {
@@ -267,7 +269,7 @@ export function ResourceLinker({
             <div className="flex items-center justify-between">
                 <label className="text-sm font-semibold text-text dark:text-dark-text flex items-center gap-2">
                     <Link2 className="w-4 h-4" />
-                    Linked Resources
+                    {t('linkedResources')}
                 </label>
                 <div className="flex items-center gap-2">
                     <span className="text-xs text-text-muted dark:text-dark-text-muted">
@@ -280,7 +282,7 @@ export function ResourceLinker({
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 rounded-lg transition-all"
                         >
                             <Upload className="w-3.5 h-3.5" />
-                            Upload New
+                            {t('uploadNew')}
                         </button>
                     )}
                 </div>
@@ -338,7 +340,7 @@ export function ResourceLinker({
                     <input
                         ref={searchInputRef}
                         type="text"
-                        placeholder="Search existing resources..."
+                        placeholder={t('searchPlaceholder')}
                         value={searchQuery}
                         onChange={e => {
                             setSearchQuery(e.target.value)
@@ -387,7 +389,7 @@ export function ResourceLinker({
                             </ul>
                         ) : searchQuery.trim() && !isSearching ? (
                             <div className="p-4 text-center text-sm text-text-muted dark:text-dark-text-muted">
-                                <p>No resources found for "{searchQuery}"</p>
+                                <p>{t('noResourcesFound', { query: searchQuery })}</p>
                                 {userId && (
                                     <button
                                         type="button"
@@ -398,7 +400,7 @@ export function ResourceLinker({
                                         className="inline-flex items-center gap-1 mt-2 text-primary hover:underline"
                                     >
                                         <Plus className="w-3.5 h-3.5" />
-                                        Upload new resource
+                                        {t('uploadNewResource')}
                                     </button>
                                 )}
                             </div>
@@ -414,7 +416,7 @@ export function ResourceLinker({
 
             {/* Help Text */}
             <p className="text-xs text-text-light dark:text-dark-text-muted">
-                Link relevant resources like datasets, papers, or tools that support your post.
+                {t('helpText')}
             </p>
 
             {/* Quick Upload Modal */}
@@ -424,7 +426,7 @@ export function ResourceLinker({
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-semibold text-text dark:text-dark-text flex items-center gap-2">
                                 <Upload className="w-5 h-5 text-primary" />
-                                Quick Upload Resource
+                                {t('quickUpload')}
                             </h3>
                             <button
                                 type="button"
@@ -457,10 +459,10 @@ export function ResourceLinker({
                                         <>
                                             <UploadCloud className="w-8 h-8 text-gray-400" />
                                             <p className="font-medium text-text dark:text-dark-text text-sm">
-                                                Click or drag file to upload
+                                                {t('clickOrDrag')}
                                             </p>
                                             <p className="text-xs text-text-muted">
-                                                PDF, Documents, Datasets, Media (Max 50MB)
+                                                {t('fileTypes')}
                                             </p>
                                         </>
                                     )}
@@ -469,7 +471,7 @@ export function ResourceLinker({
 
                             {/* Resource Type */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-text dark:text-dark-text">Type</label>
+                                <label className="text-sm font-medium text-text dark:text-dark-text">{t('type')}</label>
                                 <div className="flex flex-wrap gap-2">
                                     {RESOURCE_TYPES.map(type => {
                                         const Icon = type.icon
@@ -494,23 +496,23 @@ export function ResourceLinker({
 
                             {/* Title */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-text dark:text-dark-text">Title *</label>
+                                <label className="text-sm font-medium text-text dark:text-dark-text">{t('titleRequired')}</label>
                                 <input
                                     type="text"
                                     value={uploadTitle}
                                     onChange={e => setUploadTitle(e.target.value)}
-                                    placeholder="Resource title"
+                                    placeholder={t('resourceTitle')}
                                     className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                 />
                             </div>
 
                             {/* Description */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-text dark:text-dark-text">Description (optional)</label>
+                                <label className="text-sm font-medium text-text dark:text-dark-text">{t('descriptionOptional')}</label>
                                 <textarea
                                     value={uploadDescription}
                                     onChange={e => setUploadDescription(e.target.value)}
-                                    placeholder="Brief description of this resource..."
+                                    placeholder={t('briefDescription')}
                                     rows={2}
                                     className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                                 />
@@ -523,7 +525,7 @@ export function ResourceLinker({
                                     onClick={() => setShowUploadModal(false)}
                                     className="flex-1 px-4 py-2.5 text-sm font-medium rounded-xl border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface-hover transition-colors"
                                 >
-                                    Cancel
+                                    {t('cancel')}
                                 </button>
                                 <button
                                     type="button"
@@ -534,12 +536,12 @@ export function ResourceLinker({
                                     {isUploading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 animate-spin" />
-                                            Uploading...
+                                            {t('uploading')}
                                         </>
                                     ) : (
                                         <>
                                             <Upload className="w-4 h-4" />
-                                            Upload & Link
+                                            {t('uploadAndLink')}
                                         </>
                                     )}
                                 </button>

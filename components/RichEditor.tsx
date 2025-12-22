@@ -15,17 +15,26 @@ import {
   toggleInlineCodeCommand,
   toggleLinkCommand
 } from '@milkdown/preset-commonmark'
-import { gfm } from '@milkdown/preset-gfm'
+import { gfm, insertTableCommand } from '@milkdown/preset-gfm'
 import { history } from '@milkdown/plugin-history'
 import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react'
+import { math } from '@milkdown/plugin-math'
+import 'katex/dist/katex.min.css'
 import { insert, callCommand } from '@milkdown/utils'
 import { createClient } from '@/lib/supabase/client'
 import {
   ImagePlus, Loader2, Check, Bold, Italic, Heading1, Heading2, Heading3,
-  List, ListOrdered, Quote, Code, Link2, Minus, HelpCircle
+  List, ListOrdered, Quote, Code, Link2, Minus, HelpCircle, Table, Sigma, X, Type
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { useTranslations } from 'next-intl'
 
 interface RichEditorProps {
@@ -117,7 +126,8 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
         .use(commonmark)
         .use(gfm)
         .use(history)
-        .use(listener),
+        .use(listener)
+        .use(math),
       [onChange]
     )
 
@@ -172,6 +182,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
 
 export function RichEditor({ value, onChange, placeholder, userId }: RichEditorProps) {
   const t = useTranslations('EditorExtras')
+  const tEditor = useTranslations('Editor')
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [lastInsertedImage, setLastInsertedImage] = useState<string | null>(null)
@@ -292,7 +303,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {/* Image Upload Button */}
+      {/* Image Upload Status */}
       <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
         {lastInsertedImage && !isUploading && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg text-sm text-green-700 dark:text-green-400 animate-fade-in">
@@ -306,15 +317,6 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
             {t('uploading')}
           </div>
         )}
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading || !userId}
-          className="p-2 rounded-lg bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-border transition-colors disabled:opacity-50"
-          title={t('insertImage')}
-        >
-          <ImagePlus className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
-        </button>
         <input
           ref={fileInputRef}
           type="file"
@@ -370,7 +372,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
           />
         </div>
 
-        {/* Lists */}
+        {/* Lists & Blocks */}
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={List}
@@ -382,24 +384,15 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
             title={t('numberedList')}
             onClick={() => editorRef.current?.runCommand(wrapInOrderedListCommand.key)}
           />
-        </div>
-
-        {/* Blocks */}
-        <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
             icon={Quote}
             title={t('quote')}
             onClick={() => editorRef.current?.runCommand(wrapInBlockquoteCommand.key)}
           />
-          <ToolbarButton
-            icon={Minus}
-            title={t('horizontalLine')}
-            onClick={() => editorRef.current?.runCommand(insertHrCommand.key)}
-          />
         </div>
 
-        {/* Link & Image */}
-        <div className="flex items-center">
+        {/* Insert */}
+        <div className="flex items-center pr-1 mr-1 border-r border-gray-200 dark:border-dark-border">
           <ToolbarButton
             icon={Link2}
             title={t('addLink')}
@@ -416,30 +409,99 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
             onClick={() => fileInputRef.current?.click()}
             disabled={!userId}
           />
+          <ToolbarButton
+            icon={Table}
+            title={tEditor('page.cheatSheet.tables')}
+            onClick={() => editorRef.current?.runCommand(insertTableCommand.key)}
+          />
+          <ToolbarButton
+            icon={Sigma}
+            title={tEditor('page.cheatSheet.math')}
+            onClick={() => editorRef.current?.insertMarkdown('\n$$ \n\n $$ \n')}
+          />
+          <ToolbarButton
+            icon={Minus}
+            title={t('horizontalLine')}
+            onClick={() => editorRef.current?.runCommand(insertHrCommand.key)}
+          />
         </div>
 
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Help tooltip */}
-        <div className="relative group">
-          <button
-            type="button"
-            className="p-1.5 rounded-lg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border transition-colors"
-          >
-            <HelpCircle className="w-4 h-4" />
-          </button>
-          <div className="absolute right-0 top-full mt-2 w-64 p-3 bg-white dark:bg-dark-surface rounded-lg shadow-lg border border-gray-200 dark:border-dark-border text-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-            <p className="font-semibold mb-2 text-text dark:text-dark-text">Markdown Tips:</p>
-            <ul className="space-y-1 text-text-light dark:text-dark-text-muted">
-              <li><code className="bg-gray-100 dark:bg-dark-bg px-1 rounded"># H1</code> <code className="bg-gray-100 dark:bg-dark-bg px-1 rounded">## H2</code> for headings</li>
-              <li><code className="bg-gray-100 dark:bg-dark-bg px-1 rounded">**bold**</code> <code className="bg-gray-100 dark:bg-dark-bg px-1 rounded">*italic*</code></li>
-              <li><code className="bg-gray-100 dark:bg-dark-bg px-1 rounded">- item</code> for bullet lists</li>
-              <li><code className="bg-gray-100 dark:bg-dark-bg px-1 rounded">[text](url)</code> for links</li>
-              <li>Drag & drop or paste images</li>
-            </ul>
-          </div>
-        </div>
+        {/* Help Dialog */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="p-1.5 rounded-lg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border transition-colors"
+              title="Markdown Help"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Type className="w-4 h-4 text-primary" />
+                {tEditor('page.markdownSupported')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6 pt-2">
+              {/* Basic Formatting */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-text-light/60 dark:text-dark-text-muted/60">{tEditor('page.cheatSheet.basic')}</h4>
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border rounded-md">
+                    <code className="text-[10px] font-mono font-bold text-primary">**{tEditor('page.cheatSheet.bold')}**</code>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border rounded-md">
+                    <code className="text-[10px] font-mono italic text-secondary-dark">*{tEditor('page.cheatSheet.italic')}*</code>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border rounded-md">
+                    <code className="text-[10px] font-mono line-through text-text-light">~~{tEditor('page.cheatSheet.strikethrough')}~~</code>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lists & Links */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-text-light/60 dark:text-dark-text-muted/60">{tEditor('page.cheatSheet.lists')}</h4>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2 text-[11px] text-text-light dark:text-dark-text-muted">
+                      <code className="px-1.5 py-0.5 bg-primary/5 text-primary rounded font-mono">-</code>
+                      <span>{tEditor('page.cheatSheet.bulletList')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-text-light dark:text-dark-text-muted">
+                      <code className="px-1.5 py-0.5 bg-primary/5 text-primary rounded font-mono">1.</code>
+                      <span>{tEditor('page.cheatSheet.numberedList')}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-text-light dark:text-dark-text-muted">
+                    <code className="px-1.5 py-0.5 bg-secondary/10 text-secondary-dark rounded font-mono">[]()</code>
+                    <span>{tEditor('page.cheatSheet.link')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-text-light/60 dark:text-dark-text-muted/60">{tEditor('page.cheatSheet.scientific')}</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex flex-col items-center justify-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg border border-gray-100 dark:border-dark-border">
+                    <span className="font-mono text-primary mb-1">$$</span>
+                    <span className="text-[9px] text-text-light uppercase">{tEditor('page.cheatSheet.math')}</span>
+                  </div>
+                  <div className="flex flex-col items-center justify-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg border border-gray-100 dark:border-dark-border">
+                    <Table className="w-4 h-4 text-secondary-dark mb-1" />
+                    <span className="text-[9px] text-text-light uppercase">{tEditor('page.cheatSheet.tables')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <MilkdownProvider>

@@ -25,8 +25,13 @@ import { ReferencesSection } from '@/components/ReferencesSection'
 import { CiteButton } from '@/components/CiteButton'
 import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
+import { SpatialContextCard } from '@/components/spatial'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 import { Button } from '@/components/ui/button'
 import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
@@ -459,9 +464,21 @@ export default async function PostPage(props: PostPageProps) {
               prose-ul:my-6 prose-li:my-1
             ">
               <TextSelectionHandler postId={post.id}>
-                <ReactMarkdown>{post.content || ''}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {post.content || ''}
+                </ReactMarkdown>
               </TextSelectionHandler>
             </div>
+
+            {/* Spatial Context - between content and citations */}
+            <SpatialContextCard
+              spatialCoverage={post.spatial_coverage}
+              temporalStart={post.temporal_start}
+              temporalEnd={post.temporal_end}
+            />
 
             {/* References Section - what this post cites */}
             <ReferencesSection postId={post.id} />
