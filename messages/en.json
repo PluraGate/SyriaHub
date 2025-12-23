@@ -2494,6 +2494,8 @@
         "customLocation": "Custom location",
         "customRegion": "Custom region",
         "dismissFlag": "Dismiss",
+        "patternPreview": "Spatial observations (preview)",
+        "analyzingContext": "Analyzing spatial context",
         "patternDisclaimer": "These observations are suggestions for consideration, not conclusions.",
         "patterns": {
             "networkBottleneck": "This area may have limited route access",

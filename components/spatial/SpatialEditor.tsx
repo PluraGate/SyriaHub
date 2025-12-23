@@ -2,9 +2,12 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { MapPin, Search, Trash2, Circle as CircleIcon, Pentagon } from 'lucide-react'
+import { MapPin, Search, Trash2, Circle as CircleIcon, Pentagon, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import dynamic from 'next/dynamic'
+import { detectPatterns, type DetectedPattern } from '@/lib/patternDetector'
+import { AwarenessFlag } from './AwarenessFlag'
+import type { GovernorateFeature } from '@/lib/spatialQueries'
 
 // Fix Leaflet's default marker icon issue with bundlers
 const fixLeafletIcons = async () => {
@@ -145,10 +148,47 @@ export function SpatialEditor({
     const [polygonPoints, setPolygonPoints] = useState<[number, number][]>([])
     const [circleRadius, setCircleRadius] = useState(5000) // Default 5km
 
+    // Pattern detection preview state
+    const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
+    const [detectedPatterns, setDetectedPatterns] = useState<DetectedPattern[]>([])
+    const [dismissedPatterns, setDismissedPatterns] = useState<Set<string>>(new Set())
+
     useEffect(() => {
         setMounted(true)
         fixLeafletIcons()
+
+        // Load governorates for pattern detection
+        fetch('/data/syria-governorates-polygons.json')
+            .then(res => res.json())
+            .then(data => {
+                const arabicNames: Record<string, string> = {
+                    'Damascus': 'دمشق', 'Aleppo': 'حلب', 'Rural Damascus': 'ريف دمشق',
+                    'Homs': 'حمص', 'Hama': 'حماة', 'Lattakia': 'اللاذقية', 'Tartus': 'طرطوس',
+                    'Idleb': 'إدلب', 'Ar-Raqqa': 'الرقة', 'Deir-ez-Zor': 'دير الزور',
+                    'Al-Hasakeh': 'الحسكة', "Dar'a": 'درعا', 'As-Sweida': 'السويداء', 'Quneitra': 'القنيطرة'
+                }
+                const features = data.features.map((f: { properties: { shapeName: string }; geometry: { type: string; coordinates: number[] | number[][][] } }) => ({
+                    name: f.properties.shapeName,
+                    name_ar: arabicNames[f.properties.shapeName] || f.properties.shapeName,
+                    type: 'governorate' as const,
+                    geometry: f.geometry
+                }))
+                setGovernorates(features)
+            })
+            .catch(err => console.error('Failed to load governorates:', err))
     }, [])
+
+    // Run pattern detection when geometry or governorates change
+    useEffect(() => {
+        if (!currentGeometry || governorates.length === 0) {
+            setDetectedPatterns([])
+            return
+        }
+
+        // Only run sync detection (P2, P3, P4) - no need for async in editor preview
+        const patterns = detectPatterns(currentGeometry, governorates, undefined)
+        setDetectedPatterns(patterns)
+    }, [currentGeometry, governorates])
 
     useEffect(() => {
         if (geometry) {
@@ -567,6 +607,17 @@ export function SpatialEditor({
                             ({currentGeometry.type === 'Point' ? t('point') : currentGeometry.type === 'Circle' ? t('radius') : t('region')})
                         </span>
                     )}
+                </div>
+            )}
+
+            {/* Pattern Detection Preview */}
+            {detectedPatterns.length > 0 && (
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">
+                        <Info className="w-3.5 h-3.5" />
+                        <span>{t('patternPreview') || 'Spatial observations (preview)'}</span>
+                    </div>
+                    <AwarenessFlag patterns={detectedPatterns} />
                 </div>
             )}
         </div>

@@ -1,25 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { BookOpen, ExternalLink, ChevronRight, X } from 'lucide-react'
-
-interface Precedent {
-    id: string
-    title: string
-    title_ar?: string
-    summary: string
-    summary_ar?: string
-    pattern_id: string
-    governorate?: string
-    source_url?: string
-    source_name?: string
-    trust_level: string
-}
+import type { Precedent } from '@/lib/hooks/usePrecedents'
 
 interface PrecedentCardProps {
-    patternIds: string[]
-    governorate?: string
+    precedents: Precedent[]
+    loading: boolean
     className?: string
 }
 
@@ -27,56 +15,12 @@ interface PrecedentCardProps {
  * PrecedentCard
  * 
  * Displays relevant historical case studies based on detected patterns.
- * Fetches precedents from the API based on pattern matches.
+ * Pure presentational component.
  */
-export function PrecedentCard({ patternIds, governorate, className = '' }: PrecedentCardProps) {
+export function PrecedentCard({ precedents, loading, className = '' }: PrecedentCardProps) {
     const t = useTranslations('Spatial')
     const locale = useLocale()
-    const [precedents, setPrecedents] = useState<Precedent[]>([])
-    const [loading, setLoading] = useState(true)
     const [dismissed, setDismissed] = useState(false)
-
-    useEffect(() => {
-        if (patternIds.length === 0) {
-            setLoading(false)
-            return
-        }
-
-        async function fetchPrecedents() {
-            setLoading(true)
-            try {
-                // Fetch precedents for each pattern
-                const results: Precedent[] = []
-                for (const patternId of patternIds.slice(0, 2)) { // Limit to 2 patterns
-                    const params = new URLSearchParams({ pattern: patternId })
-                    if (governorate) params.append('governorate', governorate)
-
-                    const res = await fetch(`/api/precedents?${params}&limit=2`)
-                    if (res.ok) {
-                        const contentType = res.headers.get('content-type')
-                        if (contentType?.includes('application/json')) {
-                            const data = await res.json()
-                            if (Array.isArray(data)) {
-                                results.push(...data)
-                            }
-                        }
-                    }
-                }
-
-                // Deduplicate
-                const unique = results.filter((p, i, arr) =>
-                    arr.findIndex(x => x.id === p.id) === i
-                ).slice(0, 3)
-
-                setPrecedents(unique)
-            } catch (error) {
-                console.error('Failed to fetch precedents:', error)
-            }
-            setLoading(false)
-        }
-
-        fetchPrecedents()
-    }, [patternIds, governorate])
 
     if (dismissed || (precedents.length === 0 && !loading)) {
         return null

@@ -2529,6 +2529,8 @@
         "customLocation": "موقع مخصص",
         "customRegion": "منطقة مخصصة",
         "dismissFlag": "إغلاق",
+        "patternPreview": "ملاحظات مكانية (معاينة)",
+        "analyzingContext": "جارٍ تحليل السياق المكاني",
         "patternDisclaimer": "هذه الملاحظات اقتراحات للنظر فيها، وليست استنتاجات.",
         "patterns": {
             "networkBottleneck": "قد تكون هذه المنطقة ذات وصول محدود للطرق",
