@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl'
 import { MapPin, ChevronDown, ChevronUp, Info } from 'lucide-react'
 import { SpatialMap } from './SpatialMap'
 import { AwarenessFlag } from './AwarenessFlag'
-import { detectPatterns, type DetectedPattern } from '@/lib/patternDetector'
+import { PrecedentCard } from './PrecedentCard'
+import { detectPatterns, detectPatternsAsync, type DetectedPattern } from '@/lib/patternDetector'
+import { usePrecedents } from '@/lib/hooks/usePrecedents'
+import { useNearbyPosts } from '@/lib/hooks/useNearbyPosts'
 import type { GovernorateFeature } from '@/lib/spatialQueries'
 
 interface SpatialContextCardProps {
@@ -31,8 +34,14 @@ export function SpatialContextCard({
 }: SpatialContextCardProps) {
     const t = useTranslations('Spatial')
     const [isExpanded, setIsExpanded] = useState(true)
+
     const [patterns, setPatterns] = useState<DetectedPattern[]>([])
+    const [asyncPatterns, setAsyncPatterns] = useState<DetectedPattern[]>([])
+    const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
+
+    // Fetch nearby posts for P5 detection (uses spatialCoverage text as initial governorate hint)
+    const { postCount, hasHumanitarianPosts } = useNearbyPosts(spatialGeometry, spatialCoverage || undefined)
 
     // Load governorate data once
     useEffect(() => {
@@ -78,16 +87,55 @@ export function SpatialContextCard({
     useEffect(() => {
         if (!spatialGeometry || governorates.length === 0) {
             setPatterns([])
+            setAsyncPatterns([])
             return
         }
 
-        const detected = detectPatterns(
+        // 1. Run Synchronous Detection (Immediate)
+        const syncDetected = detectPatterns(
             spatialGeometry,
             governorates,
             temporalStart || temporalEnd
         )
-        setPatterns(detected)
-    }, [spatialGeometry, governorates, temporalStart, temporalEnd])
+        setPatterns(syncDetected)
+
+        // 2. Run Asynchronous Detection (Network/DB required)
+        // Only run if we have a valid geometry (Point/Polygon) to avoid spamming APIs
+        const hasValidGeo = spatialGeometry.coordinates && spatialGeometry.coordinates.length > 0
+
+        if (hasValidGeo) {
+            setIsAnalyzing(true)
+            detectPatternsAsync(
+                spatialGeometry,
+                postCount,
+                hasHumanitarianPosts,
+                temporalStart || temporalEnd
+            ).then(asyncDetected => {
+                setAsyncPatterns(asyncDetected)
+            }).catch(err => {
+                console.error('Async pattern detection failed:', err)
+            }).finally(() => {
+                setIsAnalyzing(false)
+            })
+        } else {
+            setAsyncPatterns([])
+        }
+    }, [spatialGeometry, governorates, temporalStart, temporalEnd, postCount, hasHumanitarianPosts])
+
+    // Merge patterns for display
+    const allPatterns = [...patterns, ...asyncPatterns].sort((a, b) => b.confidence - a.confidence)
+
+    // Extract pattern IDs for precedent fetching
+    const patternIds = allPatterns.map(p => p.id)
+
+    // Determine primary governorate for precedent context
+    // Prefer P2/P3 metadata, otherwise use first governorate from cache/state
+    const primaryGovernorate = allPatterns.find(p => p.metadata?.governorate)?.metadata?.governorate as string
+        || allPatterns.find(p => p.metadata?.nearestGovernorate)?.metadata?.nearestGovernorate as string
+        || governorates[0]?.name // Fallback (refine logic if needed)
+
+    // Fetch precedents
+    const { precedents, loading: precedentsLoading } = usePrecedents(patternIds, primaryGovernorate)
 
     // Don't render if no spatial data (text or geometry)
     if (!spatialCoverage && !spatialGeometry) {
@@ -150,8 +198,24 @@ export function SpatialContextCard({
                     />
 
                     {/* Awareness Flags (if any patterns detected) */}
-                    {patterns.length > 0 && (
-                        <AwarenessFlag patterns={patterns} />
+                    {(allPatterns.length > 0) && (
+                        <AwarenessFlag patterns={allPatterns} />
+                    )}
+
+                    {/* Precedent Card (Related Case Studies) */}
+                    {(precedents.length > 0 || precedentsLoading) && (
+                        <PrecedentCard
+                            precedents={precedents}
+                            loading={precedentsLoading}
+                        />
+                    )}
+
+                    {/* Analysis Status */}
+                    {isAnalyzing && (
+                        <div className="flex items-center gap-2 px-1 text-xs text-primary animate-pulse">
+                            <div className="w-2 h-2 rounded-full bg-primary" />
+                            <span>{t('analyzingContext')}...</span>
+                        </div>
                     )}
 
                     {/* Subtle info footer */}

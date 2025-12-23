@@ -237,6 +237,12 @@ export default function EditorPage() {
           setCoverImage(data.cover_image_url || null)
           setLicense(data.license || 'CC-BY-4.0')
 
+          // Load temporal/spatial coverage fields
+          if (data.temporal_start) setTemporalCoverageStart(data.temporal_start)
+          if (data.temporal_end) setTemporalCoverageEnd(data.temporal_end)
+          if (data.spatial_coverage) setSpatialCoverage(data.spatial_coverage)
+          if (data.spatial_geometry) setSpatialGeometry(data.spatial_geometry)
+
           if (data.group_id) {
             const { data: groupData } = await supabase
               .from('groups')
@@ -425,7 +431,7 @@ export default function EditorPage() {
         setSaving(false)
       }
     },
-    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam, coverImage, linkedResources, clearDraft]
+    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, quoteParam, coverImage, linkedResources, clearDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry]
   )
 
   const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
