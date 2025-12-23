@@ -1006,6 +1006,7 @@
         "governance": "Governance",
         "tags": "Tag Management",
         "waitlist": "Waitlist",
+        "precedents": "Case Studies",
         "expand": "Expand sidebar",
         "collapse": "Collapse sidebar",
         "backToSite": "Back to site",
@@ -2445,6 +2446,7 @@
             "shared_author": "Same Author"
         },
         "noConnections": "No connections found for this post",
+        "byAuthor": "By {author}",
         "explorerTitle": "Knowledge Graph Explorer",
         "legend": {
             "topic": "Topic",
@@ -2490,6 +2492,15 @@
         "clickToAddMorePoints": "Add more points or finish",
         "finishRegion": "Finish",
         "customLocation": "Custom location",
-        "customRegion": "Custom region"
+        "customRegion": "Custom region",
+        "dismissFlag": "Dismiss",
+        "patternDisclaimer": "These observations are suggestions for consideration, not conclusions.",
+        "patterns": {
+            "networkBottleneck": "This area may have limited route access",
+            "serviceMismatch": "Services in this area may not match population needs",
+            "boundarySpillover": "This region spans multiple administrative areas",
+            "accessDiscontinuity": "Administrative boundaries may not reflect physical access patterns",
+            "aidClustering": "Aid activity patterns could be reviewed in this area"
+        }
     }
 }

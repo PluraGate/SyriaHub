@@ -50,7 +50,7 @@ const SYRIA_BOUNDS: [[number, number], [number, number]] = [
 
 interface GeoJSONGeometry {
     type: 'Point' | 'Polygon' | 'Circle'
-    coordinates: number[] | number[][]
+    coordinates: number[] | number[][] | number[][][]
     radius?: number
 }
 
@@ -166,8 +166,21 @@ export function SpatialEditor({
                 setMapCenter([geometry.coordinates[1] as number, geometry.coordinates[0] as number])
                 setMapZoom(12)
             } else if (geometry.type === 'Polygon' && Array.isArray(geometry.coordinates)) {
-                // Calculate bounds of polygon
-                const coords = geometry.coordinates as number[][]
+                // Calculate bounds of polygon (handle both simple and nested GeoJSON polygons)
+                const rawCoords = geometry.coordinates
+                let coords: number[][] = []
+
+                if (rawCoords.length > 0) {
+                    // Check nesting level and extract points
+                    if (Array.isArray(rawCoords[0]) && Array.isArray((rawCoords[0] as any)[0])) {
+                        // It's number[][][] (GeoJSON Polygon ring)
+                        coords = (rawCoords as number[][][])[0]
+                    } else {
+                        // It's number[][] (Simple array of points)
+                        coords = rawCoords as number[][]
+                    }
+                }
+
                 if (coords.length > 0) {
                     const lats = coords.map(c => c[1])
                     const lngs = coords.map(c => c[0])
@@ -176,7 +189,14 @@ export function SpatialEditor({
                     const minLng = Math.min(...lngs)
                     const maxLng = Math.max(...lngs)
 
-                    setMapBounds([[minLat, minLng], [maxLat, maxLng]])
+                    // Extend bounds slightly for better visibility
+                    const latPad = (maxLat - minLat) * 0.05
+                    const lngPad = (maxLng - minLng) * 0.05
+
+                    setMapBounds([
+                        [minLat - latPad, minLng - lngPad],
+                        [maxLat + latPad, maxLng + lngPad]
+                    ])
                 }
             }
         }
@@ -273,7 +293,7 @@ export function SpatialEditor({
             if (newPoints.length >= 3) {
                 const geo: GeoJSONGeometry = {
                     type: 'Polygon',
-                    coordinates: newPoints
+                    coordinates: [newPoints] // Wrap in array to make it a ring (GeoJSON standard)
                 }
                 setCurrentGeometry(geo)
                 const placeName = value || t('customRegion')
@@ -287,7 +307,7 @@ export function SpatialEditor({
         if (polygonPoints.length >= 3) {
             const geo: GeoJSONGeometry = {
                 type: 'Polygon',
-                coordinates: polygonPoints
+                coordinates: [polygonPoints] // Wrap in array
             }
             setCurrentGeometry(geo)
             const placeName = value || t('customRegion')
@@ -301,6 +321,7 @@ export function SpatialEditor({
         setCurrentGeometry(null)
         setSearchQuery('')
         setPolygonPoints([])
+        setMapBounds(null) // Reset bounds
         onChange('', undefined)
     }, [onChange])
 
@@ -498,7 +519,16 @@ export function SpatialEditor({
                     )}
                     {currentGeometry?.type === 'Polygon' && (
                         <Polygon
-                            positions={(currentGeometry.coordinates as number[][]).map(c => [c[1], c[0]] as [number, number])}
+                            positions={(() => {
+                                const coords = currentGeometry.coordinates as any[]
+                                // Handle both simple and standard GeoJSON (nested)
+                                if (coords.length > 0 && Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+                                    // number[][][] -> Extract first ring
+                                    return (coords[0] as number[][]).map(c => [c[1], c[0]] as [number, number])
+                                }
+                                // number[][]
+                                return (coords as number[][]).map(c => [c[1], c[0]] as [number, number])
+                            })()}
                             pathOptions={{
                                 color: '#1A3D40',
                                 fillColor: '#4AA3A5',

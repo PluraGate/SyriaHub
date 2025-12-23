@@ -476,6 +476,7 @@ export default async function PostPage(props: PostPageProps) {
             {/* Spatial Context - between content and citations */}
             <SpatialContextCard
               spatialCoverage={post.spatial_coverage}
+              spatialGeometry={post.spatial_geometry}
               temporalStart={post.temporal_start}
               temporalEnd={post.temporal_end}
             />

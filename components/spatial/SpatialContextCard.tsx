@@ -1,28 +1,96 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { MapPin, ChevronDown, ChevronUp, Info } from 'lucide-react'
 import { SpatialMap } from './SpatialMap'
+import { AwarenessFlag } from './AwarenessFlag'
+import { detectPatterns, type DetectedPattern } from '@/lib/patternDetector'
+import type { GovernorateFeature } from '@/lib/spatialQueries'
 
 interface SpatialContextCardProps {
     spatialCoverage?: string | null
+    spatialGeometry?: {
+        type: string
+        coordinates: number[] | number[][] | number[][][]
+    } | null
     temporalStart?: string | null
     temporalEnd?: string | null
     className?: string
 }
 
+// Cache for governorate data
+let governoratesCache: GovernorateFeature[] | null = null
+
 export function SpatialContextCard({
     spatialCoverage,
+    spatialGeometry,
     temporalStart,
     temporalEnd,
     className = ''
 }: SpatialContextCardProps) {
     const t = useTranslations('Spatial')
     const [isExpanded, setIsExpanded] = useState(true)
+    const [patterns, setPatterns] = useState<DetectedPattern[]>([])
+    const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
 
-    // Don't render if no spatial data
-    if (!spatialCoverage) {
+    // Load governorate data once
+    useEffect(() => {
+        if (governoratesCache) {
+            setGovernorates(governoratesCache)
+            return
+        }
+
+        // Arabic names mapping for geoBoundaries data
+        const arabicNames: Record<string, string> = {
+            'Damascus': 'دمشق',
+            'Aleppo': 'حلب',
+            'Rural Damascus': 'ريف دمشق',
+            'Homs': 'حمص',
+            'Hama': 'حماة',
+            'Lattakia': 'اللاذقية',
+            'Tartus': 'طرطوس',
+            'Idleb': 'إدلب',
+            'Ar-Raqqa': 'الرقة',
+            'Deir-ez-Zor': 'دير الزور',
+            'Al-Hasakeh': 'الحسكة',
+            "Dar'a": 'درعا',
+            'As-Sweida': 'السويداء',
+            'Quneitra': 'القنيطرة'
+        }
+
+        fetch('/data/syria-governorates-polygons.json')
+            .then(res => res.json())
+            .then(data => {
+                const features = data.features.map((f: { properties: { shapeName: string; shapeISO: string }; geometry: { type: string; coordinates: number[] | number[][][] } }) => ({
+                    name: f.properties.shapeName,
+                    name_ar: arabicNames[f.properties.shapeName] || f.properties.shapeName,
+                    type: 'governorate' as const,
+                    geometry: f.geometry
+                }))
+                governoratesCache = features
+                setGovernorates(features)
+            })
+            .catch(err => console.error('Failed to load governorate data:', err))
+    }, [])
+
+    // Run pattern detection when geometry or governorates change
+    useEffect(() => {
+        if (!spatialGeometry || governorates.length === 0) {
+            setPatterns([])
+            return
+        }
+
+        const detected = detectPatterns(
+            spatialGeometry,
+            governorates,
+            temporalStart || temporalEnd
+        )
+        setPatterns(detected)
+    }, [spatialGeometry, governorates, temporalStart, temporalEnd])
+
+    // Don't render if no spatial data (text or geometry)
+    if (!spatialCoverage && !spatialGeometry) {
         return null
     }
 
@@ -72,16 +140,22 @@ export function SpatialContextCard({
 
             {/* Map Content */}
             {isExpanded && (
-                <div className="px-4 pb-4">
+                <div className="px-4 pb-4 space-y-3">
                     <SpatialMap
                         spatialCoverage={spatialCoverage}
+                        spatialGeometry={spatialGeometry}
                         height="220px"
                         showLayerToggle={true}
                         interactive={true}
                     />
 
+                    {/* Awareness Flags (if any patterns detected) */}
+                    {patterns.length > 0 && (
+                        <AwarenessFlag patterns={patterns} />
+                    )}
+
                     {/* Subtle info footer */}
-                    <div className="mt-3 flex items-start gap-2 text-xs text-text-light dark:text-dark-text-muted">
+                    <div className="flex items-start gap-2 text-xs text-text-light dark:text-dark-text-muted">
                         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
                         <p>{t('contextNote')}</p>
                     </div>
