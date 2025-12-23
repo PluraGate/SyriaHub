@@ -1040,6 +1040,7 @@
         "governance": "الحوكمة",
         "tags": "إدارة الأوسمة",
         "waitlist": "قائمة الانتظار",
+        "precedents": "دراسات الحالة",
         "expand": "توسيع الشريط الجانبي",
         "collapse": "طي الشريط الجانبي",
         "backToSite": "العودة للموقع",
@@ -2480,6 +2481,7 @@
             "shared_author": "نفس المؤلف"
         },
         "noConnections": "لم يتم العثور على اتصالات لهذا المنشور",
+        "byAuthor": "بواسطة {author}",
         "explorerTitle": "مستكشف مخطط المعرفة",
         "legend": {
             "topic": "موضوع",
@@ -2525,6 +2527,15 @@
         "clickToAddMorePoints": "أضف المزيد من النقاط أو أنهِ",
         "finishRegion": "إنهاء",
         "customLocation": "موقع مخصص",
-        "customRegion": "منطقة مخصصة"
+        "customRegion": "منطقة مخصصة",
+        "dismissFlag": "إغلاق",
+        "patternDisclaimer": "هذه الملاحظات اقتراحات للنظر فيها، وليست استنتاجات.",
+        "patterns": {
+            "networkBottleneck": "قد تكون هذه المنطقة ذات وصول محدود للطرق",
+            "serviceMismatch": "قد لا تتوافق الخدمات في هذه المنطقة مع احتياجات السكان",
+            "boundarySpillover": "تمتد هذه المنطقة عبر مناطق إدارية متعددة",
+            "accessDiscontinuity": "قد لا تعكس الحدود الإدارية أنماط الوصول الفعلي",
+            "aidClustering": "يمكن مراجعة أنماط نشاط المساعدات في هذه المنطقة"
+        }
     }
 }

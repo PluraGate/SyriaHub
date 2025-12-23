@@ -17,7 +17,8 @@ import {
     MessagesSquare,
     Search,
     MessageSquarePlus,
-    Shield
+    Shield,
+    BookOpen
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
@@ -97,6 +98,11 @@ const navItems = [
         href: '/admin/audit',
         icon: History,
         adminOnly: true,
+    },
+    {
+        label: 'Precedents',
+        href: '/admin/precedents',
+        icon: BookOpen,
     },
 ]
 
@@ -191,7 +197,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                         'Coordination': 'coordination',
                         'Feedback': 'feedback',
                         'Governance': 'governance',
-                        'Audit Logs': 'auditLog'
+                        'Audit Logs': 'auditLog',
+                        'Precedents': 'precedents'
                     }
                     const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')
                     const label = t(translationKey) || item.label

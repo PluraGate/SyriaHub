@@ -2,3 +2,5 @@
 export { SpatialMap } from './SpatialMap'
 export { SpatialContextCard } from './SpatialContextCard'
 export { SpatialEditor } from './SpatialEditor'
+export { AwarenessFlag } from './AwarenessFlag'
+export { PrecedentCard } from './PrecedentCard'

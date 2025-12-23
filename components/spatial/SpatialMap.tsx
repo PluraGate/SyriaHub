@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 // Dynamic import for Leaflet (SSR-safe)
 import dynamic from 'next/dynamic'
+import { useMemo } from 'react'
 
 const MapContainer = dynamic(
     () => import('react-leaflet').then((mod) => mod.MapContainer),
@@ -27,6 +28,39 @@ const Popup = dynamic(
 )
 const Circle = dynamic(
     () => import('react-leaflet').then((mod) => mod.Circle),
+    { ssr: false }
+)
+const Polygon = dynamic(
+    () => import('react-leaflet').then((mod) => mod.Polygon),
+    { ssr: false }
+)
+
+// Map center/zoom controller component
+const MapViewController = dynamic(
+    () => Promise.resolve(function MapViewControllerInner({
+        center,
+        zoom,
+        bounds
+    }: {
+        center?: [number, number]
+        zoom?: number
+        bounds?: [[number, number], [number, number]]
+    }) {
+        const { useMap } = require('react-leaflet')
+        const map = useMap()
+
+        useEffect(() => {
+            if (!map) return
+
+            if (bounds) {
+                map.fitBounds(bounds, { padding: [20, 20], animate: true, maxZoom: 15 })
+            } else if (center && zoom) {
+                map.setView(center, zoom, { animate: true })
+            }
+        }, [center, zoom, bounds, map])
+
+        return null
+    }),
     { ssr: false }
 )
 
@@ -75,6 +109,10 @@ const SYRIA_BOUNDS: [[number, number], [number, number]] = [
 
 interface SpatialMapProps {
     spatialCoverage?: string | null
+    spatialGeometry?: {
+        type: string
+        coordinates: number[] | number[][] | number[][][]
+    } | null
     className?: string
     height?: string
     showLayerToggle?: boolean
@@ -83,6 +121,7 @@ interface SpatialMapProps {
 
 export function SpatialMap({
     spatialCoverage,
+    spatialGeometry,
     className = '',
     height = '280px',
     showLayerToggle = true,
@@ -137,6 +176,67 @@ export function SpatialMap({
                     />
                 )}
 
+                {/* Auto-focus controller */}
+                <MapViewController
+                    center={matchedLocation ? [matchedLocation.lat, matchedLocation.lng] : SYRIA_CENTER}
+                    zoom={matchedLocation ? 10 : 6}
+                    bounds={(() => {
+                        if (spatialGeometry?.type === 'Polygon' && spatialGeometry.coordinates) {
+                            const coords = spatialGeometry.coordinates as any[]
+                            let points: number[][] = []
+
+                            // Handle standard GeoJSON number[][][] and simple number[][]
+                            if (coords.length > 0) {
+                                if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+                                    points = coords[0] as number[][]
+                                } else {
+                                    points = coords as number[][]
+                                }
+                            }
+
+                            if (points.length > 0) {
+                                const lats = points.map(c => c[1])
+                                const lngs = points.map(c => c[0])
+                                const minLat = Math.min(...lats)
+                                const maxLat = Math.max(...lats)
+                                const minLng = Math.min(...lngs)
+                                const maxLng = Math.max(...lngs)
+
+                                // Add 5% padding (reduced from 10%)
+                                const latPad = (maxLat - minLat) * 0.05
+                                const lngPad = (maxLng - minLng) * 0.05
+
+                                return [
+                                    [minLat - latPad, minLng - lngPad],
+                                    [maxLat + latPad, maxLng + lngPad]
+                                ] as [[number, number], [number, number]]
+                            }
+                        } else if (spatialGeometry?.type === 'Circle' && spatialGeometry.coordinates) {
+                            // Focus on circle with padding equivalent to radius
+                            const lat = spatialGeometry.coordinates[1] as number
+                            const lng = spatialGeometry.coordinates[0] as number
+                            // Rough approximation: 1 degree approx 111km
+                            const radiusDeg = ((spatialGeometry as any).radius || 5000) / 111000
+                            const pad = radiusDeg * 1.5
+                            return [
+                                [lat - pad, lng - pad],
+                                [lat + pad, lng + pad]
+                            ] as [[number, number], [number, number]]
+                        } else if (spatialGeometry?.type === 'Point' && spatialGeometry.coordinates) {
+                            // Focus on point
+                            const lat = spatialGeometry.coordinates[1] as number
+                            const lng = spatialGeometry.coordinates[0] as number
+                            const pad = 0.05 // rough "zoom level 12-13" equivalent box
+                            return [
+                                [lat - pad, lng - pad],
+                                [lat + pad, lng + pad]
+                            ] as [[number, number], [number, number]]
+                        }
+
+                        return undefined
+                    })()}
+                />
+
                 {/* Fallback neutral tiles */}
                 {!showOSM && (
                     <TileLayer
@@ -145,7 +245,6 @@ export function SpatialMap({
                     />
                 )}
 
-                {/* Ghost-highlight for matched location */}
                 {matchedLocation && (
                     <Circle
                         center={[matchedLocation.lat, matchedLocation.lng]}
@@ -156,6 +255,48 @@ export function SpatialMap({
                             fillOpacity: 0.15,
                             weight: 2,
                             dashArray: '5, 5'
+                        }}
+                    />
+                )}
+
+                {/* Render saved geometry */}
+                {spatialGeometry && spatialGeometry.type === 'Point' && spatialGeometry.coordinates && spatialGeometry.coordinates.length >= 2 && (
+                    <Marker position={[spatialGeometry.coordinates[1] as number, spatialGeometry.coordinates[0] as number]} />
+                )}
+                {spatialGeometry && spatialGeometry.type === 'Polygon' && spatialGeometry.coordinates && (
+                    <Polygon
+                        positions={(() => {
+                            const coords = spatialGeometry.coordinates as any[]
+                            if (!coords || coords.length === 0) return []
+
+                            // Check for standard GeoJSON (number[][][]) - Array of rings
+                            if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+                                return (coords[0] as number[][]).map(c => [c[1], c[0]] as [number, number])
+                            }
+                            // Check for simple Polygon (number[][]) - Array of points
+                            else if (Array.isArray(coords[0]) && typeof coords[0][0] === 'number') {
+                                return (coords as number[][]).map(c => [c[1], c[0]] as [number, number])
+                            }
+
+                            return []
+                        })()}
+                        pathOptions={{
+                            color: '#1A3D40',
+                            fillColor: '#4AA3A5',
+                            fillOpacity: 0.2,
+                            weight: 2
+                        }}
+                    />
+                )}
+                {spatialGeometry && (spatialGeometry as any).radius && spatialGeometry.coordinates && spatialGeometry.coordinates.length >= 2 && (
+                    <Circle
+                        center={[spatialGeometry.coordinates[1] as number, spatialGeometry.coordinates[0] as number]}
+                        radius={(spatialGeometry as any).radius}
+                        pathOptions={{
+                            color: '#1A3D40',
+                            fillColor: '#4AA3A5',
+                            fillOpacity: 0.2,
+                            weight: 2
                         }}
                     />
                 )}

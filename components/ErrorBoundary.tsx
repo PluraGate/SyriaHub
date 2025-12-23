@@ -75,11 +75,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 // Error type detection
 type ErrorType = 'network' | 'auth' | 'notFound' | 'generic'
 
-function detectErrorType(error: Error | null): ErrorType {
+function detectErrorType(error: Error | null | any): ErrorType {
     if (!error) return 'generic'
 
-    const message = error.message.toLowerCase()
-    const name = error.name.toLowerCase()
+    // Safeguard against non-standard error objects
+    const message = error.message ? String(error.message).toLowerCase() : ''
+    const name = error.name ? String(error.name).toLowerCase() : ''
 
     if (message.includes('network') || message.includes('fetch') || message.includes('failed to load')) {
         return 'network'

@@ -23,6 +23,6 @@ export const config = {
     // Match only internationalized pathnames
     // We exclude api, static files, etc.
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'
+        '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)'
     ]
 };
