@@ -252,6 +252,15 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                     <option value="trending">{t('displaySettings.trending')}</option>
                                 </select>
                             </div>
+
+                            <div className="pt-4 border-t border-gray-100 dark:border-dark-border">
+                                <ToggleSetting
+                                    label={t('displaySettings.guidedReadingMode')}
+                                    description={t('displaySettings.guidedReadingModeDesc')}
+                                    checked={preferences.display.guided_reading_mode}
+                                    onChange={(v) => handleUpdate('display', 'guided_reading_mode', v)}
+                                />
+                            </div>
                         </div>
                     )}
 

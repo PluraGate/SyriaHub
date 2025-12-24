@@ -19,6 +19,7 @@ import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
 import { useTranslations } from 'next-intl'
+import { FirstTimeContributorPrompt } from '@/components/FirstTimeContributorPrompt'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -75,6 +76,7 @@ export default function EditorPage() {
   const [useRichEditor, setUseRichEditor] = useState(true)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
   const [linkedResources, setLinkedResources] = useState<any[]>([])
+  const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false)
 
   // Epistemic Architecture fields
   const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
@@ -109,6 +111,33 @@ export default function EditorPage() {
       setShowDraftBanner(true)
     }
   }, [hasDraft, draftData, postIdParam, title, content])
+
+  // Check for first-time contributor
+  useEffect(() => {
+    if (!user || postIdParam) return // Only for new posts
+
+    // Check sessionStorage first
+    if (typeof window !== 'undefined') {
+      const seen = sessionStorage.getItem('firstTimePromptSeen')
+      if (seen === 'true') return
+    }
+
+    // Check if user has any published posts
+    async function checkFirstTime() {
+      if (!user?.id) return
+      const { count } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('author_id', user.id)
+        .eq('status', 'published')
+
+      if (count === 0) {
+        setShowFirstTimePrompt(true)
+      }
+    }
+
+    checkFirstTime()
+  }, [user, postIdParam, supabase])
 
   // Handle draft restoration
   const handleRestoreDraft = useCallback(() => {
@@ -555,6 +584,18 @@ export default function EditorPage() {
                 draftData={draftData}
                 onRestore={handleRestoreDraft}
                 onDiscard={handleDiscardDraft}
+              />
+            )}
+
+            {/* First-Time Contributor Prompt */}
+            {showFirstTimePrompt && !postIdParam && (
+              <FirstTimeContributorPrompt
+                onDismiss={() => {
+                  setShowFirstTimePrompt(false)
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('firstTimePromptSeen', 'true')
+                  }
+                }}
               />
             )}
 

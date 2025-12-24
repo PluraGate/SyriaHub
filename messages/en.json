@@ -341,6 +341,14 @@
             },
             "editWindowTitle": "24-Hour Edit Window",
             "editWindowDescription": "Once published, you can edit this post for 24 hours. After that, it will be locked for transparency and academic integrity."
+        },
+        "firstTimePrompt": {
+            "title": "Welcome, Contributor",
+            "description": "This is a research commons. Before publishing, consider:",
+            "question1": "What evidence supports this claim?",
+            "question2": "What do I not know, or cannot verify?",
+            "question3": "Who should I reference or acknowledge?",
+            "dismiss": "Dismiss"
         }
     },
     "Profile": {
@@ -409,7 +417,8 @@
         "badge": "Collaborative Research Platform",
         "featuredResearchers": "Featured Researchers",
         "trendingNow": "Trending Now",
-        "upcomingEvents": "Upcoming Events"
+        "upcomingEvents": "Upcoming Events",
+        "context": "Context"
     },
     "Footer": {
         "description": "A collaborative research commons for Syrian knowledge, context, and memory.",
@@ -425,7 +434,8 @@
         "governance": "Governance & Trust",
         "privacy": "Privacy Policy",
         "spatialTeaser": "Spatial knowledge tools coming soon",
-        "licensingNote": "Content licensed per author terms."
+        "licensingNote": "Content licensed per author terms.",
+        "researchCommonsStatement": "This is not a discussion platform. It is a research commons."
     },
     "Resources": {
         "linkedResources": "Linked Resources",
@@ -751,7 +761,9 @@
             "defaultSort": "Default Sort",
             "mostRecent": "Most Recent",
             "mostPopular": "Most Popular",
-            "trending": "Trending"
+            "trending": "Trending",
+            "guidedReadingMode": "Reduced interface for focused reading",
+            "guidedReadingModeDesc": "Minimise distractions by hiding activity indicators, badges, and metrics"
         },
         "editorSettings": {
             "title": "Editor Settings",
@@ -1492,9 +1504,9 @@
         }
     },
     "Trending": {
-        "title": "Trending",
-        "noTrending": "No trending posts yet",
-        "viewAll": "View all trending",
+        "title": "Active Discussions",
+        "noTrending": "No active discussions yet",
+        "viewAll": "View all discussions",
         "week": "Week",
         "month": "Month",
         "today": "Today"
@@ -2418,7 +2430,7 @@
         "reason": "Reason",
         "confidence": "Confidence",
         "diversityObjective": "Diversity Objective: {objective}",
-        "footer": "Epistemic diversity engine: Surfacing contradictions and gaps to prevent consensus bias."
+        "footer": "These are suggestions based on your current reading session. They do not reflect long-term preferences and are not personalised beyond this session."
     },
     "KnowledgeGraph": {
         "title": "Knowledge Graph",
@@ -2503,6 +2515,122 @@
             "boundarySpillover": "This region spans multiple administrative areas",
             "accessDiscontinuity": "Administrative boundaries may not reflect physical access patterns",
             "aidClustering": "Aid activity patterns could be reviewed in this area"
+        },
+        "confidenceWeak": "Weak signal",
+        "confidenceModerate": "Moderate indication",
+        "confidenceStrong": "Strong pattern match"
+    },
+    "Governance": {
+        "title": "Governance & Trust",
+        "subtitle": "How SyriaHub maintains quality without compromising autonomy.",
+        "moderation": {
+            "title": "How Moderation Works",
+            "intro": "Content moderation follows a layered approach designed to catch problems early while preserving human judgment for complex cases.",
+            "layer1Title": "AI Pre-Filter",
+            "layer1Desc": "All content passes through automated checks for harassment, spam, and plagiarism. Flagged content is held for human review.",
+            "layer2Title": "Community Reports",
+            "layer2Desc": "Any user can report content that may violate standards. Reports require explanation and cannot target your own content.",
+            "layer3Title": "Human Moderators",
+            "layer3Desc": "Moderators review flagged content and reports. They can approve, request revisions, or reject with explanation.",
+            "layer4Title": "Jury Panel",
+            "layer4Desc": "Complex or contested cases go to multiple moderators who review independently and vote."
+        },
+        "trust": {
+            "title": "What Trust Scores Mean",
+            "whatItIs": "Trust scores represent:",
+            "is1": "Content quality consistency over time",
+            "is2": "Citation accuracy and proper attribution",
+            "is3": "Constructive community participation",
+            "whatItIsNot": "Trust scores do NOT represent:",
+            "isNot1": "Intelligence or expertise",
+            "isNot2": "Correctness of conclusions",
+            "isNot3": "Authority on any topic"
+        },
+        "ai": {
+            "title": "How AI Is Constrained",
+            "intro": "SyriaHub uses AI for specific, limited purposes with clear constraints:",
+            "principle1Title": "Transparency",
+            "principle1Desc": "Users always know when AI is involved",
+            "principle2Title": "Reversibility",
+            "principle2Desc": "All AI decisions can be overridden by humans",
+            "principle3Title": "No Profiling",
+            "principle3Desc": "AI does not build user behavioral models",
+            "principle4Title": "Hedging Language",
+            "principle4Desc": "AI never speaks with false certainty"
+        },
+        "limits": {
+            "title": "Limits of Authority",
+            "intro": "Power is safer when its limits are written down.",
+            "moderatorsTitle": "What Moderators Cannot Do",
+            "mod1": "Delete content without explanation",
+            "mod2": "Reject content for disagreeing with conclusions",
+            "mod3": "Override jury panel decisions",
+            "adminsTitle": "What Admins Should Not Decide",
+            "admin1": "Which research conclusions are correct",
+            "admin2": "Who counts as a real researcher",
+            "admin3": "Exceptions to moderation rules for specific users"
+        },
+        "nonGoals": {
+            "title": "What SyriaHub Will Not Do",
+            "item1": "Profile users behaviorally",
+            "item2": "Rank people by influence metrics",
+            "item3": "Optimize for engagement",
+            "item4": "Personalize content feeds",
+            "item5": "Allow anonymous moderation decisions"
+        }
+    },
+    "HowItWorks": {
+        "title": "How SyriaHub Works",
+        "subtitle": "Understanding the system you're contributing to.",
+        "mentalModel": {
+            "line1": "SyriaHub is closer to a shared research notebook than a forum.",
+            "line2": "Contributions are expected to remain useful even when disagreed with."
+        },
+        "contentTypes": {
+            "title": "Content Types",
+            "bestFor": "Best for",
+            "article": "Article",
+            "articleDesc": "Long-form research with citations, analysis, and conclusions.",
+            "articleBestFor": "Original research, literature reviews, policy analysis",
+            "question": "Question",
+            "questionDesc": "Community Q&A with voting and accepted answers.",
+            "questionBestFor": "Factual queries, seeking sources, methodological advice",
+            "trace": "Trace",
+            "traceDesc": "Collective memory artefacts—primary sources preserved for the record.",
+            "traceBestFor": "Photographs, documents, oral testimonies, maps",
+            "gap": "Research Gap",
+            "gapDesc": "Identified absences in current knowledge.",
+            "gapBestFor": "Coordinating research priorities, avoiding duplication"
+        },
+        "forking": {
+            "title": "Forking & Attribution",
+            "intro": "Content can be forked—creating a new version that builds on the original while maintaining attribution.",
+            "step1": "Click Fork on any post to create a new draft with the original content",
+            "step2": "Edit and extend as needed to take the work in a new direction",
+            "step3": "On publish, your fork links back to the original and appears in its Forks section"
+        },
+        "citations": {
+            "title": "Citations & Versioning",
+            "intro": "The citation system tracks how knowledge connects across the platform.",
+            "editWindowTitle": "24-Hour Edit Window",
+            "editWindowDesc": "After publishing, you have 24 hours to make corrections. After that, edits create new versions.",
+            "backlinksTitle": "Citation Backlinks",
+            "backlinksDesc": "When you cite another post, a backlink appears on the original showing how work is connected."
+        },
+        "spatial": {
+            "title": "Spatial Context & Awareness",
+            "intro": "Posts can specify geographic regions and time periods they cover, enabling spatial pattern detection.",
+            "flagsNote": "Important",
+            "flagsDesc": "Awareness flags are suggestions, not conclusions. They are dismissible, session-only, and never stored as metadata."
+        },
+        "gaps": {
+            "title": "Research Gaps Lifecycle",
+            "intro": "Research gaps map what we don't know, helping coordinate effort and avoid duplication.",
+            "step1": "Identify",
+            "step2": "Upvote",
+            "step3": "Claim",
+            "step4": "Work",
+            "step5": "Resolve"
         }
     }
 }
