@@ -41,7 +41,7 @@ export function SpatialContextCard({
     const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
 
     // Fetch nearby posts for P5 detection (uses spatialCoverage text as initial governorate hint)
-    const { postCount, hasHumanitarianPosts } = useNearbyPosts(spatialGeometry, spatialCoverage || undefined)
+    const { postCount, hasHumanitarianPosts } = useNearbyPosts(spatialGeometry ?? null, spatialCoverage || undefined)
 
     // Load governorate data once
     useEffect(() => {
