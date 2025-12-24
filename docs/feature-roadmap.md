@@ -26,6 +26,7 @@ This roadmap outlines the SyriaHub feature modules and their current status. Eac
 | 8 | Gamification | ✅ Complete | XP, levels, badges, achievements |
 | 9 | Real-time Collaboration | ✅ Complete | Presence tracking in editor |
 | 10 | Analytics Dashboard | ✅ Complete | Researcher analytics with trends |
+| 11 | Spatial Engine | ✅ Complete | Map drawing, pattern detection (P1-P5), awareness flags |
 
 ---
 
@@ -108,6 +109,17 @@ This roadmap outlines the SyriaHub feature modules and their current status. Eac
 - Trend charts (7/14/30/90 day periods)
 - Top performing content ranking
 
+### ✅ Spatial Engine
+
+- **Drawing tools**: Point, Circle, Polygon with radius slider
+- **Place search**: Nominatim/OpenStreetMap integration
+- **Pattern detection** (P1-P5): Network bottleneck, service mismatch, boundary spill-over, access discontinuity, aid clustering
+- **Awareness flags**: Dismissible, hedging language, 60% confidence threshold
+- **Governorate polygons**: geoBoundaries data with Arabic names
+- **Pattern preview**: Authors see flags while creating posts
+- **Precedent cards**: Related case studies
+- **Documentation**: SPATIAL_PATTERN_PHILOSOPHY.md, public/data/README.md
+
 ---
 
 ## Future Enhancements
@@ -167,4 +179,4 @@ This roadmap outlines the SyriaHub feature modules and their current status. Eac
 
 ---
 
-*Last updated: December 2024*
+*Last updated: December 24, 2024*

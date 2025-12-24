@@ -1,6 +1,6 @@
 # System Gap Analysis
 
-**Last Updated:** December 21, 2025
+**Last Updated:** December 24, 2024
 
 This document tracks the system capabilities, completed features, and remaining gaps for the SyriaHub research platform.
 
@@ -53,6 +53,20 @@ This document tracks the system capabilities, completed features, and remaining 
 | Content Type Tooltips | ✅ Complete | Help text explaining Article vs Question vs Trace |
 | Research Gaps Table | ✅ Complete | DB table with status, priority, upvotes, and claims |
 | Academic Impact Score | ✅ Complete | Citation-based impact metric for posts |
+
+### Spatial Engine (Phase 3)
+| Feature | Status | Notes |
+|---------|--------|-------|
+| SpatialEditor Component | ✅ Complete | Point, Circle, Polygon drawing tools with Nominatim search |
+| SpatialMap Viewer | ✅ Complete | Leaflet map with layer toggle and auto-zoom |
+| SpatialContextCard | ✅ Complete | Displays spatial context and temporal range on posts |
+| Pattern Detection (P1-P5) | ✅ Complete | Network bottleneck, service mismatch, boundary spill-over, access discontinuity, aid clustering |
+| Awareness Flags | ✅ Complete | Dismissible, session-only flags with hedging language |
+| Confidence Scoring | ✅ Complete | 60% threshold (40% pattern, 30% data, 20% temporal, 10% source) |
+| Governorate Polygons | ✅ Complete | geoBoundaries data with Arabic names |
+| Pattern Preview in Editor | ✅ Complete | Authors see flags while creating posts |
+| Precedent Cards | ✅ Complete | Related case studies for detected patterns |
+| P5 Database Integration | ✅ Complete | useNearbyPosts hook queries actual post data |
 
 ### Events System
 | Feature | Status | Notes |
