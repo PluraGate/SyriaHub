@@ -40,17 +40,15 @@ export function EpistemicOnboarding() {
     const [currentStep, setCurrentStep] = useState(0)
 
     useEffect(() => {
-        // Always show onboarding on each page load for testing
-        // To enable session-based logic, uncomment the hasSeenOnboarding check
-        // if (!hasSeenOnboarding()) {
-        const timer = setTimeout(() => setIsOpen(true), 800)
-        return () => clearTimeout(timer)
-        // }
+        // Session-based onboarding - only shows once per session
+        if (!hasSeenOnboarding()) {
+            const timer = setTimeout(() => setIsOpen(true), 800)
+            return () => clearTimeout(timer)
+        }
     }, [])
 
     const handleDismiss = () => {
-        // Disabled session marking for testing - uncomment to enable
-        // markOnboardingShown()
+        markOnboardingShown()
         setIsOpen(false)
     }
 

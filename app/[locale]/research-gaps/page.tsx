@@ -399,6 +399,41 @@ export default function ResearchGapsPage() {
                     </div>
                 </div>
 
+                {/* Success Stories - Resolved Gaps Showcase */}
+                {gaps.filter(g => g.status === 'addressed' && g.addressed_by_post_id).length > 0 && statusFilter !== 'identified' && statusFilter !== 'investigating' && (
+                    <div className="mb-8 p-5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl">
+                        <div className="flex items-center gap-2 mb-4">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                            <h3 className="font-semibold text-emerald-800 dark:text-emerald-300">
+                                Gaps That Led to Research
+                            </h3>
+                        </div>
+                        <p className="text-sm text-emerald-700 dark:text-emerald-400/80 mb-4">
+                            These knowledge gaps have been addressed through community research contributions.
+                        </p>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {gaps
+                                .filter(g => g.status === 'addressed' && g.addressed_by_post_id)
+                                .slice(0, 3)
+                                .map(gap => (
+                                    <Link
+                                        key={gap.id}
+                                        href={`/post/${gap.addressed_by_post_id}`}
+                                        className="group p-3 bg-white dark:bg-dark-surface rounded-lg border border-emerald-100 dark:border-emerald-800/30 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all"
+                                    >
+                                        <h4 className="text-sm font-medium text-text dark:text-dark-text line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                            {gap.title}
+                                        </h4>
+                                        <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                            View research
+                                        </div>
+                                    </Link>
+                                ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* New Gap Form Modal */}
                 {showNewGapForm && (
                     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

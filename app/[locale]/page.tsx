@@ -169,15 +169,24 @@ export default async function Home({
                     <SuggestedPostsCarousel limit={6} />
                   </div>
 
-                  {/* Sidebar Column */}
+                  {/* Sidebar Column - "Context Stack" */}
                   <div className="space-y-6">
-                    {/* Trending Posts */}
-                    <TrendingPosts />
+                    {/* Section Header */}
+                    <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide">
+                      {t('context')}
+                    </h3>
 
-                    {/* Activity Feed */}
-                    <ActivityFeedCompact limit={5} />
+                    {/* Active Discussions */}
+                    <div>
+                      <TrendingPosts />
+                    </div>
 
-                    {/* Related Authors */}
+                    {/* Recent Activity */}
+                    <div>
+                      <ActivityFeedCompact limit={5} />
+                    </div>
+
+                    {/* Related Researchers */}
                     <div className="card p-4">
                       <RelatedAuthors currentUserId={user.id} limit={4} />
                     </div>

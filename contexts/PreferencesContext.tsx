@@ -27,6 +27,7 @@ export interface UserPreferences {
         show_avatars: boolean
         posts_per_page: number
         default_sort: 'recent' | 'popular' | 'trending'
+        guided_reading_mode: boolean
     }
 
     // Privacy
@@ -62,6 +63,7 @@ const defaultPreferences: UserPreferences = {
         show_avatars: true,
         posts_per_page: 20,
         default_sort: 'recent',
+        guided_reading_mode: false,
     },
     privacy: {
         show_profile_public: true,

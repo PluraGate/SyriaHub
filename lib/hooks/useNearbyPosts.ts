@@ -35,16 +35,23 @@ export function useNearbyPosts(
                 const supabase = createClient()
 
                 // Query posts with spatial coverage in the same governorate
-                // This is a simplified proximity check based on text match
+                // Using ilike for case-insensitive partial match
                 const { data, error } = await supabase
                     .from('posts')
                     .select('id, title, content, spatial_coverage')
-                    .or(`spatial_coverage.ilike.%${governorate}%`)
+                    .not('spatial_coverage', 'is', null)
+                    .ilike('spatial_coverage', `%${governorate}%`)
                     .eq('status', 'published')
                     .limit(20)
 
                 if (error) {
-                    console.error('Error fetching nearby posts:', error)
+                    // Log detailed error info - Supabase errors have message, code, details
+                    console.error('Error fetching nearby posts:', {
+                        message: error.message,
+                        code: error.code,
+                        details: error.details,
+                        hint: error.hint
+                    })
                     setPostCount(0)
                     setHasHumanitarianPosts(false)
                     return
@@ -61,7 +68,7 @@ export function useNearbyPosts(
                 setHasHumanitarianPosts(humanitarian)
 
             } catch (err) {
-                console.error('Failed to fetch nearby posts:', err)
+                console.error('Failed to fetch nearby posts:', err instanceof Error ? err.message : err)
                 setPostCount(0)
                 setHasHumanitarianPosts(false)
             } finally {

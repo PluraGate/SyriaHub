@@ -68,7 +68,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about/how-it-works"
+                  href="/how-it-works"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('howItWorks')}
@@ -101,7 +101,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about/governance"
+                  href="/governance"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
                   {t('governance')}
@@ -178,8 +178,11 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar - Legal */}
-        <div className="py-4 border-t border-gray-200 dark:border-dark-border">
+        {/* Bottom Bar - Research Commons Statement & Legal */}
+        <div className="py-4 border-t border-gray-200 dark:border-dark-border space-y-2">
+          <p className="text-text-muted/70 dark:text-dark-text-muted/50 text-[11px] text-center italic">
+            {t('researchCommonsStatement')}
+          </p>
           <p className="text-text-muted dark:text-dark-text-muted/60 text-xs text-center">
             © {currentYear} SyriaHub · {t('licensingNote')}
           </p>

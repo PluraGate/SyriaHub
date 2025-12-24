@@ -64,16 +64,23 @@ export function AwarenessFlag({ patterns, className = '' }: AwarenessFlagProps) 
                                 {locale === 'ar' ? pattern.message_ar : pattern.message}
                             </p>
 
-                            {/* Subtle confidence indicator (hidden from most users) */}
+                            {/* Language-first confidence indicator - avoids false precision */}
                             {pattern.confidence && (
-                                <div className="mt-1.5 flex items-center gap-2">
-                                    <div className="h-1 flex-1 bg-amber-200 dark:bg-amber-800/50 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-amber-500 dark:bg-amber-500 rounded-full transition-all"
-                                            style={{ width: `${pattern.confidence * 100}%` }}
-                                        />
-                                    </div>
-                                    <span className="text-xs text-amber-500 dark:text-amber-400/70">
+                                <div className="mt-1.5 flex items-center gap-2 group cursor-help"
+                                    title={`${Math.round(pattern.confidence * 100)}% confidence`}>
+                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${pattern.confidence >= 0.85
+                                            ? 'bg-amber-200 dark:bg-amber-700/50 text-amber-800 dark:text-amber-200'
+                                            : pattern.confidence >= 0.70
+                                                ? 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300'
+                                                : 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                                        }`}>
+                                        {pattern.confidence >= 0.85
+                                            ? t('confidenceStrong')
+                                            : pattern.confidence >= 0.70
+                                                ? t('confidenceModerate')
+                                                : t('confidenceWeak')}
+                                    </span>
+                                    <span className="text-[10px] text-amber-400 dark:text-amber-500/60 opacity-0 group-hover:opacity-100 transition-opacity">
                                         {Math.round(pattern.confidence * 100)}%
                                     </span>
                                 </div>

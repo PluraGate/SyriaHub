@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
-import { TrendingUp, Flame, Clock, ChevronRight, Sparkles } from 'lucide-react'
+import { TrendingUp, MessageSquare, Clock, ChevronRight, Sparkles } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface TrendingPost {
@@ -118,8 +118,8 @@ export function TrendingPosts() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-dark-border">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                        <Flame className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                        <MessageSquare className="w-4 h-4 text-white" />
                     </div>
                     <h3 className="font-semibold text-text dark:text-dark-text">{t('title')}</h3>
                 </div>
