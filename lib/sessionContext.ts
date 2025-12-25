@@ -121,7 +121,7 @@ export function resetSessionContext(): void {
  */
 export function hasSeenOnboarding(): boolean {
     if (typeof window === 'undefined') return true
-    return sessionStorage.getItem(ONBOARDING_KEY) === 'true'
+    return localStorage.getItem(ONBOARDING_KEY) === 'true'
 }
 
 /**
@@ -129,7 +129,7 @@ export function hasSeenOnboarding(): boolean {
  */
 export function markOnboardingShown(): void {
     if (typeof window === 'undefined') return
-    sessionStorage.setItem(ONBOARDING_KEY, 'true')
+    localStorage.setItem(ONBOARDING_KEY, 'true')
 }
 
 /**

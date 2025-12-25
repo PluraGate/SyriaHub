@@ -12,9 +12,11 @@ import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FeedCardSkeletonCompact } from '@/components/ui/skeleton'
+import { ImpactStoriesSection } from '@/components/ImpactStoriesSection'
 import { Post } from '@/types'
 import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+
 
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
 type FeedTab = 'all' | 'following'
@@ -353,6 +355,11 @@ export default function FeedPage() {
                     )}
                   </BentoGrid>
                 </section>
+              )}
+
+              {/* Impact Stories - Research Outcomes */}
+              {!selectedTag && (
+                <ImpactStoriesSection limit={3} className="mb-12 -mx-4 sm:-mx-6 lg:-mx-8" />
               )}
 
               {/* Remaining Posts - Magazine Cards Grid */}

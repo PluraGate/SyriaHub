@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { useToast } from '@/components/ui/toast'
+import { GapContributions } from '@/components/GapContributions'
 import {
     Search,
     Plus,
@@ -691,7 +692,6 @@ export default function ResearchGapsPage() {
                                                 Being investigated by {(gap.claimer as any).name || (gap.claimer as any).email?.split('@')[0]}
                                             </div>
                                         )}
-
                                         {gap.status === 'addressed' && gap.addressed_by_post_id && (
                                             <Link
                                                 href={`/post/${gap.addressed_by_post_id}`}
@@ -701,6 +701,15 @@ export default function ResearchGapsPage() {
                                                 View the addressing research
                                                 <ArrowRight className="w-4 h-4" />
                                             </Link>
+                                        )}
+
+                                        {/* Gap Contributions - formal collaboration system */}
+                                        {gap.status !== 'closed' && (
+                                            <GapContributions
+                                                gapId={gap.id}
+                                                gapClaimerId={gap.claimed_by || undefined}
+                                                className="mt-4"
+                                            />
                                         )}
                                     </div>
                                 </div>

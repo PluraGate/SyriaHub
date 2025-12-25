@@ -14,7 +14,9 @@
     "test:e2e": "playwright test",
     "test:e2e:editor": "playwright test tests/e2e/editor.spec.ts",
     "test:e2e:ui": "playwright test --ui",
-    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
+    "db:reset": "npx tsx scripts/reset-database.ts",
+    "db:reset:force": "npx tsx scripts/reset-database.ts --force"
   },
   "keywords": [
     "nextjs",
