@@ -18,7 +18,8 @@ import {
     Search,
     MessageSquarePlus,
     Shield,
-    BookOpen
+    BookOpen,
+    Activity
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
@@ -40,6 +41,11 @@ const navItems = [
         label: 'Analytics',
         href: '/admin/analytics',
         icon: BarChart3,
+    },
+    {
+        label: 'Platform Health',
+        href: '/admin/platform-health',
+        icon: Activity,
     },
     {
         label: 'Search Analytics',
@@ -187,6 +193,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                     const keyMap: Record<string, string> = {
                         'Overview': 'overview',
                         'Analytics': 'analytics',
+                        'Platform Health': 'platformHealth',
                         'Search Analytics': 'searchAnalytics',
                         'Users': 'users',
                         'Content': 'content',

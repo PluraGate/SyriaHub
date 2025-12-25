@@ -9,8 +9,6 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Enable instrumentation hook for Sentry
-    instrumentationHook: true,
   },
   images: {
     remotePatterns: [
