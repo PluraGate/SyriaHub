@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SkillBadge } from './SkillBadge'
 import { UserAvatar } from '@/components/ui/UserAvatar'
@@ -530,19 +531,20 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {skill.endorsers.map((endorser: Endorser) => (
-                                                <div
+                                                <Link
                                                     key={endorser.id}
-                                                    className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-dark-surface rounded-full border border-gray-200 dark:border-dark-border"
+                                                    href={`/profile/${endorser.id}`}
+                                                    className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-dark-surface rounded-full border border-gray-200 dark:border-dark-border hover:border-primary/50 transition-colors"
                                                 >
                                                     <UserAvatar
                                                         name={endorser.name}
                                                         avatarUrl={endorser.avatar_url}
                                                         size="sm"
                                                     />
-                                                    <span className="text-sm text-text dark:text-dark-text">
+                                                    <span className="text-sm text-text dark:text-dark-text hover:text-primary transition-colors">
                                                         {endorser.name || 'Anonymous'}
                                                     </span>
-                                                </div>
+                                                </Link>
                                             ))}
                                         </div>
                                     </div>

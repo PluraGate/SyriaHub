@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { formatDistanceToNow } from 'date-fns'
@@ -70,17 +71,34 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
             <div className="py-3">
                 {/* Comment Header */}
                 <div className="flex items-start gap-3">
-                    <UserAvatar
-                        name={comment.user?.name}
-                        email={comment.user?.email}
-                        avatarUrl={comment.user?.avatar_url}
-                        size="sm"
-                    />
+                    {comment.user?.id ? (
+                        <Link href={`/profile/${comment.user.id}`} className="shrink-0 hover:opacity-80 transition-opacity">
+                            <UserAvatar
+                                name={comment.user?.name}
+                                email={comment.user?.email}
+                                avatarUrl={comment.user?.avatar_url}
+                                size="sm"
+                            />
+                        </Link>
+                    ) : (
+                        <UserAvatar
+                            name={comment.user?.name}
+                            email={comment.user?.email}
+                            avatarUrl={comment.user?.avatar_url}
+                            size="sm"
+                        />
+                    )}
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-medium text-text dark:text-dark-text">
-                                {comment.user?.name || t('anonymous')}
-                            </span>
+                            {comment.user?.id ? (
+                                <Link href={`/profile/${comment.user.id}`} className="text-sm font-medium text-text dark:text-dark-text hover:text-primary dark:hover:text-accent-light transition-colors">
+                                    {comment.user?.name || t('anonymous')}
+                                </Link>
+                            ) : (
+                                <span className="text-sm font-medium text-text dark:text-dark-text">
+                                    {comment.user?.name || t('anonymous')}
+                                </span>
+                            )}
                             <span className="text-xs text-text-light dark:text-dark-text-muted">
                                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: dateLocale })}
                             </span>

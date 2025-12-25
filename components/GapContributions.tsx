@@ -374,20 +374,22 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
                                         {/* Header */}
                                         <div className="flex items-start gap-3 mb-3">
                                             {/* User avatar */}
-                                            {contribution.user?.avatar_url ? (
-                                                <img
-                                                    src={contribution.user.avatar_url}
-                                                    alt=""
-                                                    className="w-8 h-8 rounded-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className={cn(
-                                                    'w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white',
-                                                    getAvatarGradient(contribution.user_id)
-                                                )}>
-                                                    {getInitials(contribution.user?.name, contribution.user?.email)}
-                                                </div>
-                                            )}
+                                            <Link href={`/profile/${contribution.user_id}`} className="shrink-0 hover:opacity-80 transition-opacity">
+                                                {contribution.user?.avatar_url ? (
+                                                    <img
+                                                        src={contribution.user.avatar_url}
+                                                        alt=""
+                                                        className="w-8 h-8 rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className={cn(
+                                                        'w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white',
+                                                        getAvatarGradient(contribution.user_id)
+                                                    )}>
+                                                        {getInitials(contribution.user?.name, contribution.user?.email)}
+                                                    </div>
+                                                )}
+                                            </Link>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 flex-wrap">
                                                     <Link
