@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search, FileText, Users, Globe, Calendar, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useTypeahead } from '@/hooks/useTypeahead'
 
 interface Suggestion {
   id: string
@@ -36,6 +37,12 @@ export function SearchBar() {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Typeahead hook for inline completion
+  const { completion, acceptCompletion, trackSearch } = useTypeahead(query, {
+    debounceMs: 100,
+    minChars: 2
+  })
 
   // Fetch suggestions
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
@@ -88,10 +95,24 @@ export function SearchBar() {
     if (!query.trim()) return
 
     setShowDropdown(false)
+    trackSearch(query.trim()) // Track the search term
     router.push(`/search?q=${encodeURIComponent(query)}`)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Handle Tab or Right Arrow to accept typeahead completion
+    if ((e.key === 'Tab' || e.key === 'ArrowRight') && completion && !e.shiftKey) {
+      const cursorAtEnd = inputRef.current?.selectionStart === query.length
+      if (cursorAtEnd) {
+        e.preventDefault()
+        const acceptedTerm = acceptCompletion()
+        if (acceptedTerm) {
+          setQuery(acceptedTerm)
+        }
+        return
+      }
+    }
+
     if (!showDropdown || suggestions.length === 0) return
 
     switch (e.key) {
@@ -150,24 +171,39 @@ export function SearchBar() {
   return (
     <div className="relative hidden md:block w-64 lg:w-80">
       <form onSubmit={handleSearch}>
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setShowDropdown(true)
-            setSelectedIndex(-1)
-          }}
-          onFocus={() => setShowDropdown(true)}
-          onKeyDown={handleKeyDown}
-          placeholder={t('searchPlaceholder')}
-          className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-        />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        {isLoading && (
-          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
-        )}
+        <div className="relative">
+          {/* Typeahead overlay - shows greyed out completion */}
+          <div className="pointer-events-none absolute inset-0 flex items-center overflow-hidden rounded-lg">
+            <div className="pl-10 pr-12 py-2 whitespace-pre overflow-hidden text-ellipsis max-w-full">
+              <span className="text-transparent">{query}</span>
+              <span className="text-gray-400 dark:text-gray-500">
+                {completion || ''}
+              </span>
+            </div>
+          </div>
+
+          {/* Actual input */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setShowDropdown(true)
+              setSelectedIndex(-1)
+            }}
+            onFocus={() => setShowDropdown(true)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('searchPlaceholder')}
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            style={{ background: 'transparent', position: 'relative', zIndex: 1 }}
+            autoComplete="off"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+          {isLoading && (
+            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin z-10" />
+          )}
+        </div>
       </form>
 
       {/* Suggestions Dropdown */}
@@ -213,11 +249,12 @@ export function SearchBar() {
                   type="button"
                   onClick={() => {
                     setShowDropdown(false)
+                    trackSearch(query.trim())
                     router.push(`/search?q=${encodeURIComponent(query)}`)
                   }}
                   className="w-full px-4 py-3 text-sm text-primary dark:text-accent-light font-medium hover:bg-gray-50 dark:hover:bg-dark-border transition-colors text-center"
                 >
-                  View all results for &quot;{query}&quot;
+                  {tSearch('viewAllResults', { query })}
                 </button>
               </div>
             </div>
@@ -230,11 +267,12 @@ export function SearchBar() {
                 type="button"
                 onClick={() => {
                   setShowDropdown(false)
+                  trackSearch(query.trim())
                   router.push(`/search?q=${encodeURIComponent(query)}`)
                 }}
                 className="mt-2 text-sm text-primary dark:text-accent-light font-medium hover:underline"
               >
-                Search for &quot;{query}&quot;
+                {tSearch('searchFor', { query })}
               </button>
             </div>
           ) : null}

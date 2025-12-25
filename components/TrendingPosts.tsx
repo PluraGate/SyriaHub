@@ -116,21 +116,21 @@ export function TrendingPosts() {
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-dark-border">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+            <div className="flex items-center justify-between gap-3 p-4 border-b border-gray-100 dark:border-dark-border">
+                <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center flex-shrink-0">
                         <MessageSquare className="w-4 h-4 text-white" />
                     </div>
-                    <h3 className="font-semibold text-text dark:text-dark-text">{t('title')}</h3>
+                    <h3 className="font-semibold text-sm text-text dark:text-dark-text truncate">{t('title')}</h3>
                 </div>
 
                 {/* Time Range Selector */}
-                <div className="flex gap-1 p-0.5 bg-gray-100 dark:bg-dark-bg rounded-lg">
+                <div className="flex gap-1 p-0.5 bg-gray-100 dark:bg-dark-bg rounded-lg flex-shrink-0">
                     {timeRangeOptions.map(option => (
                         <button
                             key={option.value}
                             onClick={() => setTimeRange(option.value)}
-                            className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${timeRange === option.value
+                            className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all whitespace-nowrap ${timeRange === option.value
                                 ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
                                 : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                                 }`}

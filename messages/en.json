@@ -639,6 +639,9 @@
         "noResultsDesc": "Try different keywords or filters",
         "clearSearch": "Clear Search",
         "enterSearch": "Enter a search term to find posts, users, groups, and events.",
+        "viewAllResults": "View all results for \"{query}\"",
+        "searchFor": "Search for \"{query}\"",
+        "noSuggestions": "No suggestions found",
         "filters": {
             "contentType": "Content Type",
             "author": "Author",
@@ -666,9 +669,13 @@
     "Notifications": {
         "title": "Notifications",
         "markAllRead": "Mark all as read",
+        "markAllAsRead": "Mark all as read",
         "clearAll": "Clear all",
         "noNotifications": "No notifications",
         "noNotificationsDesc": "You're all caught up!",
+        "allCaughtUp": "All caught up!",
+        "noNotificationsYet": "No notifications yet. We'll let you know when something happens.",
+        "viewAllNotifications": "View All Notifications",
         "settings": "Notification Settings",
         "newComment": "commented on your post",
         "newReply": "replied to your comment",
@@ -1501,7 +1508,9 @@
             "save": "Save",
             "copyLink": "Copy link",
             "copied": "Copied!",
-            "saveAsReference": "Save as Reference"
+            "saveAsReference": "Save as Reference",
+            "searchFor": "Search for \"{query}\"",
+            "noSuggestions": "No suggestions found"
         }
     },
     "Trending": {
