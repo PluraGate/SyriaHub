@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Search, Filter, Loader2, ChevronDown, X, Info, AlertTriangle, Link2, Quote, FileDown, Bookmark, ExternalLink, MoreHorizontal, Globe, Database, History, Copy, Plus, GitBranch, Check, Clock } from 'lucide-react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { Search, Filter, Loader2, ChevronDown, X, Info, AlertTriangle, Link2, Quote, FileDown, Bookmark, ExternalLink, MoreHorizontal, Globe, Database, History, Copy, Plus, GitBranch, Check, Clock, FileText, Users, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TrustBadge } from '@/components/TrustProfileCard'
 import { InlineConflictBadge } from '@/components/ConflictWarning'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useTypeahead } from '@/hooks/useTypeahead'
 import type {
     SearchResult, SearchFilters, Discipline, EvidenceTier, ConflictPhase,
     DisciplineCategory
@@ -65,6 +66,15 @@ function stripMarkdown(text: string): string {
         .trim()
 }
 
+// Suggestion type for autocomplete dropdown
+interface Suggestion {
+    id: string
+    type: 'post' | 'user' | 'group' | 'event'
+    title: string
+    description: string
+    url: string
+}
+
 export function ResearchSearchEngine() {
     const t = useTranslations('ResearchLab.searchEnginePage')
     const [query, setQuery] = useState('')
@@ -82,6 +92,20 @@ export function ResearchSearchEngine() {
     const [activeTab, setActiveTab] = useState<'search' | 'saved'>('search')
     const [savingSearch, setSavingSearch] = useState(false)
     const [isFromCache, setIsFromCache] = useState(false) // Track if results are from cache
+
+    // Autocomplete dropdown state
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+    const [showDropdown, setShowDropdown] = useState(false)
+    const [selectedIndex, setSelectedIndex] = useState(-1)
+    const [loadingSuggestions, setLoadingSuggestions] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    // Typeahead hook for inline completion
+    const { completion, acceptCompletion, trackSearch } = useTypeahead(query, {
+        debounceMs: 100,
+        minChars: 2
+    })
 
     // Saved search type (matches database schema)
     interface SavedSearch {
@@ -281,6 +305,121 @@ export function ResearchSearchEngine() {
         setTimeout(() => setCopiedId(null), 2000)
     }, [])
 
+    // Fetch autocomplete suggestions
+    const fetchSuggestions = useCallback(async (searchQuery: string) => {
+        if (searchQuery.length < 2) {
+            setSuggestions([])
+            return
+        }
+
+        setLoadingSuggestions(true)
+        try {
+            const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(searchQuery)}`)
+            if (response.ok) {
+                const data = await response.json()
+                setSuggestions(data.suggestions || [])
+            }
+        } catch (error) {
+            console.error('Failed to fetch suggestions:', error)
+        } finally {
+            setLoadingSuggestions(false)
+        }
+    }, [])
+
+    // Debounced fetch for suggestions
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (query.trim()) {
+                fetchSuggestions(query)
+            } else {
+                setSuggestions([])
+            }
+        }, 200)
+        return () => clearTimeout(timer)
+    }, [query, fetchSuggestions])
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                inputRef.current &&
+                !inputRef.current.contains(event.target as Node)
+            ) {
+                setShowDropdown(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+    // Handle keyboard navigation for autocomplete
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Handle Tab or Right Arrow to accept typeahead completion
+        if ((e.key === 'Tab' || e.key === 'ArrowRight') && completion && !e.shiftKey) {
+            const cursorAtEnd = inputRef.current?.selectionStart === query.length
+            if (cursorAtEnd) {
+                e.preventDefault()
+                const acceptedTerm = acceptCompletion()
+                if (acceptedTerm) {
+                    setQuery(acceptedTerm)
+                }
+                return
+            }
+        }
+
+        // Handle Enter to search
+        if (e.key === 'Enter') {
+            if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+                // Navigate to selected suggestion
+                e.preventDefault()
+                setShowDropdown(false)
+                window.location.href = suggestions[selectedIndex].url
+            } else {
+                // Perform search
+                setShowDropdown(false)
+                trackSearch(query.trim())
+                handleSearch()
+            }
+            return
+        }
+
+        if (!showDropdown || suggestions.length === 0) return
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault()
+                setSelectedIndex(prev => Math.min(prev + 1, suggestions.length - 1))
+                break
+            case 'ArrowUp':
+                e.preventDefault()
+                setSelectedIndex(prev => Math.max(prev - 1, -1))
+                break
+            case 'Escape':
+                setShowDropdown(false)
+                setSelectedIndex(-1)
+                break
+        }
+    }
+
+    // Get icon for suggestion type
+    const getTypeIcon = (type: string) => {
+        switch (type) {
+            case 'post':
+                return <FileText className="w-4 h-4 text-blue-500" />
+            case 'user':
+                return <Users className="w-4 h-4 text-purple-500" />
+            case 'group':
+                return <Globe className="w-4 h-4 text-green-500" />
+            case 'event':
+                return <Calendar className="w-4 h-4 text-orange-500" />
+            default:
+                return <FileText className="w-4 h-4 text-gray-400" />
+        }
+    }
+
     return (
         <div className="max-w-4xl mx-auto">
             {/* Header with Tabs */}
@@ -455,20 +594,39 @@ export function ResearchSearchEngine() {
                         </button>
                     </div>
 
-                    {/* Search Bar */}
+                    {/* Search Bar with Typeahead */}
                     <div className="relative mb-4">
                         <div className="relative bg-white dark:bg-dark-surface rounded-2xl shadow-lg dark:shadow-none border border-gray-100 dark:border-dark-border overflow-hidden">
-                            <div className="flex items-center">
-                                <Search className="absolute start-5 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                            <div className="flex items-center relative">
+                                <Search className="absolute start-5 w-5 h-5 text-gray-400 dark:text-gray-500 z-10" />
+
+                                {/* Typeahead overlay - shows greyed out completion */}
+                                <div className="pointer-events-none absolute inset-0 flex items-center overflow-hidden rounded-2xl">
+                                    <div className="ps-14 pe-48 py-4 whitespace-pre overflow-hidden text-ellipsis max-w-full text-lg">
+                                        <span className="text-transparent">{query}</span>
+                                        <span className="text-gray-400 dark:text-gray-500">
+                                            {completion || ''}
+                                        </span>
+                                    </div>
+                                </div>
+
                                 <input
+                                    ref={inputRef}
                                     type="text"
                                     value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    onChange={(e) => {
+                                        setQuery(e.target.value)
+                                        setShowDropdown(true)
+                                        setSelectedIndex(-1)
+                                    }}
+                                    onFocus={() => setShowDropdown(true)}
+                                    onKeyDown={handleInputKeyDown}
                                     placeholder={t('searchPlaceholder')}
-                                    className="flex-1 ps-14 pe-4 py-4 bg-transparent text-gray-900 dark:text-gray-100 text-lg placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none"
+                                    className="flex-1 ps-14 pe-4 py-4 bg-transparent text-gray-900 dark:text-gray-100 text-lg placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none relative z-[1]"
+                                    autoComplete="off"
                                 />
-                                <div className="flex items-center gap-2 pe-3">
+
+                                <div className="flex items-center gap-2 pe-3 z-10">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -484,7 +642,11 @@ export function ResearchSearchEngine() {
                                         )}
                                     </Button>
                                     <Button
-                                        onClick={handleSearch}
+                                        onClick={() => {
+                                            setShowDropdown(false)
+                                            trackSearch(query.trim())
+                                            handleSearch()
+                                        }}
                                         disabled={loading || !query.trim()}
                                         className="px-5"
                                     >
@@ -493,7 +655,72 @@ export function ResearchSearchEngine() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Autocomplete Dropdown */}
+                        {showDropdown && query.length >= 2 && (
+                            <div
+                                ref={dropdownRef}
+                                className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-xl shadow-lg overflow-hidden z-50"
+                            >
+                                {suggestions.length > 0 ? (
+                                    <div className="max-h-80 overflow-y-auto">
+                                        {suggestions.map((suggestion, index) => (
+                                            <Link
+                                                key={`${suggestion.type}-${suggestion.id}`}
+                                                href={suggestion.url}
+                                                onClick={() => setShowDropdown(false)}
+                                                className={`flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-border transition-colors ${index === selectedIndex ? 'bg-gray-50 dark:bg-dark-border' : ''
+                                                    }`}
+                                            >
+                                                <div className="mt-0.5">
+                                                    {getTypeIcon(suggestion.type)}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-0.5">
+                                                        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                                            {suggestion.type}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                        {suggestion.title}
+                                                    </p>
+                                                    {suggestion.description && (
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                            {suggestion.description}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </Link>
+                                        ))}
+
+                                        {/* Full search link */}
+                                        <div className="border-t border-gray-100 dark:border-dark-border">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setShowDropdown(false)
+                                                    trackSearch(query.trim())
+                                                    handleSearch()
+                                                }}
+                                                className="w-full px-4 py-3 text-sm text-primary dark:text-accent-light font-medium hover:bg-gray-50 dark:hover:bg-dark-border transition-colors text-center"
+                                            >
+                                                {t('searchFor', { query })}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : loadingSuggestions ? (
+                                    <div className="px-4 py-6 text-center">
+                                        <Loader2 className="w-5 h-5 animate-spin mx-auto text-gray-400" />
+                                    </div>
+                                ) : (
+                                    <div className="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        {t('noSuggestions') || 'No suggestions found'}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
+
 
                     {/* Filters Panel */}
                     {showFilters && (

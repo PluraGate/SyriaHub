@@ -639,6 +639,9 @@
         "noResultsDesc": "جرب كلمات مفتاحية أو فلاتر مختلفة",
         "clearSearch": "مسح البحث",
         "enterSearch": "أدخل كلمة بحث للعثور على المنشورات والمستخدمين والمجموعات والفعاليات.",
+        "viewAllResults": "عرض جميع النتائج لـ \"{query}\"",
+        "searchFor": "البحث عن \"{query}\"",
+        "noSuggestions": "لا توجد اقتراحات",
         "filters": {
             "contentType": "نوع المحتوى",
             "author": "الكاتب",
@@ -666,9 +669,13 @@
     "Notifications": {
         "title": "الإشعارات",
         "markAllRead": "تحديد الكل كمقروء",
+        "markAllAsRead": "تحديد الكل كمقروء",
         "clearAll": "مسح الكل",
         "noNotifications": "لا توجد إشعارات",
         "noNotificationsDesc": "أنت على اطلاع بكل جديد!",
+        "allCaughtUp": "أنت على اطلاع بكل جديد!",
+        "noNotificationsYet": "لا توجد إشعارات بعد. سنعلمك عند حدوث شيء.",
+        "viewAllNotifications": "عرض جميع الإشعارات",
         "settings": "إعدادات الإشعارات",
         "newComment": "علّق على منشورك",
         "newReply": "رد على تعليقك",
@@ -1539,7 +1546,9 @@
             "save": "حفظ",
             "copyLink": "نسخ الرابط",
             "copied": "تم النسخ!",
-            "saveAsReference": "حفظ كمرجع"
+            "saveAsReference": "حفظ كمرجع",
+            "searchFor": "البحث عن \"{query}\"",
+            "noSuggestions": "لا توجد اقتراحات"
         }
     },
     "Trending": {

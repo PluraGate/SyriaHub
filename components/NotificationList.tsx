@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { NotificationSkeleton } from '@/components/ui/skeleton'
 import { NoNotificationsIllustration } from '@/components/ui/EmptyState'
+import { useTranslations } from 'next-intl'
 
 interface Notification {
     id: string
@@ -21,14 +22,16 @@ interface Notification {
 
 interface NotificationListProps {
     onClose?: () => void
+    onMarkAllRead?: () => void
 }
 
-export function NotificationList({ onClose }: NotificationListProps) {
+export function NotificationList({ onClose, onMarkAllRead }: NotificationListProps) {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(true)
     const [hoveredId, setHoveredId] = useState<string | null>(null)
     const supabase = createClient()
     const router = useRouter()
+    const t = useTranslations('Notifications')
 
     useEffect(() => {
         fetchNotifications()
@@ -38,6 +41,7 @@ export function NotificationList({ onClose }: NotificationListProps) {
         const { data } = await supabase
             .from('notifications')
             .select('*')
+            .eq('is_read', false)
             .order('created_at', { ascending: false })
             .limit(20)
 
@@ -66,6 +70,8 @@ export function NotificationList({ onClose }: NotificationListProps) {
             .eq('is_read', false)
 
         setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+        // Notify parent to update badge count immediately
+        onMarkAllRead?.()
     }
 
     const handleNotificationClick = async (notification: Notification) => {
@@ -108,13 +114,13 @@ export function NotificationList({ onClose }: NotificationListProps) {
         return (
             <div className="w-full max-w-sm bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-dark-border overflow-hidden animate-fade-in-up">
                 <div className="p-4 border-b border-gray-200 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50">
-                    <h3 className="font-semibold text-sm text-text dark:text-dark-text">Notifications</h3>
+                    <h3 className="font-semibold text-sm text-text dark:text-dark-text">{t('title')}</h3>
                 </div>
                 <div className="py-8 px-4 text-center">
                     <NoNotificationsIllustration className="w-32 h-32 mx-auto mb-4 opacity-80" />
-                    <p className="text-sm font-medium text-text dark:text-dark-text mb-1">All caught up!</p>
+                    <p className="text-sm font-medium text-text dark:text-dark-text mb-1">{t('allCaughtUp')}</p>
                     <p className="text-xs text-text-light dark:text-dark-text-muted">
-                        No notifications yet. We&apos;ll let you know when something happens.
+                        {t('noNotificationsYet')}
                     </p>
                 </div>
             </div>
@@ -124,12 +130,12 @@ export function NotificationList({ onClose }: NotificationListProps) {
     return (
         <div className="w-full max-w-sm bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-dark-border overflow-hidden animate-fade-in-up">
             <div className="p-4 border-b border-gray-200 dark:border-dark-border flex justify-between items-center bg-gray-50/50 dark:bg-dark-bg/50">
-                <h3 className="font-semibold text-sm text-text dark:text-dark-text">Notifications</h3>
+                <h3 className="font-semibold text-sm text-text dark:text-dark-text">{t('title')}</h3>
                 <button
                     onClick={markAllAsRead}
-                    className="text-xs text-primary hover:text-primary-dark dark:hover:text-primary-light transition-colors font-medium"
+                    className="text-xs text-secondary hover:text-secondary-light transition-colors font-medium"
                 >
-                    Mark all as read
+                    {t('markAllAsRead')}
                 </button>
             </div>
             <div className="max-h-[400px] overflow-y-auto">
@@ -202,9 +208,9 @@ export function NotificationList({ onClose }: NotificationListProps) {
                 <a
                     href="/notifications"
                     onClick={() => onClose?.()}
-                    className="block text-center text-sm font-medium text-primary hover:text-primary-dark dark:hover:text-primary-light transition-colors"
+                    className="block text-center text-sm font-medium text-secondary hover:text-secondary-light transition-colors"
                 >
-                    View All Notifications
+                    {t('viewAllNotifications')}
                 </a>
             </div>
         </div>

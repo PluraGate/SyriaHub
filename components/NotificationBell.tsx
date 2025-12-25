@@ -142,7 +142,10 @@ export function NotificationBell() {
 
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-80 sm:w-96 z-50 animate-dropdown-enter">
-                    <NotificationList onClose={() => setIsOpen(false)} />
+                    <NotificationList
+                        onClose={() => setIsOpen(false)}
+                        onMarkAllRead={() => setUnreadCount(0)}
+                    />
                 </div>
             )}
         </div>
