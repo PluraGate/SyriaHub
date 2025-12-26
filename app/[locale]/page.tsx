@@ -97,13 +97,13 @@ export default async function Home({
                   <div className="mb-16">
                     <div className="flex items-center justify-between mb-8">
                       <h2 className="text-3xl font-display font-bold text-text dark:text-dark-text">
-                        Featured
+                        {t('featured')}
                       </h2>
                       <Link
                         href="/feed"
                         className="text-primary dark:text-primary-light hover:text-primary-dark font-medium flex items-center gap-2 transition-colors"
                       >
-                        View all
+                        {t('viewAll')}
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>

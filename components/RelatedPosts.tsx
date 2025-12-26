@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
 import { TagChip } from './TagChip'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface RelatedPostAuthor {
   name?: string | null
@@ -20,7 +21,10 @@ interface RelatedPostsProps {
   title?: string
 }
 
-export function RelatedPosts({ posts, title = 'Related Research' }: RelatedPostsProps) {
+export function RelatedPosts({ posts }: RelatedPostsProps) {
+  const t = useTranslations('Homepage')
+  const locale = useLocale()
+
   if (posts.length === 0) return null
 
   return (
@@ -28,7 +32,7 @@ export function RelatedPosts({ posts, title = 'Related Research' }: RelatedPosts
       <div className="flex items-center gap-2 mb-6">
         <BookOpen className="w-5 h-5 text-primary dark:text-accent-light" />
         <h3 className="font-display font-semibold text-lg text-primary dark:text-dark-text">
-          {title}
+          {t('relatedResearch')}
         </h3>
       </div>
 
@@ -42,7 +46,7 @@ export function RelatedPosts({ posts, title = 'Related Research' }: RelatedPosts
             <h4 className="font-medium text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-accent-light transition-colors mb-2 line-clamp-2">
               {post.title}
             </h4>
-            
+
             {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {post.tags.slice(0, 3).map((tag) => (
@@ -53,7 +57,7 @@ export function RelatedPosts({ posts, title = 'Related Research' }: RelatedPosts
 
             <p className="text-xs text-text-light dark:text-dark-text-muted">
               {post.author?.name || post.author?.email?.split('@')[0] || 'Anonymous'} •{' '}
-              {new Date(post.created_at).toLocaleDateString('en-US', {
+              {new Date(post.created_at).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric',

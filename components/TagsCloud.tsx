@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { useLocale } from 'next-intl'
 import { TrendingUp, Flame } from 'lucide-react'
+
+interface VerifiedTag {
+  label: string
+  label_ar: string | null
+  color: string | null
+  post_count: number
+}
 
 interface TagCount {
   tag: string
@@ -11,33 +19,60 @@ interface TagCount {
 }
 
 export function TagsCloud() {
-  const [tags, setTags] = useState<TagCount[]>([])
+  const [tags, setTags] = useState<VerifiedTag[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const locale = useLocale()
 
   useEffect(() => {
     const loadTags = async () => {
       try {
+        // First try to fetch verified tags from tags table
+        const { data: verifiedTags, error: tagsError } = await supabase
+          .from('tags')
+          .select('label, label_ar, color')
+
+        // Get post counts for tags
         const { data: posts } = await supabase
           .from('posts')
           .select('tags')
 
-        if (posts) {
-          const tagMap: Record<string, number> = {}
-          posts.forEach((post) => {
-            if (post.tags) {
-              post.tags.forEach((tag: string) => {
-                tagMap[tag] = (tagMap[tag] || 0) + 1
-              })
-            }
-          })
+        const tagCountMap: Record<string, number> = {}
+        posts?.forEach((post) => {
+          if (post.tags) {
+            post.tags.forEach((tag: string) => {
+              tagCountMap[tag] = (tagCountMap[tag] || 0) + 1
+            })
+          }
+        })
 
-          const sortedTags = Object.entries(tagMap)
-            .map(([tag, count]) => ({ tag, count }))
-            .sort((a, b) => b.count - a.count)
+        // If verified tags exist and no error, use them with colors
+        if (!tagsError && verifiedTags && verifiedTags.length > 0) {
+          const tagsWithCounts = verifiedTags
+            .map(tag => ({
+              label: tag.label,
+              label_ar: tag.label_ar || null,
+              color: tag.color || null,
+              post_count: tagCountMap[tag.label] || 0
+            }))
+            .filter(tag => tag.post_count > 0)
+            .sort((a, b) => b.post_count - a.post_count)
             .slice(0, 20)
 
-          setTags(sortedTags)
+          setTags(tagsWithCounts)
+        } else {
+          // Fallback: use tags from posts directly (for backward compatibility)
+          const fallbackTags = Object.entries(tagCountMap)
+            .map(([label, count]) => ({
+              label,
+              label_ar: null,
+              color: null,
+              post_count: count
+            }))
+            .sort((a, b) => b.post_count - a.post_count)
+            .slice(0, 20)
+
+          setTags(fallbackTags)
         }
       } catch (error) {
         console.error('Error loading tags:', error)
@@ -59,40 +94,39 @@ export function TagsCloud() {
     )
   }
 
-  const getTagSize = (count: number, maxCount: number) => {
-    const ratio = count / maxCount
-    if (ratio > 0.7) return 'text-base font-medium'
-    if (ratio > 0.4) return 'text-sm font-medium'
-    return 'text-sm'
+  // Function to determine if color is light or dark for text contrast
+  const isLightColor = (hex: string) => {
+    const c = hex.substring(1)
+    const rgb = parseInt(c, 16)
+    const r = (rgb >> 16) & 0xff
+    const g = (rgb >> 8) & 0xff
+    const b = (rgb >> 0) & 0xff
+    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    return luma > 128
   }
-
-  const maxCount = tags.length > 0 ? Math.max(...tags.map((t) => t.count)) : 1
 
   return (
     <div className="flex flex-wrap gap-2 justify-center items-center">
-      {tags.map(({ tag, count }) => (
-        <Link
-          key={tag}
-          href={`/explore?tag=${encodeURIComponent(tag)}`}
-          className={`
-            px-3 py-1.5 
-            bg-gray-50 dark:bg-dark-surface 
-            border border-gray-200 dark:border-dark-border
-            hover:border-primary dark:hover:border-accent-light
-            hover:bg-white dark:hover:bg-dark-surface
-            text-text-light dark:text-dark-text-muted 
-            hover:text-primary dark:hover:text-accent-light
-            rounded-full 
-            transition-all duration-200
-            ${getTagSize(count, maxCount)}
-          `}
-        >
-          {tag}
-          <span className="ml-1.5 text-xs opacity-50">
-            {count}
-          </span>
-        </Link>
-      ))}
+      {tags.map((tag) => {
+        const displayLabel = (locale === 'ar' && tag.label_ar) ? tag.label_ar : tag.label
+        const bgColor = tag.color || '#1A3D40'
+
+        return (
+          <Link
+            key={tag.label}
+            href={`/explore?tag=${encodeURIComponent(tag.label)}`}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-md border border-white/10 text-white dark:text-dark-text"
+            style={{
+              backgroundColor: `${bgColor}40`, // 25% opacity
+            }}
+          >
+            <span>{displayLabel}</span>
+            <span className="text-xs opacity-60">
+              {tag.post_count}
+            </span>
+          </Link>
+        )
+      })}
     </div>
   )
 }

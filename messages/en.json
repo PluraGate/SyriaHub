@@ -418,6 +418,10 @@
         "featuredResearchers": "Featured Researchers",
         "trendingNow": "Trending Now",
         "upcomingEvents": "Upcoming Events",
+        "featured": "Featured",
+        "trending": "Trending",
+        "minRead": "{count} min",
+        "event": "Event",
         "context": "Context"
     },
     "Footer": {
@@ -1163,7 +1167,10 @@
             "declineSuccess": "Tag \"{tag}\" has been declined and removed from {count} post(s).",
             "declineFail": "Failed to decline tag.",
             "colorPlaceholder": "#3B82F6",
-            "alreadyUsed": "{color} (already used)"
+            "alreadyUsed": "{color} (already used)",
+            "labelArabic": "Arabic Label",
+            "labelArabicPlaceholder": "Enter Arabic translation...",
+            "labelArabicHint": "Optional - helps Arabic users discover content"
         },
         "waitlistPage": {
             "title": "Waitlist Management",
@@ -2271,6 +2278,30 @@
         "postsToday": "posts today",
         "thisWeek": "this week"
     },
+    "Homepage": {
+        "featured": "Featured",
+        "trending": "Trending",
+        "recentActivity": "Recent Activity",
+        "researchersYouMightKnow": "Researchers you might know",
+        "relatedResearch": "Related Research",
+        "viewAll": "View all",
+        "viewProfile": "View profile",
+        "noActivity": "No recent activity yet.",
+        "beFirst": "Be the first to share something!",
+        "published": "published",
+        "commentedOn": "commented on",
+        "earnedBadge": "earned the",
+        "startedFollowing": "started following",
+        "cited": "cited",
+        "upvoted": "upvoted",
+        "joined": "joined",
+        "wasActive": "was active",
+        "aNewPost": "a new post",
+        "aPost": "a post",
+        "aResearcher": "a researcher",
+        "research": "research",
+        "aGroup": "a group"
+    },
     "ProfileCompletion": {
         "complete": "Profile Complete!",
         "completeProfile": "Complete Profile",
@@ -2291,7 +2322,28 @@
         "discoverDescription": "Discover groundbreaking research by topic, discipline, or researcher",
         "trendingNow": "Trending Now",
         "hotResearch": "Hot research this week",
-        "upcomingEvents": "Upcoming Events"
+        "upcomingEvents": "Upcoming Events",
+        "dontMissOut": "Don't miss out",
+        "filteringBy": "Filtering by:",
+        "mostRecent": "Most Recent",
+        "trending": "Trending",
+        "mostCited": "Most Cited",
+        "researchGroups": "Research Groups",
+        "joinCommunities": "Join collaborative communities",
+        "viewAll": "View all",
+        "featuredResearchers": "Featured Researchers",
+        "latestResearch": "Latest Research",
+        "publications": "{count} publications",
+        "tagResearch": "{tag} Research",
+        "loadingContent": "Loading content...",
+        "noResearchFound": "No research found",
+        "noPostsForTag": "No posts found for \"{tag}\"",
+        "noPostsYet": "No posts available yet.",
+        "featured": "Featured",
+        "viewAllPosts": "→ View all",
+        "minRead": "{count} min",
+        "min": "min",
+        "event": "Event"
     },
     "Categories": {
         "Computer Science": "Computer Science",

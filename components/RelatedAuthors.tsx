@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { UserAchievements } from '@/components/UserAchievements'
 import { FollowButton } from '@/components/FollowButton'
 import { Users, FileText } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface Author {
     id: string
@@ -28,11 +29,12 @@ interface RelatedAuthorsProps {
 export function RelatedAuthors({
     currentUserId,
     limit = 5,
-    title = 'Researchers you might know',
 }: RelatedAuthorsProps) {
+    const t = useTranslations('Homepage')
     const [authors, setAuthors] = useState<Author[]>([])
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
+    const title = t('researchersYouMightKnow')
 
     useEffect(() => {
         const loadAuthors = async () => {
@@ -155,6 +157,7 @@ export function RelatedAuthors({
  * Compact author cards for sidebar
  */
 export function AuthorSpotlight({ authorId }: { authorId: string }) {
+    const t = useTranslations('Homepage')
     const [author, setAuthor] = useState<Author | null>(null)
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
@@ -237,7 +240,7 @@ export function AuthorSpotlight({ authorId }: { authorId: string }) {
                     href={`/profile/${author.id}`}
                     className="text-sm text-primary dark:text-accent-light hover:underline"
                 >
-                    View profile
+                    {t('viewProfile')}
                 </Link>
             </div>
         </div>
