@@ -15,8 +15,8 @@ import {
     User,
     Link2
 } from 'lucide-react'
-import { useLocale, useTranslations } from 'next-intl'
-import { formatLocalizedDate } from '@/lib/formatDate'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 interface ResearchOutcome {
     id: string
@@ -52,7 +52,7 @@ const outcomeTypeConfig: Record<string, { icon: React.ElementType; label: string
 }
 
 export function ResearchOutcomeCard({ outcome, variant = 'default', className }: ResearchOutcomeCardProps) {
-    const locale = useLocale()
+    const { formatDate } = useDateFormatter()
     const t = useTranslations('ResearchImpact')
 
     const typeConfig = outcomeTypeConfig[outcome.outcome_type] || outcomeTypeConfig.publication
@@ -76,7 +76,7 @@ export function ResearchOutcomeCard({ outcome, variant = 'default', className }:
                     <p className="text-xs text-text-muted dark:text-dark-text-muted mt-0.5">
                         {t(`outcomeType.${outcome.outcome_type}`)}
                         {outcome.publication_date && (
-                            <> · {formatLocalizedDate(outcome.publication_date, locale, 'short')}</>
+                            <> · {formatDate(outcome.publication_date, 'short')}</>
                         )}
                     </p>
                 </div>
@@ -190,7 +190,7 @@ export function ResearchOutcomeCard({ outcome, variant = 'default', className }:
                 {outcome.publication_date && (
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
-                        <span>{formatLocalizedDate(outcome.publication_date, locale, 'medium')}</span>
+                        <span>{formatDate(outcome.publication_date, 'medium')}</span>
                     </div>
                 )}
                 {outcome.creator_name && (

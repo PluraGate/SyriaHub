@@ -1,6 +1,7 @@
+'use client'
+
 import Link from 'next/link'
 import { MessageSquare, Quote, Clock, GitFork, GraduationCap } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
 import { BookmarkButton } from '@/components/BookmarkButton'
@@ -8,6 +9,7 @@ import { ReviewBadgeInline } from '@/components/ReviewBadge'
 import { PlagiarismDetails } from '@/components/PlagiarismDetails'
 import { Post } from '@/types'
 import { stripMarkdown, cn, getInitials, getAvatarGradient } from '@/lib/utils'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 interface PostCardProps {
   post: Post & {
@@ -26,6 +28,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, showAuthor = true }: PostCardProps) {
+  const { formatDate } = useDateFormatter()
   const getExcerpt = (content: string, maxLength: number = 150) => {
     const plainText = stripMarkdown(content)
     if (plainText.length <= maxLength) return plainText
@@ -146,7 +149,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
           <span className="text-text-muted/50">·</span>
 
           <time dateTime={post.created_at}>
-            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+            {formatDate(post.created_at, 'distance')}
           </time>
         </div>
       </Link>

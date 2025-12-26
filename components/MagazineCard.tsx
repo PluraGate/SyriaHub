@@ -4,8 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { cn, stripMarkdown, getInitials, getAvatarGradient } from '@/lib/utils'
 import { Clock, Bookmark, Eye, Calendar } from 'lucide-react'
-import { useLocale, useTranslations } from 'next-intl'
-import { formatLocalizedDate } from '@/lib/formatDate'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 export type MagazineCardVariant = 'featured' | 'standard' | 'compact' | 'horizontal'
 
@@ -47,26 +47,7 @@ function getReadingTime(content?: string): number {
     return Math.max(1, Math.ceil(words / wordsPerMinute))
 }
 
-// Format relative time with locale support
-function formatRelativeTime(dateString: string, locale: string = 'en'): string {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
-    // Use generic relative time for recent posts
-    if (diffInSeconds < 60) return locale === 'ar' ? 'الآن' : 'Just now'
-    if (diffInSeconds < 3600) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 60)} د` : `${Math.floor(diffInSeconds / 60)}m ago`
-    if (diffInSeconds < 86400) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 3600)} س` : `${Math.floor(diffInSeconds / 3600)}h ago`
-    if (diffInSeconds < 604800) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 86400)} ي` : `${Math.floor(diffInSeconds / 86400)}d ago`
-
-    return formatLocalizedDate(date, locale, 'short')
-}
-
-// Format event date with locale support
-function formatEventDate(dateString?: string, locale: string = 'en'): string {
-    if (!dateString) return locale === 'ar' ? 'التاريخ غير محدد' : 'Date TBD'
-    return formatLocalizedDate(dateString, locale, 'medium')
-}
 
 export function MagazineCard({
     post,
@@ -75,13 +56,35 @@ export function MagazineCard({
     priority = false,
     showImage = true,
 }: MagazineCardProps) {
-    const locale = useLocale()
+    const { formatDate, locale } = useDateFormatter()
     const t = useTranslations('Landing')
     const readingTime = getReadingTime(post.content)
     const isEvent = post.content_type === 'event'
-    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time, locale) : ''
     const rawExcerpt = post.excerpt || post.content || ''
     const excerpt = stripMarkdown(rawExcerpt).substring(0, 150).trim() + (rawExcerpt.length > 150 ? '...' : '')
+
+    // Format relative time with locale support
+    const formatRelativeTime = (dateString: string): string => {
+        const date = new Date(dateString)
+        const now = new Date()
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+        // Use generic relative time for recent posts
+        if (diffInSeconds < 60) return locale === 'ar' ? 'الآن' : 'Just now'
+        if (diffInSeconds < 3600) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 60)} د` : `${Math.floor(diffInSeconds / 60)}m ago`
+        if (diffInSeconds < 86400) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 3600)} س` : `${Math.floor(diffInSeconds / 3600)}h ago`
+        if (diffInSeconds < 604800) return locale === 'ar' ? `منذ ${Math.floor(diffInSeconds / 86400)} ي` : `${Math.floor(diffInSeconds / 86400)}d ago`
+
+        return formatDate(date, 'short')
+    }
+
+    // Format event date with locale support
+    const formatEventDate = (dateString?: string): string => {
+        if (!dateString) return locale === 'ar' ? 'التاريخ غير محدد' : 'Date TBD'
+        return formatDate(dateString, 'medium')
+    }
+
+    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time) : ''
 
     // Featured variant - large card with image background
     if (variant === 'featured') {
@@ -162,7 +165,7 @@ export function MagazineCard({
                                     <span>{t('minRead', { count: readingTime })}</span>
                                 </div>
                                 <span className="text-white/50">·</span>
-                                <span>{formatRelativeTime(post.created_at, locale)}</span>
+                                <span>{formatRelativeTime(post.created_at)}</span>
                             </>
                         )}
                     </div>
@@ -216,7 +219,7 @@ export function MagazineCard({
                             <span>{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
-                        <span>{formatRelativeTime(post.created_at, locale)}</span>
+                        <span>{formatRelativeTime(post.created_at)}</span>
                     </div>
                 </div>
             </Link>
@@ -255,7 +258,7 @@ export function MagazineCard({
                         <Clock className="w-3 h-3" />
                         <span>{t('minRead', { count: readingTime })}</span>
                     </div>
-                    <span>{formatRelativeTime(post.created_at, locale)}</span>
+                    <span>{formatRelativeTime(post.created_at)}</span>
                 </div>
             </Link>
         )
@@ -361,7 +364,7 @@ export function MagazineCard({
                             <span>{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
-                        <span>{formatRelativeTime(post.created_at, locale)}</span>
+                        <span>{formatRelativeTime(post.created_at)}</span>
                         {post.views !== undefined && post.views > 0 && (
                             <>
                                 <span>·</span>

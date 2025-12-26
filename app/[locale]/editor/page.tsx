@@ -57,6 +57,7 @@ export default function EditorPage() {
   const postIdParam = searchParams.get('id')
   const critiqueOfParam = searchParams.get('critique_of')
   const quoteParam = searchParams.get('quote')
+  const typeParam = searchParams.get('type')
   const { showToast } = useToast()
   const t = useTranslations('Editor')
   const tCommon = useTranslations('Common')
@@ -68,7 +69,9 @@ export default function EditorPage() {
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
   const [citations, setCitations] = useState<Citation[]>([])
-  const [contentType, setContentType] = useState<'article' | 'question' | 'trace'>('article')
+  // Initialize content type from URL parameter if valid
+  const initialContentType = (typeParam === 'question' || typeParam === 'trace') ? typeParam : 'article'
+  const [contentType, setContentType] = useState<'article' | 'question' | 'trace'>(initialContentType)
   const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
   const [group, setGroup] = useState<any>(null)

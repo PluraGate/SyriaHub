@@ -4,7 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { cn, stripMarkdown } from '@/lib/utils'
 import { Clock, ArrowUpRight, TrendingUp, Calendar } from 'lucide-react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 type FeaturedSize = 'large' | 'medium' | 'small'
 
@@ -89,11 +90,13 @@ export function FeaturedPost({
     className,
 }: FeaturedPostProps) {
     const t = useTranslations('Landing')
-    const locale = useLocale()
+    const { formatDate, locale } = useDateFormatter()
     const readingTime = getReadingTime(post.content)
     const colors = accentClasses[accentColor]
     const isEvent = post.content_type === 'event'
-    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time, locale) : ''
+
+    // Format event date using calendar-aware formatting
+    const eventDate = isEvent && post.metadata?.start_time ? formatDate(post.metadata.start_time, 'medium') : ''
 
     // Large variant - full hero-style card
     if (size === 'large') {
@@ -197,7 +200,7 @@ export function FeaturedPost({
                                         {post.author.name || post.author.email?.split('@')[0]}
                                     </div>
                                     <div className="text-sm text-white/60">
-                                        {isEvent ? eventDate : new Date(post.created_at).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        {isEvent ? eventDate : formatDate(post.created_at, 'medium')}
                                     </div>
                                 </div>
                             </div>
@@ -324,7 +327,7 @@ export function FeaturedPost({
                     </div>
                 ) : (
                     <>
-                        <span>{new Date(post.created_at).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })}</span>
+                        <span>{formatDate(post.created_at, 'short')}</span>
                         <span>{t('minRead', { count: readingTime })}</span>
                     </>
                 )}

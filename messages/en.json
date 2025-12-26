@@ -774,7 +774,11 @@
             "mostPopular": "Most Popular",
             "trending": "Trending",
             "guidedReadingMode": "Reduced interface for focused reading",
-            "guidedReadingModeDesc": "Minimise distractions by hiding activity indicators, badges, and metrics"
+            "guidedReadingModeDesc": "Minimise distractions by hiding activity indicators, badges, and metrics",
+            "calendarSystem": "Calendar System",
+            "calendarSystemDesc": "Choose which calendar to use for displaying dates",
+            "hijri": "Hijri (Islamic)",
+            "gregorian": "Gregorian"
         },
         "editorSettings": {
             "title": "Editor Settings",
@@ -2791,5 +2795,16 @@
         "low": "Low",
         "needsAttention": "Needs Attention",
         "noData": "No data available"
+    },
+    "QuickActions": {
+        "newPost": "New Post",
+        "askQuestion": "Ask Question",
+        "traceMemory": "Trace Memory",
+        "newEvent": "New Event",
+        "newSurvey": "New Survey",
+        "newPoll": "New Poll",
+        "uploadResource": "Upload Resource",
+        "openMenu": "Open quick actions",
+        "closeMenu": "Close quick actions"
     }
 }

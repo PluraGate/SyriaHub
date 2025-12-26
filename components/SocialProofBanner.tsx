@@ -38,14 +38,22 @@ export function SocialProofBanner() {
 
                 // Get active users from the last 30 minutes (based on post views)
                 const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
-                const { count: recentActiveUsers } = await supabase
+
+                // Check post_views for recent activity
+                const { count: postViewUsers } = await supabase
                     .from('post_views')
                     .select('user_id', { count: 'exact', head: true })
-                    .gte('viewed_at', thirtyMinutesAgo.toISOString())
+                    .gte('created_at', thirtyMinutesAgo.toISOString())
                     .not('user_id', 'is', null)
 
-                // Fall back to recent sessions if no post_views data
-                const onlineNow = recentActiveUsers || 0
+                // Also check reading_history for users who have been active
+                const { count: readingHistoryUsers } = await supabase
+                    .from('reading_history')
+                    .select('user_id', { count: 'exact', head: true })
+                    .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
+
+                // Use the higher of the two counts (both track active authenticated users)
+                const onlineNow = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
 
                 // Get this week's new users
                 const { count: thisWeekUsers } = await supabase
@@ -79,9 +87,52 @@ export function SocialProofBanner() {
 
         loadStats()
 
-        // Refresh every minute
-        const interval = setInterval(loadStats, 60000)
-        return () => clearInterval(interval)
+        // Subscribe to Realtime updates for live online count
+        const postViewsChannel = supabase
+            .channel('social-proof-post-views')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'post_views' },
+                () => {
+                    // Refresh stats when new post view is recorded
+                    loadStats()
+                }
+            )
+            .subscribe()
+
+        const readingHistoryChannel = supabase
+            .channel('social-proof-reading-history')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'reading_history' },
+                () => {
+                    // Refresh stats when reading history changes
+                    loadStats()
+                }
+            )
+            .subscribe()
+
+        // Also subscribe to new posts for live posts count
+        const postsChannel = supabase
+            .channel('social-proof-posts')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'posts' },
+                () => {
+                    loadStats()
+                }
+            )
+            .subscribe()
+
+        // Fallback polling every 30 seconds (reduced from 60s)
+        const interval = setInterval(loadStats, 30000)
+
+        return () => {
+            clearInterval(interval)
+            supabase.removeChannel(postViewsChannel)
+            supabase.removeChannel(readingHistoryChannel)
+            supabase.removeChannel(postsChannel)
+        }
     }, [supabase])
 
     if (loading) {
@@ -141,18 +192,52 @@ export function OnlineIndicator() {
             const now = new Date()
             const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
-            const { count } = await supabase
+            // Check post_views for recent activity
+            const { count: postViewUsers } = await supabase
                 .from('post_views')
                 .select('user_id', { count: 'exact', head: true })
-                .gte('viewed_at', thirtyMinutesAgo.toISOString())
+                .gte('created_at', thirtyMinutesAgo.toISOString())
                 .not('user_id', 'is', null)
 
-            setOnlineCount(count || 0)
+            // Also check reading_history for users who have been active
+            const { count: readingHistoryUsers } = await supabase
+                .from('reading_history')
+                .select('user_id', { count: 'exact', head: true })
+                .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
+
+            // Use the higher of the two counts
+            setOnlineCount(Math.max(postViewUsers || 0, readingHistoryUsers || 0))
         }
 
         loadOnlineCount()
-        const interval = setInterval(loadOnlineCount, 60000)
-        return () => clearInterval(interval)
+
+        // Subscribe to Realtime updates for live online count
+        const postViewsChannel = supabase
+            .channel('online-indicator-post-views')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'post_views' },
+                () => loadOnlineCount()
+            )
+            .subscribe()
+
+        const readingHistoryChannel = supabase
+            .channel('online-indicator-reading-history')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'reading_history' },
+                () => loadOnlineCount()
+            )
+            .subscribe()
+
+        // Fallback polling every 30 seconds
+        const interval = setInterval(loadOnlineCount, 30000)
+
+        return () => {
+            clearInterval(interval)
+            supabase.removeChannel(postViewsChannel)
+            supabase.removeChannel(readingHistoryChannel)
+        }
     }, [supabase])
 
     return (

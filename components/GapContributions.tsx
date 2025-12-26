@@ -16,8 +16,8 @@ import {
     ChevronUp,
     Plus
 } from 'lucide-react'
-import { useTranslations, useLocale } from 'next-intl'
-import { formatLocalizedDate } from '@/lib/formatDate'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 import { Button } from '@/components/ui/button'
 
 interface GapContribution {
@@ -75,7 +75,7 @@ const contributionTypeConfig = {
 
 export function GapContributions({ gapId, gapClaimerId, className }: GapContributionsProps) {
     const t = useTranslations('GapContributions')
-    const locale = useLocale()
+    const { formatDate } = useDateFormatter()
     const [contributions, setContributions] = useState<GapContribution[]>([])
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
@@ -408,7 +408,7 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
                                                 </div>
                                                 <div className="flex items-center gap-1 text-xs text-text-muted dark:text-dark-text-muted mt-0.5">
                                                     <Clock className="w-3 h-3" />
-                                                    <span>{formatLocalizedDate(contribution.created_at, locale, 'short')}</span>
+                                                    <span>{formatDate(contribution.created_at, 'short')}</span>
                                                 </div>
                                             </div>
                                         </div>

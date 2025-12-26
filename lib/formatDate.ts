@@ -1,9 +1,10 @@
 /**
  * Locale-aware date and number formatting utilities for SyriaHub.
  * Provides consistent formatting across the application with RTL/Arabic support.
+ * Supports Hijri (Islamic) and Gregorian calendar systems.
  */
 
-import { format, formatDistanceToNow, formatRelative, type Locale } from 'date-fns'
+import { formatDistanceToNow, type Locale } from 'date-fns'
 import { ar, enUS } from 'date-fns/locale'
 
 // Map of supported locales to date-fns locale objects
@@ -13,23 +14,54 @@ const localeMap: Record<string, Locale> = {
 }
 
 export type DateFormatType = 'short' | 'medium' | 'long' | 'relative' | 'distance'
+export type CalendarSystem = 'hijri' | 'gregorian'
 
 /**
- * Format a date according to locale and format type.
+ * Get Intl.DateTimeFormat options for the specified calendar and format type.
+ */
+function getDateFormatOptions(
+    formatType: DateFormatType,
+    calendar: CalendarSystem
+): Intl.DateTimeFormatOptions {
+    const calendarExtension = calendar === 'hijri' ? 'islamic-umalqura' : 'gregory'
+
+    const baseOptions: Intl.DateTimeFormatOptions = {
+        calendar: calendarExtension,
+    }
+
+    switch (formatType) {
+        case 'short':
+            // Dec 22 or ٢٢ جمادى الآخرة
+            return { ...baseOptions, month: 'short', day: 'numeric' }
+        case 'medium':
+            // Dec 22, 2025 or ٢٢ جمادى الآخرة ١٤٤٧
+            return { ...baseOptions, month: 'short', day: 'numeric', year: 'numeric' }
+        case 'long':
+            // December 22, 2025 or ٢٢ جمادى الآخرة ١٤٤٧ هـ
+            return { ...baseOptions, month: 'long', day: 'numeric', year: 'numeric' }
+        default:
+            return { ...baseOptions, month: 'short', day: 'numeric', year: 'numeric' }
+    }
+}
+
+/**
+ * Format a date according to locale, format type, and calendar system.
  * 
  * @param date - The date to format (Date object, string, or number)
  * @param locale - The locale code ('en' or 'ar')
  * @param formatType - The type of format to use
+ * @param calendar - The calendar system to use ('hijri' or 'gregorian')
  * @returns Formatted date string
  * 
  * @example
- * formatLocalizedDate(new Date(), 'ar', 'medium') // "٢٢ ديسمبر ٢٠٢٥"
- * formatLocalizedDate(new Date(), 'en', 'short')  // "Dec 22"
+ * formatLocalizedDate(new Date(), 'ar', 'medium', 'hijri') // "٢٢ جمادى الآخرة ١٤٤٧"
+ * formatLocalizedDate(new Date(), 'en', 'short', 'gregorian')  // "Dec 22"
  */
 export function formatLocalizedDate(
     date: Date | string | number,
     locale: string = 'en',
-    formatType: DateFormatType = 'medium'
+    formatType: DateFormatType = 'medium',
+    calendar: CalendarSystem = 'hijri'
 ): string {
     const dateObj = typeof date === 'string' || typeof date === 'number'
         ? new Date(date)
@@ -39,31 +71,23 @@ export function formatLocalizedDate(
         return ''
     }
 
-    const dateLocale = localeMap[locale] || enUS
+    // For relative and distance formats, use date-fns (calendar-agnostic)
+    if (formatType === 'relative' || formatType === 'distance') {
+        const dateLocale = localeMap[locale] || enUS
+        return formatDistanceToNow(dateObj, { addSuffix: true, locale: dateLocale })
+    }
 
-    switch (formatType) {
-        case 'short':
-            // Dec 22
-            return format(dateObj, 'MMM d', { locale: dateLocale })
+    // Use Intl.DateTimeFormat for Hijri/Gregorian support
+    const localeString = locale === 'ar' ? 'ar-SA' : 'en-US'
+    const options = getDateFormatOptions(formatType, calendar)
 
-        case 'medium':
-            // Dec 22, 2025
-            return format(dateObj, 'MMM d, yyyy', { locale: dateLocale })
-
-        case 'long':
-            // December 22, 2025
-            return format(dateObj, 'MMMM d, yyyy', { locale: dateLocale })
-
-        case 'relative':
-            // yesterday, last Friday, etc.
-            return formatRelative(dateObj, new Date(), { locale: dateLocale })
-
-        case 'distance':
-            // 2 days ago, in 3 hours, etc.
-            return formatDistanceToNow(dateObj, { addSuffix: true, locale: dateLocale })
-
-        default:
-            return format(dateObj, 'MMM d, yyyy', { locale: dateLocale })
+    try {
+        return new Intl.DateTimeFormat(localeString, options).format(dateObj)
+    } catch (error) {
+        // Fallback to Gregorian if Hijri fails
+        console.warn('Date formatting failed, falling back to Gregorian:', error)
+        const fallbackOptions = getDateFormatOptions(formatType, 'gregorian')
+        return new Intl.DateTimeFormat(localeString, fallbackOptions).format(dateObj)
     }
 }
 
@@ -72,11 +96,13 @@ export function formatLocalizedDate(
  * 
  * @param date - The date to format
  * @param locale - The locale code
+ * @param calendar - The calendar system to use
  * @returns Formatted date and time string
  */
 export function formatLocalizedDateTime(
     date: Date | string | number,
-    locale: string = 'en'
+    locale: string = 'en',
+    calendar: CalendarSystem = 'hijri'
 ): string {
     const dateObj = typeof date === 'string' || typeof date === 'number'
         ? new Date(date)
@@ -86,8 +112,29 @@ export function formatLocalizedDateTime(
         return ''
     }
 
-    const dateLocale = localeMap[locale] || enUS
-    return format(dateObj, 'MMM d, yyyy h:mm a', { locale: dateLocale })
+    const localeString = locale === 'ar' ? 'ar-SA' : 'en-US'
+    const calendarExtension = calendar === 'hijri' ? 'islamic-umalqura' : 'gregory'
+
+    const options: Intl.DateTimeFormatOptions = {
+        calendar: calendarExtension,
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+    }
+
+    try {
+        return new Intl.DateTimeFormat(localeString, options).format(dateObj)
+    } catch (error) {
+        console.warn('DateTime formatting failed, falling back to Gregorian:', error)
+        const fallbackOptions: Intl.DateTimeFormatOptions = {
+            ...options,
+            calendar: 'gregory',
+        }
+        return new Intl.DateTimeFormat(localeString, fallbackOptions).format(dateObj)
+    }
 }
 
 /**
@@ -111,11 +158,13 @@ export function formatLocalizedNumber(
  * 
  * @param date - The date to format
  * @param locale - The locale code
+ * @param calendar - The calendar system to use
  * @returns Formatted date string suitable for UI display
  */
 export function formatSavedDate(
     date: Date | string | number,
-    locale: string = 'en'
+    locale: string = 'en',
+    calendar: CalendarSystem = 'hijri'
 ): string {
-    return formatLocalizedDate(date, locale, 'short')
+    return formatLocalizedDate(date, locale, 'short', calendar)
 }

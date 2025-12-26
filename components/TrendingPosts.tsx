@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { TrendingUp, MessageSquare, Clock, ChevronRight, Sparkles } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 interface TrendingPost {
     id: string
@@ -23,6 +23,7 @@ type TimeRange = '24h' | '7d' | '30d'
 
 export function TrendingPosts() {
     const t = useTranslations('Trending')
+    const { formatDate } = useDateFormatter()
     const [posts, setPosts] = useState<TrendingPost[]>([])
     const [loading, setLoading] = useState(true)
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
@@ -191,7 +192,7 @@ export function TrendingPosts() {
                                     <span>•</span>
                                     <span className="flex items-center gap-1">
                                         <Clock className="w-3 h-3" />
-                                        {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                                        {formatDate(post.created_at, 'distance')}
                                     </span>
                                 </div>
                             </div>

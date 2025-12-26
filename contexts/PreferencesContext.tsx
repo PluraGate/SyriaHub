@@ -7,6 +7,9 @@ export interface UserPreferences {
     // Theme
     theme: 'light' | 'dark' | 'system'
 
+    // Calendar System
+    calendar: 'hijri' | 'gregorian'
+
     // Language
     language: string
 
@@ -48,6 +51,7 @@ export interface UserPreferences {
 
 const defaultPreferences: UserPreferences = {
     theme: 'system',
+    calendar: 'hijri',
     language: 'en',
     notifications: {
         email_mentions: true,
