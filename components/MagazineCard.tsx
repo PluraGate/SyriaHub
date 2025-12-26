@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { cn, stripMarkdown, getInitials, getAvatarGradient } from '@/lib/utils'
 import { Clock, Bookmark, Eye, Calendar } from 'lucide-react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { formatLocalizedDate } from '@/lib/formatDate'
 
 export type MagazineCardVariant = 'featured' | 'standard' | 'compact' | 'horizontal'
@@ -76,6 +76,7 @@ export function MagazineCard({
     showImage = true,
 }: MagazineCardProps) {
     const locale = useLocale()
+    const t = useTranslations('Landing')
     const readingTime = getReadingTime(post.content)
     const isEvent = post.content_type === 'event'
     const eventDate = isEvent ? formatEventDate(post.metadata?.start_time, locale) : ''
@@ -158,7 +159,7 @@ export function MagazineCard({
                             <>
                                 <div className="flex items-center gap-1">
                                     <Clock className="w-3.5 h-3.5" />
-                                    <span>{readingTime} min read</span>
+                                    <span>{t('minRead', { count: readingTime })}</span>
                                 </div>
                                 <span className="text-white/50">·</span>
                                 <span>{formatRelativeTime(post.created_at, locale)}</span>
@@ -212,7 +213,7 @@ export function MagazineCard({
                     <div className="flex items-center gap-3 mt-2 text-xs text-text-muted dark:text-dark-text-muted">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{readingTime} min read</span>
+                            <span>{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
                         <span>{formatRelativeTime(post.created_at, locale)}</span>
@@ -252,7 +253,7 @@ export function MagazineCard({
                 <div className="mt-3 flex items-center justify-between text-xs text-text-muted dark:text-dark-text-muted">
                     <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        <span>{readingTime} min read</span>
+                        <span>{t('minRead', { count: readingTime })}</span>
                     </div>
                     <span>{formatRelativeTime(post.created_at, locale)}</span>
                 </div>
@@ -296,7 +297,7 @@ export function MagazineCard({
                     {post.content_type === 'event' && (
                         <div className="absolute bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-sm py-1.5 px-4 flex items-center justify-center gap-2 text-white">
                             <Calendar className="w-3.5 h-3.5" />
-                            <span className="text-xs font-bold uppercase tracking-wide">Event</span>
+                            <span className="text-xs font-bold uppercase tracking-wide">{t('event')}</span>
                         </div>
                     )}
                 </div>
@@ -357,7 +358,7 @@ export function MagazineCard({
                     <div className="flex items-center gap-2 text-xs text-text-muted dark:text-dark-text-muted">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
-                            <span>{readingTime} min</span>
+                            <span>{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
                         <span>{formatRelativeTime(post.created_at, locale)}</span>

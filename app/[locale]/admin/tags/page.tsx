@@ -40,6 +40,7 @@ export default function AdminTagsPage() {
     const [approvingTag, setApprovingTag] = useState<string | null>(null)
     const [decliningTag, setDecliningTag] = useState<string | null>(null)
     const [newTagColor, setNewTagColor] = useState(TAG_COLORS[0])
+    const [newTagLabelAr, setNewTagLabelAr] = useState('')
     const [dialogOpen, setDialogOpen] = useState(false)
     const [declineDialogOpen, setDeclineDialogOpen] = useState(false)
     const [declining, setDeclining] = useState(false)
@@ -87,6 +88,7 @@ export default function AdminTagsPage() {
     const handleApproveClick = (tag: string) => {
         setApprovingTag(tag)
         setNewTagColor(suggestNextColor)
+        setNewTagLabelAr('')
         setDialogOpen(true)
     }
 
@@ -96,7 +98,11 @@ export default function AdminTagsPage() {
         try {
             const { error } = await supabase
                 .from('tags')
-                .insert({ label: approvingTag, color: newTagColor })
+                .insert({
+                    label: approvingTag,
+                    color: newTagColor,
+                    label_ar: newTagLabelAr || null
+                })
 
             if (error) throw error
 
@@ -255,6 +261,25 @@ export default function AdminTagsPage() {
                                     {approvingTag}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Arabic Translation Input */}
+                        <div className="space-y-2">
+                            <Label htmlFor="labelAr" className="text-text dark:text-dark-text font-medium">
+                                {t('labelArabic')}
+                            </Label>
+                            <Input
+                                id="labelAr"
+                                type="text"
+                                value={newTagLabelAr}
+                                onChange={(e) => setNewTagLabelAr(e.target.value)}
+                                className="bg-white dark:bg-dark-bg border-gray-200 dark:border-dark-border text-text dark:text-dark-text"
+                                placeholder={t('labelArabicPlaceholder')}
+                                dir="rtl"
+                            />
+                            <p className="text-xs text-text-light dark:text-dark-text-muted">
+                                {t('labelArabicHint')}
+                            </p>
                         </div>
 
                         <div className="space-y-2">

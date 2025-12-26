@@ -36,6 +36,17 @@ export function SocialProofBanner() {
                     .gte('created_at', todayStart.toISOString())
                     .eq('status', 'published')
 
+                // Get active users from the last 30 minutes (based on post views)
+                const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
+                const { count: recentActiveUsers } = await supabase
+                    .from('post_views')
+                    .select('user_id', { count: 'exact', head: true })
+                    .gte('viewed_at', thirtyMinutesAgo.toISOString())
+                    .not('user_id', 'is', null)
+
+                // Fall back to recent sessions if no post_views data
+                const onlineNow = recentActiveUsers || 0
+
                 // Get this week's new users
                 const { count: thisWeekUsers } = await supabase
                     .from('users')
@@ -53,13 +64,6 @@ export function SocialProofBanner() {
                 const weeklyGrowth = lastWeekUsers && lastWeekUsers > 0
                     ? Math.round(((thisWeekUsers || 0) - lastWeekUsers) / lastWeekUsers * 100)
                     : 0
-
-                // Simulate "online now" with random number based on time of day
-                // In a real app, you'd track this with presence or analytics
-                const hour = now.getHours()
-                const baseOnline = 10 + Math.floor(Math.random() * 15)
-                const timeMultiplier = hour >= 9 && hour <= 18 ? 2 : 1
-                const onlineNow = baseOnline * timeMultiplier
 
                 setStats({
                     onlineNow,
@@ -130,21 +134,26 @@ export function SocialProofBanner() {
  */
 export function OnlineIndicator() {
     const [onlineCount, setOnlineCount] = useState(0)
+    const supabase = createClient()
 
     useEffect(() => {
-        // Simulate dynamic count
-        const now = new Date()
-        const hour = now.getHours()
-        const baseOnline = 10 + Math.floor(Math.random() * 15)
-        const timeMultiplier = hour >= 9 && hour <= 18 ? 2 : 1
-        setOnlineCount(baseOnline * timeMultiplier)
+        const loadOnlineCount = async () => {
+            const now = new Date()
+            const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
-        const interval = setInterval(() => {
-            setOnlineCount(prev => prev + Math.floor(Math.random() * 3) - 1)
-        }, 30000)
+            const { count } = await supabase
+                .from('post_views')
+                .select('user_id', { count: 'exact', head: true })
+                .gte('viewed_at', thirtyMinutesAgo.toISOString())
+                .not('user_id', 'is', null)
 
+            setOnlineCount(count || 0)
+        }
+
+        loadOnlineCount()
+        const interval = setInterval(loadOnlineCount, 60000)
         return () => clearInterval(interval)
-    }, [])
+    }, [supabase])
 
     return (
         <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">

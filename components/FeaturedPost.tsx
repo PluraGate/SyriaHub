@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { cn, stripMarkdown } from '@/lib/utils'
 import { Clock, ArrowUpRight, TrendingUp, Calendar } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
 
 type FeaturedSize = 'large' | 'medium' | 'small'
 
@@ -74,10 +75,10 @@ const accentClasses = {
 }
 
 // Format event date
-function formatEventDate(dateString?: string): string {
+function formatEventDate(dateString?: string, locale: string = 'en'): string {
     if (!dateString) return 'Date TBD'
     const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return date.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function FeaturedPost({
@@ -87,10 +88,12 @@ export function FeaturedPost({
     accentColor = 'primary',
     className,
 }: FeaturedPostProps) {
+    const t = useTranslations('Landing')
+    const locale = useLocale()
     const readingTime = getReadingTime(post.content)
     const colors = accentClasses[accentColor]
     const isEvent = post.content_type === 'event'
-    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time) : ''
+    const eventDate = isEvent ? formatEventDate(post.metadata?.start_time, locale) : ''
 
     // Large variant - full hero-style card
     if (size === 'large') {
@@ -150,7 +153,7 @@ export function FeaturedPost({
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-full shadow-sm">
                                     <TrendingUp className="w-3.5 h-3.5 text-white" />
                                     <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                        Trending
+                                        {t('trending')}
                                     </span>
                                 </div>
                             )}
@@ -194,7 +197,7 @@ export function FeaturedPost({
                                         {post.author.name || post.author.email?.split('@')[0]}
                                     </div>
                                     <div className="text-sm text-white/60">
-                                        {isEvent ? eventDate : new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        {isEvent ? eventDate : new Date(post.created_at).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +208,7 @@ export function FeaturedPost({
                             {!isEvent && (
                                 <div className="flex items-center gap-1.5 text-white/70">
                                     <Clock className="w-4 h-4" />
-                                    <span className="text-sm">{readingTime} min read</span>
+                                    <span className="text-sm">{t('minRead', { count: readingTime })}</span>
                                 </div>
                             )}
                             <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center transition-all group-hover:bg-white group-hover:scale-110">
@@ -272,7 +275,7 @@ export function FeaturedPost({
                                 <span>{eventDate}</span>
                             </div>
                         ) : (
-                            <span>{readingTime} min read</span>
+                            <span>{t('minRead', { count: readingTime })}</span>
                         )}
 
                         {post.views !== undefined && !isEvent && (
@@ -305,7 +308,7 @@ export function FeaturedPost({
             <div className="flex items-center gap-2 mb-3">
                 <div className={cn('w-2 h-2 rounded-full', isEvent ? 'bg-primary' : colors.bg)} />
                 <span className={cn('text-xs font-semibold uppercase tracking-wider', isEvent ? 'text-primary' : colors.text)}>
-                    {isEvent ? 'Event' : (post.tags?.[0] || 'Research')}
+                    {isEvent ? t('trending') : (post.tags?.[0] || 'Research')}
                 </span>
             </div>
 
@@ -321,8 +324,8 @@ export function FeaturedPost({
                     </div>
                 ) : (
                     <>
-                        <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                        <span>{readingTime} min</span>
+                        <span>{new Date(post.created_at).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })}</span>
+                        <span>{t('minRead', { count: readingTime })}</span>
                     </>
                 )}
             </div>

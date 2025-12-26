@@ -250,7 +250,7 @@ function ExplorePageContent() {
           {/* Active Filter */}
           {selectedTag && (
             <div className="mb-8 flex items-center gap-3">
-              <span className="text-text-light dark:text-dark-text-muted">Filtering by:</span>
+              <span className="text-text-light dark:text-dark-text-muted">{t('filteringBy')}</span>
               <div className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full">
                 <span className="font-semibold">{selectedTag}</span>
                 <button
@@ -267,7 +267,7 @@ function ExplorePageContent() {
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
                 <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                <p className="text-text-light dark:text-dark-text-muted">Loading content...</p>
+                <p className="text-text-light dark:text-dark-text-muted">{t('loadingContent')}</p>
               </div>
             </div>
           ) : (
@@ -325,14 +325,14 @@ function ExplorePageContent() {
                           </div>
                           <div>
                             <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('upcomingEvents')}</h2>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Don&apos;t miss out</p>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">{t('dontMissOut')}</p>
                           </div>
                         </div>
                         <Link
                           href="/events"
                           className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
                         >
-                          View all →
+                          {t('viewAll')} →
                         </Link>
                       </div>
 
@@ -353,15 +353,15 @@ function ExplorePageContent() {
                             <Sparkles className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">Research Groups</h2>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">Join collaborative communities</p>
+                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">{t('researchGroups')}</h2>
+                            <p className="text-sm text-text-light dark:text-dark-text-muted">{t('joinCommunities')}</p>
                           </div>
                         </div>
                         <Link
                           href="/groups"
                           className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
                         >
-                          View all →
+                          {t('viewAll')} →
                         </Link>
                       </div>
 
@@ -382,10 +382,10 @@ function ExplorePageContent() {
                         </div>
                         <div>
                           <h2 className="text-2xl font-bold text-text dark:text-dark-text">
-                            {selectedTag ? `${selectedTag} Research` : 'Latest Research'}
+                            {selectedTag ? t('tagResearch', { tag: selectedTag }) : t('latestResearch')}
                           </h2>
                           <p className="text-sm text-text-light dark:text-dark-text-muted">
-                            {posts.length} publications
+                            {t('publications', { count: posts.length })}
                           </p>
                         </div>
                       </div>
@@ -397,9 +397,9 @@ function ExplorePageContent() {
                           onChange={(e) => setSortBy(e.target.value as SortOption)}
                           className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer"
                         >
-                          <option value="recent">Most Recent</option>
-                          <option value="trending">Trending</option>
-                          <option value="cited">Most Cited</option>
+                          <option value="recent">{t('mostRecent')}</option>
+                          <option value="trending">{t('trending')}</option>
+                          <option value="cited">{t('mostCited')}</option>
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
                       </div>
@@ -414,9 +414,9 @@ function ExplorePageContent() {
                     ) : (
                       <div className="text-center py-16 bg-gray-50 dark:bg-dark-surface rounded-2xl">
                         <BookOpen className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
-                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">No research found</h3>
+                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">{t('noResearchFound')}</h3>
                         <p className="text-text-light dark:text-dark-text-muted">
-                          {selectedTag ? `No posts found for "${selectedTag}"` : 'No posts available yet.'}
+                          {selectedTag ? t('noPostsForTag', { tag: selectedTag }) : t('noPostsYet')}
                         </p>
                       </div>
                     )}
@@ -433,7 +433,7 @@ function ExplorePageContent() {
                           <Users className="w-5 h-5 text-secondary-dark" />
                         </div>
                         <div>
-                          <h2 className="text-lg font-bold text-text dark:text-dark-text leading-tight">Featured Researchers</h2>
+                          <h2 className="text-lg font-bold text-text dark:text-dark-text leading-tight">{t('featuredResearchers')}</h2>
                         </div>
                       </div>
 

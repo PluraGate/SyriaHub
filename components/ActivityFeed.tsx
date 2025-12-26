@@ -15,6 +15,8 @@ import {
     Users,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { ar, enUS } from 'date-fns/locale'
+import { useTranslations, useLocale } from 'next-intl'
 
 type ActivityType = 'post' | 'comment' | 'badge' | 'follow' | 'citation' | 'vote' | 'group_join'
 
@@ -56,7 +58,10 @@ const ACTIVITY_COLORS: Record<ActivityType, string> = {
     group_join: 'bg-gray-100 text-gray-600 dark:bg-dark-surface dark:text-dark-text-muted',
 }
 
-function getActivityMessage(activity: ActivityItem): React.ReactNode {
+function ActivityItemComponent({ activity, t, locale }: { activity: ActivityItem; t: any; locale: string }) {
+    const Icon = ACTIVITY_ICONS[activity.type]
+    const colorClass = ACTIVITY_COLORS[activity.type]
+
     const userName = (
         <Link
             href={`/profile/${activity.user.id}`}
@@ -66,97 +71,93 @@ function getActivityMessage(activity: ActivityItem): React.ReactNode {
         </Link>
     )
 
-    switch (activity.type) {
-        case 'post':
-            return (
-                <>
-                    {userName} published{' '}
-                    <Link
-                        href={`/post/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.title || 'a new post'}
-                    </Link>
-                </>
-            )
-        case 'comment':
-            return (
-                <>
-                    {userName} commented on{' '}
-                    <Link
-                        href={`/post/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.title || 'a post'}
-                    </Link>
-                </>
-            )
-        case 'badge':
-            return (
-                <>
-                    {userName} earned the{' '}
-                    <span className="font-medium text-yellow-600 dark:text-yellow-400">
-                        {activity.metadata?.badge_name || 'badge'}
-                    </span>{' '}
-                    badge
-                </>
-            )
-        case 'follow':
-            return (
-                <>
-                    {userName} started following{' '}
-                    <Link
-                        href={`/profile/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.name || 'a researcher'}
-                    </Link>
-                </>
-            )
-        case 'citation':
-            return (
-                <>
-                    {userName} cited{' '}
-                    <Link
-                        href={`/post/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.title || 'research'}
-                    </Link>
-                </>
-            )
-        case 'vote':
-            return (
-                <>
-                    {userName} upvoted{' '}
-                    <Link
-                        href={`/post/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.title || 'a post'}
-                    </Link>
-                </>
-            )
-        case 'group_join':
-            return (
-                <>
-                    {userName} joined{' '}
-                    <Link
-                        href={`/groups/${activity.target?.id}`}
-                        className="font-medium text-primary dark:text-accent-light hover:underline"
-                    >
-                        {activity.target?.name || 'a group'}
-                    </Link>
-                </>
-            )
-        default:
-            return <>{userName} was active</>
+    const getActivityMessage = (): React.ReactNode => {
+        switch (activity.type) {
+            case 'post':
+                return (
+                    <>
+                        {userName} {t('published')}{' '}
+                        <Link
+                            href={`/post/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.title || t('aNewPost')}
+                        </Link>
+                    </>
+                )
+            case 'comment':
+                return (
+                    <>
+                        {userName} {t('commentedOn')}{' '}
+                        <Link
+                            href={`/post/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.title || t('aPost')}
+                        </Link>
+                    </>
+                )
+            case 'badge':
+                return (
+                    <>
+                        {userName} {t('earnedBadge')}{' '}
+                        <span className="font-medium text-yellow-600 dark:text-yellow-400">
+                            {activity.metadata?.badge_name || 'badge'}
+                        </span>
+                    </>
+                )
+            case 'follow':
+                return (
+                    <>
+                        {userName} {t('startedFollowing')}{' '}
+                        <Link
+                            href={`/profile/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.name || t('aResearcher')}
+                        </Link>
+                    </>
+                )
+            case 'citation':
+                return (
+                    <>
+                        {userName} {t('cited')}{' '}
+                        <Link
+                            href={`/post/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.title || t('research')}
+                        </Link>
+                    </>
+                )
+            case 'vote':
+                return (
+                    <>
+                        {userName} {t('upvoted')}{' '}
+                        <Link
+                            href={`/post/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.title || t('aPost')}
+                        </Link>
+                    </>
+                )
+            case 'group_join':
+                return (
+                    <>
+                        {userName} {t('joined')}{' '}
+                        <Link
+                            href={`/groups/${activity.target?.id}`}
+                            className="font-medium text-primary dark:text-accent-light hover:underline"
+                        >
+                            {activity.target?.name || t('aGroup')}
+                        </Link>
+                    </>
+                )
+            default:
+                return <>{userName} {t('wasActive')}</>
+        }
     }
-}
-
-function ActivityItemComponent({ activity }: { activity: ActivityItem }) {
-    const Icon = ACTIVITY_ICONS[activity.type]
-    const colorClass = ACTIVITY_COLORS[activity.type]
 
     return (
         <div className="flex items-start gap-3 p-4 hover:bg-gray-50 dark:hover:bg-dark-surface/50 transition-colors rounded-lg animate-fade-in-up">
@@ -168,10 +169,13 @@ function ActivityItemComponent({ activity }: { activity: ActivityItem }) {
             />
             <div className="flex-1 min-w-0">
                 <p className="text-sm text-text-light dark:text-dark-text-muted">
-                    {getActivityMessage(activity)}
+                    {getActivityMessage()}
                 </p>
                 <p className="text-xs text-text-light/70 dark:text-dark-text-muted/70 mt-1">
-                    {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(activity.created_at), {
+                        addSuffix: true,
+                        locale: locale === 'ar' ? ar : enUS
+                    })}
                 </p>
             </div>
             <div className={`p-2 rounded-full ${colorClass}`}>
@@ -182,6 +186,8 @@ function ActivityItemComponent({ activity }: { activity: ActivityItem }) {
 }
 
 export function ActivityFeed({ limit = 10 }: { limit?: number }) {
+    const t = useTranslations('Homepage')
+    const locale = useLocale()
     const [activities, setActivities] = useState<ActivityItem[]>([])
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
@@ -307,8 +313,8 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
     if (activities.length === 0) {
         return (
             <div className="text-center py-8 text-text-light dark:text-dark-text-muted">
-                <p>No recent activity yet.</p>
-                <p className="text-sm mt-1">Be the first to share something!</p>
+                <p>{t('noActivity')}</p>
+                <p className="text-sm mt-1">{t('beFirst')}</p>
             </div>
         )
     }
@@ -316,7 +322,7 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
     return (
         <div className="divide-y divide-gray-100 dark:divide-dark-border">
             {activities.map((activity) => (
-                <ActivityItemComponent key={activity.id} activity={activity} />
+                <ActivityItemComponent key={activity.id} activity={activity} t={t} locale={locale} />
             ))}
         </div>
     )
@@ -326,11 +332,12 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
  * Compact activity feed for sidebar or cards
  */
 export function ActivityFeedCompact({ limit = 5 }: { limit?: number }) {
+    const t = useTranslations('Homepage')
     return (
         <div className="card p-0 overflow-hidden">
             <div className="p-4 border-b border-gray-100 dark:border-dark-border">
                 <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted">
-                    Recent Activity
+                    {t('recentActivity')}
                 </h3>
             </div>
             <ActivityFeed limit={limit} />

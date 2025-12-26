@@ -418,6 +418,10 @@
         "featuredResearchers": "باحثون مميزون",
         "trendingNow": "الأكثر رواجاً",
         "upcomingEvents": "الفعاليات القادمة",
+        "featured": "مميز",
+        "trending": "رائج",
+        "minRead": "{count} د",
+        "event": "فعالية",
         "context": "السياق"
     },
     "Footer": {
@@ -1201,7 +1205,10 @@
             "declineSuccess": "تم رفض الوسم \"{tag}\" وإزالته من {count} منشور.",
             "declineFail": "فشل في رفض الوسم.",
             "colorPlaceholder": "#3B82F6",
-            "alreadyUsed": "{color} (مستخدم بالفعل)"
+            "alreadyUsed": "{color} (مستخدم بالفعل)",
+            "labelArabic": "التسمية (بالعربية)",
+            "labelArabicPlaceholder": "أدخل الترجمة العربية...",
+            "labelArabicHint": "اختياري - يساعد المستخدمين العرب على اكتشاف المحتوى"
         },
         "waitlistPage": {
             "title": "إدارة قائمة الانتظار",
@@ -2306,6 +2313,30 @@
         "postsToday": "منشورات اليوم",
         "thisWeek": "هذا الأسبوع"
     },
+    "Homepage": {
+        "featured": "مميز",
+        "trending": "رائج",
+        "recentActivity": "النشاط الأخير",
+        "researchersYouMightKnow": "باحثون قد تعرفهم",
+        "relatedResearch": "أبحاث ذات صلة",
+        "viewAll": "عرض الكل",
+        "viewProfile": "عرض الملف الشخصي",
+        "noActivity": "لا يوجد نشاط بعد.",
+        "beFirst": "كن أول من يشارك شيئاً!",
+        "published": "نشر",
+        "commentedOn": "علّق على",
+        "earnedBadge": "حصل على وسام",
+        "startedFollowing": "بدأ بمتابعة",
+        "cited": "اقتبس",
+        "upvoted": "صوّت لـ",
+        "joined": "انضم إلى",
+        "wasActive": "كان نشطاً",
+        "aNewPost": "منشور جديد",
+        "aPost": "منشور",
+        "aResearcher": "باحث",
+        "research": "بحث",
+        "aGroup": "مجموعة"
+    },
     "ProfileCompletion": {
         "complete": "الملف الشخصي مكتمل!",
         "completeProfile": "أكمل الملف الشخصي",
@@ -2326,7 +2357,28 @@
         "discoverDescription": "اكتشف أبحاثاً رائدة حسب الموضوع أو التخصص أو الباحث",
         "trendingNow": "آخر الأبحاث",
         "hotResearch": "أبحاث هذا الأسبوع",
-        "upcomingEvents": "الفعاليات القادمة"
+        "upcomingEvents": "الفعاليات القادمة",
+        "dontMissOut": "لا تفوتها",
+        "filteringBy": "التصفية حسب:",
+        "mostRecent": "الأحدث",
+        "trending": "رائج",
+        "mostCited": "الأكثر اقتباساً",
+        "researchGroups": "مجموعات البحث",
+        "joinCommunities": "انضم إلى مجتمعات تعاونية",
+        "viewAll": "عرض الكل",
+        "featuredResearchers": "باحثون مميزون",
+        "latestResearch": "آخر الأبحاث",
+        "publications": "{count} منشورات",
+        "tagResearch": "أبحاث {tag}",
+        "loadingContent": "جارٍ التحميل...",
+        "noResearchFound": "لم يتم العثور على أبحاث",
+        "noPostsForTag": "لا توجد منشورات لـ \"{tag}\"",
+        "noPostsYet": "لا توجد منشورات بعد.",
+        "featured": "مميز",
+        "viewAllPosts": "← عرض الكل",
+        "minRead": "{count} د",
+        "min": "د",
+        "event": "فعالية"
     },
     "Categories": {
         "Computer Science": "علوم الحاسوب",
