@@ -774,7 +774,11 @@
             "mostPopular": "الأكثر شعبية",
             "trending": "الرائج",
             "guidedReadingMode": "واجهة مختصرة للقراءة المركّزة",
-            "guidedReadingModeDesc": "تقليل عوامل التشتيت بإخفاء مؤشرات النشاط والشارات والمقاييس"
+            "guidedReadingModeDesc": "تقليل عوامل التشتيت بإخفاء مؤشرات النشاط والشارات والمقاييس",
+            "calendarSystem": "نظام التقويم",
+            "calendarSystemDesc": "اختر التقويم المستخدم لعرض التواريخ",
+            "hijri": "هجري (إسلامي)",
+            "gregorian": "ميلادي"
         },
         "editorSettings": {
             "title": "إعدادات المحرر",
@@ -2826,5 +2830,16 @@
         "low": "منخفض",
         "needsAttention": "يحتاج انتباهاً",
         "noData": "لا توجد بيانات متاحة"
+    },
+    "QuickActions": {
+        "newPost": "منشور جديد",
+        "askQuestion": "اطرح سؤالاً",
+        "traceMemory": "توثيق ذاكرة",
+        "newEvent": "فعالية جديدة",
+        "newSurvey": "استطلاع جديد",
+        "newPoll": "تصويت جديد",
+        "uploadResource": "رفع مورد",
+        "openMenu": "فتح الإجراءات السريعة",
+        "closeMenu": "إغلاق الإجراءات السريعة"
     }
 }

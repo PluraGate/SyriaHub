@@ -261,6 +261,35 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                     onChange={(v) => handleUpdate('display', 'guided_reading_mode', v)}
                                 />
                             </div>
+
+                            <div className="pt-4 border-t border-gray-100 dark:border-dark-border">
+                                <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
+                                    {t('displaySettings.calendarSystem')}
+                                </label>
+                                <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
+                                    {t('displaySettings.calendarSystemDesc')}
+                                </p>
+                                <div className="flex gap-3">
+                                    {[
+                                        { value: 'hijri', label: t('displaySettings.hijri') },
+                                        { value: 'gregorian', label: t('displaySettings.gregorian') },
+                                    ].map(option => {
+                                        const isSelected = preferences.calendar === option.value
+                                        return (
+                                            <button
+                                                key={option.value}
+                                                onClick={() => updatePreference('calendar', option.value as 'hijri' | 'gregorian')}
+                                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
+                                                    ? 'border-primary bg-primary/10 text-primary dark:text-primary-light'
+                                                    : 'border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                                    }`}
+                                            >
+                                                <span className="font-medium">{option.label}</span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     )}
 

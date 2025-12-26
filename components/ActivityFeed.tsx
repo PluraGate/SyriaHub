@@ -14,9 +14,8 @@ import {
     Star,
     Users,
 } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import { ar, enUS } from 'date-fns/locale'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 type ActivityType = 'post' | 'comment' | 'badge' | 'follow' | 'citation' | 'vote' | 'group_join'
 
@@ -58,7 +57,7 @@ const ACTIVITY_COLORS: Record<ActivityType, string> = {
     group_join: 'bg-gray-100 text-gray-600 dark:bg-dark-surface dark:text-dark-text-muted',
 }
 
-function ActivityItemComponent({ activity, t, locale }: { activity: ActivityItem; t: any; locale: string }) {
+function ActivityItemComponent({ activity, t, formatDate }: { activity: ActivityItem; t: any; formatDate: (date: Date | string | number, formatType?: 'short' | 'medium' | 'long' | 'relative' | 'distance') => string }) {
     const Icon = ACTIVITY_ICONS[activity.type]
     const colorClass = ACTIVITY_COLORS[activity.type]
 
@@ -172,10 +171,7 @@ function ActivityItemComponent({ activity, t, locale }: { activity: ActivityItem
                     {getActivityMessage()}
                 </p>
                 <p className="text-xs text-text-light/70 dark:text-dark-text-muted/70 mt-1">
-                    {formatDistanceToNow(new Date(activity.created_at), {
-                        addSuffix: true,
-                        locale: locale === 'ar' ? ar : enUS
-                    })}
+                    {formatDate(activity.created_at, 'distance')}
                 </p>
             </div>
             <div className={`p-2 rounded-full ${colorClass}`}>
@@ -187,7 +183,7 @@ function ActivityItemComponent({ activity, t, locale }: { activity: ActivityItem
 
 export function ActivityFeed({ limit = 10 }: { limit?: number }) {
     const t = useTranslations('Homepage')
-    const locale = useLocale()
+    const { formatDate } = useDateFormatter()
     const [activities, setActivities] = useState<ActivityItem[]>([])
     const [loading, setLoading] = useState(true)
     const supabase = createClient()
@@ -322,7 +318,7 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
     return (
         <div className="divide-y divide-gray-100 dark:divide-dark-border">
             {activities.map((activity) => (
-                <ActivityItemComponent key={activity.id} activity={activity} t={t} locale={locale} />
+                <ActivityItemComponent key={activity.id} activity={activity} t={t} formatDate={formatDate} />
             ))}
         </div>
     )

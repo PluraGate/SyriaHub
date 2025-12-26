@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { UserAvatar } from '@/components/ui/UserAvatar'
-import { formatDistanceToNow } from 'date-fns'
-import { ar, enUS } from 'date-fns/locale'
 import { MessageSquare, ChevronDown, ChevronUp, CornerDownRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 interface Comment {
     id: string
@@ -44,8 +43,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
     const t = useTranslations('Comments')
     const tForms = useTranslations('Forms')
     const tCommon = useTranslations('Common')
-    const locale = useLocale()
-    const dateLocale = locale === 'ar' ? ar : enUS
+    const { formatDate } = useDateFormatter()
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isReplying, setIsReplying] = useState(false)
     const [replyContent, setReplyContent] = useState('')
@@ -100,7 +98,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
                                 </span>
                             )}
                             <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: dateLocale })}
+                                {formatDate(comment.created_at, 'distance')}
                             </span>
                         </div>
 

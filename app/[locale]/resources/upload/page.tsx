@@ -289,13 +289,13 @@ export default function UploadResourcePage() {
                     {/* Discipline Tags */}
                     <div className="space-y-3">
                         <Label>Disciplines & Tags</Label>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                        <p className="text-sm text-text-light dark:text-gray-400">
                             Select the disciplines and topics that apply to this resource
                         </p>
 
                         {/* Selected Tags */}
                         {selectedTags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-dark-surface-hover rounded-lg">
+                            <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                                 {selectedTags.map(tagLabel => {
                                     const tag = availableTags.find(t => t.label === tagLabel)
                                     return (
@@ -303,10 +303,11 @@ export default function UploadResourcePage() {
                                             key={tagLabel}
                                             type="button"
                                             onClick={() => toggleTag(tagLabel)}
-                                            className="flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium bg-primary text-white"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                            style={{ borderLeft: `3px solid ${tag?.color || '#10b981'}` }}
                                         >
                                             {tagLabel}
-                                            <X className="w-3 h-3" />
+                                            <X className="w-3 h-3 opacity-70" />
                                         </button>
                                     )
                                 })}
@@ -314,7 +315,7 @@ export default function UploadResourcePage() {
                         )}
 
                         {/* Available Tags by Discipline */}
-                        <div className="space-y-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-dark-border rounded-lg p-4">
+                        <div className="space-y-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-dark-border rounded-lg p-4 bg-gray-50 dark:bg-dark-bg">
                             {Object.entries(tagsByDiscipline).map(([discipline, tags]) => (
                                 <div key={discipline}>
                                     <p className="text-xs font-medium text-text-light dark:text-dark-text-muted mb-2 uppercase tracking-wide">
@@ -328,7 +329,7 @@ export default function UploadResourcePage() {
                                                 onClick={() => toggleTag(tag.label)}
                                                 className={`px-3 py-1 rounded-full text-sm transition-colors ${selectedTags.includes(tag.label)
                                                     ? 'bg-primary text-white'
-                                                    : 'bg-gray-100 dark:bg-dark-surface-hover text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-text dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
                                                     }`}
                                                 style={!selectedTags.includes(tag.label) ? { borderLeft: `3px solid ${tag.color}` } : {}}
                                             >

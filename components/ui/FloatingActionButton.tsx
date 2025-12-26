@@ -2,106 +2,143 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, PenLine, HelpCircle, Upload, X } from 'lucide-react'
+import { Plus, PenLine, HelpCircle, Upload, X, Calendar, BookMarked, Vote } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface QuickAction {
     icon: React.ReactNode
-    label: string
+    labelKey: string
     href?: string
     onClick?: () => void
-    color?: string
+    iconColor: string
+    iconBg: string
 }
 
-const defaultActions: QuickAction[] = [
-    {
-        icon: <PenLine className="w-5 h-5" />,
-        label: 'New Post',
-        href: '/editor',
-        color: 'bg-blue-500 hover:bg-blue-600',
-    },
-    {
-        icon: <HelpCircle className="w-5 h-5" />,
-        label: 'Ask Question',
-        href: '/editor?type=question',
-        color: 'bg-purple-500 hover:bg-purple-600',
-    },
-    {
-        icon: <Upload className="w-5 h-5" />,
-        label: 'Upload Resource',
-        href: '/resources/upload',
-        color: 'bg-green-500 hover:bg-green-600',
-    },
-]
-
-interface FloatingActionButtonProps {
-    actions?: QuickAction[]
-    className?: string
-}
-
-export function FloatingActionButton({
-    actions = defaultActions,
-    className,
-}: FloatingActionButtonProps) {
+export function FloatingActionButton({ className }: { className?: string }) {
     const [isOpen, setIsOpen] = useState(false)
+    const t = useTranslations('QuickActions')
+
+    const actions: QuickAction[] = [
+        {
+            icon: <PenLine className="w-4 h-4" />,
+            labelKey: 'newPost',
+            href: '/editor',
+            iconColor: 'text-blue-600 dark:text-blue-400',
+            iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+        },
+        {
+            icon: <HelpCircle className="w-4 h-4" />,
+            labelKey: 'askQuestion',
+            href: '/editor?type=question',
+            iconColor: 'text-purple-600 dark:text-purple-400',
+            iconBg: 'bg-purple-100 dark:bg-purple-900/30',
+        },
+        {
+            icon: <BookMarked className="w-4 h-4" />,
+            labelKey: 'traceMemory',
+            href: '/editor?type=trace',
+            iconColor: 'text-amber-600 dark:text-amber-400',
+            iconBg: 'bg-amber-100 dark:bg-amber-900/30',
+        },
+        {
+            icon: <Calendar className="w-4 h-4" />,
+            labelKey: 'newEvent',
+            href: '/events/create',
+            iconColor: 'text-rose-600 dark:text-rose-400',
+            iconBg: 'bg-rose-100 dark:bg-rose-900/30',
+        },
+        {
+            icon: <Vote className="w-4 h-4" />,
+            labelKey: 'newPoll',
+            href: '/research-lab/polls?create=true',
+            iconColor: 'text-indigo-600 dark:text-indigo-400',
+            iconBg: 'bg-indigo-100 dark:bg-indigo-900/30',
+        },
+        {
+            icon: <Upload className="w-4 h-4" />,
+            labelKey: 'uploadResource',
+            href: '/resources/upload',
+            iconColor: 'text-emerald-600 dark:text-emerald-400',
+            iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
+        },
+    ]
 
     return (
         <div className={cn('fixed bottom-6 right-6 z-50', className)}>
-            {/* Action Menu */}
+            {/* Backdrop overlay when open */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/20 dark:bg-black/40 -z-10"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            {/* Action Menu Panel */}
             <div
                 className={cn(
-                    'absolute bottom-16 right-0 flex flex-col gap-3 transition-all duration-300',
+                    'absolute bottom-16 right-0 transition-all duration-200',
                     isOpen
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 translate-y-4 pointer-events-none'
                 )}
             >
-                {actions.map((action, index) => (
-                    <div
-                        key={index}
-                        className="flex items-center gap-3 justify-end animate-fade-in-up"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                        <span className="bg-white dark:bg-dark-surface px-3 py-1.5 rounded-lg shadow-md text-sm font-medium text-text dark:text-dark-text whitespace-nowrap">
-                            {action.label}
-                        </span>
-                        {action.href ? (
+                {/* Bounded panel container */}
+                <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-xl shadow-xl p-2 space-y-1.5">
+                    {actions.map((action, index) => (
+                        action.href ? (
                             <Link
+                                key={index}
                                 href={action.href}
-                                className={cn(
-                                    'w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110 active:scale-95',
-                                    action.color || 'bg-primary hover:bg-primary-dark'
-                                )}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg border border-gray-100 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50 hover:bg-gray-100 dark:hover:bg-dark-border/50 transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
-                                {action.icon}
+                                {/* Icon in chamfered rectangle */}
+                                <span className={cn(
+                                    'flex items-center justify-center w-8 h-8 rounded-md',
+                                    action.iconBg,
+                                    action.iconColor
+                                )}>
+                                    {action.icon}
+                                </span>
+                                <span className="text-sm font-medium text-text dark:text-dark-text whitespace-nowrap">
+                                    {t(action.labelKey)}
+                                </span>
                             </Link>
                         ) : (
                             <button
+                                key={index}
                                 onClick={() => {
                                     action.onClick?.()
                                     setIsOpen(false)
                                 }}
-                                className={cn(
-                                    'w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110 active:scale-95',
-                                    action.color || 'bg-primary hover:bg-primary-dark'
-                                )}
+                                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-gray-100 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50 hover:bg-gray-100 dark:hover:bg-dark-border/50 transition-colors"
                             >
-                                {action.icon}
+                                {/* Icon in chamfered rectangle */}
+                                <span className={cn(
+                                    'flex items-center justify-center w-8 h-8 rounded-md',
+                                    action.iconBg,
+                                    action.iconColor
+                                )}>
+                                    {action.icon}
+                                </span>
+                                <span className="text-sm font-medium text-text dark:text-dark-text whitespace-nowrap">
+                                    {t(action.labelKey)}
+                                </span>
                             </button>
-                        )}
-                    </div>
-                ))}
+                        )
+                    ))}
+                </div>
             </div>
 
             {/* Main FAB Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    'fab fab-primary w-14 h-14 transition-all duration-300',
+                    'fab fab-primary w-14 h-14 transition-all duration-200',
                     isOpen && 'rotate-45 bg-gray-600 hover:bg-gray-700'
                 )}
-                aria-label={isOpen ? 'Close quick actions' : 'Open quick actions'}
+                aria-label={isOpen ? t('closeMenu') : t('openMenu')}
                 aria-expanded={isOpen}
             >
                 {isOpen ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
