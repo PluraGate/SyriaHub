@@ -1,80 +1,27 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Bell, Check, MessageSquare, Award, CheckCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { NotificationSkeleton } from '@/components/ui/skeleton'
 import { NoNotificationsIllustration } from '@/components/ui/EmptyState'
 import { useTranslations } from 'next-intl'
-
-interface Notification {
-    id: string
-    type: 'badge' | 'solution' | 'reply' | 'mention' | 'system'
-    title: string
-    message: string
-    url: string | null
-    is_read: boolean
-    created_at: string
-}
+import { useNotifications } from '@/components/NotificationsProvider'
 
 interface NotificationListProps {
     onClose?: () => void
-    onMarkAllRead?: () => void
 }
 
-export function NotificationList({ onClose, onMarkAllRead }: NotificationListProps) {
-    const [notifications, setNotifications] = useState<Notification[]>([])
-    const [loading, setLoading] = useState(true)
+export function NotificationList({ onClose }: NotificationListProps) {
+    const { notifications, markAsRead, markAllAsRead } = useNotifications()
     const [hoveredId, setHoveredId] = useState<string | null>(null)
-    const supabase = createClient()
+    const [loading] = useState(false) // loading is handled in provider or initial fetch
     const router = useRouter()
     const t = useTranslations('Notifications')
 
-    useEffect(() => {
-        fetchNotifications()
-    }, [])
-
-    const fetchNotifications = async () => {
-        const { data } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('is_read', false)
-            .order('created_at', { ascending: false })
-            .limit(20)
-
-        if (data) setNotifications(data as Notification[])
-        setLoading(false)
-    }
-
-    const markAsRead = async (id: string, e?: React.MouseEvent) => {
-        if (e) {
-            e.stopPropagation()
-        }
-        await supabase
-            .from('notifications')
-            .update({ is_read: true })
-            .eq('id', id)
-
-        setNotifications(prev => prev.map(n =>
-            n.id === id ? { ...n, is_read: true } : n
-        ))
-    }
-
-    const markAllAsRead = async () => {
-        await supabase
-            .from('notifications')
-            .update({ is_read: true })
-            .eq('is_read', false)
-
-        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
-        // Notify parent to update badge count immediately
-        onMarkAllRead?.()
-    }
-
-    const handleNotificationClick = async (notification: Notification) => {
+    const handleNotificationClick = async (notification: any) => {
         if (!notification.is_read) {
             await markAsRead(notification.id)
         }
@@ -91,22 +38,6 @@ export function NotificationList({ onClose, onMarkAllRead }: NotificationListPro
             case 'reply': return <MessageSquare className="w-5 h-5 text-blue-500" />
             default: return <Bell className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         }
-    }
-
-    // Loading state with skeletons
-    if (loading) {
-        return (
-            <div className="w-full max-w-sm bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-dark-border overflow-hidden animate-fade-in-up">
-                <div className="p-4 border-b border-gray-200 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50">
-                    <div className="h-5 w-24 skeleton rounded" />
-                </div>
-                <div>
-                    {Array.from({ length: 3 }).map((_, i) => (
-                        <NotificationSkeleton key={i} />
-                    ))}
-                </div>
-            </div>
-        )
     }
 
     // Empty state with illustration
@@ -132,7 +63,7 @@ export function NotificationList({ onClose, onMarkAllRead }: NotificationListPro
             <div className="p-4 border-b border-gray-200 dark:border-dark-border flex justify-between items-center bg-gray-50/50 dark:bg-dark-bg/50">
                 <h3 className="font-semibold text-sm text-text dark:text-dark-text">{t('title')}</h3>
                 <button
-                    onClick={markAllAsRead}
+                    onClick={() => markAllAsRead()}
                     className="text-xs text-secondary hover:text-secondary-light transition-colors font-medium"
                 >
                     {t('markAllAsRead')}
@@ -149,7 +80,7 @@ export function NotificationList({ onClose, onMarkAllRead }: NotificationListPro
                             "p-4 border-b border-gray-100 dark:border-dark-border cursor-pointer",
                             "hover:bg-gray-50 dark:hover:bg-dark-border/50 transition-all duration-200",
                             "flex gap-3 relative group",
-                            !notification.is_read && "bg-primary/5 dark:bg-primary/10",
+                            !notification.is_read ? "bg-primary/5 dark:bg-primary/10" : "opacity-70",
                             "animate-fade-in-up"
                         )}
                         style={{ animationDelay: `${index * 50}ms` }}
@@ -165,7 +96,7 @@ export function NotificationList({ onClose, onMarkAllRead }: NotificationListPro
                                 "text-sm text-gray-900 dark:text-gray-100 leading-snug",
                                 !notification.is_read && "font-semibold"
                             )}>
-                                {notification.title}
+                                {notification.id.startsWith('temp-') ? notification.content : notification.title || notification.content}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">
                                 {notification.message}
@@ -187,7 +118,10 @@ export function NotificationList({ onClose, onMarkAllRead }: NotificationListPro
                                     )} />
                                     {/* Check button on hover */}
                                     <button
-                                        onClick={(e) => markAsRead(notification.id, e)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            markAsRead(notification.id);
+                                        }}
                                         className={cn(
                                             "absolute right-3 top-3 p-1.5 rounded-full",
                                             "bg-primary/10 text-primary hover:bg-primary hover:text-white",

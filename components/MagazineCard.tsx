@@ -6,6 +6,7 @@ import { cn, stripMarkdown, getInitials, getAvatarGradient } from '@/lib/utils'
 import { Clock, Bookmark, Eye, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
+import { useCoverWithFallback } from '@/lib/coverImages'
 
 export type MagazineCardVariant = 'featured' | 'standard' | 'compact' | 'horizontal'
 
@@ -86,6 +87,9 @@ export function MagazineCard({
 
     const eventDate = isEvent ? formatEventDate(post.metadata?.start_time) : ''
 
+    // Get cover image with theme-aware fallback
+    const coverImage = useCoverWithFallback(post.cover_image_url, 'medium')
+
     // Featured variant - large card with image background
     if (variant === 'featured') {
         return (
@@ -100,11 +104,11 @@ export function MagazineCard({
                     className
                 )}
             >
-                {/* Background image or gradient */}
-                {post.cover_image_url && showImage && (
+                {/* Background image with fallback */}
+                {showImage && (
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
-                        style={{ backgroundImage: `url(${post.cover_image_url})` }}
+                        style={{ backgroundImage: `url(${coverImage})` }}
                     />
                 )}
 
@@ -190,14 +194,10 @@ export function MagazineCard({
                 {/* Image */}
                 {showImage && (
                     <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-100 dark:bg-dark-border">
-                        {post.cover_image_url ? (
-                            <div
-                                className="w-full h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105 will-change-transform"
-                                style={{ backgroundImage: `url(${post.cover_image_url})` }}
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10" />
-                        )}
+                        <div
+                            className="w-full h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105 will-change-transform"
+                            style={{ backgroundImage: `url(${coverImage})` }}
+                        />
                     </div>
                 )}
 
@@ -280,14 +280,10 @@ export function MagazineCard({
             {/* Image */}
             {showImage && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-dark-border">
-                    {post.cover_image_url ? (
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
-                            style={{ backgroundImage: `url(${post.cover_image_url})` }}
-                        />
-                    ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
-                    )}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
+                        style={{ backgroundImage: `url(${coverImage})` }}
+                    />
 
                     {/* Bookmark icon */}
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -115,13 +115,14 @@ export function TagsCloud() {
           <Link
             key={tag.label}
             href={`/explore?tag=${encodeURIComponent(tag.label)}`}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-md border border-white/10 text-white dark:text-dark-text"
+            className="flex items-center gap-2 pl-3 pr-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-md bg-gray-100/50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-200"
             style={{
-              backgroundColor: `${bgColor}40`, // 25% opacity
+              borderInlineStartWidth: '4px',
+              borderInlineStartColor: bgColor,
             }}
           >
             <span>{displayLabel}</span>
-            <span className="text-xs opacity-60">
+            <span className="text-xs opacity-60 font-mono">
               {tag.post_count}
             </span>
           </Link>

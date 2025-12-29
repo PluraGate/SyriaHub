@@ -1,13 +1,20 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts"
+// Setup type definitions for built-in Supabase Runtime APIs
+import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+
+// SMTP Configuration from Supabase Secrets
+const SMTP_HOST = Deno.env.get('SMTP_HOST') || 'smtp.gmail.com'
+const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
+const SMTP_USER = Deno.env.get('SMTP_USER') || 'admin@pluragate.org'
+const SMTP_PASS = Deno.env.get('SMTP_PASS')!
+const FROM_NAME = Deno.env.get('FROM_NAME') || 'SyriaHub via PluraGate'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
-    // Handle CORS
+Deno.serve(async (req) => {
+    // Handle CORS preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
@@ -19,51 +26,50 @@ serve(async (req) => {
             throw new Error('Missing required fields: to, subject, html')
         }
 
-        // SMTP Configuration from Supabase Secrets
-        const SMTP_HOSTNAME = Deno.env.get('SMTP_HOSTNAME') || 'smtp.gmail.com'
-        const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
-        const SMTP_USER = Deno.env.get('SMTP_USER')
-        const SMTP_PASS = Deno.env.get('SMTP_PASS')
-        const SITE_URL = Deno.env.get('SITE_URL') || 'http://localhost:3000'
+        // Use Gmail SMTP via fetch to a nodemailer-compatible relay
+        // Note: Supabase Edge Functions can't use raw SMTP, so we use Gmail API approach
 
-        if (!SMTP_USER || !SMTP_PASS) {
-            throw new Error('SMTP credentials not configured in Supabase Secrets')
+        // For now, we'll use the Gmail API via OAuth or a third-party SMTP relay
+        // Alternative: Use Supabase's built-in email or a webhook to your Next.js API
+
+        // Sending via Gmail SMTP requires a relay service in Edge Functions
+        // Recommended: Use Supabase Auth emails or call your Next.js API endpoint
+
+        const response = await fetch(`${Deno.env.get('SITE_URL')}/api/send-email`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+                to,
+                subject,
+                html,
+                text,
+            }),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.error || 'Failed to send email')
         }
 
-        const client = new SmtpClient()
-
-        await client.connectTLS({
-            hostname: SMTP_HOSTNAME,
-            port: SMTP_PORT,
-            username: SMTP_USER,
-            password: SMTP_PASS,
-        })
-
-        await client.send({
-            from: `"SyriaHub" <${SMTP_USER}>`,
-            to,
-            subject,
-            content: text || html.replace(/<[^>]*>/g, ''),
-            html,
-        })
-
-        await client.close()
+        const data = await response.json()
 
         return new Response(
-            JSON.stringify({ success: true, message: 'Email sent successfully' }),
+            JSON.stringify({ success: true, ...data }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 200
+                status: 200,
             }
         )
-
     } catch (error) {
         console.error('Email Function Error:', error.message)
         return new Response(
             JSON.stringify({ error: error.message }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 500
+                status: 500,
             }
         )
     }

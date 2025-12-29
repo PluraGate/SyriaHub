@@ -1,9 +1,11 @@
 'use client'
+// Force rebuild for hydration fix
 
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
 import { useRouter } from 'next/navigation'
 import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy } from 'lucide-react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
@@ -117,35 +119,39 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md border-b border-gray-200 dark:border-dark-border">
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+        <div className="flex items-end justify-between h-16 gap-6 pb-4" suppressHydrationWarning>
+          {/* Logo - Updated to use Image component */}
           <Link
             href="/"
-            className="flex items-center space-x-2 group focus-ring rounded-lg px-2 py-1 -ml-2 shrink-0"
+            className="flex items-end gap-1 group focus-ring rounded-lg px-2 py-1 -ms-2 shrink-0"
             aria-label={tCommon('appTitle')}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
-              <span className="text-white font-display font-bold text-lg">S</span>
-            </div>
-            <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors">
+            <Image
+              src="/icons/icon-192x192.png"
+              alt="SyriaHub Logo"
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-lg shadow-sm group-hover:shadow-md transition-all object-cover mb-1"
+            />
+            <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors leading-none mb-1">
               {tCommon('appTitle')}
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4 flex-1 min-w-0 justify-end">
+          <div className="hidden md:flex items-end gap-4 flex-1 justify-end">
             {/* Nav links - can shrink/hide on smaller screens */}
-            <div className="hidden lg:flex items-center gap-1 shrink min-w-0">
+            <div className="hidden lg:flex items-center gap-1">
               <NavLink href="/feed">{t('feed')}</NavLink>
               <NavLink href="/explore">{t('explore')}</NavLink>
               <NavLink href="/resources">{t('resources')}</NavLink>
               <NavLink href="/events">{t('events')}</NavLink>
             </div>
 
-            <div className="hidden lg:block h-6 w-px bg-gray-200 dark:bg-dark-border shrink-0" />
+            <div className="hidden lg:block h-6 w-px bg-gray-200 dark:bg-dark-border shrink-0 mb-1" />
 
             {/* Action items - never shrink */}
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-3 shrink-0 translate-y-1">
               <SearchBar />
 
               <LanguageSwitcher />
@@ -178,7 +184,7 @@ export function Navbar({ user }: NavbarProps) {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 ml-2 focus-ring rounded-full shrink-0" suppressHydrationWarning>
+                      <button className="flex items-center gap-2 ms-2 focus-ring rounded-full shrink-0" suppressHydrationWarning>
                         <Avatar className="w-8 h-8 border border-gray-200 dark:border-dark-border transition-transform hover:scale-105">
                           <AvatarImage src={userAvatar} alt={userName} />
                           <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">

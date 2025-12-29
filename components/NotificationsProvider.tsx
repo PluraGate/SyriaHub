@@ -7,12 +7,17 @@ import { useRouter } from 'next/navigation'
 
 type Notification = {
     id: string
-    type: 'comment' | 'like' | 'invite' | 'system'
+    type: string
+    title?: string
+    message?: string
     content: string
-    resource_id: string
-    resource_type: string
+    url?: string
+    link?: string
+    resource_id?: string
+    resource_type?: string
     is_read: boolean
     created_at: string
+    metadata?: any
 }
 
 type NotificationsContextType = {
@@ -20,6 +25,7 @@ type NotificationsContextType = {
     unreadCount: number
     markAsRead: (id: string) => Promise<void>
     markAllAsRead: () => Promise<void>
+    deleteNotification: (id: string) => Promise<void>
 }
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined)
@@ -70,7 +76,32 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
                 (payload) => {
                     const newNotification = payload.new as Notification
                     setNotifications(prev => [newNotification, ...prev])
-                    showToast(newNotification.content, 'info')
+                    showToast(newNotification.title || newNotification.content, 'info')
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `user_id=eq.${userId}`
+                },
+                (payload) => {
+                    const updated = payload.new as Notification
+                    setNotifications(prev => prev.map(n => n.id === updated.id ? updated : n))
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'notifications'
+                },
+                (payload) => {
+                    const deletedId = payload.old.id
+                    setNotifications(prev => prev.filter(n => n.id !== deletedId))
                 }
             )
             .subscribe()
@@ -103,10 +134,20 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             .eq('is_read', false)
     }
 
+    const deleteNotification = async (id: string) => {
+        // Optimistic update
+        setNotifications(prev => prev.filter(n => n.id !== id))
+
+        await supabase
+            .from('notifications')
+            .delete()
+            .eq('id', id)
+    }
+
     const unreadCount = notifications.filter(n => !n.is_read).length
 
     return (
-        <NotificationsContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
+        <NotificationsContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification }}>
             {children}
         </NotificationsContext.Provider>
     )

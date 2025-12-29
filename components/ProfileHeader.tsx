@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { EditProfileDialog } from './EditProfileDialog'
 import BadgeDisplay from './BadgeDisplay'
@@ -8,6 +10,7 @@ import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, 
 import { format } from 'date-fns'
 import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
+import { useCoverWithFallback } from '@/lib/coverImages'
 
 interface ProfileHeaderProps {
     profile: any
@@ -63,25 +66,18 @@ function StatItem({
 }
 
 export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileHeaderProps) {
-    // Default cover gradient if no cover_image_url
-    const hasCoverImage = profile.cover_image_url
+    // Get cover image with theme-aware fallback
+    const coverImage = useCoverWithFallback(profile.cover_image_url, 'large')
 
     return (
         <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden mb-8">
-            {/* Cover Image / Gradient Banner */}
-            <div
-                className={cn(
-                    "relative h-48 md:h-56 w-full",
-                    !hasCoverImage && "bg-primary-dark"
-                )}
-            >
-                {hasCoverImage && (
-                    <img
-                        src={profile.cover_image_url}
-                        alt="Profile cover"
-                        className="w-full h-full object-cover"
-                    />
-                )}
+            {/* Cover Image / Fallback Banner */}
+            <div className="relative h-48 md:h-56 w-full">
+                <img
+                    src={coverImage}
+                    alt="Profile cover"
+                    className="w-full h-full object-cover"
+                />
                 {/* Subtle overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>

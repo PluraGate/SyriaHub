@@ -33,8 +33,32 @@ import {
     Bar,
     Legend
 } from 'recharts'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { useTranslations } from 'next-intl'
+
+const CustomTooltip = ({ active, payload, label, t }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border p-3 rounded-lg shadow-xl backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+                <p className="text-sm font-bold text-text dark:text-dark-text mb-2 border-b border-gray-100 dark:border-dark-border pb-1">
+                    {format(new Date(label), 'MMM d, yyyy')}
+                </p>
+                <div className="space-y-1.5">
+                    {payload.map((entry: any, index: number) => (
+                        <div key={index} className="flex items-center gap-3">
+                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                            <span className="text-xs text-text-light dark:text-dark-text-muted">{entry.name}:</span>
+                            <span className="text-xs font-bold text-text dark:text-dark-text ml-auto">
+                                {entry.value?.toLocaleString()}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+    return null
+}
 
 interface AdminStats {
     users: {
@@ -273,8 +297,8 @@ export function AnalyticsDashboard() {
                             <AreaChart data={userGrowth}>
                                 <defs>
                                     <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="hsl(var(--color-primary))" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="hsl(var(--color-primary))" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-dark-border" />
@@ -282,21 +306,19 @@ export function AnalyticsDashboard() {
                                     dataKey="date"
                                     tickFormatter={(date) => format(new Date(date), 'MMM d')}
                                     className="text-xs"
-                                    tick={{ fill: 'currentColor' }}
+                                    tick={{ fill: '#94a3b8' }}
                                 />
-                                <YAxis className="text-xs" tick={{ fill: 'currentColor' }} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'var(--bg-surface)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: '8px'
-                                    }}
-                                    labelFormatter={(date) => format(new Date(date), 'MMM d, yyyy')}
+                                <YAxis
+                                    className="text-[10px]"
+                                    tick={{ fill: '#94a3b8' }}
+                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
+                                    domain={['auto', 'auto']}
                                 />
+                                <Tooltip content={<CustomTooltip t={t} />} />
                                 <Area
                                     type="monotone"
                                     dataKey="cumulative_users"
-                                    stroke="hsl(var(--color-primary))"
+                                    stroke="#3b82f6"
                                     fill="url(#userGradient)"
                                     strokeWidth={2}
                                     name={t('totalUsers')}
@@ -319,22 +341,20 @@ export function AnalyticsDashboard() {
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(date) => format(new Date(date), 'MMM d')}
-                                    className="text-xs"
-                                    tick={{ fill: 'currentColor' }}
+                                    className="text-[10px]"
+                                    tick={{ fill: '#94a3b8' }}
+                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
                                 />
-                                <YAxis className="text-xs" tick={{ fill: 'currentColor' }} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'var(--bg-surface)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: '8px'
-                                    }}
-                                    labelFormatter={(date) => format(new Date(date), 'MMM d, yyyy')}
+                                <YAxis
+                                    className="text-[10px]"
+                                    tick={{ fill: '#94a3b8' }}
+                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
                                 />
+                                <Tooltip content={<CustomTooltip t={t} />} />
                                 <Legend />
-                                <Bar dataKey="posts" fill="hsl(var(--color-primary))" name={t('articles')} radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="comments" fill="hsl(var(--color-accent))" name={t('totalComments')} radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="votes" fill="#8B5CF6" name={t('totalVotes')} radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="posts" fill="#3b82f6" name={t('articles')} radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="comments" fill="#10b981" name={t('totalComments')} radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="votes" fill="#8b5cf6" name={t('totalVotes')} radius={[2, 2, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -442,6 +462,13 @@ export function AnalyticsDashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Footer info */}
+            {stats.generated_at && (
+                <div className="text-center text-xs text-text-light/50 dark:text-dark-text-muted/50 pb-4">
+                    {tCommon('lastUpdated', { date: format(new Date(stats.generated_at), 'MMM d, yyyy HH:mm') })}
+                </div>
+            )}
         </div>
     )
 }

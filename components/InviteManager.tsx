@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Ticket, Plus, Copy, Check, Loader2, Send, Users, Clock, GraduationCap, User } from 'lucide-react'
+import { Ticket, Plus, Copy, Check, Loader2, Send, Users, Clock, GraduationCap, User, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
+import { SendInviteEmailDialog } from './SendInviteEmailDialog'
 
 type InviteTargetRole = 'member' | 'researcher'
 
@@ -42,6 +43,8 @@ export function InviteManager() {
     const [creating, setCreating] = useState(false)
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<InviteTargetRole>('researcher')
+    const [emailDialogCode, setEmailDialogCode] = useState<string | null>(null)
+    const [userRole, setUserRole] = useState<string>('member')
     const { showToast } = useToast()
     const t = useTranslations('Settings.invitesSection')
 
@@ -65,6 +68,14 @@ export function InviteManager() {
             p_user_id: user.id,
         })
         if (statsData) setStats(statsData)
+
+        // Get user role
+        const { data: userData } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+        if (userData) setUserRole(userData.role)
 
         setLoading(false)
     }
@@ -301,6 +312,17 @@ export function InviteManager() {
                                         )}
                                         {t('share')}
                                     </Button>
+                                    {['admin', 'moderator'].includes(userRole) && (
+                                        <Button
+                                            variant="default"
+                                            size="sm"
+                                            onClick={() => setEmailDialogCode(invite.code)}
+                                            className="gap-1.5"
+                                        >
+                                            <Mail className="w-4 h-4" />
+                                            {t('sendEmail')}
+                                        </Button>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -314,6 +336,14 @@ export function InviteManager() {
                     {t('expiresAfter')}
                 </p>
             </div>
+
+            {/* Send Email Dialog */}
+            <SendInviteEmailDialog
+                code={emailDialogCode || ''}
+                isOpen={!!emailDialogCode}
+                onClose={() => setEmailDialogCode(null)}
+                onSuccess={() => fetchData()}
+            />
         </div>
     )
 }

@@ -11,7 +11,9 @@
         "save": "Save",
         "refresh": "Refresh",
         "cancel": "Cancel",
+        "days_short": "d",
         "delete": "Delete",
+        "lastUpdated": "Last updated: {date}",
         "edit": "Edit",
         "submit": "Submit",
         "close": "Close",
@@ -426,6 +428,7 @@
     },
     "Footer": {
         "description": "A collaborative research commons for Syrian knowledge, context, and memory.",
+        "contribute": "Contribute",
         "quickLinks": "Quick Links",
         "browseFeed": "Browse Feed",
         "writePost": "Write a Post",
@@ -433,11 +436,12 @@
         "contact": "Contact",
         "resources": "Resources",
         "github": "GitHub",
+        "openSource": "open source",
         "githubTooltip": "Open-source components",
         "about": "About",
         "governance": "Governance & Trust",
         "privacy": "Privacy Policy",
-        "spatialTeaser": "Spatial knowledge tools coming soon",
+        "spatialTeaser": "Spatial knowledge tools in development",
         "licensingNote": "Content licensed per author terms.",
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons."
     },
@@ -827,7 +831,20 @@
             "codeCopied": "Code copied!",
             "researcherInviteCreated": "Researcher invite created!",
             "memberInviteCreated": "Member invite created!",
-            "expiresAfter": "Each invite can be used once and expires after 30 days"
+            "expiresAfter": "Each invite can be used once and expires after 30 days",
+            "sendEmail": "Send Email",
+            "sendInviteTitle": "Send Invitation",
+            "sendInviteDescription": "Send this invite code directly to someone's email address.",
+            "emailLanguage": "Email Language",
+            "recipientEmail": "Recipient Email",
+            "recipientName": "Recipient Name (optional)",
+            "recipientNamePlaceholder": "Enter their name...",
+            "cancel": "Cancel",
+            "sending": "Sending...",
+            "sendInvitation": "Send Invitation",
+            "invitationSent": "Invitation sent to {email}",
+            "emailRequired": "Email address is required",
+            "invalidEmail": "Please enter a valid email address"
         },
         "notificationSettings": {
             "title": "Notification Settings",
@@ -865,6 +882,8 @@
         "title": "Research Analytics",
         "totalViews": "Total Views",
         "totalVotes": "Total Votes",
+        "totalComments": "Comments",
+        "interactions": "Interactions",
         "publications": "Publications",
         "citations": "Citations",
         "followers": "Followers",
@@ -875,7 +894,33 @@
         "viewAll": "View All",
         "noPublications": "No publications yet.",
         "startWriting": "Start writing!",
-        "days": "{count}d"
+        "days": "{count}d",
+        "tooltips": {
+            "trustScore": "Averaged from source credibility, methodology transparency, and proximity to evidence across your publications.",
+            "followers": "Researchers who receive updates when you publish new work.",
+            "citations": "Times your work has been referenced by other researchers on this platform.",
+            "publications": "Total articles, questions, and traces you've published.",
+            "totalVotes": "Community endorsements across all your publications.",
+            "totalComments": "Total comments from the community on your research.",
+            "totalViews": "Each view represents a unique reader engaging with your research.",
+            "interactions": "Total engagement including votes, comments, and shares on your work."
+        },
+        "zeroState": {
+            "title": "Your research journey begins here",
+            "description": "This dashboard tracks the reach and impact of your contributions. Here's how to get started:",
+            "step1": "Publish your first research article or question",
+            "step2": "Engage with other researchers' work to build connections",
+            "step3": "Your metrics will grow as the community discovers your contributions",
+            "cta": "Write Your First Post",
+            "chartEmpty": "Activity appears here once your research gains readers",
+            "expectedLine": "Expected baseline"
+        },
+        "trends": {
+            "up": "+{percent}%",
+            "down": "{percent}%",
+            "noChange": "—",
+            "vsLastPeriod": "vs last {days}d"
+        }
     },
     "Coordination": {
         "coordinationCenter": "Coordination Center",
@@ -1233,7 +1278,8 @@
             "questions": "Questions",
             "discussions": "Discussions",
             "failedToLoad": "Failed to load analytics data",
-            "newInPeriod": "+{count} in {days}d"
+            "newInPeriod": "+{count} in {days}d",
+            "moderationQueue": "Moderation Queue"
         },
         "auditLogPage": {
             "title": "Audit Log",
@@ -1396,6 +1442,7 @@
             "deletePoll": "Delete",
             "confirmDeletePoll": "Are you sure you want to delete this poll? This action cannot be undone.",
             "voteRecorded": "Vote recorded!",
+            "voteRecordedWithCTA": "Vote recorded! View live results →",
             "loginToVote": "Log in to vote",
             "loginToCreate": "Please log in to create a poll",
             "enterQuestion": "Please enter a question",
@@ -1404,6 +1451,35 @@
             "pollDeleted": "Poll deleted successfully",
             "pollClosed": "Poll closed",
             "by": "by"
+        },
+        "footprint": {
+            "title": "Your Participation",
+            "subtitle": "Your contribution to collective research",
+            "summary": "Participation Summary",
+            "pollsVoted": "Polls Voted",
+            "surveysCompleted": "Surveys Completed",
+            "lastActivity": "Last Activity",
+            "engagementLevel": "Engagement Level",
+            "engagedResearch": "Active Research You Engaged With",
+            "viewAll": "View All",
+            "votes": "votes",
+            "responses": "responses",
+            "noRecentActivity": "No participation yet. Start by voting on polls or completing surveys.",
+            "viewPolls": "View Polls",
+            "viewSurveys": "View Surveys"
+        },
+        "unanswered": {
+            "title": "Active Research to Participate In",
+            "viewAll": "View all",
+            "open": "Open",
+            "closesToday": "Closes today",
+            "closesTomorrow": "Closes tomorrow",
+            "closesInDays": "Closes in {days} days",
+            "participate": "Participate",
+            "type": {
+                "poll": "Poll",
+                "survey": "Survey"
+            }
         },
         "surveysPage": {
             "subtitle": "Create and manage research surveys with multiple question types",

@@ -8,13 +8,22 @@ interface EmailOptions {
   text?: string
 }
 
-// Create reusable transporter (Gmail SMTP for testing)
+// Email configuration constants
+const EMAIL_CONFIG = {
+  fromName: 'SyriaHub via PluraGate',
+  fromEmail: process.env.SMTP_USER || 'admin@pluragate.org',
+  replyTo: process.env.SMTP_REPLY_TO || 'admin@pluragate.org',
+}
+
+// Create reusable transporter (Google Workspace SMTP)
 const createTransporter = () => {
   const config = {
-    service: 'gmail',
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: true, // Use TLS
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD, // App password for Gmail
+      pass: process.env.SMTP_PASSWORD, // App password for Google Workspace
     },
   }
 
@@ -47,7 +56,8 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     // Local/Dev Fallback
     const transporter = createTransporter()
     await transporter.sendMail({
-      from: `"SyriaHub" <${process.env.SMTP_USER}>`,
+      from: `"${EMAIL_CONFIG.fromName}" <${EMAIL_CONFIG.fromEmail}>`,
+      replyTo: EMAIL_CONFIG.replyTo,
       to,
       subject,
       html,
@@ -169,6 +179,94 @@ export const emailTemplates = {
       </div>
     `),
   }),
+
+  // PluraGate Network Invitation - English
+  pluraGateInviteEN: (inviteUrl: string, recipientName?: string) => ({
+    subject: 'An Invitation to Explore PluraGate',
+    html: wrapPluraGateEmailLayout(`
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        ${recipientName ? `Hello ${recipientName},` : 'Hello,'}
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        You're receiving this message because we believe your work, thinking, or practice aligns with what PluraGate is being built to support.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        <strong>PluraGate</strong> is a growing network designed to host and connect independent knowledge initiatives — creating shared infrastructure, governance, and long-term continuity without flattening their identities or agendas. Each initiative within the network remains autonomous, while benefiting from collective standards, tools, and mutual visibility.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        As part of this network, <strong>SyriaHub</strong> operates as one of the active initiatives, focused on research, documentation, and collaborative knowledge around Syria. It retains its own voice, scope, and direction within the wider PluraGate framework.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        This invitation is not a commitment request. It is an opening — to explore participation, contribution, or simply dialogue, at a pace and depth that makes sense to you.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 20px;">
+        We are intentionally building PluraGate slowly, with care for clarity, trust, and purpose over scale or noise.
+      </p>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${inviteUrl}" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);">Join PluraGate</a>
+      </div>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 1.8; margin-bottom: 8px;">
+        If this resonates, you're welcome to reply directly to this email. A real person will respond.
+      </p>
+      
+      <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 16px; color: #374151; margin: 0 0 4px;">Warm regards,</p>
+        <p style="font-size: 16px; color: #6366f1; font-weight: 600; margin: 0;">PluraGate</p>
+        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0;">admin@pluragate.org</p>
+      </div>
+    `, 'en'),
+  }),
+
+  // PluraGate Network Invitation - Arabic
+  pluraGateInviteAR: (inviteUrl: string, recipientName?: string) => ({
+    subject: 'دعوة لاستكشاف PluraGate',
+    html: wrapPluraGateEmailLayout(`
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        ${recipientName ? `مرحباً ${recipientName}،` : 'مرحباً،'}
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        تصلك هذه الرسالة لأننا نؤمن بأن عملك، أو تفكيرك، أو ممارستك تتقاطع مع ما نبنيه في PluraGate.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        <strong>PluraGate</strong> شبكة متنامية صُمّمت لاستضافة وربط مبادرات المعرفة المستقلة — توفّر بنية تحتية مشتركة، وحوكمة، واستمرارية طويلة الأمد، دون طمس هويات المبادرات أو أجنداتها. تبقى كل مبادرة ضمن الشبكة مستقلة، مع الاستفادة من المعايير والأدوات المشتركة والحضور المتبادل.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        كجزء من هذه الشبكة، يعمل <strong>SyriaHub</strong> كإحدى المبادرات النشطة، مركّزاً على البحث والتوثيق والمعرفة التشاركية حول سوريا. يحتفظ بصوته ونطاقه واتجاهه الخاص ضمن إطار PluraGate الأوسع.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        هذه الدعوة ليست طلب التزام. إنها فتح باب — لاستكشاف المشاركة، أو المساهمة، أو الحوار ببساطة، بالوتيرة والعمق الذي يناسبك.
+      </p>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 20px;">
+        نحن نبني PluraGate بتأنٍّ مقصود، مع عناية بالوضوح والثقة والهدف، بدلاً من السعي وراء الحجم أو الضجيج.
+      </p>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${inviteUrl}" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);">انضم إلى PluraGate</a>
+      </div>
+      
+      <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 8px;">
+        إن كان هذا يتردد صداه لديك، يسعدنا أن ترد مباشرة على هذا البريد. سيرد عليك شخص حقيقي.
+      </p>
+      
+      <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 16px; color: #374151; margin: 0 0 4px;">مع أطيب التحيات،</p>
+        <p style="font-size: 16px; color: #6366f1; font-weight: 600; margin: 0;">PluraGate</p>
+        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0;">admin@pluragate.org</p>
+      </div>
+    `, 'ar'),
+  }),
 }
 
 /**
@@ -221,3 +319,106 @@ function wrapEmailLayout(content: string): string {
     </html>
   `
 }
+
+/**
+ * PluraGate Network email layout - clean, minimalist design
+ * Supports RTL for Arabic emails
+ */
+function wrapPluraGateEmailLayout(content: string, locale: 'en' | 'ar' = 'en'): string {
+  const isRTL = locale === 'ar'
+  const direction = isRTL ? 'rtl' : 'ltr'
+  const textAlign = isRTL ? 'right' : 'left'
+  const fontFamily = isRTL
+    ? "'Segoe UI', Tahoma, Arial, sans-serif"
+    : "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+
+  return `
+    <!DOCTYPE html>
+    <html lang="${locale}" dir="${direction}">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { 
+          margin: 0; 
+          padding: 0; 
+          font-family: ${fontFamily}; 
+          background-color: #f9fafb; 
+          color: #1f2937;
+          direction: ${direction};
+        }
+        .wrapper { 
+          width: 100%; 
+          table-layout: fixed; 
+          background-color: #f9fafb; 
+          padding: 40px 20px;
+        }
+        .main { 
+          background-color: #ffffff; 
+          margin: 0 auto; 
+          width: 100%; 
+          max-width: 600px; 
+          border-spacing: 0; 
+          color: #1f2937; 
+          border-radius: 12px; 
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .header { 
+          background: #ffffff; 
+          padding: 32px 40px 24px; 
+          text-align: ${textAlign};
+          border-bottom: 1px solid #e5e7eb;
+        }
+        .logo { 
+          color: #6366f1; 
+          font-size: 24px; 
+          font-weight: 700; 
+          letter-spacing: -0.025em; 
+          text-decoration: none;
+        }
+        .content { 
+          padding: 32px 40px; 
+          text-align: ${textAlign};
+        }
+        .footer { 
+          padding: 24px 40px; 
+          text-align: center; 
+          color: #9ca3af; 
+          font-size: 12px;
+          background: #f9fafb;
+          border-top: 1px solid #e5e7eb;
+        }
+        @media screen and (max-width: 600px) {
+          .content { padding: 24px 20px !important; }
+          .header { padding: 24px 20px 20px !important; }
+          .footer { padding: 20px !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <table class="main">
+          <tr>
+            <td class="header">
+              <a href="https://pluragate.org" class="logo">PluraGate</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="content">
+              ${content}
+            </td>
+          </tr>
+        </table>
+        <div class="footer">
+          <p style="margin: 0;">© ${new Date().getFullYear()} PluraGate Network</p>
+          <p style="margin: 8px 0 0; color: #6b7280;">
+            ${isRTL ? 'شبكة مبادرات المعرفة المستقلة' : 'A network of independent knowledge initiatives'}
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}
+

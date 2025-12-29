@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import {
     Bell,
     Check,
@@ -14,7 +13,6 @@ import {
     Award,
     CheckCircle,
     Trash2,
-    Filter,
     Loader2,
     ArrowLeft,
     Reply
@@ -25,20 +23,7 @@ import { useToast } from '@/components/ui/toast'
 import { NoNotificationsIllustration } from '@/components/ui/EmptyState'
 import { useTranslations } from 'next-intl'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
-
-interface Notification {
-    id: string
-    type: 'badge' | 'solution' | 'reply' | 'mention' | 'system' | 'follow'
-    title: string
-    message: string | null
-    url: string | null
-    is_read: boolean
-    created_at: string
-    post_id?: string | null
-    comment_id?: string | null
-    actor_id?: string | null
-    metadata?: any
-}
+import { useNotifications } from '@/components/NotificationsProvider'
 
 type FilterType = 'all' | 'unread' | 'reply' | 'mention' | 'badge' | 'system'
 
@@ -51,7 +36,7 @@ const filterKeys: { value: FilterType; labelKey: string }[] = [
     { value: 'system', labelKey: 'types.system' },
 ]
 
-const typeIcons: Record<string, typeof Bell> = {
+const typeIcons: Record<string, any> = {
     badge: Award,
     solution: CheckCircle,
     reply: MessageSquare,
@@ -69,118 +54,44 @@ const typeColors: Record<string, string> = {
     system: 'text-gray-500 bg-gray-50 dark:bg-gray-900/20',
 }
 
-interface NotificationsPageContentProps {
-    userId: string
-}
-
-export function NotificationsPageContent({ userId }: NotificationsPageContentProps) {
+export function NotificationsPageContent({ userId }: { userId: string }) {
     const t = useTranslations('Notifications')
     const { formatSaved } = useDateFormatter()
-    const [notifications, setNotifications] = useState<Notification[]>([])
-    const [loading, setLoading] = useState(true)
+    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
     const [filter, setFilter] = useState<FilterType>('all')
     const [markingAll, setMarkingAll] = useState(false)
     const [replyingTo, setReplyingTo] = useState<string | null>(null)
     const [replyContent, setReplyContent] = useState('')
     const [submittingReply, setSubmittingReply] = useState(false)
 
-    const supabase = useMemo(() => createClient(), [])
     const router = useRouter()
     const { showToast } = useToast()
 
-    const fetchNotifications = useCallback(async () => {
-        setLoading(true)
-        try {
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', userId)
-                .order('created_at', { ascending: false })
-                .limit(100)
-
-            if (error) throw error
-            setNotifications(data || [])
-        } catch (error) {
-            console.error('Error fetching notifications:', error)
-            showToast('Failed to load notifications.', 'error')
-        } finally {
-            setLoading(false)
-        }
-    }, [userId, supabase, showToast])
-
-    useEffect(() => {
-        fetchNotifications()
-    }, [fetchNotifications])
+    const handleMarkAllAsRead = async () => {
+        setMarkingAll(true)
+        await markAllAsRead()
+        setMarkingAll(false)
+        showToast('All notifications marked as read.', 'success')
+    }
 
     const filteredNotifications = useMemo(() => {
-        if (filter === 'all') return notifications
-        if (filter === 'unread') return notifications.filter(n => !n.is_read)
-        return notifications.filter(n => n.type === filter)
+        let list = notifications as any[]
+        if (filter === 'all') return list
+        if (filter === 'unread') return list.filter(n => !n.is_read)
+        return list.filter(n => n.type === filter)
     }, [notifications, filter])
 
-    const unreadCount = useMemo(() =>
-        notifications.filter(n => !n.is_read).length,
-        [notifications])
-
-    const markAsRead = async (notificationId: string) => {
-        try {
-            await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', notificationId)
-
-            setNotifications(prev =>
-                prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
-            )
-        } catch (error) {
-            console.error('Error marking as read:', error)
-        }
-    }
-
-    const markAllAsRead = async () => {
-        setMarkingAll(true)
-        try {
-            await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('user_id', userId)
-                .eq('is_read', false)
-
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
-            showToast('All notifications marked as read.', 'success')
-        } catch (error) {
-            console.error('Error marking all as read:', error)
-            showToast('Failed to mark all as read.', 'error')
-        } finally {
-            setMarkingAll(false)
-        }
-    }
-
-    const deleteNotification = async (notificationId: string) => {
-        try {
-            await supabase
-                .from('notifications')
-                .delete()
-                .eq('id', notificationId)
-
-            setNotifications(prev => prev.filter(n => n.id !== notificationId))
-            showToast('Notification deleted.', 'success')
-        } catch (error) {
-            console.error('Error deleting notification:', error)
-            showToast('Failed to delete notification.', 'error')
-        }
-    }
-
-    const handleNotificationClick = (notification: Notification) => {
+    const handleNotificationClick = (notification: any) => {
         if (!notification.is_read) {
             markAsRead(notification.id)
         }
-        if (notification.url) {
-            router.push(notification.url)
+        const url = notification.url || notification.link
+        if (url) {
+            router.push(url)
         }
     }
 
-    const handleReply = async (notification: Notification) => {
+    const handleReply = async (notification: any) => {
         if (!replyContent.trim() || !notification.post_id) return
 
         setSubmittingReply(true)
@@ -202,6 +113,10 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
             showToast('Reply posted successfully!', 'success')
             setReplyContent('')
             setReplyingTo(null)
+            // Mark as read after replying
+            if (!notification.is_read) {
+                markAsRead(notification.id)
+            }
         } catch (error) {
             console.error('Error posting reply:', error)
             showToast('Failed to post reply.', 'error')
@@ -213,17 +128,6 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
     const getIcon = (type: string) => {
         const Icon = typeIcons[type] || Bell
         return <Icon className="w-5 h-5" />
-    }
-
-    if (loading) {
-        return (
-            <div className="max-w-3xl mx-auto">
-                <div className="flex items-center justify-center py-16">
-                    <Loader2 className="w-6 h-6 animate-spin text-text-light dark:text-dark-text-muted" />
-                    <span className="ml-2 text-text-light dark:text-dark-text-muted">{t('loading')}</span>
-                </div>
-            </div>
-        )
     }
 
     return (
@@ -272,7 +176,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={markAllAsRead}
+                        onClick={handleMarkAllAsRead}
                         disabled={markingAll}
                     >
                         {markingAll ? (
@@ -326,7 +230,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                             'text-sm text-text dark:text-dark-text',
                                             !notification.is_read && 'font-semibold'
                                         )}>
-                                            {notification.title}
+                                            {notification.title || notification.content}
                                         </p>
                                         {notification.message && (
                                             <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-0.5">
@@ -399,13 +303,6 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                             <Check className="w-4 h-4" />
                                         </button>
                                     )}
-                                    <button
-                                        onClick={() => deleteNotification(notification.id)}
-                                        className="p-1.5 rounded-full text-text-light dark:text-dark-text-muted hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors"
-                                        title={t('delete')}
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
                                 </div>
                             </div>
                         </div>

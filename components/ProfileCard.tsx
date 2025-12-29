@@ -1,15 +1,18 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { User as UserIcon, Building2, ArrowUpRight } from 'lucide-react'
 import { User } from '@/types'
 import ReputationScore from './ReputationScore'
+import { useCoverWithFallback } from '@/lib/coverImages'
 
 interface ProfileCardProps {
     profile: User
 }
 
 export function ProfileCard({ profile }: ProfileCardProps) {
-    // Generate a gradient based on name (used as fallback)
+    // Generate a gradient based on name (used as fallback for avatar)
     const gradients = [
         'from-primary to-secondary',
         'from-secondary to-primary',
@@ -19,7 +22,8 @@ export function ProfileCard({ profile }: ProfileCardProps) {
     const gradientIndex = profile.name.charCodeAt(0) % gradients.length
     const gradient = gradients[gradientIndex]
 
-    const hasCoverImage = !!profile.cover_image_url
+    // Get cover image with theme-aware fallback
+    const coverImage = useCoverWithFallback(profile.cover_image_url, 'small')
     const hasAvatar = !!profile.avatar_url
 
     return (
@@ -27,18 +31,14 @@ export function ProfileCard({ profile }: ProfileCardProps) {
             href={`/profile/${profile.id}`}
             className="group relative flex flex-col h-full bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300"
         >
-            {/* Header - Cover Image or Gradient */}
+            {/* Header - Cover Image with Fallback */}
             <div className="h-16 relative">
-                {hasCoverImage ? (
-                    <Image
-                        src={profile.cover_image_url!}
-                        alt=""
-                        fill
-                        className="object-cover"
-                    />
-                ) : (
-                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
-                )}
+                <Image
+                    src={coverImage}
+                    alt=""
+                    fill
+                    className="object-cover"
+                />
                 {/* Avatar */}
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
                     <div className="w-16 h-16 rounded-xl bg-white dark:bg-dark-surface border-4 border-white dark:border-dark-surface shadow-soft-md flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">

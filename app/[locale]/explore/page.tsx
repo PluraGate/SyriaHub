@@ -15,6 +15,7 @@ import { ProfileCard } from '@/components/ProfileCard'
 import { SearchBar } from '@/components/SearchBar'
 import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useDefaultCover } from '@/lib/coverImages'
 
 import { Post } from '@/types'
 
@@ -47,6 +48,9 @@ function ExplorePageContent() {
   const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
   const [profiles, setProfiles] = useState<any[]>([])
   const [comingEvents, setComingEvents] = useState<Post[]>([])
+
+  // Get theme-aware hero cover image
+  const heroCover = useDefaultCover('large')
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -190,8 +194,16 @@ function ExplorePageContent() {
 
       <main className="flex-1">
         {/* Hero Header */}
-        <div className="relative bg-gradient-to-br from-primary via-primary-dark to-primary overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
+        <div className="relative overflow-hidden">
+          {/* Background Cover Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${heroCover})` }}
+          />
+          {/* Gradient Overlay - lighter in light mode to show light cover, darker in dark mode */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/60 via-primary-dark/50 to-primary/40 dark:from-primary/80 dark:via-primary-dark/70 dark:to-primary/60" />
+          {/* Decorative blurs */}
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
           </div>

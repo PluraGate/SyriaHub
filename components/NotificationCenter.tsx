@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import {
     Bell,
     BellOff,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
+import { useNotifications } from '@/components/NotificationsProvider'
 
 interface Notification {
     id: string
@@ -40,7 +40,7 @@ interface Notification {
 
 type NotificationFilter = 'all' | 'unread' | 'mentions' | 'social' | 'system'
 
-const notificationIcons: Record<Notification['type'], typeof Bell> = {
+const notificationIcons: Record<string, any> = {
     mention: AtSign,
     reply: MessageSquare,
     follow: UserPlus,
@@ -51,7 +51,7 @@ const notificationIcons: Record<Notification['type'], typeof Bell> = {
     moderation: AlertTriangle,
 }
 
-const notificationColors: Record<Notification['type'], string> = {
+const notificationColors: Record<string, string> = {
     mention: 'text-blue-500 bg-blue-50 dark:bg-blue-900/20',
     reply: 'text-green-500 bg-green-50 dark:bg-green-900/20',
     follow: 'text-purple-500 bg-purple-50 dark:bg-purple-900/20',
@@ -62,123 +62,31 @@ const notificationColors: Record<Notification['type'], string> = {
     moderation: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20',
 }
 
-interface NotificationCenterProps {
-    userId: string
-}
-
-export function NotificationCenter({ userId }: NotificationCenterProps) {
+export function NotificationCenter({ userId }: { userId: string }) {
     const [isOpen, setIsOpen] = useState(false)
-    const [notifications, setNotifications] = useState<Notification[]>([])
-    const [loading, setLoading] = useState(true)
+    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications()
     const [filter, setFilter] = useState<NotificationFilter>('all')
     const [markingAll, setMarkingAll] = useState(false)
-    const supabase = useMemo(() => createClient(), [])
 
-    const unreadCount = useMemo(() =>
-        notifications.filter(n => !n.is_read).length,
-        [notifications]
-    )
-
-    const fetchNotifications = useCallback(async () => {
-        try {
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', userId)
-                .order('created_at', { ascending: false })
-                .limit(50)
-
-            if (error) throw error
-            setNotifications(data || [])
-        } catch (error) {
-            console.error('Error fetching notifications:', error)
-        } finally {
-            setLoading(false)
-        }
-    }, [userId, supabase])
-
-    useEffect(() => {
-        fetchNotifications()
-
-        // Subscribe to real-time notifications
-        const channel = supabase
-            .channel(`notifications:${userId}`)
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'notifications',
-                    filter: `user_id=eq.${userId}`,
-                },
-                (payload) => {
-                    setNotifications(prev => [payload.new as Notification, ...prev])
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
-        }
-    }, [userId, supabase, fetchNotifications])
-
-    const markAsRead = async (notificationId: string) => {
-        try {
-            await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', notificationId)
-
-            setNotifications(prev =>
-                prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
-            )
-        } catch (error) {
-            console.error('Error marking notification as read:', error)
-        }
-    }
-
-    const markAllAsRead = async () => {
+    const handleMarkAllAsRead = async () => {
         setMarkingAll(true)
-        try {
-            await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('user_id', userId)
-                .eq('is_read', false)
-
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
-        } catch (error) {
-            console.error('Error marking all as read:', error)
-        } finally {
-            setMarkingAll(false)
-        }
-    }
-
-    const deleteNotification = async (notificationId: string) => {
-        try {
-            await supabase
-                .from('notifications')
-                .delete()
-                .eq('id', notificationId)
-
-            setNotifications(prev => prev.filter(n => n.id !== notificationId))
-        } catch (error) {
-            console.error('Error deleting notification:', error)
-        }
+        await markAllAsRead()
+        setMarkingAll(false)
     }
 
     const filteredNotifications = useMemo(() => {
+        let list = notifications as any[]
         switch (filter) {
             case 'unread':
-                return notifications.filter(n => !n.is_read)
+                return list.filter(n => !n.is_read)
             case 'mentions':
-                return notifications.filter(n => n.type === 'mention' || n.type === 'reply')
+                return list.filter(n => n.type === 'mention' || n.type === 'reply')
             case 'social':
-                return notifications.filter(n => ['follow', 'like', 'fork', 'citation'].includes(n.type))
+                return list.filter(n => ['follow', 'like', 'fork', 'citation'].includes(n.type))
             case 'system':
-                return notifications.filter(n => n.type === 'system' || n.type === 'moderation')
+                return list.filter(n => n.type === 'system' || n.type === 'moderation')
             default:
-                return notifications
+                return list
         }
     }, [notifications, filter])
 
@@ -194,7 +102,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
             >
                 <Bell className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full border-2 border-white dark:border-dark-bg transition-all animate-in zoom-in">
                         {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                 )}
@@ -225,7 +133,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
                                         <Button
                                             size="sm"
                                             variant="ghost"
-                                            onClick={markAllAsRead}
+                                            onClick={handleMarkAllAsRead}
                                             disabled={markingAll}
                                             className="text-xs gap-1"
                                         >
@@ -252,8 +160,8 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
                                         key={f}
                                         onClick={() => setFilter(f)}
                                         className={`px-2.5 py-1 text-xs rounded-full capitalize transition-colors ${filter === f
-                                                ? 'bg-primary text-white'
-                                                : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
                                             }`}
                                     >
                                         {f}
@@ -264,11 +172,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
 
                         {/* Notifications List */}
                         <div className="flex-1 overflow-y-auto">
-                            {loading ? (
-                                <div className="flex items-center justify-center py-12">
-                                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                                </div>
-                            ) : filteredNotifications.length === 0 ? (
+                            {filteredNotifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
                                     <BellOff className="w-10 h-10 text-text-light dark:text-dark-text-muted opacity-50 mb-3" />
                                     <p className="text-sm text-text-light dark:text-dark-text-muted">
@@ -310,21 +214,21 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
 }
 
 interface NotificationItemProps {
-    notification: Notification
+    notification: any
     onRead: (id: string) => void
     onDelete: (id: string) => void
     onClose: () => void
 }
 
 function NotificationItem({ notification, onRead, onDelete, onClose }: NotificationItemProps) {
-    const Icon = notificationIcons[notification.type]
-    const colorClass = notificationColors[notification.type]
+    const Icon = notificationIcons[notification.type] || Bell
+    const colorClass = notificationColors[notification.type] || 'text-gray-500 bg-gray-50 dark:bg-gray-900/20'
 
     const handleClick = () => {
         if (!notification.is_read) {
             onRead(notification.id)
         }
-        if (notification.url) {
+        if (notification.url || notification.link) {
             onClose()
         }
     }
@@ -343,7 +247,7 @@ function NotificationItem({ notification, onRead, onDelete, onClose }: Notificat
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                     <p className={`text-sm ${!notification.is_read ? 'font-medium' : ''} text-text dark:text-dark-text line-clamp-2`}>
-                        {notification.title}
+                        {notification.title || notification.content}
                     </p>
                     {notification.message && (
                         <p className="text-xs text-text-light dark:text-dark-text-muted mt-0.5 line-clamp-2">
@@ -386,9 +290,11 @@ function NotificationItem({ notification, onRead, onDelete, onClose }: Notificat
         </div>
     )
 
-    if (notification.url) {
+    const url = notification.url || notification.link
+
+    if (url) {
         return (
-            <Link href={notification.url} onClick={handleClick}>
+            <Link href={url} onClick={handleClick}>
                 {content}
             </Link>
         )
@@ -397,9 +303,6 @@ function NotificationItem({ notification, onRead, onDelete, onClose }: Notificat
     return <div onClick={handleClick}>{content}</div>
 }
 
-/**
- * Compact notification bell for navbar
- */
 export function NotificationBell({ userId }: { userId: string }) {
     return <NotificationCenter userId={userId} />
 }

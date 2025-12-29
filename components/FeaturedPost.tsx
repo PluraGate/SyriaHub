@@ -6,6 +6,7 @@ import { cn, stripMarkdown } from '@/lib/utils'
 import { Clock, ArrowUpRight, TrendingUp, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
+import { useCoverWithFallback } from '@/lib/coverImages'
 
 type FeaturedSize = 'large' | 'medium' | 'small'
 
@@ -95,6 +96,9 @@ export function FeaturedPost({
     const colors = accentClasses[accentColor]
     const isEvent = post.content_type === 'event'
 
+    // Get cover image with theme-aware fallback
+    const coverImage = useCoverWithFallback(post.cover_image_url, size === 'large' ? 'large' : 'medium')
+
     // Format event date using calendar-aware formatting
     const eventDate = isEvent && post.metadata?.start_time ? formatDate(post.metadata.start_time, 'medium') : ''
 
@@ -116,18 +120,10 @@ export function FeaturedPost({
             >
                 {/* Background */}
                 <div className="absolute inset-0">
-                    {post.cover_image_url ? (
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
-                            style={{ backgroundImage: `url(${post.cover_image_url})` }}
-                        />
-                    ) : (
-                        <div className={cn(
-                            'absolute inset-0 bg-gradient-to-br',
-                            colors.gradient,
-                            'opacity-90'
-                        )} />
-                    )}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
+                        style={{ backgroundImage: `url(${coverImage})` }}
+                    />
                     {/* Overlay - semi-transparent to show cover image */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
                 </div>
@@ -241,14 +237,10 @@ export function FeaturedPost({
             >
                 {/* Background */}
                 <div className="absolute inset-0">
-                    {post.cover_image_url ? (
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
-                            style={{ backgroundImage: `url(${post.cover_image_url})` }}
-                        />
-                    ) : (
-                        <div className={cn('absolute inset-0', colors.bgLight)} />
-                    )}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 will-change-transform"
+                        style={{ backgroundImage: `url(${coverImage})` }}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 </div>
 
