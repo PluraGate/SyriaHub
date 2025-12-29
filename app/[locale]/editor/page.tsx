@@ -80,6 +80,7 @@ export default function EditorPage() {
   const [showDraftBanner, setShowDraftBanner] = useState(false)
   const [linkedResources, setLinkedResources] = useState<any[]>([])
   const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false)
+  const [editorKey, setEditorKey] = useState(0) // Key to force RichEditor remount
 
   // Epistemic Architecture fields
   const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
@@ -157,6 +158,8 @@ export default function EditorPage() {
       if (draft.temporalCoverageEnd) setTemporalCoverageEnd(draft.temporalCoverageEnd)
       if (draft.spatialCoverage) setSpatialCoverage(draft.spatialCoverage)
       if (draft.spatialGeometry) setSpatialGeometry(draft.spatialGeometry)
+      // Force RichEditor to remount with new content
+      setEditorKey(prev => prev + 1)
       setShowDraftBanner(false)
       showToast('Draft restored successfully', 'success')
     }
@@ -391,7 +394,11 @@ export default function EditorPage() {
         }
 
         const { data, error } = result
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', JSON.stringify(error, null, 2))
+          console.error('Error properties:', Object.keys(error))
+          throw new Error(error.message || error.code || 'Unknown database error')
+        }
 
         if (citations.length > 0) {
           // Delete existing citations if editing
@@ -456,9 +463,21 @@ export default function EditorPage() {
 
         await new Promise(resolve => setTimeout(resolve, 1500))
         router.push(publish ? (group ? `/groups/${group.id}` : `/post/${data.id}`) : '/feed')
-      } catch (error) {
+      } catch (error: any) {
+        // Log detailed error for debugging
         console.error('Failed to store post', error)
-        showToast('Unable to save your post right now. Please try again.', 'error')
+        console.error('Error details:', {
+          message: error?.message,
+          code: error?.code,
+          details: error?.details,
+          hint: error?.hint,
+        })
+
+        // Show user-friendly error with more details if available
+        const errorMessage = error?.message || error?.code
+          ? `Unable to save: ${error.message || error.code}${error.hint ? ` (${error.hint})` : ''}`
+          : 'Unable to save your post right now. Please try again.'
+        showToast(errorMessage, 'error')
       } finally {
         setSaving(false)
       }
@@ -707,6 +726,7 @@ export default function EditorPage() {
 
                 {useRichEditor ? (
                   <RichEditor
+                    key={editorKey}
                     value={content}
                     onChange={setContent}
                     placeholder="Write your content here..."

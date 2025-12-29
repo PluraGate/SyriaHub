@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Download, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>
@@ -75,27 +76,30 @@ export function InstallPWA() {
                             {t('installDescription')}
                         </p>
                     </div>
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={handleDismiss}
-                        className="text-gray-500 hover:text-gray-300 transition-colors"
+                        className="text-gray-500 hover:text-gray-300 -mr-2"
                         aria-label={t('dismiss')}
                     >
                         <X className="w-4 h-4" />
-                    </button>
+                    </Button>
                 </div>
                 <div className="flex gap-2 mt-3">
-                    <button
+                    <Button
                         onClick={handleInstall}
-                        className="flex-1 px-3 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
+                        className="flex-1"
                     >
                         {t('install')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleDismiss}
-                        className="px-3 py-2 text-gray-400 text-sm hover:text-gray-200 transition-colors"
+                        variant="ghost"
+                        className="text-gray-400 hover:text-gray-200 hover:bg-white/5"
                     >
                         {t('notNow')}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

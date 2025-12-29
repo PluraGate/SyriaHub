@@ -16,6 +16,7 @@ import { ImpactStoriesSection } from '@/components/ImpactStoriesSection'
 import { Post } from '@/types'
 import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useDefaultCover } from '@/lib/coverImages'
 
 
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
@@ -32,6 +33,9 @@ export default function FeedPage() {
   const [followingIds, setFollowingIds] = useState<string[]>([])
   const supabase = createClient()
   const t = useTranslations('Feed')
+
+  // Get theme-aware hero cover image
+  const heroCover = useDefaultCover('large')
 
   const [officialTags, setOfficialTags] = useState<string[]>([])
 
@@ -169,8 +173,16 @@ export default function FeedPage() {
 
       <main className="flex-1">
         {/* Hero Header */}
-        <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
-          <div className="container-custom max-w-7xl py-8 md:py-12">
+        <div className="relative overflow-hidden border-b border-gray-200 dark:border-dark-border">
+          {/* Background Cover Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-15 dark:opacity-20"
+            style={{ backgroundImage: `url(${heroCover})` }}
+          />
+          {/* Solid background overlay */}
+          <div className="absolute inset-0 bg-white dark:bg-dark-surface" style={{ opacity: 0.92 }} />
+
+          <div className="container-custom max-w-7xl py-8 md:py-12 relative z-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <div className="flex items-center gap-2 mb-3">

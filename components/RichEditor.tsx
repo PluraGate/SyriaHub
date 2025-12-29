@@ -21,7 +21,7 @@ import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react'
 import { math } from '@milkdown/plugin-math'
 import 'katex/dist/katex.min.css'
-import { insert, callCommand } from '@milkdown/utils'
+import { insert, callCommand, replaceAll } from '@milkdown/utils'
 import { createClient } from '@/lib/supabase/client'
 import {
   ImagePlus, Loader2, Check, Bold, Italic, Heading1, Heading2, Heading3,
@@ -105,11 +105,13 @@ function ToolbarButton({ icon: Icon, title, onClick, disabled }: ToolbarButtonPr
 interface MilkdownEditorHandle {
   insertMarkdown: (markdown: string) => void
   runCommand: (command: any, payload?: any) => void
+  setContent: (markdown: string) => void
 }
 
 const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & { onPasteImage?: (file: File) => void }>(
   function MilkdownEditorInner({ value, onChange, placeholder, onPasteImage }, ref) {
     const wrapperRef = useRef<HTMLDivElement>(null)
+    const lastExternalValueRef = useRef<string>(value)
 
     const { get } = useEditor((root) =>
       Editor.make()
@@ -118,6 +120,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
           ctx.set(defaultValueCtx, value)
           ctx.get(listenerCtx).markdownUpdated((ctx, markdown, prevMarkdown) => {
             if (markdown !== prevMarkdown) {
+              lastExternalValueRef.current = markdown
               onChange(markdown)
             }
           })
@@ -131,7 +134,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
       [onChange]
     )
 
-    // Expose insert function and command execution via ref
+    // Expose insert function, command execution, and setContent via ref
     useImperativeHandle(ref, () => ({
       insertMarkdown: (markdown: string) => {
         const editor = get()
@@ -143,6 +146,14 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
         const editor = get()
         if (editor) {
           editor.action(callCommand(command, payload))
+        }
+      },
+      setContent: (markdown: string) => {
+        const editor = get()
+        if (editor) {
+          // Replace all content with new markdown using replaceAll utility
+          editor.action(replaceAll(markdown))
+          lastExternalValueRef.current = markdown
         }
       }
     }), [get])

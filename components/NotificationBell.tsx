@@ -1,94 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Bell } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { NotificationList } from './NotificationList'
 import { cn } from '@/lib/utils'
+import { useNotifications } from '@/components/NotificationsProvider'
 
 export function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false)
-    const [unreadCount, setUnreadCount] = useState(0)
     const dropdownRef = useRef<HTMLDivElement>(null)
-    const supabase = createClient()
-
-    useEffect(() => {
-        fetchUnreadCount()
-
-        // Subscribe to new notifications
-        const channel = supabase
-            .channel('notifications')
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'notifications',
-                    filter: `user_id=eq.${(supabase.auth.getUser() as any).id}` // This might be tricky if user not loaded yet
-                },
-                () => {
-                    setUnreadCount(prev => prev + 1)
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
-        }
-    }, [])
-
-    // Better subscription setup that waits for user
-    useEffect(() => {
-        const setupSubscription = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            // Initial fetch
-            const { count } = await supabase
-                .from('notifications')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false)
-
-            setUnreadCount(count || 0)
-
-            // Subscribe
-            const channel = supabase
-                .channel(`notifications:${user.id}`)
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'notifications',
-                        filter: `user_id=eq.${user.id}`
-                    },
-                    (payload) => {
-                        setUnreadCount(prev => prev + 1)
-                    }
-                )
-                .subscribe()
-
-            return () => {
-                supabase.removeChannel(channel)
-            }
-        }
-
-        setupSubscription()
-    }, [])
-
-    const fetchUnreadCount = async () => {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
-
-        const { count } = await supabase
-            .from('notifications')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .eq('is_read', false)
-
-        setUnreadCount(count || 0)
-    }
+    const { unreadCount } = useNotifications()
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -106,10 +27,6 @@ export function NotificationBell() {
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen)
-        if (!isOpen) {
-            // Optionally mark as read when opening, but usually better to do it on click or explicit action
-            // For now, we just open the list
-        }
     }
 
     return (
@@ -144,7 +61,6 @@ export function NotificationBell() {
                 <div className="absolute right-0 mt-2 w-80 sm:w-96 z-50 animate-dropdown-enter">
                     <NotificationList
                         onClose={() => setIsOpen(false)}
-                        onMarkAllRead={() => setUnreadCount(0)}
                     />
                 </div>
             )}

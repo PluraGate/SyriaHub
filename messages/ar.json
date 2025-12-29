@@ -11,7 +11,9 @@
         "save": "حفظ",
         "refresh": "تحديث",
         "cancel": "إلغاء",
+        "days_short": "يوم",
         "delete": "حذف",
+        "lastUpdated": "آخر تحديث: {date}",
         "edit": "تعديل",
         "submit": "إرسال",
         "close": "إغلاق",
@@ -426,6 +428,7 @@
     },
     "Footer": {
         "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية.",
+        "contribute": "ساهم معنا",
         "quickLinks": "روابط سريعة",
         "browseFeed": "تصفح المنشورات",
         "writePost": "اكتب منشوراً",
@@ -433,11 +436,12 @@
         "contact": "تواصل معنا",
         "resources": "الموارد",
         "github": "GitHub",
+        "openSource": "مفتوح المصدر",
         "githubTooltip": "مكونات مفتوحة المصدر",
         "about": "عن المنصة",
         "governance": "الحوكمة والثقة",
         "privacy": "سياسة الخصوصية",
-        "spatialTeaser": "أدوات المعرفة المكانية قريباً",
+        "spatialTeaser": "أدوات المعرفة المكانية قيد التطوير",
         "licensingNote": "المحتوى مرخص حسب شروط المؤلف.",
         "researchCommonsStatement": "هذه ليست منصة للنقاش. إنها مساحة بحثية مشتركة."
     },
@@ -827,7 +831,20 @@
             "codeCopied": "تم نسخ الرمز!",
             "researcherInviteCreated": "تم إنشاء دعوة الباحث!",
             "memberInviteCreated": "تم إنشاء دعوة العضو!",
-            "expiresAfter": "كل دعوة يمكن استخدامها مرة واحدة وتنتهي بعد 30 يوماً"
+            "expiresAfter": "كل دعوة يمكن استخدامها مرة واحدة وتنتهي بعد 30 يوماً",
+            "sendEmail": "إرسال بريد",
+            "sendInviteTitle": "إرسال دعوة",
+            "sendInviteDescription": "أرسل رمز الدعوة هذا مباشرة إلى بريد شخص ما.",
+            "emailLanguage": "لغة البريد",
+            "recipientEmail": "بريد المستلم",
+            "recipientName": "اسم المستلم (اختياري)",
+            "recipientNamePlaceholder": "أدخل الاسم...",
+            "cancel": "إلغاء",
+            "sending": "جاري الإرسال...",
+            "sendInvitation": "إرسال الدعوة",
+            "invitationSent": "تم إرسال الدعوة إلى {email}",
+            "emailRequired": "البريد الإلكتروني مطلوب",
+            "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح"
         },
         "notificationSettings": {
             "title": "إعدادات الإشعارات",
@@ -865,6 +882,8 @@
         "title": "تحليلات البحث",
         "totalViews": "إجمالي المشاهدات",
         "totalVotes": "إجمالي الأصوات",
+        "totalComments": "التعليقات",
+        "interactions": "التفاعلات",
         "publications": "المنشورات",
         "citations": "الاستشهادات",
         "followers": "المتابعون",
@@ -875,7 +894,33 @@
         "viewAll": "عرض الكل",
         "noPublications": "لا توجد منشورات بعد.",
         "startWriting": "ابدأ الكتابة!",
-        "days": "{count} يوم"
+        "days": "{count} يوم",
+        "tooltips": {
+            "trustScore": "محسوب من مصداقية المصادر، شفافية المنهجية، والقرب من الأدلة عبر منشوراتك.",
+            "followers": "الباحثون الذين يتلقون تحديثات عند نشر عمل جديد.",
+            "citations": "عدد المرات التي تم فيها الاستشهاد بعملك من قِبل باحثين آخرين.",
+            "publications": "إجمالي المقالات والأسئلة والآثار التي نشرتها.",
+            "totalVotes": "تأييدات المجتمع عبر جميع منشوراتك.",
+            "totalComments": "إجمالي تعليقات المجتمع على أبحاثك.",
+            "totalViews": "كل مشاهدة تمثل قارئاً فريداً يتفاعل مع بحثك.",
+            "interactions": "إجمالي التفاعل بما في ذلك الأصوات والتعليقات والمشاركات على عملك."
+        },
+        "zeroState": {
+            "title": "رحلتك البحثية تبدأ من هنا",
+            "description": "تتبع هذه اللوحة مدى وصول ونطاق تأثير مساهماتك. إليك كيف تبدأ:",
+            "step1": "انشر أول مقالة بحثية أو سؤال",
+            "step2": "تفاعل مع أعمال الباحثين الآخرين لبناء علاقات",
+            "step3": "ستنمو مقاييسك مع اكتشاف المجتمع لمساهماتك",
+            "cta": "اكتب أول منشور",
+            "chartEmpty": "يظهر النشاط هنا عندما يجد القراء بحثك",
+            "expectedLine": "الخط الأساسي المتوقع"
+        },
+        "trends": {
+            "up": "+{percent}%",
+            "down": "{percent}%",
+            "noChange": "—",
+            "vsLastPeriod": "مقارنة بآخر {days} يوم"
+        }
     },
     "Coordination": {
         "coordinationCenter": "مركز التنسيق",
@@ -1270,8 +1315,9 @@
             "articles": "المقالات",
             "questions": "الأسئلة",
             "discussions": "النقاشات",
-            "failedToLoad": "فشل في تحميل بيانات التحليلات",
-            "newInPeriod": "+{count} في {days} يوم"
+            "failedToLoad": "فشل تحميل بيانات التحليلات",
+            "newInPeriod": "+{count} في {days} يوم",
+            "moderationQueue": "طابور المراجعة"
         },
         "auditLogPage": {
             "title": "سجل التدقيق",
@@ -1434,6 +1480,7 @@
             "deletePoll": "حذف",
             "confirmDeletePoll": "هل أنت متأكد من حذف هذا الاستطلاع؟ لا يمكن التراجع عن هذا الإجراء.",
             "voteRecorded": "تم تسجيل صوتك!",
+            "voteRecordedWithCTA": "تم تسجيل صوتك! عرض النتائج الحية ←",
             "loginToVote": "سجّل الدخول للتصويت",
             "loginToCreate": "سجّل الدخول لإنشاء استطلاع",
             "enterQuestion": "أدخل سؤالاً",
@@ -1442,6 +1489,35 @@
             "pollDeleted": "تم حذف الاستطلاع بنجاح",
             "pollClosed": "تم إغلاق الاستطلاع",
             "by": "بواسطة"
+        },
+        "footprint": {
+            "title": "مشاركتك",
+            "subtitle": "مساهمتك في البحث الجماعي",
+            "summary": "ملخص المشاركة",
+            "pollsVoted": "استطلاعات صوّتت فيها",
+            "surveysCompleted": "استبيانات أكملتها",
+            "lastActivity": "آخر نشاط",
+            "engagementLevel": "مستوى المشاركة",
+            "engagedResearch": "أبحاث شاركت فيها",
+            "viewAll": "عرض الكل",
+            "votes": "أصوات",
+            "responses": "ردود",
+            "noRecentActivity": "لم تشارك بعد. ابدأ بالتصويت في الاستطلاعات أو إكمال الاستبيانات.",
+            "viewPolls": "عرض الاستطلاعات",
+            "viewSurveys": "عرض الاستبيانات"
+        },
+        "unanswered": {
+            "title": "أبحاث نشطة للمشاركة فيها",
+            "viewAll": "عرض الكل",
+            "open": "مفتوح",
+            "closesToday": "يُغلق اليوم",
+            "closesTomorrow": "يُغلق غداً",
+            "closesInDays": "يُغلق خلال {days} أيام",
+            "participate": "شارك",
+            "type": {
+                "poll": "استطلاع",
+                "survey": "استبيان"
+            }
         },
         "surveysPage": {
             "subtitle": "أنشئ وأدر استبيانات البحث مع أنواع أسئلة متعددة",

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ChevronLeft, ChevronRight, Sparkles, Clock, Quote } from 'lucide-react'
@@ -33,15 +34,19 @@ export function SuggestedPostsCarousel({
     currentPostId,
     currentTags = [],
     limit = 6,
-    title = 'Related Research',
+    title,
 }: SuggestedPostsCarouselProps) {
+    const t = useTranslations('Post')
     const [posts, setPosts] = useState<SuggestedPost[]>([])
     const [loading, setLoading] = useState(true)
     const scrollRef = useRef<HTMLDivElement>(null)
     const supabase = createClient()
 
+    // Use proper translation key only if title prop is not provided or matches default
+    const displayTitle = title || t('relatedResearch')
+
     useEffect(() => {
-        const loadSuggestions = async () => {
+        const loadPosts = async () => {
             try {
                 let query = supabase
                     .from('posts')
@@ -51,44 +56,78 @@ export function SuggestedPostsCarousel({
             content,
             tags,
             created_at,
-            author:users!posts_author_id_fkey(id, name, email, avatar_url)
+            author:users!posts_author_id_fkey(
+              id,
+              name,
+              email,
+              avatar_url
+            )
           `)
                     .eq('status', 'published')
                     .order('created_at', { ascending: false })
-                    .limit(limit * 2) // Get more to filter
+                    .limit(limit)
 
-                // Exclude current post if provided
                 if (currentPostId) {
                     query = query.neq('id', currentPostId)
                 }
 
+                if (currentTags.length > 0) {
+                    // This is a simple implementation. For better tag matching, 
+                    // we might need a more complex query or edge function
+                    query = query.contains('tags', currentTags)
+                }
+
                 const { data } = await query
-
                 if (data) {
-                    let suggestedPosts = data as any[]
+                    const formatPost = (post: any): SuggestedPost => ({
+                        ...post,
+                        author: Array.isArray(post.author) ? post.author[0] : post.author
+                    })
 
-                    // Sort by tag relevance if current tags are provided
-                    if (currentTags.length > 0) {
-                        suggestedPosts = suggestedPosts
-                            .map((post) => ({
-                                ...post,
-                                relevance: post.tags?.filter((tag: string) =>
-                                    currentTags.includes(tag)
-                                ).length || 0,
-                            }))
-                            .sort((a, b) => b.relevance - a.relevance)
+                    // If we filtered by tags and got too few results, fallback to latest
+                    if (data.length < limit && currentTags.length > 0) {
+                        const { data: fallbackData } = await supabase
+                            .from('posts')
+                            .select(`
+                id,
+                title,
+                content,
+                tags,
+                created_at,
+                author:users!posts_author_id_fkey(
+                  id,
+                  name,
+                  email,
+                  avatar_url
+                )
+              `)
+                            .eq('status', 'published')
+                            .neq('id', currentPostId || '')
+                            .order('created_at', { ascending: false })
+                            .limit(limit - data.length)
+
+                        if (fallbackData) {
+                            const combined = [...data, ...fallbackData].map(formatPost)
+                            // Remove duplicates if any
+                            const unique = combined.filter((post, index, self) =>
+                                index === self.findIndex((p) => p.id === post.id)
+                            )
+                            setPosts(unique)
+                        } else {
+                            setPosts(data.map(formatPost))
+                        }
+                    } else {
+                        setPosts(data.map(formatPost))
                     }
-
-                    setPosts(suggestedPosts.slice(0, limit))
                 }
             } catch (error) {
-                console.error('Error loading suggestions:', error)
+                console.error('Error loading suggested posts:', error)
             } finally {
                 setLoading(false)
             }
         }
 
-        loadSuggestions()
+        loadPosts()
     }, [supabase, currentPostId, currentTags, limit])
 
     const scroll = (direction: 'left' | 'right') => {
@@ -106,9 +145,9 @@ export function SuggestedPostsCarousel({
             <div className="space-y-4">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-primary dark:text-accent-light" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">{title}</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{displayTitle}</h3>
                 </div>
-                <div className="flex gap-4 overflow-hidden">
+                <div className="flex gap-4 overflow-hidden py-1">
                     {Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="min-w-[300px] skeleton h-40 rounded-xl" />
                     ))}
@@ -126,7 +165,7 @@ export function SuggestedPostsCarousel({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-primary dark:text-accent-light animate-pulse" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">{title}</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{displayTitle}</h3>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
@@ -148,7 +187,7 @@ export function SuggestedPostsCarousel({
 
             <div
                 ref={scrollRef}
-                className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-2 px-2"
+                className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 pt-1 px-1"
                 style={{ scrollSnapType: 'x mandatory' }}
             >
                 {posts.map((post) => (

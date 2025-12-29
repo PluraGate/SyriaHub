@@ -35,6 +35,7 @@ import 'katex/dist/katex.min.css'
 import { Button } from '@/components/ui/button'
 import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
+import { PostHeroBackground } from '@/components/PostHeroBackground'
 
 interface PostPageProps {
   params: Promise<{
@@ -234,29 +235,18 @@ export default async function PostPage(props: PostPageProps) {
     <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
       <Navbar user={user} />
 
-      {/* Hero Header with Cover Image Background */}
-      <header className={`group relative overflow-hidden ${post.cover_image_url ? 'min-h-[250px] sm:min-h-[350px] md:min-h-[400px]' : ''}`}>
-        {/* Cover Image Background */}
-        {post.cover_image_url && (
-          <>
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url(${post.cover_image_url})` }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30 transition-opacity duration-500 group-hover:opacity-60" />
-          </>
-        )}
+      {/* Hero Header with Cover Image Background - always shows cover (with Pluragate fallback) */}
+      <header className="group relative overflow-hidden min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">
+        {/* Cover Image Background - uses Pluragate covers as fallback */}
+        <PostHeroBackground coverImageUrl={post.cover_image_url} />
 
         {/* Header Content */}
-        <div className={`relative z-10 ${post.cover_image_url ? '' : 'bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border'}`}>
+        <div className="relative z-10">
           <div className="container-custom max-w-5xl py-6">
             {/* Back Link */}
             <Link
               href="/feed"
-              className={`inline-flex items-center gap-2 text-sm transition-colors mb-4 md:mb-8 ${post.cover_image_url
-                ? 'text-white/80 hover:text-white'
-                : 'text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light'
-                }`}
+              className="inline-flex items-center gap-2 text-sm transition-colors mb-4 md:mb-8 text-white/80 hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
               {t('backToFeed')}
@@ -273,17 +263,16 @@ export default async function PostPage(props: PostPageProps) {
             )}
 
             {/* Title */}
-            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 ${post.cover_image_url ? 'text-white' : 'text-text dark:text-dark-text'
-              }`}>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
               {post.title}
             </h1>
 
             {/* Forked From */}
             {post.forked_from && (
-              <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-text-light dark:text-dark-text-muted bg-gray-50 dark:bg-dark-bg p-3 rounded-xl border border-gray-100 dark:border-dark-border w-fit">
-                <GitFork className="w-4 h-4 text-secondary" />
+              <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-white/80 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 w-fit">
+                <GitFork className="w-4 h-4 text-white" />
                 <span>{t('remixedFrom')}</span>
-                <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-primary dark:text-primary-light hover:underline">
+                <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-white hover:underline">
                   {post.forked_from.title}
                 </Link>
               </div>
@@ -292,33 +281,23 @@ export default async function PostPage(props: PostPageProps) {
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-                {post.cover_image_url ? (
-                  // White tags for visibility on cover image
-                  post.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-colors"
-                    >
-                      #{tag}
-                    </span>
-                  ))
-                ) : (
-                  // Normal tags for default background
-                  post.tags.map((tag: string) => (
-                    <TagChip key={tag} tag={tag} interactive />
-                  ))
-                )}
+                {post.tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-colors"
+                  >
+                    #{tag}
+                  </span>
+                ))}
               </div>
             )}
 
             {/* Meta Row */}
-            <div className={`flex flex-wrap items-center gap-6 text-sm ${post.cover_image_url ? 'text-white/80' : 'text-text-light dark:text-dark-text-muted'
-              }`}>
+            <div className="flex flex-wrap items-center gap-6 text-sm text-white/80">
               {/* Author */}
               <Link
                 href={`/profile/${post.author_id}`}
-                className={`flex items-center gap-3 transition-colors ${post.cover_image_url ? 'hover:text-white' : 'hover:text-primary dark:hover:text-primary-light'
-                  }`}
+                className="flex items-center gap-3 transition-colors hover:text-white"
               >
                 {post.author?.avatar_url ? (
                   <img
@@ -332,7 +311,7 @@ export default async function PostPage(props: PostPageProps) {
                   </div>
                 )}
                 <div>
-                  <span className={`font-semibold block ${post.cover_image_url ? 'text-white' : 'text-text dark:text-dark-text'}`}>{authorDisplay}</span>
+                  <span className="font-semibold block text-white">{authorDisplay}</span>
                   {post.author?.affiliation && (
                     <span className="text-xs">{post.author.affiliation}</span>
                   )}
@@ -387,7 +366,7 @@ export default async function PostPage(props: PostPageProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-gray-100 dark:border-dark-border">
+            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button]:hover:bg-white/30">
               {user && user.id === post.author_id ? (
                 <>
                   <EditButton
