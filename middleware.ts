@@ -10,7 +10,7 @@ const intlMiddleware = createMiddleware({
     defaultLocale: 'ar'
 });
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     // 1. Run next-intl middleware to get the localized response (redirects, etc.)
     const response = intlMiddleware(request);
 
