@@ -73,6 +73,13 @@
             "type": "image/png",
             "form_factor": "wide",
             "label": "Home page showing featured research"
+        },
+        {
+            "src": "/screenshots/home-mobile.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Mobile view of SyriaHub home page"
         }
     ],
     "shortcuts": [

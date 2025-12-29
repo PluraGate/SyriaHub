@@ -187,7 +187,7 @@ This document tracks the system capabilities, completed features, and remaining 
 ### Internationalization
 - [ ] Additional languages (French, Turkish)
 - [x] Locale-specific date formatting
-- [ ] Translation coverage reporting
+- [x] Translation coverage reporting
 
 ---
 

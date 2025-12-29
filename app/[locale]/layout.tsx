@@ -7,6 +7,8 @@ import { NotificationsProvider } from '@/components/NotificationsProvider'
 import { AppErrorBoundary } from '@/components/AppErrorBoundary'
 import { PreferencesProvider } from '@/contexts/PreferencesContext'
 import { SkipNavLink, SkipNavContent } from '@/components/accessibility'
+import { InstallPWA } from '@/components/InstallPWA'
+import { OfflineIndicator } from '@/components/OfflineIndicator'
 import { createClient } from '@/lib/supabase/server'
 import '../globals.css'
 
@@ -74,6 +76,10 @@ export default async function RootLayout({
             __html: `(function(){try{var prefs=JSON.parse(localStorage.getItem('user_preferences'));var theme=prefs?prefs.theme:'system';var isDark=theme==='dark'||(theme==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(isDark){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}})()`
           }}
         />
+        {/* iOS Splash Screen Meta Tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} ${cairo.variable} ${locale === 'ar' ? 'font-arabic' : 'font-sans'} bg-background text-text overflow-x-hidden`} suppressHydrationWarning>
         <SkipNavLink />
@@ -86,6 +92,8 @@ export default async function RootLayout({
                     {children}
                   </SkipNavContent>
                 </AppErrorBoundary>
+                <InstallPWA />
+                <OfflineIndicator />
               </NotificationsProvider>
             </PreferencesProvider>
           </ToastProvider>

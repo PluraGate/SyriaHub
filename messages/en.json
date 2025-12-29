@@ -672,13 +672,18 @@
     },
     "Notifications": {
         "title": "Notifications",
+        "loading": "Loading notifications...",
+        "subtitle": "Stay updated on comments, mentions, and activity",
         "markAllRead": "Mark all as read",
         "markAllAsRead": "Mark all as read",
+        "markAsRead": "Mark as read",
         "clearAll": "Clear all",
         "noNotifications": "No notifications",
         "noNotificationsDesc": "You're all caught up!",
         "allCaughtUp": "All caught up!",
         "noNotificationsYet": "No notifications yet. We'll let you know when something happens.",
+        "noFilteredNotifications": "No {filter} notifications",
+        "tryChangingFilter": "Try changing the filter to see other notifications.",
         "viewAllNotifications": "View All Notifications",
         "settings": "Notification Settings",
         "newComment": "commented on your post",
@@ -692,11 +697,20 @@
         "eventReminder": "Event starting soon",
         "badgeEarned": "You earned a new badge",
         "levelUp": "You reached a new level",
+        "unreadCount": "{count} unread",
+        "replyPlaceholder": "Write your reply...",
+        "reply": "Reply",
+        "quickReply": "Quick Reply",
+        "cancel": "Cancel",
+        "delete": "Delete",
         "types": {
             "all": "All",
+            "unread": "Unread",
+            "replies": "Replies",
             "comments": "Comments",
             "follows": "Follows",
             "mentions": "Mentions",
+            "badges": "Badges",
             "system": "System"
         }
     },
@@ -2584,7 +2598,11 @@
         },
         "confidenceWeak": "Weak signal",
         "confidenceModerate": "Moderate indication",
-        "confidenceStrong": "Strong pattern match"
+        "confidenceStrong": "Strong pattern match",
+        "relatedCaseStudies": "Related Case Studies",
+        "caseStudiesFromSimilar": "Case studies from similar situations",
+        "verified": "Verified",
+        "loading": "Loading..."
     },
     "Governance": {
         "title": "Governance & Trust",
@@ -2806,5 +2824,40 @@
         "uploadResource": "Upload Resource",
         "openMenu": "Open quick actions",
         "closeMenu": "Close quick actions"
+    },
+    "PWA": {
+        "installTitle": "Install SyriaHub",
+        "installDescription": "Add to your home screen for quick access and offline reading",
+        "install": "Install",
+        "notNow": "Not now",
+        "dismiss": "Dismiss",
+        "offline": "Offline",
+        "syncing": "Syncing {count} item...",
+        "syncingPlural": "Syncing {count} items...",
+        "offlineTitle": "You're Offline",
+        "offlineDescription": "It looks like you've lost your internet connection. Some content may still be available from your cache.",
+        "tryAgain": "Try Again",
+        "availableOffline": "Available Offline ({count})",
+        "byAuthor": "by {author}",
+        "platformName": "SyriaHub Research Platform",
+        "updateAvailable": "Update available",
+        "updateNow": "Update Now"
+    },
+    "Reading": {
+        "title": "Reading Insights",
+        "stats": "Reading Stats",
+        "noActivity": "No reading activity yet",
+        "startExploring": "Start exploring posts to see your reading insights",
+        "postsRead": "Posts Read",
+        "totalTime": "Total Time",
+        "completionRate": "Completion Rate",
+        "completed": "Completed",
+        "thisWeek": "This Week",
+        "favoriteTopics": "Favorite Topics",
+        "activityLast30Days": "Reading Activity (Last 30 Days)",
+        "noActivityTooltip": "No activity",
+        "postsMinutes": "{posts} posts, {minutes}m",
+        "less": "Less",
+        "more": "More"
     }
 }
