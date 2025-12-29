@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Download, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>
@@ -13,6 +14,7 @@ interface BeforeInstallPromptEvent extends Event {
  * Shows a banner to install the app when the browser supports it
  */
 export function InstallPWA() {
+    const t = useTranslations('PWA')
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
     const [showBanner, setShowBanner] = useState(false)
 
@@ -67,16 +69,16 @@ export function InstallPWA() {
                     </div>
                     <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-medium text-gray-100">
-                            Install SyriaHub
+                            {t('installTitle')}
                         </h3>
                         <p className="text-xs text-gray-400 mt-0.5">
-                            Add to your home screen for quick access and offline reading
+                            {t('installDescription')}
                         </p>
                     </div>
                     <button
                         onClick={handleDismiss}
                         className="text-gray-500 hover:text-gray-300 transition-colors"
-                        aria-label="Dismiss"
+                        aria-label={t('dismiss')}
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -86,16 +88,17 @@ export function InstallPWA() {
                         onClick={handleInstall}
                         className="flex-1 px-3 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
                     >
-                        Install
+                        {t('install')}
                     </button>
                     <button
                         onClick={handleDismiss}
                         className="px-3 py-2 text-gray-400 text-sm hover:text-gray-200 transition-colors"
                     >
-                        Not now
+                        {t('notNow')}
                     </button>
                 </div>
             </div>
         </div>
     )
 }
+

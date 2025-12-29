@@ -32,19 +32,20 @@ export function PrecedentCard({ precedents, loading, className = '' }: Precedent
                 <div className="flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200">
-                        {locale === 'ar' ? 'سوابق ذات صلة' : 'Related Case Studies'}
+                        {t('relatedCaseStudies')}
                     </h4>
                 </div>
                 <button
                     onClick={() => setDismissed(true)}
                     className="p-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800/30"
+                    aria-label={t('dismissFlag')}
                 >
                     <X className="w-3.5 h-3.5 text-blue-500" />
                 </button>
             </div>
 
             {loading ? (
-                <div className="text-sm text-blue-600 dark:text-blue-300">Loading...</div>
+                <div className="text-sm text-blue-600 dark:text-blue-300">{t('loading')}</div>
             ) : (
                 <div className="space-y-2">
                     {precedents.map(precedent => (
@@ -60,7 +61,7 @@ export function PrecedentCard({ precedents, loading, className = '' }: Precedent
                                         </span>
                                         {precedent.trust_level === 'high' && (
                                             <span className="text-xs text-green-600 dark:text-green-400">
-                                                ✓ Verified
+                                                ✓ {t('verified')}
                                             </span>
                                         )}
                                     </div>
@@ -89,11 +90,9 @@ export function PrecedentCard({ precedents, loading, className = '' }: Precedent
 
             <p className="text-xs text-blue-500 dark:text-blue-400 mt-2 flex items-center gap-1">
                 <ChevronRight className="w-3 h-3" />
-                {locale === 'ar'
-                    ? 'دراسات حالة من مواقف مماثلة'
-                    : 'Case studies from similar situations'
-                }
+                {t('caseStudiesFromSimilar')}
             </p>
         </div>
     )
 }
+

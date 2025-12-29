@@ -4,6 +4,7 @@ import { WifiOff, RefreshCw, BookOpen } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { getAllCachedArticles } from '@/lib/offlineStorage'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface CachedArticle {
     id: string
@@ -13,6 +14,7 @@ interface CachedArticle {
 }
 
 export default function OfflinePage() {
+    const t = useTranslations('PWA')
     const [cachedArticles, setCachedArticles] = useState<CachedArticle[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -38,11 +40,10 @@ export default function OfflinePage() {
                 {/* Title */}
                 <div className="space-y-2">
                     <h1 className="text-2xl font-semibold text-gray-100">
-                        You&apos;re Offline
+                        {t('offlineTitle')}
                     </h1>
                     <p className="text-gray-400">
-                        It looks like you&apos;ve lost your internet connection.
-                        Some content may still be available from your cache.
+                        {t('offlineDescription')}
                     </p>
                 </div>
 
@@ -52,7 +53,7 @@ export default function OfflinePage() {
                     className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
                 >
                     <RefreshCw className="w-4 h-4" />
-                    Try Again
+                    {t('tryAgain')}
                 </button>
 
                 {/* Cached Articles */}
@@ -61,7 +62,7 @@ export default function OfflinePage() {
                         <div className="flex items-center gap-2 mb-4">
                             <BookOpen className="w-5 h-5 text-gray-400" />
                             <h2 className="text-sm font-medium text-gray-300">
-                                Available Offline ({cachedArticles.length})
+                                {t('availableOffline', { count: cachedArticles.length })}
                             </h2>
                         </div>
                         <ul className="space-y-3">
@@ -75,7 +76,7 @@ export default function OfflinePage() {
                                             {article.title}
                                         </p>
                                         <p className="text-xs text-gray-500 mt-1">
-                                            by {article.author?.name || 'Unknown'}
+                                            {t('byAuthor', { author: article.author?.name || 'Unknown' })}
                                         </p>
                                     </Link>
                                 </li>
@@ -86,9 +87,10 @@ export default function OfflinePage() {
 
                 {/* Branding */}
                 <div className="pt-6 text-sm text-gray-500">
-                    SyriaHub Research Platform
+                    {t('platformName')}
                 </div>
             </div>
         </div>
     )
 }
+

@@ -20,10 +20,11 @@ import {
     Reply
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/components/ui/toast'
 import { NoNotificationsIllustration } from '@/components/ui/EmptyState'
+import { useTranslations } from 'next-intl'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 
 interface Notification {
     id: string
@@ -41,13 +42,13 @@ interface Notification {
 
 type FilterType = 'all' | 'unread' | 'reply' | 'mention' | 'badge' | 'system'
 
-const filterOptions: { value: FilterType; label: string }[] = [
-    { value: 'all', label: 'All' },
-    { value: 'unread', label: 'Unread' },
-    { value: 'reply', label: 'Replies' },
-    { value: 'mention', label: 'Mentions' },
-    { value: 'badge', label: 'Badges' },
-    { value: 'system', label: 'System' },
+const filterKeys: { value: FilterType; labelKey: string }[] = [
+    { value: 'all', labelKey: 'types.all' },
+    { value: 'unread', labelKey: 'types.unread' },
+    { value: 'reply', labelKey: 'types.replies' },
+    { value: 'mention', labelKey: 'types.mentions' },
+    { value: 'badge', labelKey: 'types.badges' },
+    { value: 'system', labelKey: 'types.system' },
 ]
 
 const typeIcons: Record<string, typeof Bell> = {
@@ -73,6 +74,8 @@ interface NotificationsPageContentProps {
 }
 
 export function NotificationsPageContent({ userId }: NotificationsPageContentProps) {
+    const t = useTranslations('Notifications')
+    const { formatSaved } = useDateFormatter()
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<FilterType>('all')
@@ -217,7 +220,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
             <div className="max-w-3xl mx-auto">
                 <div className="flex items-center justify-center py-16">
                     <Loader2 className="w-6 h-6 animate-spin text-text-light dark:text-dark-text-muted" />
-                    <span className="ml-2 text-text-light dark:text-dark-text-muted">Loading notifications...</span>
+                    <span className="ml-2 text-text-light dark:text-dark-text-muted">{t('loading')}</span>
                 </div>
             </div>
         )
@@ -225,7 +228,6 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
 
     return (
         <div className="max-w-3xl mx-auto">
-            {/* Header */}
             <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
                     <Link
@@ -235,23 +237,22 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                         <ArrowLeft className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
                     </Link>
                     <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
-                        Notifications
+                        {t('title')}
                     </h1>
                     {unreadCount > 0 && (
                         <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-primary text-white">
-                            {unreadCount} unread
+                            {t('unreadCount', { count: unreadCount })}
                         </span>
                     )}
                 </div>
                 <p className="text-sm text-text-light dark:text-dark-text-muted">
-                    Stay updated on comments, mentions, and activity
+                    {t('subtitle')}
                 </p>
             </div>
 
-            {/* Filters and Actions */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div className="flex flex-wrap items-center gap-2">
-                    {filterOptions.map(option => (
+                    {filterKeys.map(option => (
                         <button
                             key={option.value}
                             onClick={() => setFilter(option.value)}
@@ -262,7 +263,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                     : 'bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border'
                             )}
                         >
-                            {option.label}
+                            {t(option.labelKey)}
                         </button>
                     ))}
                 </div>
@@ -279,22 +280,21 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                         ) : (
                             <CheckCheck className="w-4 h-4 mr-2" />
                         )}
-                        Mark all as read
+                        {t('markAllAsRead')}
                     </Button>
                 )}
             </div>
 
-            {/* Notifications List */}
             {filteredNotifications.length === 0 ? (
                 <div className="card p-8 text-center">
                     <NoNotificationsIllustration className="w-32 h-32 mx-auto mb-4 opacity-80" />
                     <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
-                        {filter === 'all' ? 'All caught up!' : `No ${filter} notifications`}
+                        {filter === 'all' ? t('allCaughtUp') : t('noFilteredNotifications', { filter: t(`types.${filter === 'reply' ? 'replies' : filter}`) })}
                     </p>
                     <p className="text-xs text-text-light dark:text-dark-text-muted">
                         {filter === 'all'
-                            ? "We'll let you know when something happens."
-                            : 'Try changing the filter to see other notifications.'}
+                            ? t('noNotificationsYet').split('.')[1]?.trim() || t('noNotificationsYet')
+                            : t('tryChangingFilter')}
                     </p>
                 </div>
             ) : (
@@ -334,7 +334,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                             </p>
                                         )}
                                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                            {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                                            {formatSaved(new Date(notification.created_at))}
                                         </p>
                                     </div>
 
@@ -346,7 +346,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                                     <textarea
                                                         value={replyContent}
                                                         onChange={(e) => setReplyContent(e.target.value)}
-                                                        placeholder="Write your reply..."
+                                                        placeholder={t('replyPlaceholder')}
                                                         rows={2}
                                                         className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                                                     />
@@ -361,7 +361,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                                             ) : (
                                                                 <Reply className="w-3 h-3 mr-1" />
                                                             )}
-                                                            Reply
+                                                            {t('reply')}
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
@@ -371,7 +371,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                                                 setReplyContent('')
                                                             }}
                                                         >
-                                                            Cancel
+                                                            {t('cancel')}
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -381,7 +381,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                                     className="text-xs text-primary hover:text-primary-dark dark:hover:text-primary-light flex items-center gap-1"
                                                 >
                                                     <Reply className="w-3 h-3" />
-                                                    Quick Reply
+                                                    {t('quickReply')}
                                                 </button>
                                             )}
                                         </div>
@@ -394,7 +394,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                         <button
                                             onClick={() => markAsRead(notification.id)}
                                             className="p-1.5 rounded-full text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
-                                            title="Mark as read"
+                                            title={t('markAsRead')}
                                         >
                                             <Check className="w-4 h-4" />
                                         </button>
@@ -402,7 +402,7 @@ export function NotificationsPageContent({ userId }: NotificationsPageContentPro
                                     <button
                                         onClick={() => deleteNotification(notification.id)}
                                         className="p-1.5 rounded-full text-text-light dark:text-dark-text-muted hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors"
-                                        title="Delete"
+                                        title={t('delete')}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>

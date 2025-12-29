@@ -672,13 +672,18 @@
     },
     "Notifications": {
         "title": "الإشعارات",
+        "loading": "جارٍ تحميل الإشعارات...",
+        "subtitle": "ابقَ على اطلاع بالتعليقات والإشارات والنشاط",
         "markAllRead": "تحديد الكل كمقروء",
         "markAllAsRead": "تحديد الكل كمقروء",
+        "markAsRead": "تحديد كمقروء",
         "clearAll": "مسح الكل",
         "noNotifications": "لا توجد إشعارات",
         "noNotificationsDesc": "أنت على اطلاع بكل جديد!",
         "allCaughtUp": "أنت على اطلاع بكل جديد!",
         "noNotificationsYet": "لا توجد إشعارات بعد. سنعلمك عند حدوث شيء.",
+        "noFilteredNotifications": "لا توجد إشعارات {filter}",
+        "tryChangingFilter": "جرب تغيير التصفية لرؤية إشعارات أخرى.",
         "viewAllNotifications": "عرض جميع الإشعارات",
         "settings": "إعدادات الإشعارات",
         "newComment": "علّق على منشورك",
@@ -692,11 +697,20 @@
         "eventReminder": "الفعالية تبدأ قريباً",
         "badgeEarned": "حصلت على شارة جديدة",
         "levelUp": "وصلت لمستوى جديد",
+        "unreadCount": "{count} غير مقروء",
+        "replyPlaceholder": "اكتب ردك...",
+        "reply": "رد",
+        "quickReply": "رد سريع",
+        "cancel": "إلغاء",
+        "delete": "حذف",
         "types": {
             "all": "الكل",
+            "unread": "غير مقروء",
+            "replies": "الردود",
             "comments": "التعليقات",
             "follows": "المتابعات",
             "mentions": "الإشارات",
+            "badges": "الشارات",
             "system": "النظام"
         }
     },
@@ -1680,7 +1694,11 @@
             "interestRemoved": "تم إزالة اهتمامك",
             "suggestionAdded": "تم إضافة اقتراح القراءة"
         },
-        "investigating": "يتم البحث فيها بواسطة {name}"
+        "investigating": "يتم البحث فيها بواسطة {name}",
+        "help": {
+            "title": "حول الفجوات البحثية",
+            "description": "تمثل الفجوات البحثية 'نموذج الغياب' - الاعتراف بما لا نعرفه مهم بقدر ما نعرفه. صوّت للفجوات التي تعتقد أنها مهمة، وطالب بتلك التي تريد العمل عليها، واربط بحثك عندما تعالجها."
+        }
     },
     "Errors": {
         "general": "حدث خطأ ما",
@@ -1987,6 +2005,9 @@
         },
         "tips": {
             "title": "نصائح للتقدم السريع",
+            "tip1": "تفاعل يومياً للحفاظ على سلسلة نشاطك",
+            "tip2": "قدم إجابات عالية الجودة ليتم قبولها",
+            "tip3": "تعاون في البحث لزيادة ظهورك",
             "answerQuestions": "أجب على الأسئلة - أعلى XP عند قبول الإجابة (+30)",
             "completeProfile": "أكمل ملفك الشخصي - مكافأة فورية +50 XP",
             "loginStreaks": "سلسلة تسجيل دخول - 7 أيام = +100 XP إضافي",
@@ -2619,7 +2640,11 @@
         },
         "confidenceWeak": "إشارة ضعيفة",
         "confidenceModerate": "دلالة متوسطة",
-        "confidenceStrong": "تطابق قوي للنمط"
+        "confidenceStrong": "تطابق قوي للنمط",
+        "relatedCaseStudies": "دراسات حالة ذات صلة",
+        "caseStudiesFromSimilar": "دراسات حالة من مواقف مماثلة",
+        "verified": "موثق",
+        "loading": "جارٍ التحميل..."
     },
     "Governance": {
         "title": "الحوكمة والثقة",
@@ -2841,5 +2866,40 @@
         "uploadResource": "رفع مورد",
         "openMenu": "فتح الإجراءات السريعة",
         "closeMenu": "إغلاق الإجراءات السريعة"
+    },
+    "PWA": {
+        "installTitle": "تثبيت SyriaHub",
+        "installDescription": "أضف التطبيق إلى شاشتك الرئيسية للوصول السريع والقراءة بدون إنترنت",
+        "install": "تثبيت",
+        "notNow": "ليس الآن",
+        "dismiss": "تجاهل",
+        "offline": "غير متصل",
+        "syncing": "جارٍ مزامنة {count} عنصر...",
+        "syncingPlural": "جارٍ مزامنة {count} عناصر...",
+        "offlineTitle": "أنت غير متصل",
+        "offlineDescription": "يبدو أنك فقدت اتصالك بالإنترنت. قد يكون بعض المحتوى متاحاً من ذاكرة التخزين المؤقت.",
+        "tryAgain": "حاول مجدداً",
+        "availableOffline": "متاح بدون إنترنت ({count})",
+        "byAuthor": "بواسطة {author}",
+        "platformName": "منصة SyriaHub البحثية",
+        "updateAvailable": "تحديث متاح",
+        "updateNow": "تحديث الآن"
+    },
+    "Reading": {
+        "title": "إحصاءات القراءة",
+        "stats": "إحصاءات القراءة",
+        "noActivity": "لا يوجد نشاط قراءة بعد",
+        "startExploring": "ابدأ باستكشاف المنشورات لرؤية إحصاءات قراءتك",
+        "postsRead": "المنشورات المقروءة",
+        "totalTime": "الوقت الإجمالي",
+        "completionRate": "معدل الإتمام",
+        "completed": "مكتمل",
+        "thisWeek": "هذا الأسبوع",
+        "favoriteTopics": "المواضيع المفضلة",
+        "activityLast30Days": "نشاط القراءة (آخر 30 يوماً)",
+        "noActivityTooltip": "لا يوجد نشاط",
+        "postsMinutes": "{posts} منشور، {minutes} دقيقة",
+        "less": "أقل",
+        "more": "أكثر"
     }
 }
