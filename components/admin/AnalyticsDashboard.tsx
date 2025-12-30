@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
     Users,
@@ -126,11 +126,7 @@ export function AnalyticsDashboard() {
 
     const supabase = useMemo(() => createClient(), [])
 
-    useEffect(() => {
-        loadData()
-    }, [daysBack])
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true)
 
         try {
@@ -156,7 +152,12 @@ export function AnalyticsDashboard() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [daysBack, supabase])
+
+    useEffect(() => {
+        loadData()
+    }, [daysBack, loadData])
+
 
     const calculateGrowthRate = (current: number, previous: number) => {
         if (previous === 0) return current > 0 ? 100 : 0

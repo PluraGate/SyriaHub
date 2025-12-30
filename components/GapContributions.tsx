@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn, getInitials, getAvatarGradient } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -111,6 +112,7 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
     }, [gapId])
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional initial data fetch
         fetchContributions()
 
         // Get current user
@@ -376,9 +378,11 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
                                             {/* User avatar */}
                                             <Link href={`/profile/${contribution.user_id}`} className="shrink-0 hover:opacity-80 transition-opacity">
                                                 {contribution.user?.avatar_url ? (
-                                                    <img
+                                                    <Image
                                                         src={contribution.user.avatar_url}
                                                         alt=""
+                                                        width={32}
+                                                        height={32}
                                                         className="w-8 h-8 rounded-full object-cover"
                                                     />
                                                 ) : (

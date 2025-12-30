@@ -25,6 +25,7 @@ export function EditButton({ postId, postCreatedAt, isAuthor }: EditButtonProps)
 
     useEffect(() => {
         if (!isAuthor) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional early-return guard
             setCanEdit(false)
             return
         }

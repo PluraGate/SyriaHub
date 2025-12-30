@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
@@ -23,11 +23,8 @@ export function JuryPanel({ userId }: JuryPanelProps) {
     const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
 
-    useEffect(() => {
-        fetchCases()
-    }, [])
 
-    async function fetchCases() {
+    const fetchCases = useCallback(async () => {
         try {
             const response = await fetch('/api/jury?status=active')
             const data = await response.json()
@@ -41,7 +38,12 @@ export function JuryPanel({ userId }: JuryPanelProps) {
         } finally {
             setLoading(false)
         }
-    }
+    }, [showToast])
+
+    useEffect(() => {
+        fetchCases()
+    }, [fetchCases])
+
 
     function getTimeRemaining(deadline: string): string {
         const now = new Date()
@@ -74,7 +76,7 @@ export function JuryPanel({ userId }: JuryPanelProps) {
             <div className="text-center py-12 bg-background-alt/50 rounded-xl">
                 <Scale className="w-12 h-12 mx-auto mb-4 text-text-light/50" />
                 <h3 className="text-lg font-medium mb-2">No Active Jury Cases</h3>
-                <p className="text-text-light">You don't have any jury assignments at the moment.</p>
+                <p className="text-text-light">You don&apos;t have any jury assignments at the moment.</p>
             </div>
         )
     }
@@ -237,7 +239,7 @@ function VoteDialog({ open, onClose, juryCase, onVoteSubmitted }: VoteDialogProp
 
                     <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
                         <h4 className="font-medium mb-2 text-orange-800 dark:text-orange-300">
-                            Author's Appeal
+                            Author&apos;s Appeal
                         </h4>
                         <p className="text-sm">{appeal?.dispute_reason}</p>
                     </div>

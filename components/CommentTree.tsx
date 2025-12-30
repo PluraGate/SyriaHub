@@ -306,9 +306,9 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                     </div>
                 ) : (
                     <div className="text-center py-4 text-sm text-text-light dark:text-dark-text-muted">
-                        <a href="/login" className="text-primary dark:text-accent-light hover:underline">
+                        <Link href="/login" className="text-primary dark:text-accent-light hover:underline">
                             Sign in
-                        </a>{' '}
+                        </Link>{' '}
                         to join the discussion.
                     </div>
                 )}

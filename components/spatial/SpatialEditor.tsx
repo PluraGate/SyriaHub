@@ -340,7 +340,7 @@ export function SpatialEditor({
                 onChange(placeName, geo)
             }
         }
-    }, [drawMode, onChange, value, polygonPoints, t])
+    }, [drawMode, onChange, value, polygonPoints, t, circleRadius])
 
     // Finish polygon drawing
     const finishPolygon = useCallback(() => {

@@ -1,6 +1,7 @@
 'use client'
 
 import { Eye } from 'lucide-react'
+import Image from 'next/image'
 
 interface CollaboratorAvatarsProps {
     collaborators: {
@@ -58,9 +59,11 @@ export function CollaboratorAvatars({ collaborators, isConnected, userColor }: C
                         title={collab.name}
                     >
                         {collab.avatar_url ? (
-                            <img
+                            <Image
                                 src={collab.avatar_url}
                                 alt={collab.name}
+                                width={32}
+                                height={32}
                                 className="w-full h-full object-cover"
                             />
                         ) : (

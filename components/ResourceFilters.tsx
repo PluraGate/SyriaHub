@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Search, Filter, X, ChevronDown, Database, FileText, Wrench, Film, FileSpreadsheet } from 'lucide-react'
@@ -50,7 +50,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
     const t = useTranslations('Resources')
     const router = useRouter()
     const searchParams = useSearchParams()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
     const [disciplines, setDisciplines] = useState<{ discipline: string; resource_count: number }[]>([])
     const [isExpanded, setIsExpanded] = useState(false)
@@ -77,7 +77,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
     }, [supabase])
 
     // Update URL when filters change
-    const updateFilters = (newFilters: Partial<FilterState>) => {
+    const updateFilters = useCallback((newFilters: Partial<FilterState>) => {
         const updated = { ...filters, ...newFilters }
         setFilters(updated)
 
@@ -93,7 +93,8 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
         router.push(queryString ? `?${queryString}` : '?', { scroll: false })
 
         onFiltersChange?.(updated)
-    }
+    }, [filters, router, onFiltersChange])
+
 
     // Debounced search
     useEffect(() => {
@@ -103,9 +104,9 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
             }
         }, 300)
         return () => clearTimeout(timer)
-    }, [searchInput])
+    }, [searchInput, filters.search, updateFilters])
 
-    const clearFilters = () => {
+    const clearFilters = useCallback(() => {
         setSearchInput('')
         setFilters({
             type: null,
@@ -122,7 +123,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
             search: '',
             sort: 'date',
         })
-    }
+    }, [router, onFiltersChange])
 
     const activeFilterCount = [
         filters.type,

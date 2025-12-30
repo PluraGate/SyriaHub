@@ -48,6 +48,7 @@ export function useDefaultCover(size: CoverSize = 'medium'): string {
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional SSR hydration pattern
         setMounted(true)
     }, [])
 

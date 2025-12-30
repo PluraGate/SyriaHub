@@ -296,7 +296,7 @@ export function StreakEncouragement({ userId }: { userId: string }) {
             <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                 <Zap className="w-5 h-5 text-green-500" />
                 <span className="text-sm text-green-700 dark:text-green-300">
-                    Great! You've posted today. Keep your <strong>{streak.currentStreak}-day streak</strong> going!
+                    Great! You&apos;ve posted today. Keep your <strong>{streak.currentStreak}-day streak</strong> going!
                 </span>
             </div>
         )
@@ -307,7 +307,7 @@ export function StreakEncouragement({ userId }: { userId: string }) {
             <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
                 <Flame className="w-5 h-5 text-orange-500 animate-pulse" />
                 <span className="text-sm text-orange-700 dark:text-orange-300">
-                    Don't lose your <strong>{streak.currentStreak}-day streak</strong>! Post something today.
+                    Don&apos;t lose your <strong>{streak.currentStreak}-day streak</strong>! Post something today.
                 </span>
             </div>
         )

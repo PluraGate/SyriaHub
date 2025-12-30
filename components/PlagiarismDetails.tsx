@@ -260,8 +260,8 @@ function PlagiarismModal({ isOpen, onClose, score, matches }: PlagiarismModalPro
                 <div className="space-y-6 overflow-y-auto flex-1 pr-2">
                     {/* Score Summary */}
                     <div className={`p-4 rounded-xl ${isHighRisk
-                            ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                            : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                        ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                        : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
                         }`}>
                         <div className="flex items-center justify-between mb-2">
                             <span className="font-medium text-sm">Overall Similarity</span>
@@ -326,7 +326,7 @@ function PlagiarismModal({ isOpen, onClose, score, matches }: PlagiarismModalPro
                                                     Matched Text:
                                                 </span>
                                                 <p className="text-sm text-text-light dark:text-dark-text-muted italic">
-                                                    "{match.matched_text}"
+                                                    &quot;{match.matched_text}&quot;
                                                 </p>
                                             </div>
                                         )}
@@ -343,7 +343,7 @@ function PlagiarismModal({ isOpen, onClose, score, matches }: PlagiarismModalPro
                         </h4>
                         <ul className="text-xs text-blue-600 dark:text-blue-300 space-y-1">
                             <li>• Review the matched sections and add proper citations if needed</li>
-                            <li>• Paraphrase or rewrite content that's too similar to sources</li>
+                            <li>• Paraphrase or rewrite content that&apos;s too similar to sources</li>
                             <li>• If you believe this is a false positive, you can file an appeal</li>
                         </ul>
                     </div>

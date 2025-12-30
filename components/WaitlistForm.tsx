@@ -64,7 +64,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                     {t('onTheList')}
                 </h3>
                 <p className="text-text-light dark:text-dark-text-muted mb-6">
-                    We'll notify you at <strong>{email}</strong> when a spot opens up.
+                    We&apos;ll notify you at <strong>{email}</strong> when a spot opens up.
                 </p>
                 <p className="text-sm text-text-light dark:text-dark-text-muted">
                     Already have an invite code?{' '}

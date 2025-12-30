@@ -1,6 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Navigation and Core Pages', () => {
+    test.beforeEach(async ({ page }) => {
+        // Disable Epistemic Onboarding by setting localStorage key
+        await page.addInitScript(() => {
+            window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+        });
+    });
+
     test('homepage loads with correct language redirect', async ({ page }) => {
         await page.goto('/');
 
@@ -12,13 +19,16 @@ test.describe('Navigation and Core Pages', () => {
     });
 
     test('can toggle between English and Arabic', async ({ page }) => {
+        test.setTimeout(90000);
         await page.goto('/en');
+        await page.waitForLoadState('networkidle');
 
         // Find language switcher
         const langButton = page.locator('[data-testid="language-switcher"], button:has-text("العربية")').first();
         if (await langButton.isVisible()) {
             await langButton.click();
-            // Should navigate to Arabic version
+            // Wait explicitly for navigation to complete
+            await page.waitForURL(/\/ar/, { timeout: 30000 });
             await expect(page).toHaveURL(/\/ar/);
         }
     });

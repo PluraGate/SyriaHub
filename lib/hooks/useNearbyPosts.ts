@@ -77,7 +77,8 @@ export function useNearbyPosts(
         }
 
         fetchNearbyPosts()
-    }, [geometry?.type, governorate])
+    }, [geometry, governorate])
+
 
     return { postCount, hasHumanitarianPosts, loading }
 }

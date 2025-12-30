@@ -123,7 +123,7 @@ export default function AchievementsPage() {
             setLoading(false)
         }
         fetchData()
-    }, [])
+    }, [supabase])
 
     const checkForNewAchievements = async () => {
         if (!user) return

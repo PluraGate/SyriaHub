@@ -40,9 +40,15 @@ export function useAutosave({
     debounceMs = 2000,
     enabled = true,
 }: UseAutosaveOptions): UseAutosaveResult {
-    const [hasDraft, setHasDraft] = useState(false)
-    const [draftData, setDraftData] = useState<DraftData | null>(null)
-    const [lastSaved, setLastSaved] = useState<Date | null>(null)
+    const [state, setState] = useState<{
+        hasDraft: boolean
+        draftData: DraftData | null
+        lastSaved: Date | null
+    }>({
+        hasDraft: false,
+        draftData: null,
+        lastSaved: null
+    })
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
     const storageKey = `syrealize_draft_${key}`
 
@@ -59,13 +65,18 @@ export function useAutosave({
                 if (Date.now() > expiryTime) {
                     // Draft expired, clean up
                     localStorage.removeItem(storageKey)
-                    setHasDraft(false)
-                    setDraftData(null)
+                    setTimeout(() => {
+                        setState({ hasDraft: false, draftData: null, lastSaved: null })
+                    }, 0)
                 } else if (parsed.title || parsed.content) {
                     // Valid draft exists
-                    setHasDraft(true)
-                    setDraftData(parsed)
-                    setLastSaved(new Date(parsed.lastSaved))
+                    setTimeout(() => {
+                        setState({
+                            hasDraft: true,
+                            draftData: parsed,
+                            lastSaved: new Date(parsed.lastSaved)
+                        })
+                    }, 0)
                 }
             }
         } catch (error) {
@@ -98,9 +109,11 @@ export function useAutosave({
                     }
 
                     localStorage.setItem(storageKey, JSON.stringify(draftWithTimestamp))
-                    setLastSaved(new Date(draftWithTimestamp.lastSaved))
-                    setHasDraft(true)
-                    setDraftData(draftWithTimestamp)
+                    setState({
+                        hasDraft: true,
+                        draftData: draftWithTimestamp,
+                        lastSaved: new Date(draftWithTimestamp.lastSaved)
+                    })
                 } catch (error) {
                     console.error('Error saving draft:', error)
                 }
@@ -111,9 +124,8 @@ export function useAutosave({
 
     // Restore draft function
     const restoreDraft = useCallback((): DraftData | null => {
-        if (!draftData) return null
-        return draftData
-    }, [draftData])
+        return state.draftData
+    }, [state.draftData])
 
     // Clear draft function
     const clearDraft = useCallback(() => {
@@ -121,9 +133,7 @@ export function useAutosave({
             clearTimeout(saveTimeoutRef.current)
         }
         localStorage.removeItem(storageKey)
-        setHasDraft(false)
-        setDraftData(null)
-        setLastSaved(null)
+        setState({ hasDraft: false, draftData: null, lastSaved: null })
     }, [storageKey])
 
     // Cleanup timeout on unmount
@@ -136,9 +146,7 @@ export function useAutosave({
     }, [])
 
     return {
-        hasDraft,
-        draftData,
-        lastSaved,
+        ...state,
         restoreDraft,
         clearDraft,
         saveDraft,

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Bell, Check, MessageSquare, Award, CheckCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -139,13 +140,13 @@ export function NotificationList({ onClose }: NotificationListProps) {
                 ))}
             </div>
             <div className="p-3 border-t border-gray-200 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50">
-                <a
+                <Link
                     href="/notifications"
                     onClick={() => onClose?.()}
                     className="block text-center text-sm font-medium text-secondary hover:text-secondary-light transition-colors"
                 >
                     {t('viewAllNotifications')}
-                </a>
+                </Link>
             </div>
         </div>
     )

@@ -162,7 +162,7 @@ function TextResponses({ data }: { data: TextData }) {
                         {index + 1}
                     </span>
                     <p className="text-sm text-text dark:text-dark-text leading-relaxed flex-1">
-                        "{String(response)}"
+                        &quot;{String(response)}&quot;
                     </p>
                 </div>
             ))}

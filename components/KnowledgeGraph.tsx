@@ -364,7 +364,7 @@ function DialogGraphCanvas({
 
             e.currentTarget.style.cursor = node ? 'pointer' : 'default'
         }
-    }, [draggedNode, dragOffset, getNodeAtPosition, zoomLevel])
+    }, [draggedNode, dragOffset, getNodeAtPosition, zoomLevel, edges, positions])
 
     const handleMouseUp = useCallback(() => {
         setDraggedNode(null)
@@ -387,7 +387,8 @@ function DialogGraphCanvas({
             // Click on empty space clears selection
             setSelectedNode(null)
         }
-    }, [getNodeAtPosition, positions])
+    }, [getNodeAtPosition])
+
 
     const resetLayout = useCallback(() => {
         if (containerRef.current) {
@@ -895,6 +896,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
         ctx.restore()
 
     }, [nodes, edges, nodePositions, hoveredNode, zoomLevel])
+
 
     // Redraw on position or zoom changes
     useEffect(() => {

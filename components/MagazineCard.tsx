@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn, stripMarkdown, getInitials, getAvatarGradient } from '@/lib/utils'
 import { Clock, Bookmark, Eye, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -141,9 +142,11 @@ export function MagazineCard({
                         {post.author && (
                             <div className="flex items-center gap-2">
                                 {post.author.avatar_url ? (
-                                    <img
+                                    <Image
                                         src={post.author.avatar_url}
                                         alt={post.author.name || ''}
+                                        width={24}
+                                        height={24}
                                         className="w-6 h-6 rounded-full object-cover"
                                     />
                                 ) : (
@@ -334,9 +337,11 @@ export function MagazineCard({
                     {post.author && (
                         <div className="flex items-center gap-2">
                             {post.author.avatar_url ? (
-                                <img
+                                <Image
                                     src={post.author.avatar_url}
                                     alt={post.author.name || ''}
+                                    width={28}
+                                    height={28}
                                     className="w-7 h-7 rounded-full object-cover"
                                 />
                             ) : (

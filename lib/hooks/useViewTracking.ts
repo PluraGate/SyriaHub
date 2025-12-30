@@ -8,13 +8,18 @@ interface UseViewTrackingOptions {
 }
 
 export function useViewTracking({ postId, enabled = true }: UseViewTrackingOptions) {
-    const startTimeRef = useRef<number>(Date.now())
+    const startTimeRef = useRef<number | null>(null)
     const maxScrollDepthRef = useRef<number>(0)
     const hasTrackedRef = useRef<boolean>(false)
     const sessionIdRef = useRef<string>('')
 
-    // Generate or retrieve session ID
+    // Generate or retrieve session ID and set start time
     useEffect(() => {
+        // Set start time on mount (avoiding impure function call during render)
+        if (startTimeRef.current === null) {
+            startTimeRef.current = Date.now()
+        }
+
         if (typeof window !== 'undefined') {
             let sessionId = sessionStorage.getItem('view_session_id')
             if (!sessionId) {
@@ -49,7 +54,7 @@ export function useViewTracking({ postId, enabled = true }: UseViewTrackingOptio
         if (hasTrackedRef.current || !enabled) return
         hasTrackedRef.current = true
 
-        const duration = Math.floor((Date.now() - startTimeRef.current) / 1000)
+        const duration = Math.floor((Date.now() - (startTimeRef.current || Date.now())) / 1000)
         const referrer = document.referrer || undefined
 
         try {

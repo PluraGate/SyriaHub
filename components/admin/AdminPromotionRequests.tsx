@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { GraduationCap, Clock, CheckCircle, XCircle, User, Calendar, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
@@ -36,9 +37,9 @@ export function AdminPromotionRequests() {
     const [expandedId, setExpandedId] = useState<string | null>(null)
     const [adminNotes, setAdminNotes] = useState<Record<string, string>>({})
     const { showToast } = useToast()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         const { data, error } = await supabase
             .from('role_promotion_requests')
             .select(`
@@ -52,11 +53,12 @@ export function AdminPromotionRequests() {
             setRequests(data)
         }
         setLoading(false)
-    }
+    }, [supabase])
 
     useEffect(() => {
         fetchRequests()
-    }, [])
+    }, [fetchRequests])
+
 
     const handleDecision = async (requestId: string, decision: 'approved' | 'rejected') => {
         setProcessingId(requestId)
@@ -123,9 +125,11 @@ export function AdminPromotionRequests() {
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-dark-border flex items-center justify-center overflow-hidden">
                                         {request.user?.avatar_url ? (
-                                            <img
+                                            <Image
                                                 src={request.user.avatar_url}
                                                 alt={request.user.name}
+                                                width={40}
+                                                height={40}
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (

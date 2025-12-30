@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 interface UserAvatarProps {
     name?: string | null
@@ -50,6 +51,13 @@ const sizeClasses = {
     xl: 'w-16 h-16 text-lg',
 }
 
+const sizeValues = {
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 64,
+}
+
 export function UserAvatar({
     name,
     email,
@@ -70,9 +78,11 @@ export function UserAvatar({
                     className
                 )}
             >
-                <img
+                <Image
                     src={avatarUrl}
                     alt={name || email || 'User avatar'}
+                    width={sizeValues[size]}
+                    height={sizeValues[size]}
                     className="w-full h-full object-cover"
                 />
             </div>

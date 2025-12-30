@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { GraduationCap, Clock, CheckCircle, XCircle, Send, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
@@ -31,19 +31,19 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
     const [reason, setReason] = useState('')
     const [showForm, setShowForm] = useState(false)
     const { showToast } = useToast()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         const { data, error } = await supabase.rpc('get_my_promotion_requests')
         if (!error && data) {
             setRequests(data || [])
         }
         setLoading(false)
-    }
+    }, [supabase])
 
     useEffect(() => {
         fetchRequests()
-    }, [])
+    }, [fetchRequests])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -117,7 +117,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                         <div>
                             <p className="font-medium text-amber-800 dark:text-amber-200">{t('requestPending')}</p>
                             <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                                Your request is being reviewed by the admin team. You'll be notified when there's an update.
+                                Your request is being reviewed by the admin team. You&apos;ll be notified when there&apos;s an update.
                             </p>
                             <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
                                 Submitted {new Date(pendingRequest.created_at).toLocaleDateString()}
@@ -182,7 +182,7 @@ export function RolePromotionRequest({ userRole }: RolePromotionRequestProps) {
                                     <textarea
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        placeholder="Tell us about your background, expertise, and what you'd like to contribute to the community..."
+                                        placeholder="Tell us about your background, expertise, and what you&apos;d like to contribute to the community..."
                                         rows={4}
                                         className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light dark:placeholder:text-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                                         required

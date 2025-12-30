@@ -46,7 +46,7 @@ export function TrustProfileCard({ profile, compact = false }: TrustProfileCardP
             {/* Trust Summary */}
             {profile.trust_summary && (
                 <p className="text-sm text-text-light mb-4 italic">
-                    "{profile.trust_summary}"
+                    &quot;{profile.trust_summary}&quot;
                 </p>
             )}
 

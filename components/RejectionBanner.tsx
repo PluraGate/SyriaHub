@@ -51,13 +51,11 @@ export function RejectionBanner({
     const supabase = createClient()
     const { showToast } = useToast()
 
-    // Only render for rejected posts and for the author
-    if (approvalStatus !== 'rejected' || !isAuthor) {
-        return null
-    }
-
     // Fetch existing appeal and count on mount
     useEffect(() => {
+        // Only fetch if this should render
+        if (approvalStatus !== 'rejected' || !isAuthor) return
+
         const fetchAppealData = async () => {
             // Get most recent appeal
             const { data, error } = await supabase
@@ -81,7 +79,12 @@ export function RejectionBanner({
             setLoading(false)
         }
         fetchAppealData()
-    }, [postId, supabase])
+    }, [postId, supabase, approvalStatus, isAuthor])
+
+    // Only render for rejected posts and for the author
+    if (approvalStatus !== 'rejected' || !isAuthor) {
+        return null
+    }
 
     const handleSubmitAppeal = async () => {
         if (appealCount >= MAX_APPEALS) {

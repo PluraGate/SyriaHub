@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -79,7 +79,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
     const [processing, setProcessing] = useState(false)
     const supabase = useMemo(() => createClient(), [])
 
-    const severityConfig = {
+    const severityConfig = useMemo(() => ({
         critical: {
             label: t('severity.critical'),
             color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
@@ -98,13 +98,10 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
             dotColor: 'bg-green-500',
             sortOrder: 2
         }
-    }
+    }), [t])
 
-    useEffect(() => {
-        fetchReports()
-    }, [])
 
-    async function fetchReports() {
+    const fetchReports = useCallback(async () => {
         setLoading(true)
         try {
             const { data, error } = await supabase
@@ -131,7 +128,12 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
         } finally {
             setLoading(false)
         }
-    }
+    }, [supabase])
+
+    useEffect(() => {
+        fetchReports()
+    }, [fetchReports])
+
 
     // Sort and filter reports
     const processedReports = useMemo(() => {
@@ -156,7 +158,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                     return 0
             }
         })
-    }, [reports, sortBy, filterSeverity])
+    }, [reports, sortBy, filterSeverity, severityConfig])
 
     // Severity counts
     const severityCounts = useMemo(() => ({

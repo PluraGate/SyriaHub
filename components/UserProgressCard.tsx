@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Zap, Trophy, Target, ChevronRight, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { UserLevelBadge, getTierFromLevel } from './UserLevelBadge'
@@ -41,7 +41,7 @@ interface UserProgressCardProps {
 export function UserProgressCard({ userId, compact = false }: UserProgressCardProps) {
     const [progress, setProgress] = useState<UserProgress | null>(null)
     const [loading, setLoading] = useState(true)
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
     const t = useTranslations('Gamification')
     const tCommon = useTranslations('Common')
 
@@ -56,7 +56,8 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
             setLoading(false)
         }
         fetchProgress()
-    }, [userId])
+    }, [userId, supabase])
+
 
     if (loading) {
         return (

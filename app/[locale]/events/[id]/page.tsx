@@ -13,6 +13,7 @@ import { EventActions } from '@/components/EventActions'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { BookmarkButton } from '@/components/BookmarkButton'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -90,10 +91,11 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                 {event.cover_image_url ? (
                                     <>
                                         <div className="absolute inset-0">
-                                            <img
+                                            <Image
                                                 src={event.cover_image_url}
                                                 alt={event.title}
-                                                className="w-full h-full object-cover"
+                                                fill
+                                                className="object-cover"
                                             />
                                             <div className="absolute inset-0 bg-black/50" />
                                         </div>

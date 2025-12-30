@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
@@ -300,9 +301,11 @@ export default async function PostPage(props: PostPageProps) {
                 className="flex items-center gap-3 transition-colors hover:text-white"
               >
                 {post.author?.avatar_url ? (
-                  <img
+                  <Image
                     src={post.author.avatar_url}
                     alt={authorDisplay}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
                   />
                 ) : (
@@ -513,9 +516,11 @@ export default async function PostPage(props: PostPageProps) {
                 className="flex items-start gap-4 group"
               >
                 {post.author?.avatar_url ? (
-                  <img
+                  <Image
                     src={post.author.avatar_url}
                     alt={authorDisplay}
+                    width={56}
+                    height={56}
                     className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
                   />
                 ) : (

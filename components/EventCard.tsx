@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Calendar, MapPin, Users, Clock, AlertTriangle, Trash2, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
@@ -153,10 +154,11 @@ export function EventCard({ event, currentUser }: EventCardProps) {
                 {/* Background image with overlay */}
                 {event.cover_image_url && (
                     <>
-                        <img
+                        <Image
                             src={event.cover_image_url}
                             alt=""
-                            className="absolute inset-0 w-full h-full object-cover opacity-40"
+                            fill
+                            className="absolute inset-0 object-cover opacity-40"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
                     </>

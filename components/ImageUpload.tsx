@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { Upload, Loader2, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -139,10 +140,11 @@ export function ImageUpload({
                 >
                     {preview ? (
                         <>
-                            <img
+                            <Image
                                 src={preview}
                                 alt="Upload preview"
-                                className="w-full h-full object-cover object-center"
+                                fill
+                                className="object-cover object-center"
                             />
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Upload className="w-6 h-6 text-white" />
