@@ -438,7 +438,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                                             className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
                                         >
                                             <Plus className="w-4 h-4" />
-                                            Add "{(searchQuery || newSkillName).trim()}" as new skill
+                                            Add &quot;{(searchQuery || newSkillName).trim()}&quot; as new skill
                                         </button>
                                         <div className="mt-2 flex items-center gap-2">
                                             <span className="text-xs text-gray-500 dark:text-gray-400">Category:</span>

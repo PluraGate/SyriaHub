@@ -36,7 +36,6 @@ export function SettingsPage({ user }: SettingsPageProps) {
     const t = useTranslations('Settings')
     const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites' | 'feedback'>('appearance')
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
         try {
             // @ts-expect-error - Dynamic key access for settings

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { config } from 'dotenv'
 
 // Load environment variables for scripts
@@ -6,9 +6,8 @@ config({ path: '.env.local' })
 
 // ==================== Configuration ====================
 
-// Rate limiting: Maximum AI analyses per hour (global counter)
+// Rate limiting: Maximum AI analyses per hour (persistent via database)
 const MAX_ANALYSES_PER_HOUR = 30
-const analysisHistory: number[] = []
 
 // Model configuration - use gpt-4o-mini for cost efficiency
 const OPENAI_MODEL = 'gpt-4o-mini' // ~$0.15/1M input vs $2.50/1M for gpt-4o
@@ -19,29 +18,43 @@ const MAX_CONTENT_LENGTH = 3000 // Truncate long posts
 const MAX_CONTEXT_POSTS = 5 // Fewer comparison posts
 const MAX_CONTEXT_CONTENT_LENGTH = 200 // Shorter excerpts
 
-// ==================== Rate Limiting ====================
+// ==================== Rate Limiting (Database-backed) ====================
 
-function checkRateLimit(): { allowed: boolean; remaining: number } {
-    const now = Date.now()
-    const oneHourAgo = now - 60 * 60 * 1000
+async function checkRateLimit(supabase: SupabaseClient): Promise<{ allowed: boolean; remaining: number }> {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
 
-    // Remove entries older than 1 hour
-    while (analysisHistory.length > 0 && analysisHistory[0] < oneHourAgo) {
-        analysisHistory.shift()
+    // Count recent analyses from database
+    const { count, error } = await supabase
+        .from('ai_rate_limits')
+        .select('*', { count: 'exact', head: true })
+        .eq('action_type', 'recommendation_analysis')
+        .gte('executed_at', oneHourAgo)
+
+    if (error) {
+        console.error('[RecomAI] Rate limit check failed:', error)
+        // Fail open but log the issue
+        return { allowed: true, remaining: MAX_ANALYSES_PER_HOUR }
     }
 
-    const remaining = MAX_ANALYSES_PER_HOUR - analysisHistory.length
+    const used = count || 0
+    const remaining = MAX_ANALYSES_PER_HOUR - used
 
     if (remaining <= 0) {
-        console.warn(`[RecomAI] Rate limit reached: ${analysisHistory.length}/${MAX_ANALYSES_PER_HOUR} per hour`)
+        console.warn(`[RecomAI] Rate limit reached: ${used}/${MAX_ANALYSES_PER_HOUR} per hour`)
         return { allowed: false, remaining: 0 }
     }
 
     return { allowed: true, remaining }
 }
 
-function recordAnalysis(): void {
-    analysisHistory.push(Date.now())
+async function recordAnalysis(supabase: SupabaseClient): Promise<void> {
+    const { error } = await supabase
+        .from('ai_rate_limits')
+        .insert({ action_type: 'recommendation_analysis' })
+
+    if (error) {
+        console.error('[RecomAI] Failed to record analysis:', error)
+    }
 }
 
 // ==================== Supabase Client ====================
@@ -77,7 +90,7 @@ export async function analyzePostForRecommendations(
         const supabase = getSupabase()
 
         // 1. Check rate limit
-        const rateCheck = checkRateLimit()
+        const rateCheck = await checkRateLimit(supabase)
         if (!rateCheck.allowed) {
             console.log(`[RecomAI] Skipping analysis due to rate limit. Remaining: ${rateCheck.remaining}`)
             return null
@@ -168,7 +181,7 @@ export async function analyzePostForRecommendations(
         }
 
         // Record successful API call for rate limiting
-        recordAnalysis()
+        await recordAnalysis(supabase)
 
         const data = await response.json()
         const analysis = JSON.parse(data.choices[0].message.content || '{}')
@@ -234,22 +247,33 @@ export async function analyzePostForRecommendations(
     }
 }
 
-// ==================== Utility Functions ====================
-
 /**
- * Get current rate limit status
+ * Get current rate limit status (database-backed)
  */
-export function getRateLimitStatus(): { used: number; limit: number; remaining: number } {
-    const now = Date.now()
-    const oneHourAgo = now - 60 * 60 * 1000
+export async function getRateLimitStatus(): Promise<{ used: number; limit: number; remaining: number }> {
+    try {
+        const supabase = getSupabase()
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
 
-    while (analysisHistory.length > 0 && analysisHistory[0] < oneHourAgo) {
-        analysisHistory.shift()
-    }
+        const { count, error } = await supabase
+            .from('ai_rate_limits')
+            .select('*', { count: 'exact', head: true })
+            .eq('action_type', 'recommendation_analysis')
+            .gte('executed_at', oneHourAgo)
 
-    return {
-        used: analysisHistory.length,
-        limit: MAX_ANALYSES_PER_HOUR,
-        remaining: Math.max(0, MAX_ANALYSES_PER_HOUR - analysisHistory.length)
+        if (error) {
+            console.error('[RecomAI] Rate limit status check failed:', error)
+            return { used: 0, limit: MAX_ANALYSES_PER_HOUR, remaining: MAX_ANALYSES_PER_HOUR }
+        }
+
+        const used = count || 0
+        return {
+            used,
+            limit: MAX_ANALYSES_PER_HOUR,
+            remaining: Math.max(0, MAX_ANALYSES_PER_HOUR - used)
+        }
+    } catch (error) {
+        console.error('[RecomAI] Rate limit status error:', error)
+        return { used: 0, limit: MAX_ANALYSES_PER_HOUR, remaining: MAX_ANALYSES_PER_HOUR }
     }
 }

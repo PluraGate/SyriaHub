@@ -46,6 +46,7 @@ export function SpatialContextCard({
     // Load governorate data once
     useEffect(() => {
         if (governoratesCache) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional cache initialization
             setGovernorates(governoratesCache)
             return
         }
@@ -86,6 +87,7 @@ export function SpatialContextCard({
     // Run pattern detection when geometry or governorates change
     useEffect(() => {
         if (!spatialGeometry || governorates.length === 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional reset on dependency change
             setPatterns([])
             setAsyncPatterns([])
             return

@@ -62,7 +62,8 @@ export function usePrecedents(patternIds: string[], governorate?: string) {
         }
 
         fetchPrecedents()
-    }, [patternIds.join(','), governorate]) // Stable dependency via join
+    }, [patternIds, governorate])
+
 
     return { precedents, loading, error }
 }

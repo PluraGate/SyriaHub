@@ -114,7 +114,7 @@ export function AppealButton({ postId, postTitle, onAppealSubmitted }: AppealBut
                             Appeal Content Flag
                         </DialogTitle>
                         <DialogDescription>
-                            Your post {postTitle && <span className="font-medium">"{postTitle}"</span>} has been flagged for review.
+                            Your post {postTitle && <span className="font-medium">&quot;{postTitle}&quot;</span>} has been flagged for review.
                             If you believe this was a mistake, you can submit an appeal.
                         </DialogDescription>
                     </DialogHeader>
@@ -162,7 +162,7 @@ export function AppealButton({ postId, postTitle, onAppealSubmitted }: AppealBut
                                     </h4>
                                     <ul className="text-xs text-blue-600 dark:text-blue-300 space-y-1">
                                         <li>• Your appeal will be reviewed by our moderation team</li>
-                                        <li>• You'll receive a notification when a decision is made</li>
+                                        <li>• You&apos;ll receive a notification when a decision is made</li>
                                         <li>• If approved, your content will be restored</li>
                                     </ul>
                                 </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import {
     Users,
@@ -319,9 +320,11 @@ export function UserManagement() {
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center overflow-hidden">
                                                     {user.avatar_url ? (
-                                                        <img
+                                                        <Image
                                                             src={user.avatar_url}
                                                             alt=""
+                                                            width={40}
+                                                            height={40}
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : (

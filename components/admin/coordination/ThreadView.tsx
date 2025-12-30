@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import {
@@ -119,7 +119,7 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
     const { showToast } = useToast()
     const t = useTranslations('Coordination')
 
-    const loadThread = async () => {
+    const loadThread = useCallback(async () => {
         setLoading(true)
         try {
             const response = await fetch(`/api/coordination/${threadId}`)
@@ -136,11 +136,12 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
         } finally {
             setLoading(false)
         }
-    }
+    }, [threadId, t, showToast])
 
     useEffect(() => {
         loadThread()
-    }, [threadId])
+    }, [threadId, loadThread])
+
 
     const handleArchive = async () => {
         if (!isAdmin) return

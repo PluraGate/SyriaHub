@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
+import Image from 'next/image'
 import { ImagePlus, X, Loader2, Camera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
@@ -117,10 +118,11 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
         return (
             <div className="relative group">
                 <div className="relative aspect-[21/9] rounded-2xl overflow-hidden border border-gray-200 dark:border-dark-border">
-                    <img
+                    <Image
                         src={value}
                         alt="Cover preview"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                         <input
@@ -129,6 +131,7 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                             accept="image/*"
                             onChange={handleFileChange}
                             className="hidden"
+                            data-testid="cover-image-input"
                         />
                         <Button
                             type="button"
@@ -167,6 +170,7 @@ export function CoverImageUpload({ value, onChange, userId, compact = false }: C
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
+                data-testid="cover-image-input"
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                 {uploading ? (

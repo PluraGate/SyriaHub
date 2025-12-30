@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { MessageSquare, Quote, Clock, GitFork, GraduationCap } from 'lucide-react'
 import { TagChip } from './TagChip'
 import { ReportButton } from '@/components/ReportButton'
@@ -120,9 +121,11 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
           {showAuthor && post.author && (
             <div className="flex items-center gap-2">
               {post.author.avatar_url ? (
-                <img
+                <Image
                   src={post.author.avatar_url}
                   alt={displayAuthor}
+                  width={24}
+                  height={24}
                   className="w-6 h-6 rounded-full object-cover"
                 />
               ) : (

@@ -35,3 +35,11 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Supabase status files (may contain keys)
+*_status*.json
+status_*.json
+
+# Playwright
+playwright-report/
+test-results/

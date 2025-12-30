@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { Plus, Edit, Trash2, Eye, EyeOff, Search, Filter } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff, Search } from 'lucide-react'
 
 interface Precedent {
     id: string
@@ -49,11 +49,7 @@ export default function AdminPrecedentsPage() {
         is_published: false
     })
 
-    useEffect(() => {
-        fetchPrecedents()
-    }, [searchQuery, patternFilter])
-
-    async function fetchPrecedents() {
+    const fetchPrecedents = useCallback(async () => {
         setLoading(true)
         try {
             let url = '/api/precedents?limit=50'
@@ -67,7 +63,12 @@ export default function AdminPrecedentsPage() {
             console.error('Failed to fetch precedents:', error)
         }
         setLoading(false)
-    }
+    }, [searchQuery, patternFilter])
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional initial data fetch
+        fetchPrecedents()
+    }, [fetchPrecedents])
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -353,8 +354,8 @@ export default function AdminPrecedentsPage() {
                                         </span>
                                     )}
                                     <span className={`text-xs px-2 py-0.5 rounded-full ${precedent.is_published
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-amber-100 text-amber-700'
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-amber-100 text-amber-700'
                                         }`}>
                                         {precedent.is_published ? 'Published' : 'Draft'}
                                     </span>

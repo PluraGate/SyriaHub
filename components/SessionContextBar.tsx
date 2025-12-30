@@ -19,6 +19,7 @@ export function SessionContextBar() {
 
     useEffect(() => {
         const context = getSessionContext()
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional initialization from session storage
         setTrail(context.researchTrail.slice(-5).reverse())
         setSummary(getTrailSummary())
     }, [])

@@ -138,7 +138,7 @@ export function ResearchOutcomeCard({ outcome, variant = 'default', className }:
             {/* Impact Description - uses hedging language */}
             {outcome.impact_description && (
                 <p className="text-sm text-text-light dark:text-dark-text-muted mb-4 italic">
-                    "{outcome.impact_description}"
+                    &quot;{outcome.impact_description}&quot;
                 </p>
             )}
 

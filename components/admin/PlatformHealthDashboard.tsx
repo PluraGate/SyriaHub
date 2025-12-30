@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
     Activity,
@@ -73,7 +73,7 @@ export function PlatformHealthDashboard() {
 
     const supabase = useMemo(() => createClient(), [])
 
-    const loadData = async (isRefresh = false) => {
+    const loadData = useCallback(async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true)
         else setLoading(true)
 
@@ -111,11 +111,12 @@ export function PlatformHealthDashboard() {
             setLoading(false)
             setRefreshing(false)
         }
-    }
+    }, [supabase])
 
     useEffect(() => {
         loadData()
-    }, [])
+    }, [loadData])
+
 
     // Prepare pie chart data for gap status
     const gapStatusData = gapMetrics ? [
@@ -369,12 +370,12 @@ export function PlatformHealthDashboard() {
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div className={`text-center p-4 rounded-lg ${(moderation?.pending_queue || 0) > 10
-                            ? 'bg-red-50 dark:bg-red-900/20'
-                            : 'bg-gray-50 dark:bg-dark-bg'
+                        ? 'bg-red-50 dark:bg-red-900/20'
+                        : 'bg-gray-50 dark:bg-dark-bg'
                         }`}>
                         <p className={`text-3xl font-bold ${(moderation?.pending_queue || 0) > 10
-                                ? 'text-red-600 dark:text-red-400'
-                                : 'text-text dark:text-dark-text'
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-text dark:text-dark-text'
                             }`}>
                             {moderation?.pending_queue || 0}
                         </p>
@@ -399,12 +400,12 @@ export function PlatformHealthDashboard() {
                         </p>
                     </div>
                     <div className={`text-center p-4 rounded-lg ${(moderation?.pending_appeals || 0) > 5
-                            ? 'bg-orange-50 dark:bg-orange-900/20'
-                            : 'bg-gray-50 dark:bg-dark-bg'
+                        ? 'bg-orange-50 dark:bg-orange-900/20'
+                        : 'bg-gray-50 dark:bg-dark-bg'
                         }`}>
                         <p className={`text-3xl font-bold ${(moderation?.pending_appeals || 0) > 5
-                                ? 'text-orange-600 dark:text-orange-400'
-                                : 'text-text dark:text-dark-text'
+                            ? 'text-orange-600 dark:text-orange-400'
+                            : 'text-text dark:text-dark-text'
                             }`}>
                             {moderation?.pending_appeals || 0}
                         </p>
@@ -434,7 +435,7 @@ export function PlatformHealthDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${(velocity?.posts_per_day || 0) >= 1 ? 'bg-green-500' :
-                                (velocity?.posts_per_day || 0) >= 0.5 ? 'bg-yellow-500' : 'bg-red-500'
+                            (velocity?.posts_per_day || 0) >= 0.5 ? 'bg-yellow-500' : 'bg-red-500'
                             }`} />
                         <span className="text-text dark:text-dark-text">
                             {t('contentCreation')}: {
@@ -445,7 +446,7 @@ export function PlatformHealthDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${(gapMetrics?.resolution_rate || 0) >= 30 ? 'bg-green-500' :
-                                (gapMetrics?.resolution_rate || 0) >= 15 ? 'bg-yellow-500' : 'bg-red-500'
+                            (gapMetrics?.resolution_rate || 0) >= 15 ? 'bg-yellow-500' : 'bg-red-500'
                             }`} />
                         <span className="text-text dark:text-dark-text">
                             {t('gapResolution')}: {
@@ -456,7 +457,7 @@ export function PlatformHealthDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${(moderation?.pending_queue || 0) <= 5 ? 'bg-green-500' :
-                                (moderation?.pending_queue || 0) <= 15 ? 'bg-yellow-500' : 'bg-red-500'
+                            (moderation?.pending_queue || 0) <= 15 ? 'bg-yellow-500' : 'bg-red-500'
                             }`} />
                         <span className="text-text dark:text-dark-text">
                             {t('moderationBacklog')}: {

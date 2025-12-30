@@ -42,7 +42,7 @@ export function DraftRecoveryBanner({
                     <p className="text-sm text-amber-700 dark:text-amber-300/80 mt-0.5">
                         {draftData.title ? (
                             <>
-                                <span className="font-medium">"{draftData.title.slice(0, 50)}{draftData.title.length > 50 ? '...' : ''}"</span>
+                                <span className="font-medium">&quot;{draftData.title.slice(0, 50)}{draftData.title.length > 50 ? '...' : ''}&quot;</span>
                                 <span className="mx-1">•</span>
                             </>
                         ) : null}

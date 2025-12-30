@@ -30,6 +30,7 @@ export function useServiceWorker() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional initialization in effect
         setState((prev) => ({ ...prev, isSupported: true, isOffline: !isOnline() }))
 
         // Initialize offline storage

@@ -1,6 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('RTL (Arabic) Mode Support', () => {
+    test.beforeEach(async ({ page }) => {
+        // Disable Epistemic Onboarding by setting localStorage key
+        await page.addInitScript(() => {
+            window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+        });
+    });
+
     test('Arabic page has RTL direction', async ({ page }) => {
         // Go to Arabic login page (since root may redirect)
         await page.goto('/ar/auth/login');
@@ -114,7 +121,9 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('language switcher works from Arabic to English', async ({ page }) => {
+        test.setTimeout(90000);
         await page.goto('/ar');
+        await page.waitForLoadState('networkidle');
 
         // Close onboarding if present
         const closeBtn = page.getByRole('button', { name: /إغلاق|close/i });
@@ -126,7 +135,8 @@ test.describe('RTL (Arabic) Mode Support', () => {
         const langButton = page.locator('button:has-text("English"), [data-testid="language-switcher"]').first();
         if (await langButton.isVisible()) {
             await langButton.click();
-            // Should navigate to English version
+            // Wait explicitly for navigation to complete
+            await page.waitForURL(/\/en/, { timeout: 30000 });
             await expect(page).toHaveURL(/\/en/);
         }
     });

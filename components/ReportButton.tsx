@@ -27,6 +27,7 @@ export function ReportButton({ postId, commentId, className, asMenuItem }: Repor
   const supabase = createClient()
   const { showToast } = useToast()
   const t = useTranslations('Report')
+  const tPost = useTranslations('Post')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -76,7 +77,7 @@ export function ReportButton({ postId, commentId, className, asMenuItem }: Repor
         ) : (
           <Button variant="ghost" size="sm" className={`text-text-light dark:text-dark-text-muted hover:text-red-500 dark:hover:text-red-400 ${className}`}>
             <Flag className="w-4 h-4 mr-2" />
-            {useTranslations('Post')('report')}
+            {tPost('report')}
           </Button>
         )}
       </DialogTrigger>

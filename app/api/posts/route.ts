@@ -36,7 +36,7 @@ async function handleGetPosts(request: Request): Promise<NextResponse> {
     .from('posts')
     .select(`
       *,
-      author:users!posts_author_id_fkey(id, name, email, affiliation)
+      author:users!posts_author_id_fkey(id, name, affiliation)
     `)
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
@@ -145,7 +145,7 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
     })
     .select(`
       *,
-      author:users!posts_author_id_fkey(id, name, email, affiliation)
+      author:users!posts_author_id_fkey(id, name, affiliation)
     `)
     .single()
 
@@ -153,10 +153,22 @@ async function handleCreatePost(request: Request): Promise<NextResponse> {
     return handleSupabaseError(error)
   }
 
-  // Trigger AI recommendation analysis in the background
-  // This populates trust_profiles, relationships, specialties, etc.
-  analyzePostForRecommendations(data.id, data.title, data.content, data.tags || [])
-    .catch(err => console.error('Failed to analyze post for recommendations:', err))
+  // Trigger AI recommendation analysis with timeout protection for serverless
+  // Uses Promise.race to ensure the analysis has at least 10s to attempt completion
+  const analysisTimeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Analysis timeout')), 10000)
+  )
+
+  Promise.race([
+    analyzePostForRecommendations(data.id, data.title, data.content, data.tags || []),
+    analysisTimeout
+  ]).catch(err => {
+    if (err.message === 'Analysis timeout') {
+      console.warn('[Posts API] AI analysis timed out - may continue in background')
+    } else {
+      console.error('[Posts API] Failed to analyze post for recommendations:', err)
+    }
+  })
 
   // Return success with optional warnings
   if (hasWarnings) {

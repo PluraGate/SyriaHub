@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
     History,
@@ -53,11 +53,7 @@ export function AuditLogs() {
 
     const supabase = useMemo(() => createClient(), [])
 
-    useEffect(() => {
-        loadLogs()
-    }, [page])
-
-    const loadLogs = async () => {
+    const loadLogs = useCallback(async () => {
         setLoading(true)
         try {
             const { data, error } = await supabase.rpc('get_audit_logs', {
@@ -83,7 +79,12 @@ export function AuditLogs() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [page, pageSize, supabase])
+
+    useEffect(() => {
+        loadLogs()
+    }, [page, loadLogs])
+
 
     const getRoleChangeVisual = (oldRole: string, newRole: string) => {
         const roleOrder = { researcher: 0, moderator: 1, admin: 2 }

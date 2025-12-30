@@ -104,7 +104,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
         showToast(t('copied'), 'success')
     }
 
-    const useRefinedVersion = (text: string) => {
+    const applyRefinedVersion = (text: string) => {
         setQuestion(text)
         setResult(null)
         showToast(t('questionUpdated'), 'success')
@@ -298,7 +298,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                                 {t('copy')}
                                             </button>
                                             <button
-                                                onClick={() => useRefinedVersion(version)}
+                                                onClick={() => applyRefinedVersion(version)}
                                                 className="flex items-center gap-1.5 px-2 py-1 text-xs text-primary hover:underline"
                                             >
                                                 <RefreshCw className="w-3.5 h-3.5" />
