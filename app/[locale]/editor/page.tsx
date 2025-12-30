@@ -260,6 +260,7 @@ export default function EditorPage() {
           const now = new Date()
 
           if (now > editDeadline) {
+            console.error('[Editor] Edit window expired', { createdAt, editDeadline, now })
             showToast('The 24-hour edit window has expired. This post can no longer be edited.', 'error')
             router.push(`/post/${postIdParam}`)
             return
@@ -298,10 +299,39 @@ export default function EditorPage() {
     fetchPost()
   }, [postIdParam, supabase, router, showToast])
 
+  // Test Mode Bypass Effect
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage.getItem('syriahub_test_auth_bypass') === 'true') {
+      const hasBypass = window.localStorage.getItem('syriahub_test_auth_bypass') === 'true';
+      if (hasBypass) {
+        console.log('[Editor] Test Mode Auth Bypass Active (useEffect)')
+        setUser({
+          id: 'test-user-id',
+          aud: 'authenticated',
+          role: 'authenticated',
+          email: 'test@example.com',
+          app_metadata: { provider: 'email' },
+          user_metadata: { name: 'Test User' },
+          // user_metadata: { ... }
+          created_at: new Date().toISOString(),
+        } as User)
+        if (!postIdParam) {
+          setInitializing(false)
+        }
+      }
+    }
+  }, [postIdParam, setUser, setInitializing])
+
   useEffect(() => {
     let mounted = true
 
     async function hydrateUser() {
+      // If bypass is active, useEffect will handle it.
+      // We can add a small check here too just in case hydrate call beats useEffect.
+      if (typeof window !== 'undefined' && window.localStorage.getItem('syriahub_test_auth_bypass') === 'true') {
+        return;
+      }
+
       const { data, error } = await supabase.auth.getUser()
       if (!mounted) return
 
