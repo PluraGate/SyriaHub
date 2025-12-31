@@ -71,6 +71,14 @@ const sections = [
         descAr: 'تتبع أداء محتواك، المشاهدات، التفاعل، والتأثير.',
         anchor: '#analytics'
     },
+    {
+        icon: Shield,
+        titleEn: 'Settings & Personalization',
+        titleAr: 'الإعدادات والتخصيص',
+        descEn: 'Customize appearance, privacy, notifications, and editor preferences.',
+        descAr: 'تخصيص المظهر، الخصوصية، الإشعارات، وإعدادات المحرر.',
+        anchor: '#settings'
+    },
 ]
 
 const licenses = [
@@ -276,6 +284,46 @@ export default async function UserGuidePage({ params }: { params: Promise<{ loca
                         ? 'الوصول إلى لوحة التحليلات الخاصة بك عبر القائمة المنسدلة لصورتك الشخصية ← التحليلات. تتبع المشاهدات، التفاعل، المنشورات، الاستشهادات، المتابعين، ونقاط الثقة.'
                         : 'Access your analytics dashboard via your avatar dropdown → Analytics. Track views, engagement, publications, citations, followers, and trust score.'}
                 </p>
+
+                {/* Settings & Personalization */}
+                <h2 id="settings" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
+                    {isArabic ? 'الإعدادات والتخصيص' : 'Settings & Personalization'}
+                </h2>
+                <p>
+                    {isArabic
+                        ? 'قم بتخصيص تجربتك في SyriaHub من خلال صفحة الإعدادات (القائمة المنسدلة للصورة الشخصية ← الإعدادات).'
+                        : 'Customize your SyriaHub experience via the Settings page (avatar dropdown → Settings).'}
+                </p>
+                <ul className="not-prose my-4 space-y-2">
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المظهر:' : 'Appearance:'}</strong> {isArabic ? 'اختر بين الوضع الفاتح أو الداكن أو النظام.' : 'Choose between Light, Dark, or System theme.'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'العرض:' : 'Display:'}</strong> {isArabic ? 'الوضع المضغوط، إظهار الصور الرمزية، عدد المنشورات لكل صفحة، التقويم (هجري/ميلادي).' : 'Compact mode, show avatars, posts per page, calendar (Hijri/Gregorian).'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الخصوصية:' : 'Privacy:'}</strong> {isArabic ? 'التحكم في رؤية ملفك الشخصي، عرض البريد الإلكتروني، والسماح بالرسائل من المستخدمين الآخرين.' : 'Control your profile visibility, email display, and allow messages from other users.'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المحرر:' : 'Editor:'}</strong> {isArabic ? 'الحفظ التلقائي، التدقيق الإملائي، وأرقام الأسطر.' : 'Auto-save, spellcheck, and line numbers.'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الإشعارات:' : 'Notifications:'}</strong> {isArabic ? 'تحكم في إشعارات البريد الإلكتروني للإشارات والردود والمتابعين الجدد.' : 'Control email notifications for mentions, replies, and new followers.'}</span>
+                    </li>
+                </ul>
+                <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 not-prose">
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                        <strong>{isArabic ? 'ملاحظة:' : 'Note:'}</strong>{' '}
+                        {isArabic
+                            ? 'الإعدادات الافتراضية: الوضع الداكن، جميع الإشعارات مفعلة، الملف الشخصي عام، البريد الإلكتروني مخفي، الرسائل معطلة.'
+                            : 'Default settings: Dark mode, all notifications ON, public profile, email hidden, messages OFF.'}
+                    </p>
+                </div>
 
                 {/* Help Links */}
                 <div className="mt-12 p-6 rounded-xl bg-primary/5 dark:bg-secondary/5 border border-primary/10 dark:border-secondary/10 not-prose">

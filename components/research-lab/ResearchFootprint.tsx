@@ -12,6 +12,7 @@ import {
     BarChart2
 } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
+import { cn } from '@/lib/utils'
 
 interface ParticipationStats {
     pollsVoted: number
@@ -38,9 +39,11 @@ interface ParticipationStats {
 
 interface ResearchFootprintProps {
     stats: ParticipationStats
+    variant?: 'full' | 'sidebar'
+    className?: string
 }
 
-export function ResearchFootprint({ stats }: ResearchFootprintProps) {
+export function ResearchFootprint({ stats, variant = 'full', className }: ResearchFootprintProps) {
     const t = useTranslations('ResearchLab')
     const locale = useLocale()
     const dateLocale = locale === 'ar' ? ar : enUS
@@ -55,16 +58,20 @@ export function ResearchFootprint({ stats }: ResearchFootprintProps) {
     // Calculate progress percentage (just for visual, capped at 100%)
     const progressPercent = Math.min(100, (totalParticipation / 10) * 100)
 
+    const Container = variant === 'full' ? 'section' : 'div'
+    const wrapperClasses = variant === 'full' ? 'py-8' : ''
+
     return (
-        <section className="py-8">
-            <div className="container-custom">
+        <Container className={cn(wrapperClasses, className)}>
+            <div className={variant === 'full' ? 'container-custom' : ''}>
                 {/* Section Header */}
                 <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-primary/10 rounded-lg">
                         <TrendingUp className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text">
+                        <h2 className={cn("font-display font-semibold text-text dark:text-dark-text",
+                            variant === 'sidebar' ? "text-lg" : "text-xl")}>
                             {t('footprint.title')}
                         </h2>
                         <p className="text-sm text-text-light dark:text-dark-text-muted">
@@ -73,7 +80,7 @@ export function ResearchFootprint({ stats }: ResearchFootprintProps) {
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className={cn("grid gap-6", variant === 'full' ? "md:grid-cols-3" : "grid-cols-1")}>
                     {/* Your Participation Summary Card */}
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted mb-4">
@@ -150,7 +157,8 @@ export function ResearchFootprint({ stats }: ResearchFootprintProps) {
                     </div>
 
                     {/* Active Research You Engaged With */}
-                    <div className="md:col-span-2 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
+                    <div className={cn("bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6",
+                        variant === 'full' ? "md:col-span-2" : "")}>
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted">
                                 {t('footprint.engagedResearch')}
@@ -249,6 +257,6 @@ export function ResearchFootprint({ stats }: ResearchFootprintProps) {
                     </div>
                 </div>
             </div>
-        </section>
+        </Container>
     )
 }

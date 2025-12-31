@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { BookOpen, FileText, HelpCircle, GitFork, Quote, Map, Lightbulb } from 'lucide-react'
+import { BookOpen, FileText, HelpCircle, GitFork, Quote, Map, Lightbulb, Settings } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params
@@ -202,6 +202,43 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
                                             )}
                                         </span>
                                     ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Settings & Personalization */}
+                        <section className="mb-12">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Settings className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
+                                <h2 className="text-2xl font-semibold text-text dark:text-dark-text m-0">
+                                    {isArabic ? 'الإعدادات والتخصيص' : 'Settings & Personalization'}
+                                </h2>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {isArabic
+                                    ? 'خصص تجربتك في SyriaHub من خلال صفحة الإعدادات. يمكنك الوصول إليها عبر القائمة المنسدلة لصورتك الشخصية.'
+                                    : 'Customize your SyriaHub experience through the Settings page, accessible via your avatar dropdown.'}
+                            </p>
+                            <div className="not-prose grid md:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                                    <h4 className="font-semibold text-text dark:text-dark-text mb-2">
+                                        {isArabic ? 'المظهر والعرض' : 'Appearance & Display'}
+                                    </h4>
+                                    <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                                        {isArabic
+                                            ? 'اختر بين الوضع الفاتح أو الداكن، الوضع المضغوط، التقويم، وإعدادات العرض الأخرى.'
+                                            : 'Choose Light/Dark theme, compact mode, calendar format, and other display preferences.'}
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                                    <h4 className="font-semibold text-text dark:text-dark-text mb-2">
+                                        {isArabic ? 'الخصوصية والإشعارات' : 'Privacy & Notifications'}
+                                    </h4>
+                                    <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                                        {isArabic
+                                            ? 'تحكم في رؤية ملفك الشخصي، عرض البريد الإلكتروني، الرسائل، وتفضيلات الإشعارات.'
+                                            : 'Control profile visibility, email display, messaging, and notification preferences.'}
+                                    </p>
                                 </div>
                             </div>
                         </section>

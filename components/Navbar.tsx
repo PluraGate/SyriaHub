@@ -128,7 +128,7 @@ export function Navbar({ user }: NavbarProps) {
             aria-label={tCommon('appTitle')}
           >
             <Image
-              src="/icons/icon-192x192.png"
+              src="/icons/Pluragate-logo.ico"
               alt="SyriaHub Logo"
               width={32}
               height={32}
@@ -140,19 +140,19 @@ export function Navbar({ user }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-end gap-4 flex-1 justify-end">
-            {/* Nav links - can shrink/hide on smaller screens */}
-            <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden md:flex items-end gap-2 lg:gap-4 flex-1 justify-end">
+            {/* Nav links - only visible at lg+ to preserve space for action items */}
+            <div className="hidden lg:flex items-center gap-0.5 xl:gap-1">
               <NavLink href="/feed">{t('feed')}</NavLink>
               <NavLink href="/explore">{t('explore')}</NavLink>
               <NavLink href="/resources">{t('resources')}</NavLink>
               <NavLink href="/events">{t('events')}</NavLink>
             </div>
 
-            <div className="hidden lg:block h-6 w-px bg-gray-200 dark:bg-dark-border shrink-0 mb-1" />
+            <div className="hidden xl:block h-6 w-px bg-gray-200 dark:bg-dark-border shrink-0 mb-1" />
 
             {/* Action items - never shrink */}
-            <div className="flex items-center gap-3 shrink-0 translate-y-1">
+            <div className="flex items-center gap-1 lg:gap-2 shrink-0 translate-y-1">
               <SearchBar />
 
               <LanguageSwitcher />
@@ -286,7 +286,8 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-2 border-t border-gray-200 dark:border-dark-border animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden py-4 space-y-1 border-t border-gray-200 dark:border-dark-border animate-in slide-in-from-top-2 duration-200">
+            {/* Content: Feed */}
             <Link
               href="/feed"
               className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
@@ -294,27 +295,33 @@ export function Navbar({ user }: NavbarProps) {
             >
               {t('feed')}
             </Link>
-            <Link
-              href="/explore"
-              className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t('explore')}
-            </Link>
+
+            {/* Thinking Tools: Explore + Research Lab - subtle visual grouping */}
+            <div className="mx-2 my-1 px-2 py-1 bg-gray-50/50 dark:bg-white/[0.02] rounded-lg">
+              <Link
+                href="/explore"
+                className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('explore')}
+              </Link>
+              <Link
+                href="/research-lab"
+                className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <FlaskConical className="w-4 h-4" />
+                {t('researchLab')}
+              </Link>
+            </div>
+
+            {/* Content: Resources, Events */}
             <Link
               href="/resources"
               className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               {t('resources')}
-            </Link>
-            <Link
-              href="/research-lab"
-              className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <FlaskConical className="w-4 h-4" />
-              {t('researchLab')}
             </Link>
             <Link
               href="/events"
@@ -324,90 +331,153 @@ export function Navbar({ user }: NavbarProps) {
               {t('events')}
             </Link>
 
-            <div className="border-t border-gray-100 dark:border-dark-border my-2 pt-2">
-              {user ? (
-                <>
-                  <div className="px-4 py-2 flex items-center gap-3">
-                    <Avatar className="w-10 h-10 border border-gray-200 dark:border-dark-border">
-                      <AvatarImage src={userAvatar} alt={userName} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {userName.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium text-sm text-text dark:text-dark-text">{userName}</p>
-                      <p className="text-xs text-text-light dark:text-dark-text-muted truncate max-w-[200px]">{user.email}</p>
-                    </div>
-                  </div>
+            {user ? (
+              <>
+                {/* Separator before Write */}
+                <div className="border-t border-gray-200 dark:border-dark-border my-3" />
 
-                  <Link
-                    href="/editor"
-                    className="flex items-center gap-2 px-4 py-3 text-primary dark:text-accent-light font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <PenSquare className="w-4 h-4" />
-                    {t('write')}
-                  </Link>
-
-                  <Link
-                    href={`/profile/${user.id}`}
-                    className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="w-4 h-4" />
-                    {t('profile')}
-                  </Link>
-
-                  {isAdminOrModerator && (
-                    <Link
-                      href="/admin"
-                      className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Shield className="w-4 h-4" />
-                      {t('admin')}
-                    </Link>
-                  )}
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    {t('logout')}
-                  </button>
-                </>
-              ) : (
-                <div className="p-4 space-y-3">
-                  <Link
-                    href="/auth/login"
-                    className="block w-full text-center py-2.5 text-text dark:text-dark-text border border-gray-200 dark:border-dark-border rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {t('login')}
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="block w-full text-center py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-sm"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {tCommon('primaryCta')}
-                  </Link>
-                </div>
-              )}
-
-              <div className="px-4 py-2 flex items-center justify-between">
-                <span className="text-sm text-text-light dark:text-dark-text-muted">Theme</span>
-                <button
-                  onClick={toggleDarkMode}
-                  className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all"
+                {/* Write - Primary Action (accented) */}
+                <Link
+                  href="/editor"
+                  className="flex items-center gap-2 mx-4 px-4 py-3 bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent-light font-semibold rounded-lg hover:bg-primary/20 dark:hover:bg-accent/20 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  {mounted && isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  <PenSquare className="w-4 h-4" />
+                  {t('write')}
+                </Link>
+
+                {/* Separator before User Section */}
+                <div className="border-t border-gray-200 dark:border-dark-border my-3" />
+
+                {/* User Info */}
+                <div className="px-4 py-2 flex items-center gap-3">
+                  <Avatar className="w-10 h-10 border border-gray-200 dark:border-dark-border">
+                    <AvatarImage src={userAvatar} alt={userName} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {userName.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-sm text-text dark:text-dark-text">{userName}</p>
+                    <p className="text-xs text-text-light dark:text-dark-text-muted truncate max-w-[200px]">{user.email}</p>
+                  </div>
+                </div>
+
+                {/* User Account Items: Profile, Saved, Analytics, Achievements, Settings */}
+                <Link
+                  href={`/profile/${user.id}`}
+                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="w-4 h-4" />
+                  {t('profile')}
+                </Link>
+
+                <Link
+                  href="/saved"
+                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Bookmark className="w-4 h-4" />
+                  {t('saved')}
+                </Link>
+
+                <Link
+                  href="/analytics"
+                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  {t('analytics')}
+                </Link>
+
+                <Link
+                  href="/achievements"
+                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Trophy className="w-4 h-4" />
+                  {t('achievements')}
+                </Link>
+
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Settings className="w-4 h-4" />
+                  {t('settings')}
+                </Link>
+
+                {/* Separator before Admin/Sign Out */}
+                <div className="border-t border-gray-200 dark:border-dark-border my-3" />
+
+                {/* Admin Panel (de-emphasized with opacity) */}
+                {isAdminOrModerator && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center gap-2 px-4 py-3 text-text/70 dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4" />
+                    {t('admin')}
+                  </Link>
+                )}
+
+                {/* Sign Out */}
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
+                >
+                  <LogOut className="w-4 h-4" />
+                  {t('logout')}
                 </button>
+
+                {/* Theme Toggle */}
+                <div className="px-4 py-2 flex items-center justify-between">
+                  <span className="text-sm text-text-light dark:text-dark-text-muted">Theme</span>
+                  <button
+                    onClick={toggleDarkMode}
+                    className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all"
+                  >
+                    {mounted && isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="border-t border-gray-200 dark:border-dark-border mt-3 pt-3 p-4 space-y-3">
+                <Link
+                  href="/auth/login"
+                  className="block w-full text-center py-2.5 text-text dark:text-dark-text border border-gray-200 dark:border-dark-border rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t('login')}
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="block w-full text-center py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-sm"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {tCommon('primaryCta')}
+                </Link>
+
+                {/* Theme Toggle for non-logged-in users */}
+                <div className="px-4 py-2 flex items-center justify-between">
+                  <span className="text-sm text-text-light dark:text-dark-text-muted">Theme</span>
+                  <button
+                    onClick={toggleDarkMode}
+                    className="p-2 text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-border rounded-lg transition-all"
+                  >
+                    {mounted && isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
+
+
 
       {/* Global Floating Feedback Button */}
       <FeedbackButton />

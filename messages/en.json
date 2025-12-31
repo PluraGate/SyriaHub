@@ -443,7 +443,22 @@
         "privacy": "Privacy Policy",
         "spatialTeaser": "Spatial knowledge tools in development",
         "licensingNote": "Content licensed per author terms.",
-        "researchCommonsStatement": "This is not a discussion platform. It is a research commons."
+        "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
+        "updates": "Updates",
+        "platformSustainability": "Platform Sustainability",
+        "sustainabilityIntro": "SyriaHub is a non-profit research commons. When contributions are accepted, they are used exclusively to sustain the shared infrastructure that enables long-term access, research integrity, and platform reliability.",
+        "sustainabilityDataInfrastructure": "Data Infrastructure",
+        "sustainabilityDataInfrastructureDesc": "Databases, backups, spatial indexing, and long-term data preservation.",
+        "sustainabilityDeployment": "Deployment & Uptime",
+        "sustainabilityDeploymentDesc": "Hosting, monitoring, security hardening, and operational resilience.",
+        "sustainabilityMaintenance": "Maintenance",
+        "sustainabilityMaintenanceDesc": "Bug fixes, dependency updates, documentation, and technical debt reduction.",
+        "sustainabilityGovernance": "Governance & Moderation",
+        "sustainabilityGovernanceDesc": "Review workflows, provenance tracking, audit logs, and trust safeguards.",
+        "sustainabilityAI": "AI Tooling (Bounded Use)",
+        "sustainabilityAIDesc": "Retrieval, analysis, moderation support, and research assistance. AI systems are constrained, non-extractive, and do not monetise user data.",
+        "sustainabilityStatement": "SyriaHub does not sell data, prioritise engagement metrics, or place knowledge behind paywalls. All funding decisions are guided by the principle of preserving the platform as a public research commons.",
+        "sustainabilityContact": "For institutions or individuals interested in supporting this infrastructure, further details are available upon request."
     },
     "Resources": {
         "linkedResources": "Linked Resources",
@@ -874,6 +889,8 @@
         "settingsReset": "Settings reset to defaults",
         "saved": "Settings saved",
         "saveChanges": "Save Changes",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
         "feedbackSection": {
             "title": "Feedback"
         }
@@ -1126,6 +1143,10 @@
             "discussions": "Discussions",
             "resources": "Resources",
             "events": "Events",
+            "pending": "Pending",
+            "approved": "Approved",
+            "rejected": "Rejected",
+            "search": "Search",
             "tableTitle": "Title",
             "tableAuthor": "Author",
             "tableType": "Type",
@@ -1809,6 +1830,12 @@
             "methodologyIntro": "Our platform employs rigorous quality assurance measures to maintain content integrity.",
             "methodologyModeration": "Content is reviewed by our moderation team and community to ensure accuracy and adherence to our guidelines.",
             "methodologyPeer": "Our peer review system allows the community to evaluate and endorse high-quality contributions."
+        },
+        "institutionalContext": {
+            "title": "Institutional Context",
+            "line1": "SyriaHub is an independent research platform developed and stewarded within the PluraGate network.",
+            "line2": "PluraGate provides organisational, technical, and governance support to multiple public-interest initiatives. Each project within the network operates with its own scope, editorial autonomy, and research mandate.",
+            "line3": "SyriaHub retains full independence over its content, methodologies, and moderation practices."
         }
     },
     "Faq": {
@@ -2045,7 +2072,11 @@
             "title": "Tips for Fast Progression",
             "tip1": "Engage daily to maintain your streak",
             "tip2": "Provide high-quality answers to get accepted",
-            "tip3": "Collaborate on research to gain more visibility"
+            "tip3": "Collaborate on research to gain more visibility",
+            "answerQuestions": "Answer questions - highest XP when answer is accepted (+30)",
+            "completeProfile": "Complete your profile - instant +50 XP bonus",
+            "loginStreaks": "Login streak - 7 days = +100 bonus XP",
+            "inviteFriends": "Invite friends - +25 XP per successful invitation"
         }
     },
     "Polls": {
@@ -2243,7 +2274,37 @@
         "requestRejected": "Request Rejected",
         "whyPromote": "Tell us about your background, expertise, and what you'd like to contribute to the community...",
         "submitRequest": "Submit Request",
-        "alreadyResearcher": "You are already a Researcher"
+        "alreadyResearcher": "You are already a Researcher",
+        "title": "Request Promotion",
+        "description": "Explain why you think you should be promoted to the next role.",
+        "success": "Your request has been submitted successfully.",
+        "error": "Failed to submit request. Please try again.",
+        "noPending": "No pending promotion requests",
+        "rolePromotionRequests": "Role Promotion Requests",
+        "showReason": "Show Reason",
+        "approve": "Approve",
+        "reject": "Reject",
+        "pendingCount": "{count} pending",
+        "hideDetails": "Hide Details",
+        "adminNotesLabel": "Admin Notes (optional)",
+        "adminNotesPlaceholder": "Add notes to be shared with the user...",
+        "requestProcessed": "Request {decision}!",
+        "processError": "Failed to process request",
+        "changeRoleTitle": "Change User Role",
+        "changeRoleSubtitle": "Update role for user {name}",
+        "selectNewRole": "Select a new role",
+        "adminWarningTitle": "Admin permissions are significant",
+        "adminWarningDesc": "Admins can manage all users, content, and system settings. This action will be logged.",
+        "demotionWarningTitle": "This is a demotion",
+        "demotionWarningDesc": "The user will lose their current permissions. Ensure this is intentional.",
+        "reasonLabel": "Reason for Change",
+        "reasonPlaceholder": "Explain why this role change is being made...",
+        "auditLogNote": "This reason will be recorded in the audit log",
+        "noChange": "No changes to save",
+        "promoteAction": "Promote",
+        "demoteAction": "Demote",
+        "updateAction": "Update Role",
+        "current": "Current"
     },
     "Topics": {
         "topicMap": "Topic Map",
@@ -2737,6 +2798,52 @@
             "item3": "Optimize for engagement",
             "item4": "Personalize content feeds",
             "item5": "Allow anonymous moderation decisions"
+        },
+        "sustainability": {
+            "title": "Funding Transparency & Allocation",
+            "intro": "SyriaHub treats financial contributions as infrastructure support, not as a signal for growth or expansion.",
+            "ledgerIntroPart1": "To ensure accountability and trust, the platform maintains a ",
+            "ledgerIntroHighlight": "Funding Allocation Ledger",
+            "ledgerIntroPart2": " as part of its governance framework. This ledger provides a high-level overview of how contributions are used to sustain and improve the research commons.",
+            "operationalTitle": "Operational Allocation",
+            "operationalIntro": "Contributions are prioritised toward the following operational categories:",
+            "coreInfrastructure": "Core Infrastructure",
+            "coreInfrastructureDesc": "Hosting, databases, backups, spatial indexing, and system reliability.",
+            "maintenanceSecurity": "Maintenance & Security",
+            "maintenanceSecurityDesc": "Dependency updates, bug fixes, security reviews, and operational continuity.",
+            "governanceModeration": "Governance & Moderation Capacity",
+            "governanceModerationDesc": "Review workflows, auditability, provenance tracking, and trust safeguards.",
+            "aiTooling": "AI Tooling (Bounded Use)",
+            "aiToolingDesc": "Retrieval, analysis, and moderation support systems. AI usage is constrained, non-extractive, and does not monetise user data.",
+            "surplusTitle": "Surplus Allocation Policy",
+            "surplusIntroPart1": "When operational needs are met, surplus funds may be allocated to ",
+            "surplusIntroHighlight": "small, clearly scoped public-interest initiatives",
+            "surplusIntroPart2": " aligned with SyriaHub's mission.",
+            "surplusExamples": "Examples include:",
+            "surplusExample1": "Translation of research content",
+            "surplusExample2": "Transcription and accessibility improvements",
+            "surplusExample3": "Targeted micro-grants for bounded research tasks",
+            "surplusExample4": "Archival recovery or data curation efforts",
+            "surplusNote": "All surplus allocations are:",
+            "surplusNote1": "Administratively approved",
+            "surplusNote2": "Publicly logged",
+            "surplusNote3": "Non-recurring by default",
+            "transparencyTitle": "Transparency Principles",
+            "transparencyPrinciple1": "No donor influence over content, moderation, or research direction",
+            "transparencyPrinciple2": "No paywalls or preferential access",
+            "transparencyPrinciple3": "No engagement-based funding incentives",
+            "ledgerNote": "The Funding Allocation Ledger is updated periodically (e.g. quarterly) and presented for transparency, not real-time tracking or fundraising performance.",
+            "governanceClosing": "This governance framework evolves through documented revisions, not ad-hoc decisions."
+        },
+        "futureSustainability": {
+            "title": "Future Sustainability Measures",
+            "intro": "To support long-term maintenance, SyriaHub may introduce optional paid features in future versions.",
+            "principlesIntro": "Any such features will be:",
+            "principle1": "Clearly separated from core research functionality",
+            "principle2": "Non-essential to reading, publishing, or citing content",
+            "principle3": "Designed to support infrastructure, not restrict access",
+            "coreStatement": "Core research features will remain accessible and unaffected.",
+            "credibilityNote": "Paid features, if introduced, will not influence visibility, moderation outcomes, or research credibility."
         }
     },
     "HowItWorks": {

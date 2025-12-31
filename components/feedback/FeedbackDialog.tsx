@@ -19,6 +19,7 @@ import { useTranslations } from 'next-intl'
 interface FeedbackDialogProps {
     isOpen: boolean
     onClose: () => void
+    onTicketCreated?: () => void
     defaultPageUrl?: string
 }
 
@@ -32,7 +33,7 @@ const categories: { id: Category; icon: typeof Bug; colorClass: string }[] = [
     { id: 'other', icon: HelpCircle, colorClass: 'text-gray-500 dark:text-gray-400' },
 ]
 
-export function FeedbackDialog({ isOpen, onClose, defaultPageUrl }: FeedbackDialogProps) {
+export function FeedbackDialog({ isOpen, onClose, onTicketCreated, defaultPageUrl }: FeedbackDialogProps) {
     const [category, setCategory] = useState<Category>('bug')
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -67,6 +68,11 @@ export function FeedbackDialog({ isOpen, onClose, defaultPageUrl }: FeedbackDial
 
             setIsSuccess(true)
             showToast(t('submitSuccess'), 'success')
+
+            // Trigger refresh callback if provided
+            if (onTicketCreated) {
+                onTicketCreated()
+            }
 
             // Reset and close after a short delay
             setTimeout(() => {

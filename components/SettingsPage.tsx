@@ -14,7 +14,8 @@ import {
     Check,
     RotateCcw,
     Ticket,
-    MessageSquarePlus
+    MessageSquarePlus,
+    X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
@@ -46,12 +47,16 @@ export function SettingsPage({ user }: SettingsPageProps) {
         }
     }
 
-
+    const [showResetConfirm, setShowResetConfirm] = useState(false)
 
     const handleReset = async () => {
-        if (confirm(t('confirmReset'))) {
+        try {
             await resetToDefaults()
             showToast(t('settingsReset'), 'success')
+            setShowResetConfirm(false)
+        } catch (error) {
+            console.error('[SettingsPage] Error during handleReset:', error)
+            showToast('Failed to reset settings', 'error')
         }
     }
 
@@ -82,10 +87,44 @@ export function SettingsPage({ user }: SettingsPageProps) {
                         {t('title')}
                     </h1>
                 </div>
-                <Button variant="outline" onClick={handleReset} className="gap-2">
-                    <RotateCcw className="w-4 h-4" />
-                    {t('resetToDefaults')}
-                </Button>
+
+                <div className="flex items-center gap-2 overflow-hidden px-1 py-1">
+                    {showResetConfirm ? (
+                        <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <span className="text-sm font-medium text-destructive dark:text-red-400 mr-2 whitespace-nowrap">
+                                {t('confirmReset')}
+                            </span>
+                            <div className="flex items-center bg-gray-100 dark:bg-dark-surface rounded-lg p-1 border border-gray-200 dark:border-dark-border shadow-sm">
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleReset}
+                                    className="gap-2 h-8 px-3 rounded-md shadow-sm"
+                                >
+                                    <Check className="w-3.5 h-3.5" />
+                                    {t('confirm')}
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setShowResetConfirm(false)}
+                                    className="h-8 px-3 rounded-md hover:bg-gray-200 dark:hover:bg-dark-bg transition-colors"
+                                >
+                                    {t('cancel')}
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowResetConfirm(true)}
+                            className="gap-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive transition-all duration-300 group"
+                        >
+                            <RotateCcw className="w-4 h-4 group-hover:rotate-[-45deg] transition-transform" />
+                            {t('resetToDefaults')}
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <div className="flex gap-8">

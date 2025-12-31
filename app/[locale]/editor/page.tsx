@@ -20,6 +20,7 @@ import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
 import { useTranslations } from 'next-intl'
 import { FirstTimeContributorPrompt } from '@/components/FirstTimeContributorPrompt'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 // Dynamic import for RichEditor to avoid SSR issues
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
@@ -61,6 +62,7 @@ export default function EditorPage() {
   const { showToast } = useToast()
   const t = useTranslations('Editor')
   const tCommon = useTranslations('Common')
+  const { preferences } = usePreferences()
 
   const [user, setUser] = useState<User | null>(null)
   const [initializing, setInitializing] = useState(true)
@@ -106,7 +108,8 @@ export default function EditorPage() {
     saveDraft,
   } = useAutosave({
     key: groupIdParam ? `group_${groupIdParam}` : 'new_post',
-    enabled: !postIdParam, // Only autosave for new posts, not edits
+    enabled: !postIdParam && preferences.editor.autosave, // Respect user autosave preference
+    debounceMs: (preferences.editor.autosave_interval || 30) * 1000, // Use user's interval preference
   })
 
   // Check for existing draft on mount
