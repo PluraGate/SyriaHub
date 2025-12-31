@@ -10,6 +10,7 @@ import { PreferencesProvider } from '@/contexts/PreferencesContext'
 import { SkipNavLink, SkipNavContent } from '@/components/accessibility'
 import { InstallPWA } from '@/components/InstallPWA'
 import { OfflineIndicator } from '@/components/OfflineIndicator'
+import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { createClient } from '@/lib/supabase/server'
 import '../globals.css'
 
@@ -93,6 +94,8 @@ export default async function RootLayout({
                     {children}
                   </SkipNavContent>
                 </AppErrorBoundary>
+                {/* Global FAB - Only for logged in users */}
+                {user && <FloatingActionButton />}
                 <InstallPWA />
                 <OfflineIndicator />
               </NotificationsProvider>

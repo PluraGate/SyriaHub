@@ -336,10 +336,7 @@ export default async function ResearchLabPage() {
                     </div>
                 </section>
 
-                {/* Research Footprint - User Participation */}
-                {user && (
-                    <ResearchFootprint stats={participationStats} />
-                )}
+
 
                 {/* Features Grid with Sidebar */}
                 <section className="py-16 container-custom">
@@ -380,11 +377,15 @@ export default async function ResearchLabPage() {
                             </div>
                         </div>
 
-                        {/* Sidebar - Unanswered Research */}
-                        {user && unansweredItems.length > 0 && (
-                            <aside className="lg:w-80 shrink-0">
-                                <div className="lg:sticky lg:top-24">
-                                    <UnansweredResearch items={unansweredItems} totalCount={totalUnansweredCount} />
+                        {/* Sidebar - Unanswered Research & Footprint */}
+                        {user && (
+                            <aside className="lg:w-80 shrink-0 space-y-8">
+                                <div className="lg:sticky lg:top-24 space-y-8">
+                                    <ResearchFootprint stats={participationStats} variant="sidebar" />
+
+                                    {unansweredItems.length > 0 && (
+                                        <UnansweredResearch items={unansweredItems} totalCount={totalUnansweredCount} />
+                                    )}
                                 </div>
                             </aside>
                         )}

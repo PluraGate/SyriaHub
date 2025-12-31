@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { SearchBar } from '@/components/SearchBar'
 import { TagsCloud } from '@/components/TagsCloud'
-import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+
 import { ActivityFeedCompact } from '@/components/ActivityFeed'
 import { SocialProofBanner } from '@/components/SocialProofBanner'
 import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
@@ -195,8 +195,7 @@ export default async function Home({
               </div>
             </section>
 
-            {/* Floating Action Button for Quick Actions */}
-            <FloatingActionButton />
+
           </>
         ) : (
           <>

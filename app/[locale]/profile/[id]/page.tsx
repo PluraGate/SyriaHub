@@ -38,9 +38,18 @@ export default async function ProfilePage(props: ProfilePageProps) {
   }
 
   // Fetch user stats
-  const { data: stats } = await supabase
+  const { data: statsData } = await supabase
     .rpc('get_user_stats', { user_uuid: params.id })
     .single()
+
+  const stats = (statsData || {}) as {
+    post_count?: number
+    comment_count?: number
+    citation_count?: number
+    group_count?: number
+    follower_count?: number
+    academic_impact?: number
+  }
 
   // Fetch target user's preferences for privacy settings
   const { data: prefData } = await supabase
@@ -57,8 +66,19 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
   const isOwnProfile = user?.id === params.id
 
-  // Privacy Check: Block access if profile is private and viewer is not owner
-  if (!privacySettings.show_profile_public && !isOwnProfile) {
+  // Fetch viewer role to allow admin bypass for privacy
+  let isViewerAdmin = false
+  if (user && !isOwnProfile) {
+    const { data: viewerData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isViewerAdmin = viewerData?.role === 'admin' || viewerData?.role === 'moderator'
+  }
+
+  // Privacy Check: Block access if profile is private and viewer is not owner or admin
+  if (!privacySettings.show_profile_public && !isOwnProfile && !isViewerAdmin) {
     return (
       <div className="min-h-screen bg-background dark:bg-dark-bg">
         <Navbar user={user} />
@@ -88,9 +108,21 @@ export default async function ProfilePage(props: ProfilePageProps) {
   // Create a mutable copy of the profile to modify
   const displayProfile = { ...profile }
 
-  // Handle Email Privacy: If user allows showing email but RLS hides it, fetch it via admin
-  // We check displayProfile.email is missing to avoid redundant fetching if RLS allowed it
-  if (privacySettings.show_email && !isOwnProfile && !displayProfile.email) {
+  // Security: Explicitly redact email if privacy settings don't allow it
+  // This ensures that even if the initial select('*') returned an email, 
+  // it gets removed if the user wants it hidden and the viewer isn't the owner.
+  if (!isOwnProfile && !privacySettings.show_email) {
+    displayProfile.email = null
+  }
+
+  // Populate email for owner if available in auth session
+  if (isOwnProfile && user?.email) {
+    displayProfile.email = user.email
+  }
+
+  // Handle Email Privacy: Only fetch email if owner is viewing OR they've enabled show_email
+  // Admins can see profile but must still respect email privacy choice
+  if (!displayProfile.email && (isOwnProfile || privacySettings.show_email)) {
     const supabaseAdmin = createAdminClient()
     const { data: userWithEmail } = await supabaseAdmin
       .from('users')
@@ -138,7 +170,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
 
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-bg overflow-x-hidden">
+    <div className="flex min-h-screen flex-col bg-background dark:bg-dark-bg overflow-x-hidden">
       <Navbar user={user} />
 
       {/* Back Navigation */}
@@ -154,10 +186,17 @@ export default async function ProfilePage(props: ProfilePageProps) {
         </div>
       </div>
 
-      <main className="container-custom max-w-6xl py-8">
+      <main className="container-custom max-w-6xl py-8 flex-1">
         <ProfileHeader
           profile={displayProfile}
-          stats={stats}
+          stats={{
+            post_count: Number(stats?.post_count || 0),
+            comment_count: Number(stats?.comment_count || 0),
+            citation_count: Number(stats?.citation_count || 0),
+            group_count: Number(stats?.group_count || 0),
+            follower_count: Number(stats?.follower_count || 0),
+            academic_impact: Number(stats?.academic_impact || 0)
+          }}
           badges={userBadges || []}
           isOwnProfile={isOwnProfile}
           privacySettings={privacySettings}

@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { Shield, Users, Bot, Scale, AlertTriangle, Lock, Eye } from 'lucide-react'
+import { Shield, Users, Bot, Scale, AlertTriangle, Lock, Eye, Coins, CheckCircle2 } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params
@@ -169,14 +169,14 @@ export default async function GovernancePage({ params }: { params: Promise<{ loc
 
                         {/* Non-Goals */}
                         <section className="mb-12">
-                            <div className="p-6 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+                            <div className="p-6 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                                    <h2 className="text-xl font-semibold text-amber-800 dark:text-amber-300 m-0">
+                                    <AlertTriangle className="w-5 h-5 text-text-muted dark:text-dark-text-muted" />
+                                    <h2 className="text-xl font-semibold text-text dark:text-dark-text m-0">
                                         {t('nonGoals.title')}
                                     </h2>
                                 </div>
-                                <ul className="text-amber-700 dark:text-amber-300 space-y-2 text-sm">
+                                <ul className="text-text-muted dark:text-dark-text-muted space-y-2 text-sm">
                                     <li>• {t('nonGoals.item1')}</li>
                                     <li>• {t('nonGoals.item2')}</li>
                                     <li>• {t('nonGoals.item3')}</li>
@@ -185,6 +185,133 @@ export default async function GovernancePage({ params }: { params: Promise<{ loc
                                 </ul>
                             </div>
                         </section>
+
+                        {/* Funding Transparency & Allocation */}
+                        <section className="mb-12">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Coins className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
+                                <h2 className="text-2xl font-semibold text-text dark:text-dark-text m-0">
+                                    {t('sustainability.title')}
+                                </h2>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {t('sustainability.intro')}
+                            </p>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-8">
+                                {t('sustainability.ledgerIntroPart1')}
+                                <strong className="text-text dark:text-dark-text">{t('sustainability.ledgerIntroHighlight')}</strong>
+                                {t('sustainability.ledgerIntroPart2')}
+                            </p>
+
+                            {/* Operational Allocation */}
+                            <div className="mb-8">
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-3">
+                                    {t('sustainability.operationalTitle')}
+                                </h3>
+                                <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                    {t('sustainability.operationalIntro')}
+                                </p>
+                                <div className="not-prose grid gap-3">
+                                    {[
+                                        { title: t('sustainability.coreInfrastructure'), desc: t('sustainability.coreInfrastructureDesc') },
+                                        { title: t('sustainability.maintenanceSecurity'), desc: t('sustainability.maintenanceSecurityDesc') },
+                                        { title: t('sustainability.governanceModeration'), desc: t('sustainability.governanceModerationDesc') },
+                                        { title: t('sustainability.aiTooling'), desc: t('sustainability.aiToolingDesc') }
+                                    ].map((item, i) => (
+                                        <div key={i} className="flex items-start gap-3 p-4 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                                            <span className="text-primary dark:text-secondary font-bold">•</span>
+                                            <div>
+                                                <span className="font-semibold text-text dark:text-dark-text">{item.title}</span>
+                                                <p className="text-sm text-text-muted dark:text-dark-text-muted mt-1">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Surplus Allocation Policy */}
+                            <div className="mb-8">
+                                <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-3">
+                                    {t('sustainability.surplusTitle')}
+                                </h3>
+                                <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                    {t('sustainability.surplusIntroPart1')}
+                                    <strong className="text-text dark:text-dark-text">{t('sustainability.surplusIntroHighlight')}</strong>
+                                    {t('sustainability.surplusIntroPart2')}
+                                </p>
+                                <p className="text-text-muted dark:text-dark-text-muted text-sm mb-1">
+                                    {t('sustainability.surplusExamples')}
+                                </p>
+                                <ul className="text-text-muted dark:text-dark-text-muted text-sm space-y-0.5 mb-4 ms-4">
+                                    <li>• {t('sustainability.surplusExample1')}</li>
+                                    <li>• {t('sustainability.surplusExample2')}</li>
+                                    <li>• {t('sustainability.surplusExample3')}</li>
+                                    <li>• {t('sustainability.surplusExample4')}</li>
+                                </ul>
+                                <p className="text-text-muted dark:text-dark-text-muted mb-2">
+                                    {t('sustainability.surplusNote')}
+                                </p>
+                                <div className="not-prose flex flex-wrap gap-2">
+                                    {[
+                                        t('sustainability.surplusNote1'),
+                                        t('sustainability.surplusNote2'),
+                                        t('sustainability.surplusNote3')
+                                    ].map((note, i) => (
+                                        <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm">
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            {note}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Transparency Principles */}
+                            <div className="p-6 rounded-xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 mb-6">
+                                <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-4">
+                                    {t('sustainability.transparencyTitle')}
+                                </h3>
+                                <ul className="text-green-700 dark:text-green-300 space-y-2 text-sm">
+                                    <li>• {t('sustainability.transparencyPrinciple1')}</li>
+                                    <li>• {t('sustainability.transparencyPrinciple2')}</li>
+                                    <li>• {t('sustainability.transparencyPrinciple3')}</li>
+                                </ul>
+                            </div>
+
+                            <p className="text-text-muted/80 dark:text-dark-text-muted/60 text-sm italic mb-6">
+                                {t('sustainability.ledgerNote')}
+                            </p>
+                        </section>
+
+                        {/* Future Sustainability Measures */}
+                        <section className="mb-12">
+                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                                {t('futureSustainability.title')}
+                            </h2>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {t('futureSustainability.intro')}
+                            </p>
+                            <p className="text-text-muted dark:text-dark-text-muted text-sm mb-2">
+                                {t('futureSustainability.principlesIntro')}
+                            </p>
+                            <ul className="text-text-muted dark:text-dark-text-muted text-sm space-y-1 mb-4 ms-4">
+                                <li>• {t('futureSustainability.principle1')}</li>
+                                <li>• {t('futureSustainability.principle2')}</li>
+                                <li>• {t('futureSustainability.principle3')}</li>
+                            </ul>
+                            <p className="text-text dark:text-dark-text font-medium mb-4">
+                                {t('futureSustainability.coreStatement')}
+                            </p>
+                            <p className="text-text-muted/80 dark:text-dark-text-muted/60 text-sm italic">
+                                {t('futureSustainability.credibilityNote')}
+                            </p>
+                        </section>
+
+                        {/* Governance Framework Closing */}
+                        <div className="p-4 rounded-lg border border-primary/20 dark:border-secondary/20 bg-primary/5 dark:bg-secondary/5 text-center">
+                            <p className="text-text dark:text-dark-text text-sm font-medium">
+                                {t('sustainability.governanceClosing')}
+                            </p>
+                        </div>
                     </article>
                 </div>
             </main>

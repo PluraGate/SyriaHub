@@ -50,15 +50,15 @@ export interface UserPreferences {
 }
 
 const defaultPreferences: UserPreferences = {
-    theme: 'system',
+    theme: 'dark',
     calendar: 'hijri',
     language: 'en',
     notifications: {
         email_mentions: true,
         email_replies: true,
-        email_follows: false,
+        email_follows: true,
         email_digest: 'weekly',
-        push_enabled: false,
+        push_enabled: true,
         push_mentions: true,
         push_replies: true,
     },
@@ -72,7 +72,7 @@ const defaultPreferences: UserPreferences = {
     privacy: {
         show_profile_public: true,
         show_email: false,
-        allow_messages: true,
+        allow_messages: false,
     },
     editor: {
         autosave: true,
@@ -149,13 +149,19 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
                     .single()
 
                 if (data?.preferences) {
-                    const dbPrefs = data.preferences as UserPreferences
-                    setPreferences(prev => {
-                        const merged = { ...prev, ...dbPrefs }
-                        // Update local cache with DB values
-                        localStorage.setItem('user_preferences', JSON.stringify(merged))
-                        return merged
-                    })
+                    const dbPrefs = data.preferences as Partial<UserPreferences>
+                    // Deep merge to preserve defaults for any missing nested fields
+                    const merged: UserPreferences = {
+                        ...defaultPreferences,
+                        ...dbPrefs,
+                        notifications: { ...defaultPreferences.notifications, ...(dbPrefs.notifications || {}) },
+                        display: { ...defaultPreferences.display, ...(dbPrefs.display || {}) },
+                        privacy: { ...defaultPreferences.privacy, ...(dbPrefs.privacy || {}) },
+                        editor: { ...defaultPreferences.editor, ...(dbPrefs.editor || {}) },
+                    }
+                    setPreferences(merged)
+                    // Update local cache with merged values
+                    localStorage.setItem('user_preferences', JSON.stringify(merged))
                 }
             } catch (error) {
                 console.log('No database preferences found or sync error')
@@ -232,10 +238,12 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         key: K,
         value: UserPreferences[K]
     ) => {
-        const next = { ...preferences, [key]: value }
-        setPreferences(next)
-        await savePreferences(next)
-    }, [preferences, savePreferences])
+        setPreferences(prev => {
+            const next = { ...prev, [key]: value }
+            savePreferences(next)
+            return next
+        })
+    }, [savePreferences])
 
     const updateNestedPreference = useCallback(async <
         K extends keyof UserPreferences,
@@ -245,20 +253,32 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         nestedKey: NK,
         value: UserPreferences[K][NK]
     ) => {
-        const next = {
-            ...preferences,
-            [key]: {
-                ...(preferences[key] as object),
-                [nestedKey]: value,
-            },
-        }
-        setPreferences(next)
-        await savePreferences(next)
-    }, [preferences, savePreferences])
+        setPreferences(prev => {
+            const next = {
+                ...prev,
+                [key]: {
+                    ...(prev[key] as object),
+                    [nestedKey]: value,
+                },
+            }
+            savePreferences(next)
+            return next
+        })
+    }, [savePreferences])
 
     const resetToDefaults = useCallback(async () => {
-        setPreferences(defaultPreferences)
-        await savePreferences(defaultPreferences)
+        try {
+            const freshDefaults: UserPreferences = JSON.parse(JSON.stringify(defaultPreferences))
+
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('user_preferences')
+            }
+
+            setPreferences(freshDefaults)
+            await savePreferences(freshDefaults)
+        } catch (error) {
+            console.error('Error in resetToDefaults:', error)
+        }
     }, [savePreferences])
 
     return (

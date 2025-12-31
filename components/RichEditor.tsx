@@ -185,7 +185,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
     }, [onPasteImage])
 
     return (
-      <div ref={wrapperRef}>
+      <div ref={wrapperRef} className="milkdown-editor">
         <Milkdown />
       </div>
     )
@@ -538,29 +538,70 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
           transition: all 0.2s ease;
         }
         
-        .show-line-numbers .milkdown .ProseMirror {
-          counter-reset: line-number;
+        /* Line Numbers Logic - Strict Scoping */
+        .show-line-numbers .milkdown-editor .ProseMirror {
+          counter-reset: editor-line 0;
+          padding-left: 0 !important;
         }
 
-        .show-line-numbers .milkdown .ProseMirror > * {
+        /* Target only actual content blocks */
+        .show-line-numbers .milkdown-editor .ProseMirror > p,
+        .show-line-numbers .milkdown-editor .ProseMirror > h1,
+        .show-line-numbers .milkdown-editor .ProseMirror > h2,
+        .show-line-numbers .milkdown-editor .ProseMirror > h3,
+        .show-line-numbers .milkdown-editor .ProseMirror > ul,
+        .show-line-numbers .milkdown-editor .ProseMirror > ol,
+        .show-line-numbers .milkdown-editor .ProseMirror > blockquote,
+        .show-line-numbers .milkdown-editor .ProseMirror > pre,
+        .show-line-numbers .milkdown-editor .ProseMirror > table,
+        .show-line-numbers .milkdown-editor .ProseMirror > hr {
           position: relative;
-          padding-left: 3rem;
+          padding-left: 3.5rem !important;
         }
 
-        .show-line-numbers .milkdown .ProseMirror > *::before {
-          counter-increment: line-number;
-          content: counter(line-number);
+        /* Counter increment and visual presentation */
+        .show-line-numbers .milkdown-editor .ProseMirror > p::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > h1::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > h2::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > h3::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > ul::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > ol::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > blockquote::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > pre::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > table::before,
+        .show-line-numbers .milkdown-editor .ProseMirror > hr::before {
+          counter-increment: editor-line;
+          content: counter(editor-line);
           position: absolute;
           left: 0;
           top: 0;
-          width: 2.25rem;
-          text-align: right;
+          width: 2.75rem;
+          height: 100%;
+          display: flex;
+          align-items: flex-start;
+          justify-content: flex-end;
           color: var(--color-text-muted);
-          font-family: monospace;
-          font-size: 0.75rem;
+          font-family: 'Fira Code', monospace;
+          font-size: 0.72rem;
+          padding-top: 0.5rem;
           padding-right: 0.75rem;
           user-select: none;
-          opacity: 0.5;
+          opacity: 0.45;
+          border-right: 1px solid var(--color-border);
+          background: rgba(0,0,0,0.02);
+          pointer-events: none;
+        }
+
+        .dark .show-line-numbers .milkdown-editor .ProseMirror > *::before {
+          background: rgba(255,255,255,0.02);
+          border-right-color: rgba(255,255,255,0.1);
+        }
+
+        /* Ensure toolbar icons are never affected */
+        .rich-editor-wrapper .flex button::before {
+          content: none !important;
+          display: none !important;
+          counter-increment: none !important;
         }
         
         .rich-editor-wrapper:focus-within {

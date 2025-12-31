@@ -83,6 +83,18 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                         {t('content.missionValues')}
                     </p>
                 </div>
+
+                {/* Institutional Context */}
+                <div className="mt-8 p-6 rounded-xl bg-gray-50 dark:bg-dark-surface border border-border dark:border-dark-border">
+                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">
+                        {t('institutionalContext.title')}
+                    </h3>
+                    <div className="space-y-3 text-text-muted dark:text-dark-text-muted text-sm">
+                        <p>{t('institutionalContext.line1')}</p>
+                        <p>{t('institutionalContext.line2')}</p>
+                        <p className="font-medium text-text dark:text-dark-text">{t('institutionalContext.line3')}</p>
+                    </div>
+                </div>
             </div>
         </AboutLayout>
     )
