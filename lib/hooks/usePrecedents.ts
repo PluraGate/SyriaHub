@@ -18,6 +18,10 @@ export function usePrecedents(patternIds: string[], governorate?: string) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
 
+    // Create a stable key for the dependency array to prevent infinite loops
+    // when a new array reference is passed on every render
+    const patternKey = patternIds.join(',')
+
     useEffect(() => {
         if (patternIds.length === 0) {
             setPrecedents([])
@@ -62,7 +66,8 @@ export function usePrecedents(patternIds: string[], governorate?: string) {
         }
 
         fetchPrecedents()
-    }, [patternIds, governorate])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [patternKey, governorate])
 
 
     return { precedents, loading, error }

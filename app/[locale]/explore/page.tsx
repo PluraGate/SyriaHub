@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
 
 import { Post } from '@/types'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 type SortOption = 'recent' | 'trending' | 'cited'
 
@@ -30,6 +31,7 @@ export default function ExplorePage() {
 }
 
 function ExplorePageContent() {
+  const { preferences } = usePreferences()
   const searchParams = useSearchParams()
   const initialTag = searchParams.get('tag')
 
@@ -132,6 +134,7 @@ function ExplorePageContent() {
           .neq('content_type', 'event') // Exclude events
           .neq('approval_status', 'rejected') // Hide rejected posts
           .order('created_at', { ascending: false })
+          .limit(preferences.display.posts_per_page)
 
         if (selectedTag) {
           query = query.contains('tags', [selectedTag])
@@ -180,7 +183,7 @@ function ExplorePageContent() {
     }
 
     loadContent()
-  }, [selectedTag, supabase])
+  }, [selectedTag, supabase, preferences.display.posts_per_page])
 
   const disciplines = [
     'Computer Science', 'Mathematics', 'Physics', 'Biology',
@@ -420,7 +423,7 @@ function ExplorePageContent() {
                     {posts.length > 0 ? (
                       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {posts.map((post) => (
-                          <MagazineCard key={post.id} post={post} variant="standard" />
+                          <MagazineCard key={post.id} post={post} variant={preferences.display.compact_mode ? 'compact' : 'standard'} />
                         ))}
                       </div>
                     ) : (

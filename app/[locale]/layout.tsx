@@ -1,3 +1,4 @@
+// Force re-render
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -27,14 +28,14 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: '/icons/Pluragate Logo.ico', sizes: '256x256', type: 'image/x-icon' },
+      { url: '/icons/pluragate-logo.ico', sizes: '256x256', type: 'image/x-icon' },
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
       { url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' },
     ],
-    shortcut: ['/icons/Pluragate Logo.ico'],
+    shortcut: ['/icons/pluragate-logo.ico'],
   },
 }
 

@@ -22,7 +22,10 @@ import { useDefaultCover } from '@/lib/coverImages'
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
 type FeedTab = 'all' | 'following'
 
+import { usePreferences } from '@/contexts/PreferencesContext'
+
 export default function FeedPage() {
+  const { preferences } = usePreferences()
   const [user, setUser] = useState<User | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
@@ -115,7 +118,7 @@ export default function FeedPage() {
             .order('vote_count', { ascending: false, nullsFirst: false })
         }
 
-        const { data: postsData, error } = await query.limit(50)
+        const { data: postsData, error } = await query.limit(preferences.display.posts_per_page)
 
         if (error) {
           if (error.message || error.code) {
@@ -149,7 +152,7 @@ export default function FeedPage() {
     }
 
     loadPosts()
-  }, [supabase, filter, sortBy, feedTab, followingIds])
+  }, [supabase, filter, sortBy, feedTab, followingIds, preferences.display.posts_per_page])
 
   const filteredPosts = selectedTag
     ? posts.filter(post => post.tags?.includes(selectedTag))
@@ -385,7 +388,7 @@ export default function FeedPage() {
                       post.content_type === 'question' ? (
                         <QuestionCard key={post.id} post={post} />
                       ) : (
-                        <MagazineCard key={post.id} post={post} variant="standard" />
+                        <MagazineCard key={post.id} post={post} variant={preferences.display.compact_mode ? 'compact' : 'standard'} />
                       )
                     ))}
                   </div>
@@ -400,7 +403,7 @@ export default function FeedPage() {
                       post.content_type === 'question' ? (
                         <QuestionCard key={post.id} post={post} />
                       ) : (
-                        <MagazineCard key={post.id} post={post} variant="standard" />
+                        <MagazineCard key={post.id} post={post} variant={preferences.display.compact_mode ? 'compact' : 'standard'} />
                       )
                     ))}
                   </div>

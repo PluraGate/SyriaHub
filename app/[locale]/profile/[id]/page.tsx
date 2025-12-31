@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/service'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { ProfileHeader } from '@/components/ProfileHeader'
@@ -41,6 +42,67 @@ export default async function ProfilePage(props: ProfilePageProps) {
     .rpc('get_user_stats', { user_uuid: params.id })
     .single()
 
+  // Fetch target user's preferences for privacy settings
+  const { data: prefData } = await supabase
+    .from('user_preferences')
+    .select('preferences')
+    .eq('user_id', params.id)
+    .single()
+
+  const privacySettings = prefData?.preferences?.privacy || {
+    show_profile_public: true,
+    show_email: false,
+    allow_messages: true
+  }
+
+  const isOwnProfile = user?.id === params.id
+
+  // Privacy Check: Block access if profile is private and viewer is not owner
+  if (!privacySettings.show_profile_public && !isOwnProfile) {
+    return (
+      <div className="min-h-screen bg-background dark:bg-dark-bg">
+        <Navbar user={user} />
+        <main className="container-custom max-w-4xl py-16 flex flex-col items-center text-center">
+          <div className="w-24 h-24 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center mb-6">
+            <Lock className="w-10 h-10 text-gray-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
+            This profile is private
+          </h1>
+          <p className="text-text-light dark:text-dark-text-muted mb-8">
+            The user has chosen to keep their profile information private.
+          </p>
+          <Link
+            href="/feed"
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Back to Feed
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+
+  // Create a mutable copy of the profile to modify
+  const displayProfile = { ...profile }
+
+  // Handle Email Privacy: If user allows showing email but RLS hides it, fetch it via admin
+  // We check displayProfile.email is missing to avoid redundant fetching if RLS allowed it
+  if (privacySettings.show_email && !isOwnProfile && !displayProfile.email) {
+    const supabaseAdmin = createAdminClient()
+    const { data: userWithEmail } = await supabaseAdmin
+      .from('users')
+      .select('email')
+      .eq('id', params.id)
+      .single()
+
+    if (userWithEmail?.email) {
+      displayProfile.email = userWithEmail.email
+    }
+  }
+
   // Fetch user badges
   const { data: userBadges } = await supabase
     .from('user_badges')
@@ -73,7 +135,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
     groups = groupsData || []
   }
 
-  const isOwnProfile = user?.id === params.id
+
 
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg overflow-x-hidden">
@@ -94,10 +156,11 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
       <main className="container-custom max-w-6xl py-8">
         <ProfileHeader
-          profile={profile}
+          profile={displayProfile}
           stats={stats}
           badges={userBadges || []}
           isOwnProfile={isOwnProfile}
+          privacySettings={privacySettings}
         />
 
         {/* Skills & Endorsements Section */}
