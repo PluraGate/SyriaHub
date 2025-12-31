@@ -57,12 +57,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid target role. Must be member or researcher.' }, { status: 400 })
         }
 
-        // Check user's active invite count for this role type (max 5 per role)
-        const { count: activeCount, error: countError } = await supabase
+        // Check user's TOTAL invite count for this role type (max 5 per role, lifetime limit)
+        const { count: totalCount, error: countError } = await supabase
             .from('invite_codes')
             .select('*', { count: 'exact', head: true })
             .eq('created_by', user.id)
-            .eq('is_active', true)
             .eq('target_role', target_role)
 
         if (countError) {
@@ -70,11 +69,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to check invite limit' }, { status: 500 })
         }
 
-        if (activeCount !== null && activeCount >= 5) {
-            return NextResponse.json({ error: `You have reached your ${target_role} invite limit (5)` }, { status: 400 })
+        if (totalCount !== null && totalCount >= 5) {
+            return NextResponse.json({ error: `You have reached your lifetime ${target_role} invite limit (5)` }, { status: 400 })
         }
 
-        // Create invite code with target_role
+        // Create invite code with target_role (strict single-use)
         const { data, error } = await supabase
             .from('invite_codes')
             .insert({
@@ -82,6 +81,7 @@ export async function POST(request: NextRequest) {
                 created_by: user.id,
                 note: note || null,
                 target_role: target_role,
+                max_uses: 1, // Enforce single-use
             })
             .select('id, code, target_role')
             .single()

@@ -199,8 +199,8 @@ function generateReport(sourceLocale, targetLocale, verbose = false) {
  */
 function generateProgressBar(current, total, width = 20) {
     const percentage = current / total;
-    const filled = Math.round(percentage * width);
-    const empty = width - filled;
+    const filled = Math.max(0, Math.round(percentage * width));
+    const empty = Math.max(0, width - filled);
 
     let color = colors.green;
     if (percentage < 1) color = colors.yellow;

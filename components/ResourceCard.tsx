@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { FileText, Download, User, Calendar, Database, FileType, Wrench, Film, FileSpreadsheet, Link2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
@@ -51,6 +52,8 @@ export function ResourceCard({ resource }: ResourceCardProps) {
     const typeConfig = resourceType ? RESOURCE_TYPE_CONFIG[resourceType] : null
     const TypeIcon = typeConfig?.icon || FileText
 
+    const tLicenses = useTranslations('Licenses')
+
     return (
         <div className="card hover:border-primary/50 transition-colors group p-6 flex gap-6">
             <div className="flex-shrink-0">
@@ -101,7 +104,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
                         </div>
                         {metadata.license && (
                             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-100 dark:bg-dark-surface-hover text-xs font-medium">
-                                <span>{metadata.license}</span>
+                                <span>{tLicenses(metadata.license.replace(/\./g, '_'))}</span>
                             </div>
                         )}
                         {(resource.linked_posts_count ?? 0) > 0 && (

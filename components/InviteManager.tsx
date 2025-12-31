@@ -284,7 +284,7 @@ export function InviteManager() {
                                 </div>
                             </div>
 
-                            {invite.is_active && (
+                            {invite.is_active && invite.current_uses < invite.max_uses && (
                                 <div className="flex items-center gap-2">
                                     <Button
                                         variant="ghost"

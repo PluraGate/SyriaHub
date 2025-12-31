@@ -231,6 +231,7 @@ export default async function PostPage(props: PostPageProps) {
 
   const t = await getTranslations('Post')
   const tc = await getTranslations('Common')
+  const tLicenses = await getTranslations('Licenses')
 
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
@@ -362,14 +363,14 @@ export default async function PostPage(props: PostPageProps) {
                 <>
                   <span className="text-gray-300 dark:text-gray-700">•</span>
                   <span className="px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-bg text-xs">
-                    {post.license}
+                    {tLicenses(post.license.replace(/\./g, '_'))}
                   </span>
                 </>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button]:hover:bg-white/30">
+            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
               {user && user.id === post.author_id ? (
                 <>
                   <EditButton
@@ -378,7 +379,7 @@ export default async function PostPage(props: PostPageProps) {
                     isAuthor={true}
                   />
                   <Link href={`/post/${post.id}/suggestions`}>
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" size="sm" className="gap-2">
                       <GitPullRequest className="w-4 h-4" />
                       {t('suggestions')}
                     </Button>
@@ -396,6 +397,14 @@ export default async function PostPage(props: PostPageProps) {
                     postId={post.id}
                     originalContent={post.content}
                   />
+                  {user && (
+                    <Link href={`/correspondence/compose?post=${post.id}`}>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <HelpCircle className="w-4 h-4" />
+                        Ask Author
+                      </Button>
+                    </Link>
+                  )}
                 </>
               )}
 
@@ -411,8 +420,8 @@ export default async function PostPage(props: PostPageProps) {
 
               <div className="flex-1" />
 
-              <BookmarkButton postId={post.id} />
-              <PostMoreOptions postId={post.id} />
+              <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
+              <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
             </div>
           </div>
         </div>

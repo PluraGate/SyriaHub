@@ -17,8 +17,12 @@ CREATE TABLE IF NOT EXISTS invite_codes (
   is_active BOOLEAN DEFAULT true,
   max_uses INTEGER DEFAULT 1,
   current_uses INTEGER DEFAULT 0,
+  target_role VARCHAR(20) DEFAULT 'member' CHECK (target_role IN ('member', 'researcher')),
   note TEXT
 );
+
+-- Add column if table already exists
+ALTER TABLE invite_codes ADD COLUMN IF NOT EXISTS target_role VARCHAR(20) DEFAULT 'member';
 
 CREATE INDEX IF NOT EXISTS invite_codes_code_idx ON invite_codes(code);
 CREATE INDEX IF NOT EXISTS invite_codes_created_by_idx ON invite_codes(created_by);
@@ -87,6 +91,14 @@ CREATE POLICY "Admins can update waitlist" ON waitlist
 -- 5. HELPER FUNCTIONS
 -- ============================================
 
+-- Drop functions first to avoid "not unique" errors when signatures change
+DROP FUNCTION IF EXISTS generate_invite_code();
+DROP FUNCTION IF EXISTS create_invite_code(UUID, TEXT);
+DROP FUNCTION IF EXISTS create_invite_code(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS validate_invite_code(VARCHAR);
+DROP FUNCTION IF EXISTS use_invite_code(VARCHAR, UUID);
+DROP FUNCTION IF EXISTS get_user_invite_stats(UUID);
+
 CREATE OR REPLACE FUNCTION generate_invite_code()
 RETURNS VARCHAR(12) AS $$
 DECLARE
@@ -146,22 +158,33 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION use_invite_code(p_code VARCHAR(12), p_user_id UUID)
 RETURNS BOOLEAN AS $$
-DECLARE invite_record RECORD;
+DECLARE
+  invite_record RECORD;
 BEGIN
-  SELECT * INTO invite_record FROM invite_codes
-  WHERE code = UPPER(TRIM(p_code)) AND is_active = true
-    AND (expires_at IS NULL OR expires_at > NOW()) AND current_uses < max_uses;
+  SELECT * INTO invite_record
+  FROM invite_codes
+  WHERE code = UPPER(TRIM(p_code))
+    AND is_active = true
+    AND (expires_at IS NULL OR expires_at > NOW())
+    AND current_uses < max_uses;
 
-  IF invite_record IS NULL THEN RETURN false; END IF;
+  IF invite_record IS NULL THEN
+    RETURN false;
+  END IF;
 
-  UPDATE invite_codes SET
-    current_uses = current_uses + 1,
-    used_by = p_user_id,
-    used_at = NOW(),
-    is_active = CASE WHEN current_uses + 1 >= max_uses THEN false ELSE true END
+  -- Update invite code
+  UPDATE invite_codes
+  SET current_uses = current_uses + 1,
+      used_by = p_user_id,
+      used_at = NOW(),
+      is_active = CASE WHEN current_uses + 1 >= max_uses THEN false ELSE true END
   WHERE id = invite_record.id;
 
-  UPDATE users SET invite_code_used = invite_record.id, invited_by = invite_record.created_by
+  -- Update user with invite info AND set role based on invite target_role
+  UPDATE users
+  SET invite_code_used = invite_record.id,
+      invited_by = invite_record.created_by,
+      role = COALESCE(invite_record.target_role, 'member')
   WHERE id = p_user_id;
 
   RETURN true;
@@ -170,14 +193,24 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_user_invite_stats(p_user_id UUID)
 RETURNS JSON AS $$
+DECLARE
+  result JSON;
 BEGIN
-  RETURN json_build_object(
+  SELECT json_build_object(
     'total_invites_created', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id),
-    'active_invites', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND is_active = true),
-    'used_invites', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND current_uses > 0),
-    'people_invited', (SELECT COUNT(*) FROM users WHERE invited_by = p_user_id),
-    'remaining_invites', 5 - (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND is_active = true)
-  );
+    'researcher_invites', json_build_object(
+      'active', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND is_active = true AND target_role = 'researcher' AND current_uses < max_uses),
+      'used', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND current_uses > 0 AND target_role = 'researcher'),
+      'remaining', 5 - (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND target_role = 'researcher')
+    ),
+    'member_invites', json_build_object(
+      'active', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND is_active = true AND target_role = 'member' AND current_uses < max_uses),
+      'used', (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND current_uses > 0 AND target_role = 'member'),
+      'remaining', 5 - (SELECT COUNT(*) FROM invite_codes WHERE created_by = p_user_id AND target_role = 'member')
+    ),
+    'people_invited', (SELECT COUNT(*) FROM users WHERE invited_by = p_user_id)
+  ) INTO result;
+  RETURN result;
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
         }
 
-        // Verify the invite code exists and belongs to the user (or user is admin)
+        // Verify the invite code exists and is active
         const { data: invite } = await supabase
             .from('invite_codes')
             .select('*')

@@ -58,7 +58,7 @@ export function UnansweredResearch({ items, totalCount }: UnansweredResearchProp
     }
 
     return (
-        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
             {/* Section Header - Restrained */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-medium text-text dark:text-dark-text">

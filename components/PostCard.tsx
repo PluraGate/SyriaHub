@@ -11,6 +11,7 @@ import { PlagiarismDetails } from '@/components/PlagiarismDetails'
 import { Post } from '@/types'
 import { stripMarkdown, cn, getInitials, getAvatarGradient } from '@/lib/utils'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
+import { useTranslations } from 'next-intl'
 
 interface PostCardProps {
   post: Post & {
@@ -54,6 +55,8 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
   const impactScore = post.academic_impact_score || 0
   const hasImpact = impactScore > 0
 
+  const tLicenses = useTranslations('Licenses')
+
   return (
     <article className="card card-premium card-glow card-hover p-6 group">
       <Link
@@ -92,7 +95,7 @@ export function PostCard({ post, showAuthor = true }: PostCardProps) {
           </div>
           {post.license && (
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-dark-surface text-text-light dark:text-dark-text-muted border border-gray-200 dark:border-dark-border whitespace-nowrap">
-              {post.license}
+              {tLicenses(post.license.replace(/\./g, '_'))}
             </span>
           )}
         </div>

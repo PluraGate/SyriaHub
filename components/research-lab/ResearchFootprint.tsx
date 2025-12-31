@@ -80,7 +80,10 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                     </div>
                 </div>
 
-                <div className={cn("grid gap-6", variant === 'full' ? "md:grid-cols-3" : "grid-cols-1")}>
+                <div className={cn(
+                    "gap-6",
+                    variant === 'full' ? "grid md:grid-cols-3" : "flex flex-col"
+                )}>
                     {/* Your Participation Summary Card */}
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                         <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted mb-4">

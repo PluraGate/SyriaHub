@@ -13,19 +13,21 @@ import {
 import Link from 'next/link'
 import { PostHistoryButton } from './PostHistoryButton'
 import { ReportButton } from './ReportButton'
+import { cn } from '@/lib/utils'
 
 interface PostMoreOptionsProps {
     postId: string
     asButton?: boolean
+    className?: string
 }
 
-export function PostMoreOptions({ postId, asButton }: PostMoreOptionsProps) {
+export function PostMoreOptions({ postId, asButton, className }: PostMoreOptionsProps) {
     const t = useTranslations('Post')
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-text-light dark:text-dark-text-muted">
+                <Button variant="ghost" size="icon" className={cn("text-text-light dark:text-dark-text-muted", className)}>
                     <MoreHorizontal className="w-5 h-5" />
                 </Button>
             </DropdownMenuTrigger>

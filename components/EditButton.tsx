@@ -69,7 +69,7 @@ export function EditButton({ postId, postCreatedAt, isAuthor }: EditButtonProps)
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="outline" disabled className="gap-2 opacity-50 cursor-not-allowed">
+                        <Button variant="outline" size="sm" disabled className="gap-2 opacity-50 cursor-not-allowed">
                             <Lock className="w-4 h-4" />
                             Edit
                         </Button>
@@ -92,7 +92,7 @@ export function EditButton({ postId, postCreatedAt, isAuthor }: EditButtonProps)
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Link href={`/editor?id=${postId}`}>
-                        <Button className="gap-2">
+                        <Button size="sm" className="gap-2">
                             <PenSquare className="w-4 h-4" />
                             Edit
                             {timeRemaining && (

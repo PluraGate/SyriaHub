@@ -279,14 +279,14 @@ export function SearchBar() {
       {/* Compact search button - visible at md to xl, hidden at xl+ */}
       <button
         onClick={() => setIsExpanded(true)}
-        className="hidden md:flex xl:hidden p-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light hover:bg-gray-100 dark:hover:bg-dark-border rounded-full transition-all focus-ring"
+        className="hidden md:flex lg:hidden p-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light hover:bg-gray-100 dark:hover:bg-dark-border rounded-full transition-all focus-ring"
         aria-label="Search"
       >
         <Search className="w-4 h-4" />
       </button>
 
       {/* Full search bar - only visible at xl+ */}
-      <div className="relative hidden xl:block w-64">
+      <div className="relative hidden lg:block w-48 lg:w-64 xl:w-80 transition-all duration-300" suppressHydrationWarning>
         <form onSubmit={handleSearch}>
           <div className="relative">
             {/* Typeahead overlay - shows greyed out completion */}
@@ -329,7 +329,7 @@ export function SearchBar() {
 
       {/* Expanded search overlay - appears when compact button is clicked */}
       {isExpanded && (
-        <div className="fixed inset-0 z-[100] xl:hidden">
+        <div className="fixed inset-0 z-[100] lg:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
