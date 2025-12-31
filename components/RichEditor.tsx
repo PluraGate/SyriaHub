@@ -36,6 +36,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useTranslations } from 'next-intl'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 interface RichEditorProps {
   value: string
@@ -193,6 +194,8 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
 
 export function RichEditor({ value, onChange, placeholder, userId }: RichEditorProps) {
   const t = useTranslations('EditorExtras')
+  const { preferences } = usePreferences()
+  const showLineNumbers = preferences?.editor?.line_numbers ?? false
   const tEditor = useTranslations('Editor')
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -308,7 +311,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
   return (
     <div
       ref={dropZoneRef}
-      className="rich-editor-wrapper relative"
+      className={`rich-editor-wrapper relative ${showLineNumbers ? 'show-line-numbers' : ''}`}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -533,6 +536,31 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
           background: var(--color-bg);
           overflow: hidden;
           transition: all 0.2s ease;
+        }
+        
+        .show-line-numbers .milkdown .ProseMirror {
+          counter-reset: line-number;
+        }
+
+        .show-line-numbers .milkdown .ProseMirror > * {
+          position: relative;
+          padding-left: 3rem;
+        }
+
+        .show-line-numbers .milkdown .ProseMirror > *::before {
+          counter-increment: line-number;
+          content: counter(line-number);
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 2.25rem;
+          text-align: right;
+          color: var(--color-text-muted);
+          font-family: monospace;
+          font-size: 0.75rem;
+          padding-right: 0.75rem;
+          user-select: none;
+          opacity: 0.5;
         }
         
         .rich-editor-wrapper:focus-within {

@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 interface UserAvatarProps {
     name?: string | null
@@ -69,7 +70,9 @@ export function UserAvatar({
     const identifier = email || name || 'unknown'
     const gradientIndex = getGradientIndex(identifier)
 
-    if (avatarUrl) {
+    const { preferences } = usePreferences()
+
+    if (avatarUrl && preferences.display.show_avatars) {
         return (
             <div
                 className={cn(

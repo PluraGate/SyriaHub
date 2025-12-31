@@ -1,23 +1,28 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import Image from 'next/image'
 import { EditProfileDialog } from './EditProfileDialog'
 import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
 import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
-import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap } from 'lucide-react'
+import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap, Mail, MessageSquare } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
-import { useCoverWithFallback } from '@/lib/coverImages'
+import { useCoverWithFallback, getCoverWithFallback } from '@/lib/coverImages'
+import { useState, useEffect } from 'react'
 
 interface ProfileHeaderProps {
     profile: any
     stats: any
     badges: any[]
     isOwnProfile: boolean
+    privacySettings?: {
+        show_email: boolean
+        allow_messages: boolean
+    }
 }
 
 // Simple animated stat with mini progress bar
@@ -66,7 +71,12 @@ function StatItem({
     )
 }
 
-export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileHeaderProps) {
+export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySettings }: ProfileHeaderProps) {
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
     // Get cover image with theme-aware fallback
     const coverImage = useCoverWithFallback(profile.cover_image_url, 'large')
 
@@ -74,12 +84,11 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
         <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden mb-8">
             {/* Cover Image / Fallback Banner */}
             <div className="relative h-48 md:h-56 w-full">
-                <Image
-                    src={coverImage}
+                <img
+                    src={mounted ? coverImage : getCoverWithFallback(profile.cover_image_url, 'dark', 'large')}
                     alt="Profile cover"
-                    fill
-                    className="object-cover"
-                    priority
+                    className="w-full h-full object-cover"
+                    suppressHydrationWarning
                 />
                 {/* Subtle overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -142,7 +151,15 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                                 {isOwnProfile ? (
                                     <EditProfileDialog profile={profile} />
                                 ) : (
-                                    <FollowButton userId={profile.id} />
+                                    <div className="flex items-center gap-2">
+                                        <FollowButton userId={profile.id} />
+                                        {privacySettings?.allow_messages && (
+                                            <Button variant="outline" size="sm" className="gap-2">
+                                                <MessageSquare className="w-4 h-4" />
+                                                Message
+                                            </Button>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -162,6 +179,13 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                         <div className="flex items-center gap-1.5">
                             <Building2 className="w-4 h-4" />
                             <span>{profile.affiliation}</span>
+                        </div>
+                    )}
+                    {/* Email Display - Respects Privacy Settings */}
+                    {(isOwnProfile || privacySettings?.show_email) && profile.email && (
+                        <div className="flex items-center gap-1.5 text-text dark:text-dark-text">
+                            <Mail className="w-4 h-4" />
+                            <span>{profile.email}</span>
                         </div>
                     )}
                     {profile.location && (
@@ -219,7 +243,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile }: ProfileH
                     />
                     <StatItem
                         icon={Users}
-                        value={stats?.follower_count || stats?.group_count || 0}
+                        value={stats?.follower_count || 0}
                         label="Followers"
                         maxValue={200}
                         color="accent"
