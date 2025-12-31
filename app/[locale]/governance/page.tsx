@@ -306,6 +306,68 @@ export default async function GovernancePage({ params }: { params: Promise<{ loc
                             </p>
                         </section>
 
+                        {/* Stewardship & Legal Context */}
+                        <section className="mb-12">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Shield className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
+                                <h2 className="text-2xl font-semibold text-text dark:text-dark-text m-0">
+                                    {t('stewardship.title')}
+                                </h2>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {t('stewardship.intro')}
+                            </p>
+                            <div className="p-4 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface mb-4">
+                                <p className="text-sm text-text-muted dark:text-dark-text-muted mb-0 leading-relaxed">
+                                    {t('stewardship.operationalFundsPart1')}
+                                    <strong className="text-text dark:text-dark-text">{t('stewardship.operationalFundsHighlight')}</strong>
+                                    {t('stewardship.operationalFundsPart2')}
+                                </p>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {t('stewardship.ledgerNotePart1')}
+                                <strong className="text-text dark:text-dark-text">{t('stewardship.ledgerNoteHighlight')}</strong>
+                                {t('stewardship.ledgerNotePart2')}
+                            </p>
+                            <p className="text-text-muted dark:text-dark-text-muted">
+                                {t('stewardship.jurisdictionPart1')}
+                                <strong className="text-text dark:text-dark-text">{t('stewardship.jurisdictionHighlight')}</strong>
+                                {t('stewardship.jurisdictionPart2')}
+                            </p>
+                        </section>
+
+                        {/* Role Separation */}
+                        <section className="mb-12">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Lock className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
+                                <h2 className="text-2xl font-semibold text-text dark:text-dark-text m-0">
+                                    {t('roleSeparation.title')}
+                                </h2>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                                {t('roleSeparation.intro')}
+                            </p>
+                            <div className="mb-6">
+                                <h4 className="text-base font-semibold text-text dark:text-dark-text mb-2">
+                                    {t('roleSeparation.noAuthority')}
+                                </h4>
+                                <ul className="text-sm text-text-muted dark:text-dark-text-muted space-y-1 ms-4">
+                                    <li>• {t('roleSeparation.item1')}</li>
+                                    <li>• {t('roleSeparation.item2')}</li>
+                                    <li>• {t('roleSeparation.item3')}</li>
+                                    <li>• {t('roleSeparation.item4')}</li>
+                                </ul>
+                            </div>
+                            <p className="text-text-muted dark:text-dark-text-muted mb-4 leading-relaxed">
+                                {t('roleSeparation.independence')}
+                            </p>
+                            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30">
+                                <p className="text-sm text-amber-800 dark:text-amber-400 font-medium mb-0">
+                                    {t('roleSeparation.technicalAccess')}
+                                </p>
+                            </div>
+                        </section>
+
                         {/* Governance Framework Closing */}
                         <div className="p-4 rounded-lg border border-primary/20 dark:border-secondary/20 bg-primary/5 dark:bg-secondary/5 text-center">
                             <p className="text-text dark:text-dark-text text-sm font-medium">

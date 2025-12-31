@@ -1,6 +1,6 @@
 {
   "name": "syriahub",
-  "version": "1.0.0",
+  "version": "0.6.2",
   "description": "SyriaHub - A minimalist research platform for collaborative knowledge sharing",
   "main": "index.js",
   "scripts": {

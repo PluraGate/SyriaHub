@@ -5,14 +5,21 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { SignupForm } from '@/components/auth/SignupForm'
 import { verifyTurnstileToken } from '@/lib/turnstile'
+import { getTranslations } from 'next-intl/server'
 import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen, Ticket, Gift } from 'lucide-react'
+import Image from 'next/image'
 
 export default async function SignupPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ error?: string; success?: string; code?: string }>
 }) {
-  const params = await searchParams
+  const { locale } = await params
+  const search = await searchParams
+  const t = await getTranslations({ locale, namespace: 'Auth.signupPage' })
+  const ta = await getTranslations({ locale, namespace: 'Auth' })
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -23,12 +30,12 @@ export default async function SignupPage({
   // Pre-validate invite code if provided in URL
   let preValidatedCode = ''
   let inviterName = ''
-  if (params.code) {
+  if (search.code) {
     const { data } = await supabase.rpc('validate_invite_code', {
-      p_code: params.code.toUpperCase().trim(),
+      p_code: search.code.toUpperCase().trim(),
     })
     if (data?.valid) {
-      preValidatedCode = params.code.toUpperCase().trim()
+      preValidatedCode = search.code.toUpperCase().trim()
       // Get inviter name
       if (data.inviter_id) {
         const { data: inviter } = await supabase
@@ -54,19 +61,19 @@ export default async function SignupPage({
     // Verify CAPTCHA if configured
     const captchaValid = await verifyTurnstileToken(turnstileToken)
     if (!captchaValid) {
-      redirect('/auth/signup?error=Security verification failed. Please try again.')
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Security verification failed. Please try again.')}`)
     }
 
     if (!email || !password) {
-      redirect('/auth/signup?error=Email and password are required')
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Email and password are required')}`)
     }
 
     if (!inviteCode) {
-      redirect('/auth/signup?error=Invite code is required')
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Invite code is required')}`)
     }
 
     if (password.length < 6) {
-      redirect('/auth/signup?error=Password must be at least 6 characters')
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Password must be at least 6 characters')}`)
     }
 
     const supabase = await createClient()
@@ -77,7 +84,7 @@ export default async function SignupPage({
     })
 
     if (inviteError || !inviteValidation?.valid) {
-      redirect(`/auth/signup?error=${inviteValidation?.error || 'Invalid invite code'}`)
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent(inviteValidation?.error || 'Invalid invite code')}`)
     }
 
     // Create the account
@@ -95,7 +102,7 @@ export default async function SignupPage({
 
     if (error) {
       console.error('Signup error:', error)
-      redirect(`/auth/signup?error=${error.message}&code=${inviteCode}`)
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent(error.message)}&code=${encodeURIComponent(inviteCode)}`)
     }
 
     // Mark invite as used
@@ -107,14 +114,14 @@ export default async function SignupPage({
     }
 
     if (data.user && !data.session) {
-      redirect('/auth/signup?success=check-email')
+      redirect(`/${locale}/auth/signup?success=${encodeURIComponent('check-email')}`)
     }
 
     if (data.session) {
-      redirect('/feed')
+      redirect(`/${locale}/feed`)
     }
 
-    redirect('/auth/signup?success=check-email')
+    redirect(`/${locale}/auth/signup?success=${encodeURIComponent('check-email')}`)
   }
 
   return (
@@ -131,17 +138,17 @@ export default async function SignupPage({
 
           <div className="relative z-10 flex flex-col justify-center px-16 py-12">
             <Link href="/" className="flex items-center gap-3 mb-12">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">S</span>
+              <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center overflow-hidden">
+                <Image src="/icons/icon-512x512.png" alt="SyriaHub" width={40} height={40} className="object-contain" />
               </div>
               <span className="font-bold text-2xl text-white">SyriaHub</span>
             </Link>
 
             <h1 className="text-4xl font-bold text-white mb-4">
-              Join by Invitation
+              {t('joinTitle')}
             </h1>
             <p className="text-xl text-white/80 mb-12 max-w-md">
-              SyriaHub is currently invite-only to ensure a high-quality research community.
+              {t('joinSubtitle')}
             </p>
 
             <div className="space-y-6">
@@ -150,8 +157,8 @@ export default async function SignupPage({
                   <Ticket className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Invite Required</h3>
-                  <p className="text-sm text-white/70">Get an invite from an existing member</p>
+                  <h3 className="font-semibold text-white">{t('inviteRequiredTitle')}</h3>
+                  <p className="text-sm text-white/70">{t('inviteRequiredDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -159,8 +166,8 @@ export default async function SignupPage({
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Quality Community</h3>
-                  <p className="text-sm text-white/70">Connect with verified researchers</p>
+                  <h3 className="font-semibold text-white">{t('qualityCommunityTitle')}</h3>
+                  <p className="text-sm text-white/70">{t('qualityCommunityDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -168,8 +175,8 @@ export default async function SignupPage({
                   <Gift className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Pay It Forward</h3>
-                  <p className="text-sm text-white/70">Each member can invite 5 colleagues</p>
+                  <h3 className="font-semibold text-white">{t('payItForwardTitle')}</h3>
+                  <p className="text-sm text-white/70">{t('payItForwardDesc')}</p>
                 </div>
               </div>
             </div>
@@ -182,8 +189,8 @@ export default async function SignupPage({
             {/* Mobile Logo */}
             <div className="text-center mb-8 lg:hidden">
               <Link href="/" className="inline-flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">S</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center overflow-hidden">
+                  <Image src="/icons/icon-512x512.png" alt="SyriaHub" width={32} height={32} className="object-contain" />
                 </div>
                 <span className="font-bold text-2xl text-text dark:text-dark-text">SyriaHub</span>
               </Link>
@@ -195,21 +202,24 @@ export default async function SignupPage({
                 <div className="flex items-center gap-3">
                   <Gift className="w-5 h-5 text-primary" />
                   <p className="text-sm text-text dark:text-dark-text">
-                    You&apos;ve been invited by <strong>{inviterName}</strong>
+                    {t.rich('invitedBy', {
+                      name: (chunks) => <strong>{chunks}</strong>,
+                      name_val: inviterName
+                    })}
                   </p>
                 </div>
               </div>
             )}
 
             {/* Success Message */}
-            {params.success === 'check-email' && (
+            {search.success === 'check-email' && (
               <div className="mb-6 p-4 rounded-2xl bg-secondary/10 border border-secondary/20">
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-secondary-dark mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-text dark:text-dark-text">Check your email</h3>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('checkEmailTitle')}</h3>
                     <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
-                      We&apos;ve sent you a confirmation link. Please check your inbox to verify your account.
+                      {t('checkEmailDesc')}
                     </p>
                   </div>
                 </div>
@@ -217,36 +227,38 @@ export default async function SignupPage({
             )}
 
             {/* Error Message */}
-            {params.error && (
+            {search.error && (
               <div className="mb-6 p-4 rounded-2xl bg-accent/10 border border-accent/20">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-accent mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-text dark:text-dark-text">Error</h3>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{params.error}</p>
+                    <h3 className="font-semibold text-text dark:text-dark-text">{t('errorTitle')}</h3>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{search.error}</p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Form Card */}
-            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-8">
-              <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
-                Create your account
-              </h2>
-              <p className="text-text-light dark:text-dark-text-muted mb-8">
-                Already have an account?{' '}
-                <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-dark transition-colors">
-                  Sign in
-                </Link>
-              </p>
+            {/* Form Card - Only show if not success */}
+            {search.success !== 'check-email' && (
+              <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-8">
+                <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
+                  {t('createAccountTitle')}
+                </h2>
+                <p className="text-text-light dark:text-dark-text-muted mb-8">
+                  {t('alreadyHaveAccount')}{' '}
+                  <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-dark transition-colors">
+                    {ta('login')}
+                  </Link>
+                </p>
 
-              <SignupForm preValidatedCode={preValidatedCode} action={handleSignup} />
+                <SignupForm preValidatedCode={preValidatedCode} action={handleSignup} />
 
-              <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
-                By signing up, you agree to our terms of service and privacy policy.
-              </p>
-            </div>
+                <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
+                  {t('termsAgreeLong')}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>

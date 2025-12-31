@@ -328,3 +328,78 @@ export interface UpdateUserProfileInput {
   affiliation?: string
 }
 
+// ============================================================================
+// Research Correspondence Types
+// ============================================================================
+
+export type CorrespondenceKind = 'clarification_request' | 'moderation_notice' | 'response'
+export type CorrespondenceStatus = 'pending' | 'delivered' | 'read' | 'archived'
+export type CorrespondenceContextType = 'post' | 'moderation_case'
+
+export interface Correspondence {
+  id: string
+  context_type: CorrespondenceContextType
+  kind: CorrespondenceKind
+  post_id?: string
+  moderation_case_id?: string
+  sender_id: string
+  recipient_id: string
+  parent_id?: string
+  subject: string
+  body: string
+  status: CorrespondenceStatus
+  created_at: string
+  scheduled_delivery_at?: string
+  delivered_at?: string
+  read_at?: string
+  updated_at: string
+  // Computed in queries
+  has_reply?: boolean
+  can_reply?: boolean
+  sender?: CorrespondenceUser
+  recipient?: CorrespondenceUser
+  post_detail?: {
+    id: string
+    title: string
+  }
+}
+
+export interface CorrespondenceUser {
+  id: string
+  name: string
+  avatar_url?: string
+  affiliation?: string
+}
+
+export interface CorrespondenceThread {
+  success: boolean
+  thread?: Correspondence[]
+  error?: string
+}
+
+export interface CorrespondenceInboxResponse {
+  success: boolean
+  items: Correspondence[]
+  total: number
+  page: number
+  page_size: number
+  total_pages: number
+  error?: string
+}
+
+export interface SendCorrespondenceInput {
+  kind: CorrespondenceKind
+  post_id?: string
+  moderation_case_id?: string
+  recipient_id: string
+  subject: string
+  body: string
+  parent_id?: string
+}
+
+export interface SendCorrespondenceResponse {
+  success: boolean
+  correspondence_id?: string
+  scheduled_delivery_at?: string
+  error?: string
+}

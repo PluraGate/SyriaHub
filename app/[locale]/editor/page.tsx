@@ -18,6 +18,8 @@ import { ResourceLinker } from '@/components/ResourceLinker'
 import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
+import { cn } from '@/lib/utils'
+import { useDateFormatter } from '@/hooks/useDateFormatter'
 import { useTranslations } from 'next-intl'
 import { FirstTimeContributorPrompt } from '@/components/FirstTimeContributorPrompt'
 import { usePreferences } from '@/contexts/PreferencesContext'
@@ -361,6 +363,8 @@ export default function EditorPage() {
     hydrateUser()
     return () => { mounted = false }
   }, [router, showToast, supabase, postIdParam])
+
+  const tLicenses = useTranslations('Licenses')
 
   const validate = useCallback((): boolean => {
     const nextErrors: EditorErrors = {}
@@ -870,15 +874,21 @@ export default function EditorPage() {
                   onChange={e => setLicense(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                 >
-                  <option value="CC-BY-4.0">CC BY 4.0 (Attribution)</option>
-                  <option value="CC-BY-SA-4.0">CC BY-SA 4.0 (ShareAlike)</option>
-                  <option value="CC0-1.0">CC0 1.0 (Public Domain)</option>
-                  <option value="MIT">MIT License</option>
-                  <option value="All Rights Reserved">All Rights Reserved</option>
+                  <option value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</option>
+                  <option value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</option>
+                  <option value="CC0-1.0">{tLicenses('CC0-1_0')}</option>
+                  <option value="MIT">{tLicenses('MIT')}</option>
+                  <option value="All Rights Reserved">{tLicenses('All Rights Reserved')}</option>
                 </select>
-                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                  {t('page.licenseHelp')}
-                </p>
+                <div className="text-xs text-text-light dark:text-dark-text-muted space-y-1">
+                  <p>{tLicenses('helpText')}</p>
+                  <p className={cn(
+                    "font-medium",
+                    license === 'All Rights Reserved' ? "text-amber-600 dark:text-amber-400" : "text-primary dark:text-primary-light"
+                  )}>
+                    {tLicenses(`descriptions.${license.replace(/\./g, '_')}`)}
+                  </p>
+                </div>
               </div>
 
               {/* Temporal & Spatial Coverage - for Articles and Traces */}

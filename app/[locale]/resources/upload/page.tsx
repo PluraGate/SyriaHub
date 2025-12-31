@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/toast'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -39,6 +40,7 @@ interface Tag {
 }
 
 export default function UploadResourcePage() {
+    const tLicenses = useTranslations('Licenses')
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [resourceType, setResourceType] = useState<string>('')
@@ -350,9 +352,11 @@ export default function UploadResourcePage() {
                             onChange={(e) => setLicense(e.target.value)}
                             className="flex h-10 w-full items-center justify-between rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 py-2 text-sm text-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
-                            {LICENSES.map(license => (
-                                <option key={license.value} value={license.value}>
-                                    {license.label}
+                            {LICENSES.map(l => (
+                                <option key={l.value} value={l.value}>
+                                    {l.value === 'Copyright' ? tLicenses('All Rights Reserved') :
+                                        l.value === 'Other' ? l.label :
+                                            tLicenses(l.value.replace(/\./g, '_'))}
                                 </option>
                             ))}
                         </select>

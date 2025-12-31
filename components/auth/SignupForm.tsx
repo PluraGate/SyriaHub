@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Turnstile } from '@/components/ui/Turnstile'
+import { useTranslations } from 'next-intl'
 
 interface SignupFormProps {
     preValidatedCode: string
@@ -12,6 +13,8 @@ interface SignupFormProps {
 export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
     const [turnstileToken, setTurnstileToken] = useState<string>('')
     const [captchaError, setCaptchaError] = useState(false)
+    const t = useTranslations('Auth.signupPage')
+    const ta = useTranslations('Auth')
 
     const handleSubmit = async (formData: FormData) => {
         // Add turnstile token to form data
@@ -35,7 +38,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
             {/* Invite Code */}
             <div>
                 <label htmlFor="inviteCode" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Invite Code *
+                    {ta('inviteCode')} *
                 </label>
                 <input
                     id="inviteCode"
@@ -47,9 +50,9 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all uppercase tracking-widest font-mono text-center text-lg"
                 />
                 <p className="text-xs text-text-light dark:text-dark-text-muted mt-1.5">
-                    Don&apos;t have a code?{' '}
+                    {t('dontHaveCode')}{' '}
                     <Link href="/waitlist" className="text-primary hover:underline">
-                        Join the waitlist
+                        {t('waitlistLink')}
                     </Link>
                 </p>
             </div>
@@ -59,7 +62,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
             {/* Email */}
             <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Email address
+                    {t('emailAddress')}
                 </label>
                 <input
                     id="email"
@@ -75,7 +78,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
             {/* Password */}
             <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-text dark:text-dark-text mb-2">
-                    Password
+                    {ta('password')}
                 </label>
                 <input
                     id="password"
@@ -85,7 +88,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
                     required
                     minLength={6}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                    placeholder="At least 6 characters"
+                    placeholder={t('atLeast6Chars')}
                 />
             </div>
 
@@ -103,7 +106,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
 
             {captchaError && (
                 <p className="text-sm text-red-500 text-center">
-                    Please complete the security check
+                    {t('securityCheckError')}
                 </p>
             )}
 
@@ -111,7 +114,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
                 type="submit"
                 className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
             >
-                Create Account
+                {ta('createAccount')}
             </button>
         </form>
     )

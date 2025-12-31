@@ -129,7 +129,7 @@ function StatsDisplay({ data, questionType }: { data: StatsData; questionType: s
                                         />
                                     </div>
                                     <span className="text-xs text-text-light dark:text-dark-text-muted mt-1">
-                                        {isRating ? '★'.repeat(item.value) : item.value}
+                                        {isRating ? '★'.repeat(Math.max(0, item.value)) : item.value}
                                     </span>
                                 </div>
                             )

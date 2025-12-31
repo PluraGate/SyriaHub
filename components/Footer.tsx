@@ -133,7 +133,7 @@ export function Footer() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a
-                        href="https://github.com/lAvArt/SyriaHub"
+                        href="https://github.com/PluraGate"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
@@ -165,7 +165,7 @@ export function Footer() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <a
-                    href="https://github.com/lAvArt/SyriaHub"
+                    href="https://github.com/PluraGate"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#333] dark:hover:text-white transition-colors focus-ring rounded-lg"
@@ -182,7 +182,7 @@ export function Footer() {
 
             {/* Email */}
             <a
-              href="mailto:contact@syriahub.org"
+              href="mailto:admin@pluragate.org"
               className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-primary transition-colors focus-ring rounded-lg"
               aria-label="Email"
             >
@@ -191,7 +191,7 @@ export function Footer() {
 
             {/* LinkedIn */}
             <a
-              href="https://linkedin.com/company/syriahub"
+              href="https://www.linkedin.com/in/syria-hub-pluragate-network-2a31863a2/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#0A66C2] transition-colors focus-ring rounded-lg"
@@ -200,20 +200,11 @@ export function Footer() {
               <Linkedin className="w-5 h-5" />
             </a>
 
-            {/* YouTube */}
-            <a
-              href="https://youtube.com/@syriahub"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#FF0000] transition-colors focus-ring rounded-lg"
-              aria-label="YouTube"
-            >
-              <Youtube className="w-5 h-5" />
-            </a>
-
             {/* RSS/Atom */}
             <a
-              href="/feed.xml"
+              href="https://dashboard.rss.com/podcasts/syriahub-updates/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#FFA500] transition-colors focus-ring rounded-lg"
               aria-label="RSS Feed"
             >
@@ -222,7 +213,7 @@ export function Footer() {
 
             {/* Mastodon */}
             <a
-              href="https://mastodon.social/@syriahub"
+              href="https://mastodon.social/@Syriahub"
               target="_blank"
               rel="noopener noreferrer me"
               className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#6364FF] transition-colors focus-ring rounded-lg"
@@ -243,6 +234,9 @@ export function Footer() {
             </p>
             <p className="text-text-muted/80 dark:text-dark-text-muted/50 text-[11px] text-center">
               © {currentYear} SyriaHub · {t('licensingNote')}
+            </p>
+            <p className="text-text-muted/40 dark:text-dark-text-muted/30 text-[10px] text-center">
+              {t('platformStage')} · {t('platformVersion')}
             </p>
           </div>
 

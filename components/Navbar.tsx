@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
 import { useRouter } from 'next/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -62,8 +62,8 @@ export function Navbar({ user }: NavbarProps) {
     setMounted(true)
   }, [])
 
-  // Extract locale from pathname (first segment after /)
-  const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
+  // No longer needed here as we use params or context
+  // const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
 
   // Fetch avatar_url and role from users table
   useEffect(() => {
@@ -160,9 +160,9 @@ export function Navbar({ user }: NavbarProps) {
               <button
                 onClick={toggleDarkMode}
                 className="p-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light hover:bg-gray-100 dark:hover:bg-dark-border rounded-full transition-all focus-ring"
-                aria-label={mounted && isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={mounted ? (isDark ? 'Switch to light mode' : 'Switch to dark mode') : 'Toggle theme'}
               >
-                {mounted && isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {mounted ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <div className="w-4 h-4" />}
               </button>
 
               {user ? (
@@ -214,6 +214,12 @@ export function Navbar({ user }: NavbarProps) {
                         <Link href="/saved" className="cursor-pointer w-full flex items-center">
                           <Bookmark className="mr-2 h-4 w-4" />
                           <span>{t('saved')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/correspondence" className="cursor-pointer w-full flex items-center">
+                          <Mail className="mr-2 h-4 w-4" />
+                          <span>{t('correspondence')}</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
@@ -481,6 +487,6 @@ export function Navbar({ user }: NavbarProps) {
 
       {/* Global Floating Feedback Button */}
       <FeedbackButton />
-    </nav>
+    </nav >
   )
 }

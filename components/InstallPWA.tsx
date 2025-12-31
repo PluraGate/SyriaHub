@@ -73,7 +73,7 @@ export function InstallPWA() {
                         <h3 className="text-sm font-medium text-gray-100">
                             {t('installTitle')}
                         </h3>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="text-xs text-secondary/70 dark:text-dark-text-muted mt-0.5">
                             {t('installDescription')}
                         </p>
                     </div>
@@ -87,7 +87,18 @@ export function InstallPWA() {
                         <X className="w-4 h-4" />
                     </Button>
                 </div>
-                <div className="flex gap-2 mt-3">
+
+                {/* Operational Disclosure */}
+                <div className="mt-3 space-y-2">
+                    <p className="text-[10px] leading-tight text-text-muted/60 dark:text-dark-text-muted/40 border-l-2 border-primary/20 ps-2">
+                        {t('constraintsNote')}
+                    </p>
+                    <p className="text-[10px] leading-tight text-text-muted/60 dark:text-dark-text-muted/40 italic">
+                        {t('governanceNote')}
+                    </p>
+                </div>
+
+                <div className="flex gap-2 mt-4">
                     <Button
                         onClick={handleInstall}
                         className="flex-1"

@@ -6,7 +6,7 @@ import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
 import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
-import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap, Mail, MessageSquare } from 'lucide-react'
+import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
@@ -177,17 +177,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                                         {isOwnProfile ? (
                                             <EditProfileDialog profile={profile} />
                                         ) : (
-                                            <div className="flex items-center gap-2">
-                                                <FollowButton userId={profile.id} />
-                                                {privacySettings?.allow_messages && (
-                                                    <a href={`/en/messages/${profile.id}`}>
-                                                        <Button variant="outline" size="sm" className="gap-2">
-                                                            <MessageSquare className="w-4 h-4" />
-                                                            Message
-                                                        </Button>
-                                                    </a>
-                                                )}
-                                            </div>
+                                            <FollowButton userId={profile.id} />
                                         )}
                                     </div>
                                 )}
