@@ -12,6 +12,7 @@ import { SkipNavLink, SkipNavContent } from '@/components/accessibility'
 import { InstallPWA } from '@/components/InstallPWA'
 import { OfflineIndicator } from '@/components/OfflineIndicator'
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+import { Analytics } from '@vercel/analytics/react'
 import { createClient } from '@/lib/supabase/server'
 import '../globals.css'
 
@@ -96,6 +97,7 @@ export default async function RootLayout({
                 {user && <FloatingActionButton />}
                 <InstallPWA />
                 <OfflineIndicator />
+                <Analytics />
               </NotificationsProvider>
             </PreferencesProvider>
           </ToastProvider>
