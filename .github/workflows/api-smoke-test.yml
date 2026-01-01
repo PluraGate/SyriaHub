@@ -19,8 +19,21 @@ jobs:
         run: sleep 5
 
       - name: Check /api/health endpoint
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
-          response=$(curl --fail --silent --show-error "${{ steps.prepare.outputs.url }}/api/health")
+          if [ -n "$API_TOKEN" ]; then
+            echo "Using authenticated health check"
+            response=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $API_TOKEN" \
+              -H "x-vercel-protection-bypass: $API_TOKEN" \
+              "${{ steps.prepare.outputs.url }}/api/health")
+          else
+            echo "Using public health check"
+            response=$(curl --fail --silent --show-error \
+              "${{ steps.prepare.outputs.url }}/api/health")
+          fi
+          
           echo "$response" | jq '.'
           success=$(echo "$response" | jq -r '.success')
           if [ "$success" != "true" ]; then
