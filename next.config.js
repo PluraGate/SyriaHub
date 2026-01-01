@@ -42,7 +42,7 @@ const nextConfig = {
 // Sentry configuration with org/project settings
 const sentryWebpackPluginOptions = {
   org: "lavart-studio",
-  project: "javascript-nextjs",
+  project: "pluragate-syriahub",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
