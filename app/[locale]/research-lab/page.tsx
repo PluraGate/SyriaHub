@@ -33,7 +33,7 @@ export default async function ResearchLabPage() {
     const activePolls = pollsResult.count || 0
 
     // Fetch user's participation stats (My Research Footprint)
-    let participationStats = {
+    const participationStats = {
         pollsVoted: 0,
         surveysCompleted: 0,
         lastActivity: undefined as { type: 'poll' | 'survey'; title: string; id: string; date: string } | undefined,

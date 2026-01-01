@@ -24,10 +24,11 @@ async function testForumFlow() {
     const email = 'forum_tester@syrealize.org'
     const password = 'password123'
 
-    let { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+    const { data: { user: signInUser }, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password
     })
+    let user = signInUser
 
     if (authError) {
         console.log('⚠️ Login failed, attempting to sign up...')

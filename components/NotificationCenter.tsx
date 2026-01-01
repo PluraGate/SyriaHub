@@ -75,7 +75,7 @@ export function NotificationCenter({ userId }: { userId: string }) {
     }
 
     const filteredNotifications = useMemo(() => {
-        let list = notifications as any[]
+        const list = notifications as any[]
         switch (filter) {
             case 'unread':
                 return list.filter(n => !n.is_read)

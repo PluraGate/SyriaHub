@@ -381,7 +381,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <Link href={`/post/${appeal.post_id}`} target="_blank">
+                          <Link href={`/post/${appeal.post_id}`} target="_blank" rel="noopener noreferrer">
                             <Button size="sm" variant="outline" className="gap-1">
                               {t('dashboardPage.viewPost')}
                               <ChevronRight className="w-3.5 h-3.5" />
