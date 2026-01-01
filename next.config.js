@@ -50,6 +50,19 @@ const sentryWebpackPluginOptions = {
   // Upload a larger set of source maps for prettier stack traces
   widenClientFileUpload: true,
 
+  // Ignore internal Next.js manifest files that don't have sourcemaps
+  sourcemaps: {
+    ignore: [
+      'node_modules/**',
+      '**/interception-route-rewrite-manifest.js',
+      '**/middleware-build-manifest.js',
+      '**/next-font-manifest.js',
+      '**/server-reference-manifest.js',
+      '**/build-manifest.js',
+      '**/react-loadable-manifest.js',
+    ],
+  },
+
   // Route browser requests through Next.js to circumvent ad-blockers
   tunnelRoute: "/monitoring",
 
