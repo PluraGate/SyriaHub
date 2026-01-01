@@ -12,13 +12,36 @@ const intlMiddleware = createMiddleware({
 });
 
 // Simple in-memory rate limiter for demo/local use
-// Note: In production, use Upstash or similar for distributed state
+// LIMITATIONS:
+// - Per-instance only (not shared across serverless instances)
+// - Resets on deploy/cold-start
+// - Does NOT apply to /api routes (excluded by matcher below)
+// In production, use Upstash, Redis, or Vercel's built-in rate limiting
 const requestCounts = new Map<string, { count: number; lastReset: number }>();
 const RATE_LIMIT = 100; // requests per minute
 const WINDOW_MS = 60 * 1000;
+const MAX_TRACKED_IPS = 10000; // Prevent unbounded memory growth
 
 function isRateLimited(ip: string) {
     const now = Date.now();
+
+    // Cleanup: Remove expired entries if map is getting large
+    if (requestCounts.size > MAX_TRACKED_IPS) {
+        for (const [key, value] of requestCounts.entries()) {
+            if (now - value.lastReset > WINDOW_MS) {
+                requestCounts.delete(key);
+            }
+        }
+        // If still too large after cleanup, clear oldest half
+        if (requestCounts.size > MAX_TRACKED_IPS) {
+            const entries = Array.from(requestCounts.entries());
+            entries.sort((a, b) => a[1].lastReset - b[1].lastReset);
+            entries.slice(0, Math.floor(entries.length / 2)).forEach(([key]) => {
+                requestCounts.delete(key);
+            });
+        }
+    }
+
     const stats = requestCounts.get(ip) || { count: 0, lastReset: now };
 
     if (now - stats.lastReset > WINDOW_MS) {
@@ -86,8 +109,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // 5. Apply Security Headers
+    // Note: 'unsafe-inline' required for Next.js hydration scripts
+    // 'unsafe-eval' required for map libraries (Leaflet/Mapbox)
     const securityHeaders = {
-        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co;",
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org;",
         'X-Frame-Options': 'DENY',
         'X-Content-Type-Options': 'nosniff',
         'Referrer-Policy': 'strict-origin-when-cross-origin',

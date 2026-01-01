@@ -2,6 +2,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Script from 'next/script'
 import { Inter, Outfit, Cairo } from 'next/font/google'
 import { ToastProvider } from '@/components/ui/toast'
 import { NotificationsProvider } from '@/components/NotificationsProvider'
@@ -73,15 +74,12 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var prefs=JSON.parse(localStorage.getItem('user_preferences'));var theme=prefs?prefs.theme:'system';var isDark=theme==='dark'||(theme==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(isDark){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}})()`
-          }}
-        />
         {/* iOS Splash Screen Meta Tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
+        {/* Theme initialization - runs before React hydration to prevent flash */}
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} ${cairo.variable} ${locale === 'ar' ? 'font-arabic' : 'font-sans'} bg-background text-text overflow-x-hidden`} suppressHydrationWarning>
         <SkipNavLink />

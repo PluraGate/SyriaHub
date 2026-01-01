@@ -10,7 +10,16 @@ export async function POST(request: NextRequest) {
         const authHeader = request.headers.get('authorization')
         const cronSecret = process.env.CRON_SECRET
 
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        // SECURITY: Fail-closed - reject if CRON_SECRET is not configured
+        if (!cronSecret) {
+            console.error('[correspondence/cron] CRON_SECRET not configured')
+            return NextResponse.json(
+                { success: false, error: 'Server misconfiguration' },
+                { status: 500 }
+            )
+        }
+
+        if (authHeader !== `Bearer ${cronSecret}`) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
                 { status: 401 }

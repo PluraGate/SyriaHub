@@ -90,15 +90,17 @@ export async function POST(request: NextRequest) {
             console.error('Create invite error:', error)
             // Handle duplicate code (very rare, but possible)
             if (error.code === '23505') {
-                // Retry with a new code
+                // Retry with a new code - preserve target_role and max_uses
                 const retryData = await supabase
                     .from('invite_codes')
                     .insert({
                         code: generateInviteCode(),
                         created_by: user.id,
                         note: note || null,
+                        target_role: target_role,
+                        max_uses: 1, // Enforce single-use
                     })
-                    .select('id, code')
+                    .select('id, code, target_role')
                     .single()
 
                 if (retryData.error) {
