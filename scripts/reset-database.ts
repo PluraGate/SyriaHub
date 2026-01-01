@@ -154,7 +154,7 @@ async function resetDatabase() {
 
     let successCount = 0
     let skipCount = 0
-    let errorCount = 0
+    const errorCount = 0
 
     for (const table of tablesToClear) {
         process.stdout.write(`   ${table.padEnd(25)}`)

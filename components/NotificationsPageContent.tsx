@@ -75,7 +75,7 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
     }
 
     const filteredNotifications = useMemo(() => {
-        let list = notifications as any[]
+        const list = notifications as any[]
         if (filter === 'all') return list
         if (filter === 'unread') return list.filter(n => !n.is_read)
         return list.filter(n => n.type === filter)

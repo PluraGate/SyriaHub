@@ -32,7 +32,7 @@ export default async function PollsPage({
     const { data: polls } = await pollsQuery
 
     // Fetch user's votes
-    let userVotes: Record<string, string[]> = {}
+    const userVotes: Record<string, string[]> = {}
     if (user) {
         const { data: votes } = await supabase
             .from('poll_votes')

@@ -318,7 +318,7 @@ export default function AdminAppealsPage() {
                                                 </div>
 
                                                 <div className="flex items-center gap-2 flex-shrink-0">
-                                                    <Link href={`/post/${appeal.post_id}`} target="_blank">
+                                                    <Link href={`/post/${appeal.post_id}`} target="_blank" rel="noopener noreferrer">
                                                         <Button variant="outline" size="sm" className="gap-1.5">
                                                             <Eye className="w-4 h-4" />
                                                             {t('viewPost')}
