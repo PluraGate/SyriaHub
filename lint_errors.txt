@@ -1,0 +1,34 @@
+﻿
+> syrealize@1.0.0 lint
+> eslint . --max-warnings=0
+
+node.exe : [baseline-browser-mapping] The data in this 
+module is over two months old.  To ensure accurate 
+Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([baseline- 
+   brows...ping@latest -D`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+C:\Users\AvArc\RiderProjects\SyriaHub\app\[locale]\admin\tags\page.tsx
+  39:8  warning  React Hook useEffect has a missing dependency: 'fetchUnverifiedTags'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\AvArc\RiderProjects\SyriaHub\app\[locale]\analytics\page.tsx
+  142:42  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\AvArc\RiderProjects\SyriaHub\app\[locale]\groups\page.tsx
+  166:46  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\AvArc\RiderProjects\SyriaHub\app\[locale]\questions\ask\page.tsx
+  87:56  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\AvArc\RiderProjects\SyriaHub\app\[locale]\search\page.tsx
+  59:85  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  59:89  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+Γ£û 6 problems (5 errors, 1 warning)
+

@@ -1,0 +1,42 @@
+name: API Smoke Test
+
+on:
+  deployment_status:
+
+jobs:
+  verify-api:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment_url != null && github.event.deployment_status.environment_url != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare URL
+        id: prepare
+        run: |
+          env_url="${{ github.event.deployment_status.environment_url }}"
+          env_url=${env_url%%/}
+          echo "url=$env_url" >> "$GITHUB_OUTPUT"
+
+      - name: Warm up deployment
+        run: sleep 5
+
+      - name: Check /api/health endpoint
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+        run: |
+          if [ -n "$API_TOKEN" ]; then
+            echo "Using authenticated health check"
+            response=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $API_TOKEN" \
+              -H "x-vercel-protection-bypass: $API_TOKEN" \
+              "${{ steps.prepare.outputs.url }}/api/health")
+          else
+            echo "Using public health check"
+            response=$(curl --fail --silent --show-error \
+              "${{ steps.prepare.outputs.url }}/api/health")
+          fi
+          
+          echo "$response" | jq '.'
+          success=$(echo "$response" | jq -r '.success')
+          if [ "$success" != "true" ]; then
+            echo "Health check failed" >&2
+            exit 1
+          fi
