@@ -61,7 +61,8 @@ async function uploadImage(file: File, userId: string): Promise<string | null> {
 
   try {
     const fileExt = file.name.split('.').pop()
-    const fileName = `content/${userId}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    // SECURITY: Use crypto.randomUUID() for secure filename generation
+    const fileName = `content/${userId}/${Date.now()}-${crypto.randomUUID()}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
       .from('post_images')

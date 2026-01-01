@@ -63,11 +63,13 @@ export async function GET(request: NextRequest) {
             console.error('Fuzzy search error:', error)
 
             // Fallback to ILIKE search if RPC fails
+            // SECURITY: Escape LIKE pattern special characters to prevent pattern injection
+            const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&')
             let queryBuilder = supabase
                 .from('posts')
                 .select('id, title, content, created_at, tags, content_type')
                 .eq('status', 'published')
-                .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+                .or(`title.ilike.%${sanitizedQuery}%,content.ilike.%${sanitizedQuery}%`)
                 .limit(limit)
 
             if (type === 'post') {

@@ -6,6 +6,7 @@ import {
   handleSupabaseError,
   getQueryParams,
   withErrorHandling,
+  sanitizePaginationParams,
 } from '@/lib/apiUtils'
 
 /**
@@ -23,8 +24,8 @@ async function handleGetUsers(request: Request): Promise<NextResponse> {
   // Get query parameters
   const role = params.get('role')
   const search = params.get('search')
-  const limit = parseInt(params.get('limit') || '20', 10)
-  const offset = parseInt(params.get('offset') || '0', 10)
+  // SECURITY: Use sanitized pagination to prevent DoS
+  const { limit, offset } = sanitizePaginationParams(params, { maxLimit: 100, defaultLimit: 20 })
 
   // Build query
   let query = supabase
@@ -39,7 +40,9 @@ async function handleGetUsers(request: Request): Promise<NextResponse> {
   }
 
   if (search) {
-    query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,affiliation.ilike.%${search}%`)
+    // SECURITY: Escape LIKE pattern special characters to prevent pattern injection
+    const sanitizedSearch = search.replace(/[%_\\]/g, '\\$&')
+    query = query.or(`name.ilike.%${sanitizedSearch}%,email.ilike.%${sanitizedSearch}%,affiliation.ilike.%${sanitizedSearch}%`)
   }
 
   const { data, error, count } = await query

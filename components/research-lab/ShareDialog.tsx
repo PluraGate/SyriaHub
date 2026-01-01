@@ -48,10 +48,13 @@ export function ShareDialog({
     }, [currentToken, isPublic])
 
     const generateToken = () => {
+        // SECURITY: Use cryptographically secure random values instead of Math.random()
         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        const randomValues = new Uint32Array(16)
+        crypto.getRandomValues(randomValues)
         let token = ''
-        for (let i = 0; i < 12; i++) {
-            token += chars.charAt(Math.floor(Math.random() * chars.length))
+        for (let i = 0; i < 16; i++) {
+            token += chars.charAt(randomValues[i] % chars.length)
         }
         return token
     }

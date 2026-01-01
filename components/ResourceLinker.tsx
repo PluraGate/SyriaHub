@@ -181,7 +181,8 @@ export function ResourceLinker({
         try {
             // 1. Upload file to storage
             const fileExt = uploadFile.name.split('.').pop()
-            const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+            // SECURITY: Use crypto.randomUUID() for secure filename generation
+            const fileName = `${crypto.randomUUID()}.${fileExt}`
             const filePath = `${userId}/${fileName}`
 
             const { error: uploadError } = await supabase.storage

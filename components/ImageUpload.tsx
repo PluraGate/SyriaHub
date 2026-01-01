@@ -70,7 +70,8 @@ export function ImageUpload({
 
     const uploadImage = async (file: File | Blob) => {
         const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg'
-        const fileName = `${path ? path + '/' : ''}${Math.random().toString(36).substring(2)}.${fileExt}`
+        // SECURITY: Use crypto.randomUUID() for secure filename generation
+        const fileName = `${path ? path + '/' : ''}${crypto.randomUUID()}.${fileExt}`
         const filePath = fileName
 
         setUploading(true)

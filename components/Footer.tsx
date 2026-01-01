@@ -233,7 +233,7 @@ export function Footer() {
               {t('researchCommonsStatement')}
             </p>
             <p className="text-text-muted/80 dark:text-dark-text-muted/50 text-[11px] text-center">
-              © {currentYear} SyriaHub · {t('licensingNote')}
+              © <span suppressHydrationWarning>{currentYear}</span> SyriaHub · {t('licensingNote')}
             </p>
             <p className="text-text-muted/40 dark:text-dark-text-muted/30 text-[10px] text-center">
               {t('platformStage')} · {t('platformVersion')}

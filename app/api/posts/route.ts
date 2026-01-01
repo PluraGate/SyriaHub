@@ -10,6 +10,7 @@ import {
   getQueryParams,
   withErrorHandling,
   unauthorizedResponse,
+  sanitizePaginationParams,
 } from '@/lib/apiUtils'
 import { checkContent } from '@/lib/moderation'
 import { analyzePostForRecommendations } from '@/lib/recommendationAnalysis'
@@ -27,8 +28,8 @@ async function handleGetPosts(request: Request): Promise<NextResponse> {
   // Get query parameters
   const tag = params.get('tag')
   const authorId = params.get('author_id')
-  const limit = parseInt(params.get('limit') || '10', 10)
-  const offset = parseInt(params.get('offset') || '0', 10)
+  // SECURITY: Use sanitized pagination to prevent DoS
+  const { limit, offset } = sanitizePaginationParams(params, { maxLimit: 50, defaultLimit: 10 })
   const search = params.get('search')
 
   // Build query
@@ -51,7 +52,9 @@ async function handleGetPosts(request: Request): Promise<NextResponse> {
   }
 
   if (search) {
-    query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`)
+    // SECURITY: Escape LIKE pattern special characters to prevent pattern injection
+    const sanitizedSearch = search.replace(/[%_\\]/g, '\\$&')
+    query = query.or(`title.ilike.%${sanitizedSearch}%,content.ilike.%${sanitizedSearch}%`)
   }
 
   const { data, error, count } = await query
