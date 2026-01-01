@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { WifiOff, Cloud } from 'lucide-react'
 import { useServiceWorker } from '@/hooks/useServiceWorker'
 import { useTranslations } from 'next-intl'
@@ -10,7 +11,13 @@ import { useTranslations } from 'next-intl'
  */
 export function OfflineIndicator() {
     const t = useTranslations('PWA')
+    const pathname = usePathname()
     const { isOffline, pendingSync, isReady } = useServiceWorker()
+
+    // Hide on coming-soon page or when not needed
+    if (pathname?.includes('/coming-soon')) {
+        return null
+    }
 
     // Don't show anything if service worker isn't ready or we're online with no pending
     if (!isReady || (!isOffline && pendingSync === 0)) {
