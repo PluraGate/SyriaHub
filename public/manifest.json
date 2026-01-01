@@ -1,0 +1,85 @@
+{
+    "name": "SyriaHub",
+    "short_name": "SyriaHub",
+    "description": "Open research platform for Syria's reconstruction and cultural heritage preservation",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/icons/pluragate-logo.ico",
+            "sizes": "16x16 32x32 48x48 64x64 128x128 256x256",
+            "type": "image/x-icon",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "news",
+        "social"
+    ],
+    "lang": "en",
+    "dir": "ltr",
+    "prefer_related_applications": false,
+    "screenshots": [
+        {
+            "src": "/screenshots/home.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Home page showing featured research"
+        },
+        {
+            "src": "/screenshots/home-mobile.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Mobile view of SyriaHub home page"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "New Post",
+            "short_name": "Post",
+            "description": "Create a new research post",
+            "url": "/editor",
+            "icons": [
+                {
+                    "src": "/icons/new-post.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "My Feed",
+            "short_name": "Feed",
+            "description": "View your personalized feed",
+            "url": "/feed",
+            "icons": [
+                {
+                    "src": "/icons/feed.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "share_target": {
+        "action": "/share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
+}

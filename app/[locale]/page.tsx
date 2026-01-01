@@ -1,0 +1,347 @@
+import Link from 'next/link'
+import { ArrowRight, Sparkles, Search, Users } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
+import { SearchBar } from '@/components/SearchBar'
+import { TagsCloud } from '@/components/TagsCloud'
+
+import { ActivityFeedCompact } from '@/components/ActivityFeed'
+import { SocialProofBanner } from '@/components/SocialProofBanner'
+import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
+import { RelatedAuthors } from '@/components/RelatedAuthors'
+import { OnboardingModal } from '@/components/OnboardingModal'
+import { EpistemicOnboarding } from '@/components/EpistemicOnboarding'
+
+// New Editorial Components
+import { HeroEditorial } from '@/components/HeroEditorial'
+import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
+import { MagazineCard } from '@/components/MagazineCard'
+import { FeaturedPost } from '@/components/FeaturedPost'
+import { TrendingPosts } from '@/components/TrendingPosts'
+
+import { getTranslations, setRequestLocale } from 'next-intl/server'
+
+export const dynamic = 'force-dynamic';
+
+export default async function Home({
+  params
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const t = await getTranslations({ locale, namespace: 'Landing' });
+
+  // Fetch recent posts for feed preview
+  let recentPosts: any[] = []
+  let featuredPosts: any[] = []
+
+  const { data: allPosts } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      author:users!posts_author_id_fkey(id, name, email)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  if (allPosts) {
+    featuredPosts = allPosts.slice(0, 4)
+    recentPosts = allPosts.slice(4)
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
+      <Navbar user={user} />
+
+      <main className="flex-1">
+        {/* Epistemic Onboarding - shows on every homepage refresh for testing */}
+        <EpistemicOnboarding />
+
+        {user ? (
+          <>
+            {/* Onboarding Modal for New Users */}
+            <OnboardingModal
+              userId={user.id}
+              userEmail={user.email || ''}
+              userName={user.user_metadata?.name}
+            />
+
+            {/* Feed Section for Logged-in Users */}
+            <section className="section pt-20 md:pt-24">
+              <div className="container-custom max-w-7xl">
+                {/* Social Proof Banner */}
+                <div className="mb-8">
+                  <SocialProofBanner />
+                </div>
+
+                {/* Search Bar */}
+                <div className="mb-12 flex justify-center">
+                  <SearchBar />
+                </div>
+
+                {/* Tags Cloud */}
+                <div className="mb-16">
+                  <h2 className="text-2xl font-display font-semibold text-center mb-8 text-primary dark:text-dark-text">
+                    {t('popularTopics')}
+                  </h2>
+                  <TagsCloud />
+                </div>
+
+                {/* Featured Posts - Bento Grid */}
+                {featuredPosts.length > 0 && (
+                  <div className="mb-16">
+                    <div className="flex items-center justify-between mb-8">
+                      <h2 className="text-3xl font-display font-bold text-text dark:text-dark-text">
+                        {t('featured')}
+                      </h2>
+                      <Link
+                        href="/feed"
+                        className="text-primary dark:text-primary-light hover:text-primary-dark font-medium flex items-center gap-2 transition-colors"
+                      >
+                        {t('viewAll')}
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+
+                    <BentoGrid columns={4} gap="md">
+                      {/* Large featured post */}
+                      {featuredPosts[0] && (
+                        <BentoGridItem size="2x2">
+                          <FeaturedPost post={featuredPosts[0]} size="large" showTrending />
+                        </BentoGridItem>
+                      )}
+
+                      {/* Medium posts */}
+                      {featuredPosts[1] && (
+                        <BentoGridItem size="1x1">
+                          <FeaturedPost post={featuredPosts[1]} size="small" accentColor="accent" />
+                        </BentoGridItem>
+                      )}
+                      {featuredPosts[2] && (
+                        <BentoGridItem size="1x1">
+                          <FeaturedPost post={featuredPosts[2]} size="small" accentColor="secondary" />
+                        </BentoGridItem>
+                      )}
+
+                      {/* Horizontal card */}
+                      {featuredPosts[3] && (
+                        <BentoGridItem size="2x1">
+                          <MagazineCard post={featuredPosts[3]} variant="horizontal" className="h-full" />
+                        </BentoGridItem>
+                      )}
+                    </BentoGrid>
+                  </div>
+                )}
+
+                {/* Two-column layout: Recent posts + Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Main Content Column - Recent Posts as Magazine Cards */}
+                  <div className="lg:col-span-2 space-y-12">
+                    <div>
+                      <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-display font-semibold text-text dark:text-dark-text">
+                          {t('recentResearch')}
+                        </h2>
+                      </div>
+
+                      <div className="grid gap-6 md:grid-cols-2">
+                        {recentPosts.map((post: any) => (
+                          <MagazineCard key={post.id} post={post} variant="standard" />
+                        ))}
+                      </div>
+
+                      {recentPosts.length === 0 && featuredPosts.length === 0 && (
+                        <div className="text-center py-16 text-text-light dark:text-dark-text-muted">
+                          <p className="text-lg mb-4">{t('noPosts')}</p>
+                          <Link href="/editor" className="btn btn-primary">
+                            {t('createPost')}
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Suggested Posts Carousel */}
+                    <SuggestedPostsCarousel limit={6} />
+                  </div>
+
+                  {/* Sidebar Column - "Context Stack" */}
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide">
+                      {t('context')}
+                    </h3>
+
+                    {/* Active Discussions */}
+                    <div>
+                      <TrendingPosts />
+                    </div>
+
+                    {/* Recent Activity */}
+                    <div>
+                      <ActivityFeedCompact limit={5} />
+                    </div>
+
+                    {/* Related Researchers */}
+                    <div className="card p-4">
+                      <RelatedAuthors currentUserId={user.id} limit={4} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+
+          </>
+        ) : (
+          <>
+            {/* Hero Section - New Editorial Design */}
+            <HeroEditorial
+              title={t('heroTitle')}
+              subtitle={t('heroSubtitle')}
+              badge={t('badge')}
+              featuredPosts={featuredPosts}
+            />
+
+            {/* Featured Content - Bento Grid */}
+            {featuredPosts.length > 0 && (
+              <section className="section bg-gray-50 dark:bg-dark-surface/30">
+                <div className="container-custom max-w-7xl">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold text-text dark:text-dark-text mb-4">
+                      Latest Research
+                    </h2>
+                    <p className="text-lg text-text-light dark:text-dark-text-muted max-w-2xl mx-auto">
+                      Discover the latest publications from our community of researchers
+                    </p>
+                  </div>
+
+                  <BentoGrid columns={4} gap="lg">
+                    {featuredPosts[0] && (
+                      <BentoGridItem size="2x2">
+                        <FeaturedPost post={featuredPosts[0]} size="large" showTrending />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[1] && (
+                      <BentoGridItem size="1x2">
+                        <FeaturedPost post={featuredPosts[1]} size="medium" accentColor="accent" />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[2] && (
+                      <BentoGridItem size="1x1">
+                        <MagazineCard post={featuredPosts[2]} variant="compact" className="h-full" />
+                      </BentoGridItem>
+                    )}
+                    {featuredPosts[3] && (
+                      <BentoGridItem size="1x1">
+                        <MagazineCard post={featuredPosts[3]} variant="compact" className="h-full" />
+                      </BentoGridItem>
+                    )}
+                  </BentoGrid>
+
+                  <div className="text-center mt-12">
+                    <Link
+                      href="/explore"
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-2xl transition-all duration-200 shadow-sm hover:shadow-lg"
+                    >
+                      Explore All Research
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Features Section */}
+            <section className="section bg-white dark:bg-dark-bg">
+              <div className="container-custom max-w-6xl">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-bold text-text dark:text-dark-text mb-4">
+                    {t('featuresTitle')}
+                  </h2>
+                  <p className="text-lg text-text-light dark:text-dark-text-muted max-w-2xl mx-auto">
+                    {t('featuresSubtitle')}
+                  </p>
+                </div>
+
+                <div className="grid gap-8 md:grid-cols-3">
+                  {/* Feature 1 */}
+                  <div className="group p-8 rounded-2xl bg-gray-50 dark:bg-dark-surface border border-transparent hover:border-primary/20 transition-all duration-300">
+                    <div className="w-14 h-14 bg-primary/10 dark:bg-primary-light/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <Sparkles className="w-7 h-7 text-primary dark:text-primary-light" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 text-text dark:text-dark-text">
+                      {t('feature1Title')}
+                    </h3>
+                    <p className="text-text-light dark:text-dark-text-muted leading-relaxed">
+                      {t('feature1Desc')}
+                    </p>
+                  </div>
+
+                  {/* Feature 2 */}
+                  <div className="group p-8 rounded-2xl bg-gray-50 dark:bg-dark-surface border border-transparent hover:border-accent/20 transition-all duration-300">
+                    <div className="w-14 h-14 bg-accent/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <Search className="w-7 h-7 text-accent-dark" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 text-text dark:text-dark-text">
+                      {t('feature2Title')}
+                    </h3>
+                    <p className="text-text-light dark:text-dark-text-muted leading-relaxed">
+                      {t('feature2Desc')}
+                    </p>
+                  </div>
+
+                  {/* Feature 3 */}
+                  <div className="group p-8 rounded-2xl bg-gray-50 dark:bg-dark-surface border border-transparent hover:border-secondary/20 transition-all duration-300">
+                    <div className="w-14 h-14 bg-secondary/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <Users className="w-7 h-7 text-secondary-dark" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 text-text dark:text-dark-text">
+                      {t('feature3Title')}
+                    </h3>
+                    <p className="text-text-light dark:text-dark-text-muted leading-relaxed">
+                      {t('feature3Desc')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="section bg-gray-50 dark:bg-dark-surface/50">
+              <div className="container-custom max-w-4xl">
+                <div className="relative p-12 md:p-16 rounded-3xl overflow-hidden">
+                  {/* Background gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary-dark" />
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+
+                  <div className="relative z-10 text-center">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                      {t('ctaTitle')}
+                    </h2>
+                    <p className="text-lg text-white/80 max-w-xl mx-auto mb-8">
+                      {t('ctaDesc')}
+                    </p>
+                    <Link
+                      href="/auth/signup"
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-primary font-semibold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      {t('createAccount')}
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  )
+}
