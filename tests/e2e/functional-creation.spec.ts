@@ -7,7 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env.local') });
 
 // Mock User Data
 const MOCK_USER = {
-    id: 'test-user-id',
+    id: '00000000-0000-0000-0000-000000000000',
     aud: 'authenticated',
     role: 'authenticated',
     email: 'test@example.com',
@@ -83,10 +83,10 @@ test.describe('Functional Regression: Content Creation', () => {
                     status: 201,
                     contentType: 'application/json',
                     body: JSON.stringify({
-                        id: 'new-post-123',
+                        id: '11111111-1111-1111-1111-111111111111',
                         title: 'Test Post',
                         status: 'published',
-                        author_id: 'test-user-id'
+                        author_id: '00000000-0000-0000-0000-000000000000'
                     })
                 });
             } else if (method === 'PATCH') {
@@ -94,20 +94,20 @@ test.describe('Functional Regression: Content Creation', () => {
                 await route.fulfill({
                     status: 200,
                     contentType: 'application/json',
-                    body: JSON.stringify({ id: 'existing-post-123' })
+                    body: JSON.stringify({ id: '22222222-2222-2222-2222-222222222222' })
                 });
             } else if (method === 'GET') {
                 const url = route.request().url();
                 console.log(`[DEBUG] GET Request for Posts: ${url}`);
                 // Mock Fetching Single Post
                 // Check if it's a specific post fetch
-                if (url.includes('existing-post-123')) {
+                if (url.includes('22222222-2222-2222-2222-222222222222')) {
                     console.log('[DEBUG] Intercepted Existing Post Fetch');
                     await route.fulfill({
                         status: 200,
                         contentType: 'application/json',
                         body: JSON.stringify({
-                            id: 'existing-post-123',
+                            id: '22222222-2222-2222-2222-222222222222',
                             title: 'Existing Post Title',
                             content: 'Existing content for editing.',
                             content_type: 'article',
@@ -150,7 +150,7 @@ test.describe('Functional Regression: Content Creation', () => {
                 await route.fulfill({
                     status: 200,
                     contentType: 'application/json',
-                    body: JSON.stringify({ Key: 'covers/test-user-id/mock-image.png' })
+                    body: JSON.stringify({ Key: 'covers/00000000-0000-0000-0000-000000000000/mock-image.png' })
                 });
             } else {
                 await route.continue();
@@ -246,6 +246,10 @@ test.describe('Functional Regression: Content Creation', () => {
         await page.addInitScript(() => {
             window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
             window.localStorage.setItem('syriahub_test_auth_bypass', 'true');
+            // Force fast autosave for tests
+            const prefs = JSON.parse(window.localStorage.getItem('user_preferences') || '{}');
+            prefs.editor = { ...prefs.editor, autosave_interval: 1 };
+            window.localStorage.setItem('user_preferences', JSON.stringify(prefs));
         });
 
         // Navigate to Editor

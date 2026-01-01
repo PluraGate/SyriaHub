@@ -36,5 +36,11 @@ export async function GET(request: NextRequest) {
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${requestUrl.origin}${next}`)
+  // Sanitize 'next' to prevent open redirects (only allow internal relative paths)
+  let safeNext = '/feed'
+  if (next && next.startsWith('/') && !next.startsWith('//')) {
+    safeNext = next
+  }
+
+  return NextResponse.redirect(`${requestUrl.origin}${safeNext}`)
 }

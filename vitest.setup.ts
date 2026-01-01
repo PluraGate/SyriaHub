@@ -46,3 +46,12 @@ vi.mock('next-themes', () => ({
     }),
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
+
+// Mock next/image
+vi.mock('next/image', () => ({
+    __esModule: true,
+    default: (props: any) => {
+        // eslint-disable-next-line @next/next/no-img-element
+        return React.createElement('img', { ...props, src: props.src });
+    },
+}))
