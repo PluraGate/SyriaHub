@@ -24,8 +24,8 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-background-white dark:bg-dark-surface border-t border-gray-200 dark:border-dark-border mt-auto">
-      <div className="container-custom">
+    <footer className="bg-background-white dark:bg-dark-surface border-t border-gray-200 dark:border-dark-border mt-auto" suppressHydrationWarning>
+      <div className="container-custom" suppressHydrationWarning>
         {/* Main Footer Content - 3 columns max */}
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Brand Section */}
@@ -227,13 +227,13 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar - Research Commons Statement & Legal */}
-        <div className="py-4 border-t border-gray-200 dark:border-dark-border flex flex-col items-center gap-4">
+        <div className="py-4 border-t border-gray-200 dark:border-dark-border flex flex-col items-center gap-4" suppressHydrationWarning>
           <div className="space-y-2">
             <p className="text-text-muted/60 dark:text-dark-text-muted/40 text-[10px] text-center italic">
               {t('researchCommonsStatement')}
             </p>
-            <p className="text-text-muted/80 dark:text-dark-text-muted/50 text-[11px] text-center">
-              © <span suppressHydrationWarning>{currentYear}</span> SyriaHub · {t('licensingNote')}
+            <p className="text-text-muted/80 dark:text-dark-text-muted/50 text-[11px] text-center" suppressHydrationWarning>
+              © {currentYear} SyriaHub · {t('licensingNote')}
             </p>
             <p className="text-text-muted/40 dark:text-dark-text-muted/30 text-[10px] text-center">
               {t('platformStage')} · {t('platformVersion')}

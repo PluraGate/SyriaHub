@@ -43,22 +43,16 @@ test.describe('RTL (Arabic) Mode Support', () => {
     test('Arabic research lab page loads', async ({ page }) => {
         await page.goto('/ar/research-lab');
 
-        // Wait for page to load
-        await page.waitForLoadState('networkidle');
+        // Research lab is protected - should redirect to login
+        await expect(page).toHaveURL(/\/ar\/auth\/login/, { timeout: 10000 });
 
-        // Should load or redirect
-        const url = page.url();
-        expect(url).toMatch(/(research-lab|auth\/login)/);
-
-        // Check RTL direction is maintained (only if still on Arabic page)
-        if (url.includes('/ar/')) {
-            const isRTL = await page.evaluate(() => {
-                const html = document.documentElement;
-                return html.getAttribute('dir') === 'rtl' ||
-                    getComputedStyle(html).direction === 'rtl';
-            });
-            expect(isRTL).toBeTruthy();
-        }
+        // Check RTL direction is maintained on login page
+        const isRTL = await page.evaluate(() => {
+            const html = document.documentElement;
+            return html.getAttribute('dir') === 'rtl' ||
+                getComputedStyle(html).direction === 'rtl';
+        });
+        expect(isRTL).toBeTruthy();
     });
 
     test('Arabic polls page shows translated content', async ({ page }) => {

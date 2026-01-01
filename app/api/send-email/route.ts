@@ -4,21 +4,19 @@ import { createServerClient } from '@/lib/supabaseClient'
 
 export async function POST(request: NextRequest) {
     try {
-        // Verify the request is from Supabase Edge Function or authenticated
+        // SECURITY: Only allow service-role access to prevent abuse
+        // End users should not be able to send arbitrary emails
         const authHeader = request.headers.get('authorization')
-        const supabase = await createServerClient()
 
-        // Verify service role key or user session
-        if (authHeader?.startsWith('Bearer ')) {
-            const token = authHeader.substring(7)
-            const { data: { user }, error } = await supabase.auth.getUser(token)
-
-            // Allow if valid user or if it matches service role
-            if (error && token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-            }
-        } else {
+        if (!authHeader?.startsWith('Bearer ')) {
             return NextResponse.json({ error: 'Missing authorization' }, { status: 401 })
+        }
+
+        const token = authHeader.substring(7)
+
+        // Only accept service role key - no user tokens allowed
+        if (token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            return NextResponse.json({ error: 'Unauthorized - service role required' }, { status: 403 })
         }
 
         const { to, subject, html, text } = await request.json()
