@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Plus, PenLine, HelpCircle, Upload, X, Calendar, BookMarked, Vote } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -18,6 +19,7 @@ interface QuickAction {
 export function FloatingActionButton({ className }: { className?: string }) {
     const [isOpen, setIsOpen] = useState(false)
     const t = useTranslations('QuickActions')
+    const pathname = usePathname()
 
     const actions: QuickAction[] = [
         {
@@ -63,6 +65,11 @@ export function FloatingActionButton({ className }: { className?: string }) {
             iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
         },
     ]
+
+    // Hide on coming-soon page
+    if (pathname?.includes('/coming-soon')) {
+        return null
+    }
 
     return (
         <div className={cn('fixed bottom-6 right-6 z-50', className)}>

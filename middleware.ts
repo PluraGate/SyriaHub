@@ -56,6 +56,21 @@ function isRateLimited(ip: string) {
 }
 
 export async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+
+    // 0. Coming Soon Mode Gate
+    // When SYRIAHUB_MODE=coming-soon, redirect ALL routes to /coming-soon
+    // Exception: the coming-soon page itself, static assets, and API routes
+    const isComingSoonMode = process.env.SYRIAHUB_MODE === 'coming-soon';
+    const isComingSoonPage = pathname.includes('/coming-soon');
+    
+    if (isComingSoonMode && !isComingSoonPage) {
+        // Extract locale from pathname or default to 'ar'
+        const localeMatch = pathname.match(/^\/(en|ar)/);
+        const locale = localeMatch ? localeMatch[1] : 'ar';
+        return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
+    }
+
     // 1. Run next-intl middleware to get the localized response (redirects, etc.)
     const response = intlMiddleware(request);
 
@@ -63,7 +78,6 @@ export async function middleware(request: NextRequest) {
     const finalResponse = await updateSession(request, response);
 
     // 3. Protected routes check
-    const { pathname } = request.nextUrl;
     // SECURITY: Only allow test bypass in development environment
     const isTestBypass = process.env.NODE_ENV === 'development' && request.headers.get('x-test-bypass') === 'true';
 

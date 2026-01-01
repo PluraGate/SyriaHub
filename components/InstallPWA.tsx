@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Download, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,7 @@ interface BeforeInstallPromptEvent extends Event {
  */
 export function InstallPWA() {
     const t = useTranslations('PWA')
+    const pathname = usePathname()
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
     const [showBanner, setShowBanner] = useState(false)
 
@@ -58,6 +60,11 @@ export function InstallPWA() {
     const handleDismiss = () => {
         setShowBanner(false)
         localStorage.setItem('pwa-install-dismissed', 'true')
+    }
+
+    // Hide on coming-soon page
+    if (pathname?.includes('/coming-soon')) {
+        return null
     }
 
     if (!showBanner) return null
