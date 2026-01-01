@@ -235,6 +235,16 @@
             "tagline": "\"بناء أرشيف مشترك للحقيقة من أجل مستقبل سوريا.\""
         }
     },
+    "Help": {
+        "askTitle": "اطرح سؤالاً",
+        "askDesc": "احصل على إجابات من المجتمع",
+        "howToTitle": "كيفية المساهمة",
+        "howToDesc": "تعرف على تنسيقات الأبحاث",
+        "guidelinesTitle": "إرشادات المجتمع",
+        "guidelinesDesc": "بحث محترم وأخلاقي",
+        "supportTitle": "الدعم الفني",
+        "supportDesc": "تواصل مع فريق التطوير"
+    },
     "Feed": {
         "title": "الموجز",
         "liveFeed": "الموجز المباشر",
@@ -3188,7 +3198,8 @@
         "syncingPlural": "جارٍ مزامنة {count} عناصر...",
         "offlineTitle": "تعمل الآن في وضع عدم الاتصال",
         "offlineDescription": "انقطع الاتصال. تم الحفاظ على استمرارية القراءة عبر الذاكرة المحلية.",
-        "tryAgain": "إعادة الاتصال",
+        "tryAgain": "حاول مجدداً",
+        "backToHome": "العودة للرئيسية",
         "availableOffline": "مؤرشف لضمان المرونة ({count})",
         "byAuthor": "بواسطة {author}",
         "platformName": "منصة SyriaHub البحثية",
