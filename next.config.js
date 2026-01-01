@@ -54,12 +54,8 @@ const sentryWebpackPluginOptions = {
   sourcemaps: {
     ignore: [
       'node_modules/**',
-      '**/interception-route-rewrite-manifest.js',
-      '**/middleware-build-manifest.js',
-      '**/next-font-manifest.js',
-      '**/server-reference-manifest.js',
-      '**/build-manifest.js',
-      '**/react-loadable-manifest.js',
+      '**/*-manifest.js',
+      '**/*_client-reference-manifest.js',
     ],
   },
 
