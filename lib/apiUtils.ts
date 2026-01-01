@@ -112,6 +112,29 @@ export async function parseRequestBody<T>(request: Request): Promise<T> {
 }
 
 /**
+ * SECURITY: Validate and sanitize pagination parameters to prevent DoS attacks
+ * Enforces maximum limits and ensures non-negative values
+ */
+export function sanitizePaginationParams(
+  params: URLSearchParams,
+  options: { maxLimit?: number; defaultLimit?: number } = {}
+): { limit: number; offset: number } {
+  const { maxLimit = 100, defaultLimit = 20 } = options
+  
+  let limit = parseInt(params.get('limit') || String(defaultLimit), 10)
+  let offset = parseInt(params.get('offset') || '0', 10)
+  
+  // Ensure non-negative and within bounds
+  limit = Math.max(1, Math.min(limit, maxLimit))
+  offset = Math.max(0, offset)
+  
+  // Prevent extremely large offsets that could cause performance issues
+  offset = Math.min(offset, 10000)
+  
+  return { limit, offset }
+}
+
+/**
  * Get query parameters from URL
  */
 export function getQueryParams(request: Request): URLSearchParams {

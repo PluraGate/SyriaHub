@@ -192,13 +192,15 @@ async function fallbackTextSearch(
     startTime: number,
     userId?: string
 ) {
+    // SECURITY: Escape LIKE pattern special characters to prevent pattern injection
+    const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&')
     const { data, error } = await supabase
         .from('posts')
         .select(`
       id, title, content, tags, created_at,
       author:users!posts_author_id_fkey(name)
     `)
-        .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+        .or(`title.ilike.%${sanitizedQuery}%,content.ilike.%${sanitizedQuery}%`)
         .eq('status', 'published')
         .range(offset, offset + limit - 1)
 

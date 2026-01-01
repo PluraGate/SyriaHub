@@ -41,7 +41,8 @@ export async function middleware(request: NextRequest) {
 
     // 3. Protected routes check
     const { pathname } = request.nextUrl;
-    const isTestBypass = request.headers.get('x-test-bypass') === 'true';
+    // SECURITY: Only allow test bypass in development environment
+    const isTestBypass = process.env.NODE_ENV === 'development' && request.headers.get('x-test-bypass') === 'true';
 
     const PROTECTED_ROUTES = [
         '/editor',
@@ -86,7 +87,7 @@ export async function middleware(request: NextRequest) {
 
     // 5. Apply Security Headers
     const securityHeaders = {
-        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co;",
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co;",
         'X-Frame-Options': 'DENY',
         'X-Content-Type-Options': 'nosniff',
         'Referrer-Policy': 'strict-origin-when-cross-origin',

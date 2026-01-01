@@ -131,7 +131,8 @@ export default function UploadResourcePage() {
 
             // 1. Upload File
             const fileExt = file.name.split('.').pop()
-            const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+            // SECURITY: Use crypto.randomUUID() for secure filename generation
+            const fileName = `${crypto.randomUUID()}.${fileExt}`
             const filePath = `${user.id}/${fileName}`
 
             const { error: uploadError } = await supabase.storage

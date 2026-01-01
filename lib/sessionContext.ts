@@ -23,10 +23,19 @@ const SESSION_KEY = 'syriahub_research_context'
 const ONBOARDING_KEY = 'syriahub_epistemic_onboarding_shown'
 
 /**
- * Generate a unique session ID
+ * Generate a unique session ID using cryptographically secure random values
  */
 function generateSessionId(): string {
-    return `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    // SECURITY: Use crypto API for secure random generation
+    const randomBytes = new Uint8Array(8)
+    if (typeof crypto !== 'undefined') {
+        crypto.getRandomValues(randomBytes)
+    }
+    const randomPart = Array.from(randomBytes)
+        .map(b => b.toString(36))
+        .join('')
+        .substring(0, 9)
+    return `sess_${Date.now()}_${randomPart}`
 }
 
 /**

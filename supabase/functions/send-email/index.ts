@@ -9,7 +9,9 @@ const SMTP_PASS = Deno.env.get('SMTP_PASS')!
 const FROM_NAME = Deno.env.get('FROM_NAME') || 'SyriaHub via PluraGate'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    // SECURITY: Restrict CORS to known origins instead of wildcard
+    // In production, set ALLOWED_ORIGIN env variable to your domain
+    'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') || '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
