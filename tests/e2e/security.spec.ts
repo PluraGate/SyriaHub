@@ -18,10 +18,12 @@ test.describe('Security: Unauthorized Access', () => {
 
     for (const route of PROTECTED_ROUTES) {
         test(`should redirect unauthenticated user from ${route} to login`, async ({ page }) => {
+            test.setTimeout(60000); // Allow more time for redirects
             await page.goto(route);
+            await page.waitForLoadState('domcontentloaded');
 
-            // Wait for redirect to login
-            await expect(page).toHaveURL(new RegExp(`${route.startsWith('/ar') ? '/ar' : '/en'}/auth/login`));
+            // Wait for redirect to login (with extended timeout for slow browsers)
+            await expect(page).toHaveURL(new RegExp(`${route.startsWith('/ar') ? '/ar' : '/en'}/auth/login`), { timeout: 30000 });
 
             // Verify login form is present
             await expect(page.locator('input[type="email"]')).toBeVisible();

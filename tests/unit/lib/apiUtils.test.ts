@@ -69,7 +69,7 @@ describe('API Utils', () => {
         it('returns default values for empty params', () => {
             const params = new URLSearchParams()
             const result = sanitizePaginationParams(params)
-            
+
             expect(result.limit).toBeGreaterThan(0)
             expect(result.offset).toBe(0)
         })
@@ -77,7 +77,7 @@ describe('API Utils', () => {
         it('parses limit and offset from params', () => {
             const params = new URLSearchParams({ limit: '20', offset: '10' })
             const result = sanitizePaginationParams(params)
-            
+
             expect(result.limit).toBe(20)
             expect(result.offset).toBe(10)
         })
@@ -85,14 +85,14 @@ describe('API Utils', () => {
         it('respects maxLimit option', () => {
             const params = new URLSearchParams({ limit: '1000' })
             const result = sanitizePaginationParams(params, { maxLimit: 50 })
-            
+
             expect(result.limit).toBeLessThanOrEqual(50)
         })
 
         it('handles invalid numeric values', () => {
             const params = new URLSearchParams({ limit: 'invalid', offset: 'bad' })
             const result = sanitizePaginationParams(params)
-            
+
             // When parseInt fails (NaN), Math.max(1, NaN) returns NaN
             // This is a known limitation - invalid input returns NaN
             // Test that it doesn't throw
@@ -103,7 +103,7 @@ describe('API Utils', () => {
         it('prevents negative values', () => {
             const params = new URLSearchParams({ limit: '-10', offset: '-5' })
             const result = sanitizePaginationParams(params)
-            
+
             expect(result.limit).toBeGreaterThan(0)
             expect(result.offset).toBeGreaterThanOrEqual(0)
         })
@@ -116,7 +116,7 @@ describe('API Utils', () => {
         })
 
         it('throws when field is missing', () => {
-            const body = { title: 'Test' }
+            const body: Record<string, any> = { title: 'Test' }
             expect(() => validateRequiredFields(body, ['title', 'content'])).toThrow()
         })
 
@@ -126,7 +126,7 @@ describe('API Utils', () => {
         })
 
         it('throws error with field name in message', () => {
-            const body = { title: 'Test' }
+            const body: Record<string, any> = { title: 'Test' }
             expect(() => validateRequiredFields(body, ['title', 'content'])).toThrow(/content/)
         })
     })

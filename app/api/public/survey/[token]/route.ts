@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 import crypto from 'crypto'
 
 interface RouteParams {
@@ -100,7 +101,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // POST /api/public/survey/[token] - Submit anonymous response
-export async function POST(request: NextRequest, { params }: RouteParams) {
+// SECURITY: Apply rate limiting to prevent abuse
+async function handlePost(request: NextRequest, { params }: RouteParams) {
     const { token } = await params
     const supabase = await createClient()
     const fingerprint = getFingerprint(request)
@@ -196,3 +198,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         )
     }
 }
+
+// SECURITY: Apply rate limiting to anonymous survey responses (write rate - stricter)
+export const POST = withRateLimit('write')(handlePost as any)

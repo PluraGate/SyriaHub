@@ -1,7 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { withRateLimit } from '@/lib/rateLimit'
+import { validateOrigin } from '@/lib/apiUtils'
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     const supabase = await createClient()
 
     // 1. Check authentication
@@ -56,3 +63,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
+
+// SECURITY: Apply rate limiting to plagiarism checks (AI rate - stricter)
+export const POST = withRateLimit('ai')(handlePost)

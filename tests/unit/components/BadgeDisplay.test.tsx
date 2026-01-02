@@ -6,31 +6,37 @@ describe('BadgeDisplay', () => {
     const mockBadges = [
         {
             id: '1',
+            user_id: 'user-1',
+            badge_id: 'badge-1',
+            awarded_at: '2025-12-01',
             badge: {
                 id: 'badge-1',
                 name: 'Early Adopter',
                 description: 'Joined during beta',
                 icon_url: 'star',
-                color: '#FFD700',
+                criteria: {},
+                created_at: '2025-01-01',
             },
-            earned_at: '2025-12-01',
         },
         {
             id: '2',
+            user_id: 'user-1',
+            badge_id: 'badge-2',
+            awarded_at: '2025-12-05',
             badge: {
                 id: 'badge-2',
                 name: 'First Post',
                 description: 'Published first article',
                 icon_url: 'check_circle',
-                color: '#4CAF50',
+                criteria: {},
+                created_at: '2025-01-01',
             },
-            earned_at: '2025-12-05',
         },
     ]
 
     it('renders badges correctly', () => {
         render(<BadgeDisplay badges={mockBadges} />)
-        
+
         // Check that badge tooltips contain the name and description
         expect(screen.getByText(/Early Adopter/)).toBeInTheDocument()
         expect(screen.getByText(/First Post/)).toBeInTheDocument()

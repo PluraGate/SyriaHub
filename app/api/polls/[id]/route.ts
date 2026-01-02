@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface RouteParams {
     params: Promise<{ id: string }>
@@ -50,7 +52,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PUT /api/polls/[id] - Update poll
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+async function handlePut(request: NextRequest, { params }: RouteParams) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
@@ -146,7 +153,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/polls/[id] - Delete poll
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+async function handleDelete(request: NextRequest, { params }: RouteParams) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
@@ -187,3 +199,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true })
 }
+
+export const PUT = withRateLimit('write')(handlePut)
+export const DELETE = withRateLimit('write')(handleDelete)

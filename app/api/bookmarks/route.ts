@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Fetch user's bookmarks
 export async function GET(request: NextRequest) {
@@ -43,7 +45,12 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Add a bookmark
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -94,7 +101,12 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE: Remove a bookmark
-export async function DELETE(request: NextRequest) {
+async function handleDelete(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -133,3 +145,7 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
+
+// SECURITY: Apply rate limiting to all mutation endpoints
+export const POST = withRateLimit('write')(handlePost)
+export const DELETE = withRateLimit('write')(handleDelete)

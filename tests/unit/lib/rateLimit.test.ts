@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { 
-    checkRateLimit, 
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import {
+    checkRateLimit,
     RATE_LIMIT_CONFIGS,
-    type RateLimitType 
+    type RateLimitType
 } from '@/lib/rateLimit'
 
 describe('checkRateLimit', () => {
@@ -19,29 +19,29 @@ describe('checkRateLimit', () => {
         it('allows requests under the limit', () => {
             const ip = `test-ip-${Date.now()}-${Math.random()}`
             const result = checkRateLimit(null, ip, 'read')
-            
+
             expect(result.success).toBe(true)
             expect(result.remaining).toBe(RATE_LIMIT_CONFIGS.read.maxRequests - 1)
         })
 
         it('returns remaining count after each request', () => {
             const ip = `test-ip-${Date.now()}-${Math.random()}`
-            
+
             const result1 = checkRateLimit(null, ip, 'read')
             expect(result1.remaining).toBe(99) // 100 - 1
-            
+
             const result2 = checkRateLimit(null, ip, 'read')
             expect(result2.remaining).toBe(98) // 100 - 2
         })
 
         it('blocks requests when limit is exceeded', () => {
             const ip = `test-ip-${Date.now()}-${Math.random()}`
-            
+
             // Exhaust the limit
             for (let i = 0; i < RATE_LIMIT_CONFIGS.auth.maxRequests; i++) {
                 checkRateLimit(null, ip, 'auth')
             }
-            
+
             // Next request should be blocked
             const result = checkRateLimit(null, ip, 'auth')
             expect(result.success).toBe(false)
@@ -66,11 +66,11 @@ describe('checkRateLimit', () => {
         it('uses user ID when provided', () => {
             const userId = `user-${Date.now()}`
             const ip = `ip-${Date.now()}`
-            
+
             // Make requests as user
             checkRateLimit(userId, ip, 'read')
             checkRateLimit(userId, ip, 'read')
-            
+
             // Same user, different IP should share limit
             const result = checkRateLimit(userId, 'different-ip', 'read')
             expect(result.remaining).toBe(97) // 100 - 3
@@ -79,11 +79,11 @@ describe('checkRateLimit', () => {
         it('uses IP when user ID is null', () => {
             const ip1 = `ip1-${Date.now()}`
             const ip2 = `ip2-${Date.now()}`
-            
+
             // Make requests from ip1
             checkRateLimit(null, ip1, 'read')
             checkRateLimit(null, ip1, 'read')
-            
+
             // ip2 should have fresh limit
             const result = checkRateLimit(null, ip2, 'read')
             expect(result.remaining).toBe(99) // 100 - 1
@@ -94,18 +94,18 @@ describe('checkRateLimit', () => {
         it('includes resetAt timestamp', () => {
             const ip = `test-ip-${Date.now()}`
             const result = checkRateLimit(null, ip, 'read')
-            
+
             expect(result.resetAt).toBeGreaterThan(Date.now())
         })
 
         it('includes retryAfter when blocked', () => {
             const ip = `test-ip-${Date.now()}-${Math.random()}`
-            
+
             // Exhaust auth limit (10 requests)
             for (let i = 0; i < RATE_LIMIT_CONFIGS.auth.maxRequests; i++) {
                 checkRateLimit(null, ip, 'auth')
             }
-            
+
             const result = checkRateLimit(null, ip, 'auth')
             expect(result.success).toBe(false)
             expect(result.retryAfter).toBeDefined()

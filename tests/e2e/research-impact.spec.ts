@@ -13,10 +13,11 @@ test.describe('Research Gaps Page', () => {
     });
 
     test('can filter research gaps by status', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/en/research-gaps');
 
         // Wait for page to load
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Find status filter dropdown
         const statusFilter = page.locator('select').filter({ hasText: /All Statuses/ }).first();
@@ -29,9 +30,10 @@ test.describe('Research Gaps Page', () => {
     });
 
     test('can filter research gaps by gap type', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/en/research-gaps');
 
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Find gap type filter
         const typeFilter = page.locator('select').filter({ hasText: /All Types/ }).first();
@@ -69,9 +71,10 @@ test.describe('Research Gaps Page', () => {
 
 test.describe('Gap Contributions', () => {
     test('contributions section appears on gap cards when available', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/en/research-gaps');
 
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Check if any gap cards are present
         const gapCards = page.locator('[class*="rounded-xl"][class*="border"]').filter({

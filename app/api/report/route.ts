@@ -8,7 +8,9 @@ import {
   parseRequestBody,
   validateRequiredFields,
   withErrorHandling,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface CreateManualReportInput {
   content_type: 'post' | 'comment'
@@ -21,6 +23,11 @@ interface CreateManualReportInput {
  * Create a manual report for a post or comment
  */
 async function handleCreateReport(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   // Verify authentication
   const user = await verifyAuth()
 
@@ -168,4 +175,4 @@ async function handleCreateReport(request: Request): Promise<NextResponse> {
   }
 }
 
-export const POST = withErrorHandling(handleCreateReport)
+export const POST = withRateLimit('report')(withErrorHandling(handleCreateReport))

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 import OpenAI from 'openai'
 
 const openai = new OpenAI({
@@ -9,7 +10,7 @@ const openai = new OpenAI({
 // ============================================
 // POST: Semantic search with explainability
 // ============================================
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     const startTime = Date.now()
 
     try {
@@ -341,3 +342,5 @@ function truncateText(text: string, maxLength: number): string {
     if (text.length <= maxLength) return text
     return text.substring(0, maxLength).trim() + '...'
 }
+
+export const POST = withRateLimit('ai')(handlePost)
