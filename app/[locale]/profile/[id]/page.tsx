@@ -44,6 +44,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
   const stats = (statsData || {}) as {
     post_count?: number
+    event_count?: number
     comment_count?: number
     citation_count?: number
     group_count?: number
@@ -191,6 +192,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
           profile={displayProfile}
           stats={{
             post_count: Number(stats?.post_count || 0),
+            event_count: Number(stats?.event_count || 0),
             comment_count: Number(stats?.comment_count || 0),
             citation_count: Number(stats?.citation_count || 0),
             group_count: Number(stats?.group_count || 0),

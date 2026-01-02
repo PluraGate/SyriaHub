@@ -4,7 +4,7 @@
   "description": "SyriaHub - A minimalist research platform for collaborative knowledge sharing",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

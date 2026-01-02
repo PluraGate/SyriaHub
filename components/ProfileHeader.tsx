@@ -6,7 +6,7 @@ import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
 import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
-import { MapPin, Link as LinkIcon, Building2, Calendar, Users, FileText, Quote, Zap, GraduationCap, Mail } from 'lucide-react'
+import { MapPin, Link as LinkIcon, Building2, Calendar, CalendarDays, Users, FileText, Quote, Zap, GraduationCap, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
@@ -252,11 +252,19 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                         mounted={mounted}
                     />
                     <StatItem
+                        icon={CalendarDays}
+                        value={stats?.event_count || 0}
+                        label="Events"
+                        maxValue={20}
+                        color="secondary"
+                        mounted={mounted}
+                    />
+                    <StatItem
                         icon={Quote}
                         value={stats?.citation_count || 0}
                         label="Citations"
                         maxValue={100}
-                        color="secondary"
+                        color="accent"
                         mounted={mounted}
                     />
                     <StatItem
