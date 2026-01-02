@@ -10,7 +10,9 @@ import {
   getQueryParams,
   withErrorHandling,
   forbiddenResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface CreateTagInput {
   label: string
@@ -57,6 +59,11 @@ async function handleGetTags(request: Request): Promise<NextResponse> {
  * Create a new tag (authenticated users)
  */
 async function handleCreateTag(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   // Check if user is moderator or admin
   const canManageTags = await isModerator()
   
@@ -102,4 +109,4 @@ export const GET = withErrorHandling(handleGetTags, {
     staleWhileRevalidate: 900,
   },
 })
-export const POST = withErrorHandling(handleCreateTag)
+export const POST = withRateLimit('write')(withErrorHandling(handleCreateTag))

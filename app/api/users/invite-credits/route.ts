@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // GET /api/users/invite-credits - View credit balance
 export async function GET() {
@@ -43,7 +45,12 @@ export async function GET() {
 }
 
 // POST /api/users/invite-credits - Create invite using credit
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -160,3 +167,5 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

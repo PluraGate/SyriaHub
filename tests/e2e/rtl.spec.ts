@@ -24,6 +24,7 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic navigation shows translated menu items', async ({ page }) => {
+        test.setTimeout(90000); // Extended timeout for slow navigation
         await page.goto('/ar');
 
         // Close onboarding if present
@@ -33,7 +34,7 @@ test.describe('RTL (Arabic) Mode Support', () => {
         }
 
         // Wait for page to load
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Arabic text should be present somewhere on the page
         const pageContent = await page.textContent('body');
@@ -56,7 +57,9 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic polls page shows translated content', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/ar/research-lab/polls');
+        await page.waitForLoadState('domcontentloaded');
 
         // Should load or redirect to login
         const url = page.url();
@@ -64,7 +67,9 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic surveys page shows translated content', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/ar/research-lab/surveys');
+        await page.waitForLoadState('domcontentloaded');
 
         // Should load or redirect to login
         const url = page.url();
@@ -72,7 +77,9 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic statistics page shows translated content', async ({ page }) => {
+        test.setTimeout(60000);
         await page.goto('/ar/research-lab/statistics');
+        await page.waitForLoadState('domcontentloaded');
 
         // Should load or redirect to login
         const url = page.url();

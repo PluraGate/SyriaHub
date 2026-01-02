@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
+import { validateOrigin } from '@/lib/apiUtils'
 
 // GET /api/polls - Get all active polls
 export async function GET(request: NextRequest) {
@@ -25,7 +27,12 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/polls - Create a new poll
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     const supabase = await createClient()
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -88,3 +95,6 @@ export async function POST(request: NextRequest) {
         )
     }
 }
+
+// SECURITY: Apply rate limiting to poll creation
+export const POST = withRateLimit('write')(handlePost)

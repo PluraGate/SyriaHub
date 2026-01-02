@@ -8,7 +8,9 @@ import {
   parseRequestBody,
   validateRequiredFields,
   withErrorHandling,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface CreateRoleInput {
   name: string
@@ -39,6 +41,11 @@ async function handleGetRoles(request: Request): Promise<NextResponse> {
  * Create a new role (admin only)
  */
 async function handleCreateRole(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   // Verify user is admin
   await verifyRole('admin')
 
@@ -72,4 +79,4 @@ async function handleCreateRole(request: Request): Promise<NextResponse> {
 }
 
 export const GET = withErrorHandling(handleGetRoles)
-export const POST = withErrorHandling(handleCreateRole)
+export const POST = withRateLimit('write')(withErrorHandling(handleCreateRole))

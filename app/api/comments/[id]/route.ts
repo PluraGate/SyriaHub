@@ -10,7 +10,9 @@ import {
   withErrorHandling,
   notFoundResponse,
   forbiddenResponse,
+  withOriginValidation,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface UpdateCommentInput {
   content: string
@@ -128,5 +130,5 @@ async function handleDeleteComment(
   return successResponse({ message: 'Comment deleted successfully' })
 }
 
-export const PUT = withErrorHandling(handleUpdateComment)
-export const DELETE = withErrorHandling(handleDeleteComment)
+export const PUT = withRateLimit('write')(withOriginValidation(withErrorHandling(handleUpdateComment)))
+export const DELETE = withRateLimit('write')(withOriginValidation(withErrorHandling(handleDeleteComment)))

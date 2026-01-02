@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function POST(
+async function handlePost(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const { id } = await params
         const supabase = await createClient()
@@ -38,3 +44,5 @@ export async function POST(
         )
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

@@ -9,7 +9,9 @@ import {
   extractIdFromParams,
   withErrorHandling,
   notFoundResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import type { ReportStatus } from '@/types'
 
 interface UpdateReportInput {
@@ -26,6 +28,11 @@ async function handleUpdateReport(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const reportId = extractIdFromParams({ id })
   
@@ -117,6 +124,11 @@ async function handleDeleteReport(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const reportId = extractIdFromParams({ id })
   
@@ -141,5 +153,5 @@ async function handleDeleteReport(
   return successResponse({ message: 'Report deleted successfully' })
 }
 
-export const PUT = withErrorHandling(handleUpdateReport)
-export const DELETE = withErrorHandling(handleDeleteReport)
+export const PUT = withRateLimit('write')(withErrorHandling(handleUpdateReport))
+export const DELETE = withRateLimit('write')(withErrorHandling(handleDeleteReport))

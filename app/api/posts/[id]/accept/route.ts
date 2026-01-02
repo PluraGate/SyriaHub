@@ -1,10 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { validateOrigin } from '@/lib/apiUtils'
 
 export async function POST(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     const { id: answerId } = await params
     const supabase = await createClient()
 

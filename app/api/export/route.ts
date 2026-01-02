@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function GET(request: NextRequest) {
+async function handleGet(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const postId = searchParams.get('id')
@@ -151,8 +152,12 @@ ${post.content}
 }
 
 function generateHTML(post: any, authorName: string, publishedDate: string): string {
+  // SECURITY: Escape all user content to prevent XSS
+  const safeTitle = escapeHtml(post.title)
+  const safeAuthor = escapeHtml(authorName)
+  const safeLicense = escapeHtml(post.license || 'CC-BY-4.0')
   const tags = post.tags?.length
-    ? post.tags.map((t: string) => `<span class="tag">#${t}</span>`).join(' ')
+    ? post.tags.map((t: string) => `<span class="tag">#${escapeHtml(t)}</span>`).join(' ')
     : ''
 
   return `<!DOCTYPE html>
@@ -160,7 +165,7 @@ function generateHTML(post: any, authorName: string, publishedDate: string): str
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${post.title} - SyriaHub</title>
+  <title>${safeTitle} - SyriaHub</title>
   <style>
     :root {
       --primary: #6366f1;
@@ -244,9 +249,9 @@ function generateHTML(post: any, authorName: string, publishedDate: string): str
 </head>
 <body>
   <header>
-    <h1>${post.title}</h1>
+    <h1>${safeTitle}</h1>
     <div class="meta">
-      <span><strong>Author:</strong> ${authorName}</span>
+      <span><strong>Author:</strong> ${safeAuthor}</span>
       <span><strong>Published:</strong> ${publishedDate}</span>
     </div>
     ${tags ? `<div class="tags">${tags}</div>` : ''}
@@ -256,14 +261,41 @@ function generateHTML(post: any, authorName: string, publishedDate: string): str
   </article>
   <footer>
     <p>Exported from <a href="https://syriahub.com">SyriaHub</a> on ${new Date().toLocaleDateString()}</p>
-    <p>License: ${post.license || 'CC-BY-4.0'}</p>
+    <p>License: ${safeLicense}</p>
   </footer>
 </body>
 </html>`
 }
 
+/**
+ * SECURITY: Escape HTML special characters to prevent XSS
+ * This must be applied to all user-generated content before inserting into HTML
+ */
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+/**
+ * SECURITY: Sanitize URLs to prevent javascript: and data: attacks
+ */
+function sanitizeUrl(url: string): string {
+  const trimmedUrl = url.trim().toLowerCase()
+  if (trimmedUrl.startsWith('javascript:') || trimmedUrl.startsWith('data:') || trimmedUrl.startsWith('vbscript:')) {
+    return '#blocked-unsafe-url'
+  }
+  return escapeHtml(url)
+}
+
 function convertMarkdownToBasicHTML(markdown: string): string {
-  return markdown
+  // SECURITY: First escape ALL HTML in user content to prevent XSS
+  const escaped = escapeHtml(markdown)
+  
+  return escaped
     // Headers
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
@@ -276,9 +308,9 @@ function convertMarkdownToBasicHTML(markdown: string): string {
     .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // Blockquotes
-    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-    // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/^&gt; (.*$)/gm, '<blockquote>$1</blockquote>')
+    // Links - use sanitizeUrl to prevent javascript: URLs
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => `<a href="${sanitizeUrl(url)}">${text}</a>`)
     // Lists
     .replace(/^\- (.*$)/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
@@ -393,3 +425,6 @@ function generateRIS(post: any, authorName: string, postId: string): string {
 
   return lines.join('\n') + '\n'
 }
+
+// SECURITY: Apply rate limiting to prevent export abuse (read rate)
+export const GET = withRateLimit('read')(handleGet)
