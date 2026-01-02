@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // Track post view
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         const body = await request.json()
         const { postId, sessionId, duration, scrollDepth, referrer } = body
@@ -36,6 +37,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
 }
+
+export const POST = withRateLimit('read')(handlePost)
 
 // Get post analytics (for post authors)
 export async function GET(request: NextRequest) {

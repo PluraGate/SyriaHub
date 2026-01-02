@@ -8,7 +8,9 @@ import {
   withErrorHandling,
   notFoundResponse,
   forbiddenResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 /**
  * DELETE /api/citations/[id]
@@ -18,6 +20,11 @@ async function handleDeleteCitation(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const citationId = extractIdFromParams({ id })
   
@@ -62,4 +69,4 @@ async function handleDeleteCitation(
   return successResponse({ message: 'Citation deleted successfully' })
 }
 
-export const DELETE = withErrorHandling(handleDeleteCitation)
+export const DELETE = withRateLimit('write')(withErrorHandling(handleDeleteCitation))

@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // POST /api/polls/[id]/vote - Submit a vote
-export async function POST(
+async function handlePost(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     const { id: pollId } = await params
     const supabase = await createClient()
 
@@ -111,3 +118,6 @@ export async function POST(
         )
     }
 }
+
+// SECURITY: Apply rate limiting to vote endpoint (write rate)
+export const POST = withRateLimit('write')(handlePost as any)

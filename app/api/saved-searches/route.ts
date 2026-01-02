@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Fetch user's saved searches
 export async function GET(request: NextRequest) {
@@ -31,7 +33,12 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Save a new search
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -76,7 +83,12 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE: Remove a saved search
-export async function DELETE(request: NextRequest) {
+async function handleDelete(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -112,7 +124,12 @@ export async function DELETE(request: NextRequest) {
 }
 
 // PATCH: Update a saved search (pin, add notes, etc.)
-export async function PATCH(request: NextRequest) {
+async function handlePatch(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -153,3 +170,8 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
+
+// SECURITY: Apply rate limiting to all mutation endpoints
+export const POST = withRateLimit('write')(handlePost)
+export const DELETE = withRateLimit('write')(handleDelete)
+export const PATCH = withRateLimit('write')(handlePatch)

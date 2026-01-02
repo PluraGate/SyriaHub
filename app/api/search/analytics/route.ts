@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // POST: Log a search query for analytics
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         const {
             query,
@@ -54,6 +55,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false })
     }
 }
+
+export const POST = withRateLimit('read')(handlePost)
 
 // GET: Get search analytics (admin only)
 export async function GET(request: NextRequest) {

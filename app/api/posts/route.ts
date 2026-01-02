@@ -11,7 +11,9 @@ import {
   withErrorHandling,
   unauthorizedResponse,
   sanitizePaginationParams,
+  withOriginValidation,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import { checkContent } from '@/lib/moderation'
 import { analyzePostForRecommendations } from '@/lib/recommendationAnalysis'
 import type { CreatePostInput } from '@/types'
@@ -194,4 +196,5 @@ export const GET = withErrorHandling(handleGetPosts, {
     staleWhileRevalidate: 300,
   },
 })
-export const POST = withErrorHandling(handleCreatePost)
+// SECURITY: Apply rate limiting and origin validation for CSRF protection
+export const POST = withRateLimit('write')(withOriginValidation(withErrorHandling(handleCreatePost)))

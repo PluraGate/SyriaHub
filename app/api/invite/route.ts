@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
+import { validateOrigin } from '@/lib/apiUtils'
 
 // Generate a random invite code in XXXX-XXXX format
 function generateInviteCode(): string {
@@ -40,7 +42,12 @@ export async function GET(request: NextRequest) {
 }
 
 // Create a new invite code (for authenticated users)
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -130,3 +137,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
 }
+
+// SECURITY: Apply rate limiting to invite creation (write rate)
+export const POST = withRateLimit('write')(handlePost)

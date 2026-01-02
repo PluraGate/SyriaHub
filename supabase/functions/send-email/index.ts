@@ -8,17 +8,44 @@ const SMTP_USER = Deno.env.get('SMTP_USER') || 'admin@pluragate.org'
 const SMTP_PASS = Deno.env.get('SMTP_PASS')!
 const FROM_NAME = Deno.env.get('FROM_NAME') || 'SyriaHub via PluraGate'
 
+// SECURITY: Get allowed origin - MUST be set in production, no fallback to '*'
+const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN')
+if (!ALLOWED_ORIGIN) {
+    console.warn('WARNING: ALLOWED_ORIGIN not set. Defaulting to SITE_URL for security.')
+}
+const CORS_ORIGIN = ALLOWED_ORIGIN || Deno.env.get('SITE_URL') || 'https://syriahub.com'
+
 const corsHeaders = {
-    // SECURITY: Restrict CORS to known origins instead of wildcard
-    // In production, set ALLOWED_ORIGIN env variable to your domain
-    'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') || '*',
+    // SECURITY: Restrict CORS to known origin only - never use wildcard in production
+    'Access-Control-Allow-Origin': CORS_ORIGIN,
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 Deno.serve(async (req) => {
     // Handle CORS preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
+    }
+
+    // SECURITY: Require authentication - only allow service role or valid JWT
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+        return new Response(
+            JSON.stringify({ error: 'Missing authorization header' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+        )
+    }
+    
+    const token = authHeader.substring(7)
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    
+    // Only allow service role key - this function should only be called from backend
+    if (token !== serviceRoleKey) {
+        return new Response(
+            JSON.stringify({ error: 'Unauthorized - service role required' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+        )
     }
 
     try {

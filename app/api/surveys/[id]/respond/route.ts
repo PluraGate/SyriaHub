@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface RouteParams {
     params: Promise<{ id: string }>
 }
 
 // POST /api/surveys/[id]/respond - Submit survey response
-export async function POST(request: NextRequest, { params }: RouteParams) {
+async function handlePost(request: NextRequest, { params }: RouteParams) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
@@ -99,3 +106,5 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         )
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

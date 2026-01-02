@@ -10,7 +10,9 @@ import {
   getQueryParams,
   withErrorHandling,
   forbiddenResponse,
+  withOriginValidation,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import type { CreateReportInput } from '@/types'
 
 /**
@@ -141,4 +143,5 @@ async function handleCreateReport(request: Request): Promise<NextResponse> {
 }
 
 export const GET = withErrorHandling(handleGetReports)
-export const POST = withErrorHandling(handleCreateReport)
+// SECURITY: Apply rate limiting (report type - stricter) and origin validation for CSRF
+export const POST = withRateLimit('report')(withOriginValidation(withErrorHandling(handleCreateReport)))

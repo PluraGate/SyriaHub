@@ -1,7 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     const { id } = await params
     const { value } = await request.json()
     const supabase = await createClient()
@@ -40,3 +47,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     return NextResponse.json({ voteCount: post?.vote_count || 0 })
 }
+
+// SECURITY: Apply rate limiting to vote endpoint (write rate)
+export const POST = withRateLimit('write')(handlePost as any)

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface RouteParams {
     params: Promise<{ threadId: string }>
@@ -47,7 +49,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PATCH /api/coordination/[threadId] - Update thread (archive, priority, etc.)
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+async function handlePatch(request: NextRequest, { params }: RouteParams) {
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { threadId } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -133,3 +139,5 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
     }
 }
+
+export const PATCH = withRateLimit('write')(handlePatch)

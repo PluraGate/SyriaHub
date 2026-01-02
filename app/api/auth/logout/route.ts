@@ -5,9 +5,15 @@ import {
   successResponse,
   errorResponse,
   withErrorHandling,
+  validateOrigin,
 } from '@/lib/apiUtils'
 
 async function handleLogout(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const supabase = await createServerClient()
   
   const { error } = await supabase.auth.signOut()

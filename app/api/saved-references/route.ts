@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Fetch user's saved references
 export async function GET() {
@@ -31,7 +33,12 @@ export async function GET() {
 }
 
 // POST: Save a new reference
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -88,7 +95,12 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE: Remove a saved reference
-export async function DELETE(request: NextRequest) {
+async function handleDelete(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -127,3 +139,6 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)
+export const DELETE = withRateLimit('write')(handleDelete)

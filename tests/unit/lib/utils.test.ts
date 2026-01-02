@@ -7,7 +7,9 @@ describe('cn (className merge utility)', () => {
     })
 
     it('handles conditional classes', () => {
-        expect(cn('base', true && 'active', false && 'hidden')).toBe('base active')
+        const isActive = true;
+        const isHidden = false;
+        expect(cn('base', isActive && 'active', isHidden && 'hidden')).toBe('base active')
     })
 
     it('merges tailwind classes correctly (last wins)', () => {
