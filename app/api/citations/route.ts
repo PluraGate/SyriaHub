@@ -10,7 +10,9 @@ import {
   getQueryParams,
   withErrorHandling,
   forbiddenResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface CreateInternalCitationInput {
   source_post_id: string
@@ -96,6 +98,11 @@ async function handleGetCitations(request: Request): Promise<NextResponse> {
  * Supports both internal (SyriaHub post) and external (DOI/URL) citations
  */
 async function handleCreateCitation(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   // Verify authentication
   const user = await verifyAuth()
 
@@ -253,4 +260,4 @@ export const GET = withErrorHandling(handleGetCitations, {
     staleWhileRevalidate: 900,
   },
 })
-export const POST = withErrorHandling(handleCreateCitation)
+export const POST = withRateLimit('write')(withErrorHandling(handleCreateCitation))

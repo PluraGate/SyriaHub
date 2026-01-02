@@ -60,6 +60,7 @@ test.describe('Full System Verification', () => {
     test.describe('Feature Discovery', () => {
         test('explore page features tags and publications', async ({ page }) => {
             await page.goto('/en/explore');
+            await page.waitForLoadState('domcontentloaded');
 
             // Check for search input with broader selector
             const searchInput = page.locator('input[type="search"], [placeholder*="search" i], [placeholder*="بحث" i]').first();
@@ -70,25 +71,33 @@ test.describe('Full System Verification', () => {
         });
 
         test('research lab sections: polls accessibility', async ({ page }) => {
+            test.setTimeout(60000);
             await page.goto('/en/research-lab/polls');
+            await page.waitForLoadState('domcontentloaded');
             const url = page.url();
             expect(url).toMatch(/polls|auth\/login|login/i);
         });
 
         test('research lab sections: surveys accessibility', async ({ page }) => {
+            test.setTimeout(60000);
             await page.goto('/en/research-lab/surveys');
+            await page.waitForLoadState('domcontentloaded');
             const url = page.url();
             expect(url).toMatch(/surveys|auth\/login|login/i);
         });
 
         test('research lab sections: statistics accessibility', async ({ page }) => {
+            test.setTimeout(60000);
             await page.goto('/en/research-lab/statistics');
+            await page.waitForLoadState('domcontentloaded');
             const url = page.url();
             expect(url).toMatch(/statistics|auth\/login|login/i);
         });
 
         test('research lab sections: search accessibility', async ({ page }) => {
+            test.setTimeout(60000);
             await page.goto('/en/research-lab/search');
+            await page.waitForLoadState('domcontentloaded');
             const url = page.url();
             // The search page might redirect to /search directly or have a different path structure
             // Just checking if we are not on a 404 or completely different domain

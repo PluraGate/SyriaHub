@@ -126,7 +126,7 @@ export async function middleware(request: NextRequest) {
     // Note: 'unsafe-inline' required for Next.js hydration scripts
     // 'unsafe-eval' required for map libraries (Leaflet/Mapbox)
     const securityHeaders = {
-        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org;",
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://cdnjs.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org;",
         'X-Frame-Options': 'DENY',
         'X-Content-Type-Options': 'nosniff',
         'Referrer-Policy': 'strict-origin-when-cross-origin',

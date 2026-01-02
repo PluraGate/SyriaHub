@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
@@ -42,7 +44,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data)
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const supabase = await createClient()
 
     // Check admin status

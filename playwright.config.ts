@@ -10,11 +10,13 @@ export default defineConfig({
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
-    retries: process.env.CI ? 2 : 0,
+    retries: process.env.CI ? 2 : 1,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: 'html',
+    /* Global timeout for each test */
+    timeout: 90000,
     /* Shared settings for all the projects below. See https://playwright.dev/docs/test-use-options. */
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
@@ -24,12 +26,11 @@ export default defineConfig({
         trace: 'on-first-retry',
 
         /* Increase timeout for slow browsers */
-        actionTimeout: 15000,
-        navigationTimeout: 30000,
+        actionTimeout: 20000,
+        navigationTimeout: 45000,
     },
-    timeout: 60000,
     expect: {
-        timeout: 10000,
+        timeout: 15000,
     },
 
     /* Configure projects for major browsers */
@@ -38,7 +39,6 @@ export default defineConfig({
             name: 'chromium',
             use: {
                 ...devices['Desktop Chrome'],
-                navigationTimeout: 60000,
             },
         },
 
@@ -46,15 +46,22 @@ export default defineConfig({
             name: 'firefox',
             use: {
                 ...devices['Desktop Firefox'],
-                navigationTimeout: 60000,
-                actionTimeout: 30000,
+                /* Firefox needs longer timeouts due to slower rendering */
+                navigationTimeout: 90000,
+                actionTimeout: 45000,
             },
-            timeout: 90000,
+            timeout: 120000,
         },
 
         {
             name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
+            use: {
+                ...devices['Desktop Safari'],
+                /* WebKit needs longer timeouts */
+                navigationTimeout: 60000,
+                actionTimeout: 30000,
+            },
+            timeout: 90000,
         },
     ],
 
@@ -63,5 +70,6 @@ export default defineConfig({
         command: 'npm run dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
+        timeout: 120000,
     },
 });

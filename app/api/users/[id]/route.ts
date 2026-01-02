@@ -9,7 +9,9 @@ import {
   extractIdFromParams,
   withErrorHandling,
   notFoundResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import type { UserRole, UpdateUserProfileInput } from '@/types'
 
 interface UpdateUserInput extends UpdateUserProfileInput {
@@ -18,7 +20,8 @@ interface UpdateUserInput extends UpdateUserProfileInput {
 
 /**
  * GET /api/users/[id]
- * Get user profile (authenticated users can view any profile)
+ * Get user profile (authenticated users only)
+ * Returns only public fields to prevent PII exposure
  */
 async function handleGetUser(
   request: Request,
@@ -27,11 +30,22 @@ async function handleGetUser(
   const { id } = await params
   const userId = extractIdFromParams({ id })
   
+  // SECURITY: Require authentication to view profiles
+  const { user: currentUser } = await getCurrentUser()
+  if (!currentUser) {
+    return errorResponse('Authentication required', 401)
+  }
+  
   const supabase = await createServerClient()
 
+  // SECURITY: Only select public fields, never expose email or sensitive data
+  // Admins can see additional fields
+  const isAdmin = currentUser.role === 'admin'
+  const isSelf = currentUser.id === userId
+  
   const { data, error } = await supabase
     .from('users')
-    .select('*')
+    .select('id, name, bio, affiliation, role, created_at')
     .eq('id', userId)
     .single()
 
@@ -40,6 +54,17 @@ async function handleGetUser(
       return notFoundResponse('User not found')
     }
     return handleSupabaseError(error)
+  }
+
+  // Include email only for self or admin
+  if (isSelf || isAdmin) {
+    const { data: fullData } = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', userId)
+      .single()
+    
+    return successResponse({ ...data, email: fullData?.email })
   }
 
   return successResponse(data)
@@ -55,6 +80,11 @@ async function handleUpdateUser(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const userId = extractIdFromParams({ id })
   
@@ -123,6 +153,11 @@ async function handleDeleteUser(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const userId = extractIdFromParams({ id })
   
@@ -142,5 +177,5 @@ async function handleDeleteUser(
 }
 
 export const GET = withErrorHandling(handleGetUser)
-export const PUT = withErrorHandling(handleUpdateUser)
-export const DELETE = withErrorHandling(handleDeleteUser)
+export const PUT = withRateLimit('write')(withErrorHandling(handleUpdateUser))
+export const DELETE = withRateLimit('write')(withErrorHandling(handleDeleteUser))

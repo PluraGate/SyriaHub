@@ -229,3 +229,66 @@ export function extractIdFromParams(params: any): string {
   
   return id
 }
+
+/**
+ * SECURITY: Validate request origin for CSRF protection
+ * This should be used on all state-changing (mutation) endpoints that use cookie auth
+ * 
+ * @param request - The incoming request
+ * @returns true if origin is valid, false otherwise
+ */
+export function validateOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin')
+  const referer = request.headers.get('referer')
+  
+  // Get allowed origins from environment
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://syriahub.com'
+  const allowedOrigins = [
+    siteUrl,
+    new URL(siteUrl).origin,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ]
+  
+  // In development, be more permissive
+  if (process.env.NODE_ENV === 'development') {
+    return true
+  }
+  
+  // Check origin header first (preferred)
+  if (origin) {
+    return allowedOrigins.some(allowed => origin === allowed || origin === new URL(allowed).origin)
+  }
+  
+  // Fall back to referer header
+  if (referer) {
+    try {
+      const refererOrigin = new URL(referer).origin
+      return allowedOrigins.some(allowed => refererOrigin === allowed || refererOrigin === new URL(allowed).origin)
+    } catch {
+      return false
+    }
+  }
+  
+  // If no origin or referer, reject (could be a direct request from non-browser)
+  // Exception: Some legitimate tools don't send origin, but we err on the side of security
+  return false
+}
+
+/**
+ * SECURITY: Middleware wrapper to validate origin on mutation endpoints
+ * Use this on POST, PUT, PATCH, DELETE handlers that use cookie auth
+ */
+export function withOriginValidation<T extends any[]>(
+  handler: (request: Request, ...args: T) => Promise<NextResponse>
+) {
+  return async (request: Request, ...args: T): Promise<NextResponse> => {
+    // Only validate on mutation methods
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+      if (!validateOrigin(request)) {
+        return errorResponse('Invalid request origin', 403)
+      }
+    }
+    return handler(request, ...args)
+  }
+}

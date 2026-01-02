@@ -10,7 +10,9 @@ import {
   withErrorHandling,
   notFoundResponse,
   forbiddenResponse,
+  validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import type { UpdatePostInput } from '@/types'
 
 /**
@@ -53,6 +55,11 @@ async function handleUpdatePost(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const postId = extractIdFromParams({ id })
   
@@ -129,6 +136,11 @@ async function handleDeletePost(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const { id } = await params
   const postId = extractIdFromParams({ id })
   
@@ -175,5 +187,5 @@ export const GET = withErrorHandling(handleGetPost, {
     staleWhileRevalidate: 600,
   },
 })
-export const PUT = withErrorHandling(handleUpdatePost)
-export const DELETE = withErrorHandling(handleDeletePost)
+export const PUT = withRateLimit('write')(withErrorHandling(handleUpdatePost))
+export const DELETE = withRateLimit('write')(withErrorHandling(handleDeletePost))

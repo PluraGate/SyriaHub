@@ -9,7 +9,9 @@ import {
   validateRequiredFields,
   getQueryParams,
   withErrorHandling,
+  withOriginValidation,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 import { checkContent } from '@/lib/moderation'
 import type { CreateCommentInput } from '@/types'
 
@@ -176,4 +178,5 @@ async function handleCreateComment(request: Request): Promise<NextResponse> {
 }
 
 export const GET = withErrorHandling(handleGetComments)
-export const POST = withErrorHandling(handleCreateComment)
+// SECURITY: Apply rate limiting and origin validation for CSRF protection
+export const POST = withRateLimit('write')(withOriginValidation(withErrorHandling(handleCreateComment)))

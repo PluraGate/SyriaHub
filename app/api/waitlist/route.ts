@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
+import { validateOrigin } from '@/lib/apiUtils'
 
 // Submit to waitlist
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // SECURITY: Validate origin for CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+    
     try {
         const body = await request.json()
         const { email, name, reason, affiliation, referralSource } = body
@@ -106,3 +113,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
 }
+
+// SECURITY: Apply rate limiting to waitlist submissions (abuse-prone endpoint)
+export const POST = withRateLimit('write')(handlePost)

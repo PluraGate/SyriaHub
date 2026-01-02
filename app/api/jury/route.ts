@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // ============================================
 // GET: Fetch jury cases assigned to current user
@@ -79,7 +81,12 @@ export async function GET(request: NextRequest) {
 // ============================================
 // POST: Cast vote on a deliberation
 // ============================================
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -175,3 +182,5 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

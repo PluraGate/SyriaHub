@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchAllExternalSources, ExternalResult } from '@/lib/externalData'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // Web search API - integrates with external data sources
 // ReliefWeb, HDX (Humanitarian Data Exchange), World Bank
@@ -14,7 +15,7 @@ interface WebSearchResult {
     type?: string
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         const { query, limit = 10 } = await request.json()
 
@@ -96,3 +97,5 @@ export async function POST(request: NextRequest) {
         )
     }
 }
+
+export const POST = withRateLimit('read')(handlePost)

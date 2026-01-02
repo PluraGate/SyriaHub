@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Get typeahead completion for inline autocomplete
 export async function GET(request: NextRequest) {
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Track a search term when user performs a search
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         const { term } = await request.json()
 
@@ -65,3 +66,5 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false })
     }
 }
+
+export const POST = withRateLimit('read')(handlePost)

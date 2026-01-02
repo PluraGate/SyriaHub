@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 interface RouteParams {
     params: Promise<{ threadId: string }>
 }
 
 // POST /api/coordination/[threadId]/messages - Add message to thread
-export async function POST(request: NextRequest, { params }: RouteParams) {
+async function handlePost(request: NextRequest, { params }: RouteParams) {
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { threadId } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -96,3 +102,5 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)
