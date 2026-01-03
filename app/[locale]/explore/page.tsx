@@ -12,7 +12,6 @@ import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
-import { SearchBar } from '@/components/SearchBar'
 import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
@@ -222,14 +221,9 @@ function ExplorePageContent() {
               <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
                 {t('exploreResearch')}
               </h1>
-              <p className="text-xl text-white/80 mb-8">
+              <p className="text-xl text-white/80">
                 {t('discoverDescription')}
               </p>
-
-              {/* Search */}
-              <div className="max-w-xl">
-                <SearchBar />
-              </div>
             </div>
           </div>
         </div>

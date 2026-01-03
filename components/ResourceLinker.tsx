@@ -299,7 +299,7 @@ export function ResourceLinker({
                         return (
                             <div
                                 key={resource.id}
-                                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-dark-surface-hover rounded-xl border border-gray-200 dark:border-dark-border group"
+                                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border group"
                             >
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${colorClass}`}>
                                     <Icon className="w-5 h-5" />

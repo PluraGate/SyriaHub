@@ -169,8 +169,8 @@
   }
 
   .btn-outline {
-    @apply border-2 border-primary text-primary;
-    @apply hover:bg-primary hover:text-white;
+    @apply border-2 border-primary dark:border-secondary text-primary dark:text-secondary;
+    @apply hover:bg-primary dark:hover:bg-secondary hover:text-white;
     @apply bg-transparent;
   }
 

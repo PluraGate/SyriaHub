@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
     Sparkles,
     Send,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import { useTranslations } from 'next-intl'
+import { QuestionHistory } from './QuestionHistory'
 
 interface QuestionAdvisorProps {
     userId?: string
@@ -26,6 +28,7 @@ interface QuestionAdvisorProps {
         monthly_remaining: number
         reset_at: string
     }
+    initialHistory?: any[]
 }
 
 interface AnalysisResult {
@@ -46,16 +49,28 @@ interface AnalysisResult {
     refined_versions: string[]
 }
 
-export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
+export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: QuestionAdvisorProps) {
     const t = useTranslations('QuestionAdvisor')
     const tCommon = useTranslations('Common')
+    const router = useRouter()
     const [question, setQuestion] = useState('')
     const [context, setContext] = useState('')
     const [analyzing, setAnalyzing] = useState(false)
     const [result, setResult] = useState<AnalysisResult | null>(null)
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
     const [remainingUses, setRemainingUses] = useState(usageLimits?.daily_remaining ?? 10)
+    const [history, setHistory] = useState(initialHistory)
     const { showToast } = useToast()
+
+    const refreshHistory = () => {
+        router.refresh()
+    }
+
+    const handleSelectFromHistory = (selectedQuestion: string) => {
+        setQuestion(selectedQuestion)
+        setResult(null)
+        showToast(t('questionUpdated'), 'success')
+    }
 
     const handleAnalyze = async () => {
         if (!question.trim()) {
@@ -90,6 +105,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
             const data = await response.json()
             setResult(data)
             setRemainingUses(prev => Math.max(0, prev - 1))
+            refreshHistory() // Refresh to show new history item
         } catch (error: any) {
             showToast(error.message || 'Failed to analyze question', 'error')
         } finally {
@@ -132,13 +148,24 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                     </h1>
                     <div className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted">
                         <Zap className="w-4 h-4" />
-                        {remainingUses} {t('usesRemaining', { count: remainingUses })}
+                        {t('usesRemaining', { count: remainingUses })}
                     </div>
                 </div>
                 <p className="text-text-light dark:text-dark-text-muted">
                     {t('subtitle')}
                 </p>
             </div>
+
+            {/* Question History */}
+            {initialHistory.length > 0 && (
+                <div className="mb-6">
+                    <QuestionHistory
+                        history={initialHistory}
+                        onSelectQuestion={handleSelectFromHistory}
+                        onRefresh={refreshHistory}
+                    />
+                </div>
+            )}
 
             <div className="grid lg:grid-cols-[1fr_400px] gap-6">
                 {/* Input Section */}
@@ -271,7 +298,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                 <div className="space-y-4">
                     <div className="bg-gradient-to-br from-primary/5 to-purple-50 dark:from-primary/10 dark:to-purple-900/10 rounded-xl border border-gray-200 dark:border-dark-border p-5">
                         <h3 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
-                            <RefreshCw className="w-5 h-5 text-primary" />
+                            <RefreshCw className="w-5 h-5 text-secondary" />
                             {t('refinedAlternatives')}
                         </h3>
 
@@ -299,7 +326,7 @@ export function QuestionAdvisor({ userId, usageLimits }: QuestionAdvisorProps) {
                                             </button>
                                             <button
                                                 onClick={() => applyRefinedVersion(version)}
-                                                className="flex items-center gap-1.5 px-2 py-1 text-xs text-primary hover:underline"
+                                                className="flex items-center gap-1.5 px-2 py-1 text-xs text-secondary hover:text-secondary/80 hover:underline"
                                             >
                                                 <RefreshCw className="w-3.5 h-3.5" />
                                                 {t('useThis')}

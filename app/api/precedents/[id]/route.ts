@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 export async function GET(
     request: NextRequest,
@@ -21,10 +23,15 @@ export async function GET(
     return NextResponse.json(data)
 }
 
-export async function PATCH(
+async function handlePatch(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
@@ -60,10 +67,15 @@ export async function PATCH(
     return NextResponse.json(data)
 }
 
-export async function DELETE(
+async function handleDelete(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
@@ -94,3 +106,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
 }
+
+export const PATCH = withRateLimit('write')(handlePatch)
+export const DELETE = withRateLimit('write')(handleDelete)

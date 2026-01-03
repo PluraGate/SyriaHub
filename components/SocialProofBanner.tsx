@@ -52,8 +52,18 @@ export function SocialProofBanner() {
                     .select('user_id', { count: 'exact', head: true })
                     .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
 
-                // Use the higher of the two counts (both track active authenticated users)
-                const onlineNow = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
+                // Check if current user is authenticated (they count as online too)
+                // Using getSession() which works better with cookie-based auth
+                const { data: { session } } = await supabase.auth.getSession()
+                const currentUserId = session?.user?.id
+
+                // Calculate base count from activity
+                const activityCount = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
+
+                // If user is authenticated but activity count is 0, count them as 1
+                // This ensures the current user is always counted, but avoids double-counting
+                // if they're already in the activity queries
+                const onlineNow = currentUserId && activityCount === 0 ? 1 : activityCount
 
                 // Get this week's new users
                 const { count: thisWeekUsers } = await supabase
@@ -205,8 +215,17 @@ export function OnlineIndicator() {
                 .select('user_id', { count: 'exact', head: true })
                 .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
 
-            // Use the higher of the two counts
-            setOnlineCount(Math.max(postViewUsers || 0, readingHistoryUsers || 0))
+            // Check if current user is authenticated (they count as online too)
+            // Using getSession() which works better with cookie-based auth
+            const { data: { session } } = await supabase.auth.getSession()
+            const currentUserId = session?.user?.id
+
+            // Calculate base count from activity
+            const activityCount = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
+
+            // If user is authenticated but activity count is 0, count them as 1
+            // This ensures the current user is always counted, but avoids double-counting
+            setOnlineCount(currentUserId && activityCount === 0 ? 1 : activityCount)
         }
 
         loadOnlineCount()

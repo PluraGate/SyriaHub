@@ -90,7 +90,7 @@ export default async function EventsPage() {
 
                             <div className="grid gap-6 opacity-70 hover:opacity-100 transition-opacity">
                                 {pastEvents.map((event) => (
-                                    <EventCard key={event.id} event={event} currentUser={user} />
+                                    <EventCard key={event.id} event={event} currentUser={user} isPast />
                                 ))}
                             </div>
                         </section>

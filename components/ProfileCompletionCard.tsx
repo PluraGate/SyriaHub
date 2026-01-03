@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { CheckCircle, Circle, User, FileText, Camera, Award, Shield, MapPin, Building, Globe, Image } from 'lucide-react'
+import { CheckCircle, Circle, User, FileText, Camera, Award, Shield, MapPin, Building, Globe, Image, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -45,6 +45,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
     const [completion, setCompletion] = useState<ProfileCompletion | null>(null)
     const [loading, setLoading] = useState(true)
     const [refreshKey, setRefreshKey] = useState(0)
+    const [isCollapsed, setIsCollapsed] = useState(true)
     const supabase = createClient()
 
     // Load completion data
@@ -57,6 +58,12 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
 
             if (!error && data?.success) {
                 setCompletion(data)
+                // Auto-expand if incomplete (less than 100%)
+                if (!data.is_complete && !data.success) {
+                    setIsCollapsed(false)
+                } else if (!data.is_complete) {
+                    setIsCollapsed(false)
+                }
             }
             setLoading(false)
         }
@@ -99,6 +106,8 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
     // Calculate progress ring
     const circumference = 2 * Math.PI * 28
     const strokeDashoffset = circumference - (percentage / 100) * circumference
+
+
 
     if (compact) {
         return (
@@ -143,103 +152,121 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
     }
 
     return (
-        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-            {/* Header with progress ring */}
-            <div className="flex items-center gap-4 mb-4">
-                <div className="relative w-16 h-16">
-                    <svg className="w-16 h-16 -rotate-90">
-                        <circle
-                            cx="32" cy="32" r="28"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            className="text-gray-200 dark:text-dark-border"
-                        />
-                        <circle
-                            cx="32" cy="32" r="28"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
-                            strokeLinecap="round"
-                            className={cn(
-                                "transition-all duration-500",
-                                percentage === 100 ? "text-emerald-500" : "text-primary"
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 transition-all">
+            {/* Header with progress ring and Toggle */}
+            <div className="flex items-center justify-between mb-4">
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="flex items-center gap-3 flex-1 group hover:opacity-80 transition-opacity"
+                >
+                    <div className="relative w-10 h-10">
+                        <svg className="w-10 h-10 -rotate-90">
+                            <circle
+                                cx="20" cy="20" r="16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                className="text-gray-200 dark:text-dark-border"
+                            />
+                            <circle
+                                cx="20" cy="20" r="16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeDasharray={2 * Math.PI * 16}
+                                strokeDashoffset={2 * Math.PI * 16 - (percentage / 100) * 2 * Math.PI * 16}
+                                strokeLinecap="round"
+                                className={cn(
+                                    "transition-all duration-500",
+                                    percentage === 100 ? "text-emerald-500" : "text-primary"
+                                )}
+                            />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            {is_complete ? (
+                                <CheckCircle className="w-4 h-4 text-emerald-500" />
+                            ) : (
+                                <span className="text-xs font-bold text-text dark:text-dark-text">{percentage}%</span>
                             )}
-                        />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        {is_complete ? (
-                            <CheckCircle className="w-6 h-6 text-emerald-500" />
-                        ) : (
-                            <span className="text-lg font-bold text-text dark:text-dark-text">{percentage}%</span>
-                        )}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <h3 className="font-semibold text-text dark:text-dark-text">
-                        {is_complete ? t('complete') : t('completeYourProfile')}
-                    </h3>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">
-                        {is_complete
-                            ? `+${bonus_xp} bonus XP earned`
-                            : `${missing_core.length} items remaining`
-                        }
-                    </p>
-                </div>
+                    <div className="text-left">
+                        <h3 className="text-lg font-semibold text-text dark:text-dark-text">
+                            {is_complete ? t('complete') : t('completeYourProfile')}
+                        </h3>
+                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            {is_complete
+                                ? `+${bonus_xp} bonus XP earned`
+                                : `${missing_core.length} items remaining`
+                            }
+                        </p>
+                    </div>
+                </button>
+
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-dark-bg rounded-lg transition-colors text-gray-400 dark:text-gray-500 hover:text-primary"
+                >
+                    {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+                </button>
             </div>
 
-            {/* Missing core fields */}
-            {missing_core.length > 0 && (
-                <div className="space-y-2 mb-4">
-                    <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                        {t('suggested')}
-                    </p>
-                    {CORE_FIELDS.filter(f => missing_core.includes(f.id)).map(field => (
-                        <div
-                            key={field.id}
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-dark-bg"
-                        >
-                            <Circle className="w-4 h-4 text-gray-400" />
-                            <field.icon className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-text dark:text-dark-text">{field.label}</span>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Optional bonus fields */}
-            {is_complete && (
-                <div className="space-y-2">
-                    <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                        {t('optionalExtras')}
-                    </p>
-                    {OPTIONAL_FIELDS.filter(f => !optional_completed.includes(f.id)).slice(0, 3).map(field => (
-                        <div
-                            key={field.id}
-                            className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-dark-bg"
-                        >
-                            <div className="flex items-center gap-3">
-                                <field.icon className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                    {field.label}
-                                    {field.privacy && (
-                                        <span className="text-xs ml-1 text-gray-400">(optional)</span>
-                                    )}
-                                </span>
+            {/* Collapsible Content */}
+            <div className={cn(
+                "overflow-hidden transition-all duration-300",
+                isCollapsed ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100"
+            )}>
+                {/* Missing core fields */}
+                {missing_core.length > 0 && (
+                    <div className="space-y-2 mb-4">
+                        <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
+                            {t('suggested')}
+                        </p>
+                        {CORE_FIELDS.filter(f => missing_core.includes(f.id)).map(field => (
+                            <div
+                                key={field.id}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-dark-bg"
+                            >
+                                <Circle className="w-4 h-4 text-gray-400" />
+                                <field.icon className="w-4 h-4 text-primary" />
+                                <span className="text-sm text-text dark:text-dark-text">{field.label}</span>
                             </div>
-                            <span className="text-xs font-medium text-primary">+{field.xp} XP</span>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
 
-            {/* Privacy note */}
-            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                <Shield className="w-3 h-3" />
-                {t('privacyNote')}
-            </p>
+                {/* Optional bonus fields */}
+                {is_complete && (
+                    <div className="space-y-2">
+                        <p className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
+                            {t('optionalExtras')}
+                        </p>
+                        {OPTIONAL_FIELDS.filter(f => !optional_completed.includes(f.id)).slice(0, 3).map(field => (
+                            <div
+                                key={field.id}
+                                className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-dark-bg"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <field.icon className="w-4 h-4 text-gray-400" />
+                                    <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                        {field.label}
+                                        {field.privacy && (
+                                            <span className="text-xs ml-1 text-gray-400">(optional)</span>
+                                        )}
+                                    </span>
+                                </div>
+                                <span className="text-xs font-medium text-primary">+{field.xp} XP</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Privacy note */}
+                <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    <Shield className="w-3 h-3" />
+                    {t('privacyNote')}
+                </p>
+            </div>
         </div>
     )
 }

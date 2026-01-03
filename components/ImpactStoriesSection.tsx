@@ -103,7 +103,7 @@ export function ImpactStoriesSection({ limit = 3, className }: ImpactStoriesSect
                     </div>
                     <Link
                         href="/research-outcomes"
-                        className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-primary dark:text-primary-light hover:underline"
+                        className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-primary dark:text-secondary hover:underline"
                     >
                         {t('viewAll')}
                         <ArrowRight className="w-4 h-4" />
@@ -145,7 +145,7 @@ export function ImpactStoriesSection({ limit = 3, className }: ImpactStoriesSect
                 <div className="mt-6 sm:hidden">
                     <Link
                         href="/research-outcomes"
-                        className="flex items-center justify-center gap-1.5 w-full py-3 text-sm font-medium text-primary dark:text-primary-light border border-primary/30 dark:border-primary-light/30 rounded-lg hover:bg-primary/5 transition-colors"
+                        className="flex items-center justify-center gap-1.5 w-full py-3 text-sm font-medium text-primary dark:text-secondary border border-primary/30 dark:border-secondary/30 rounded-lg hover:bg-primary/5 dark:hover:bg-secondary/5 transition-colors"
                     >
                         {t('viewAll')}
                         <ArrowRight className="w-4 h-4" />

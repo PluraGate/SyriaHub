@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function POST(
+async function handlePost(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
@@ -58,3 +59,5 @@ export async function POST(
         )
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

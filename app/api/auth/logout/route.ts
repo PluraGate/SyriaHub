@@ -7,6 +7,7 @@ import {
   withErrorHandling,
   validateOrigin,
 } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 async function handleLogout(request: Request): Promise<NextResponse> {
   // CSRF protection
@@ -25,4 +26,4 @@ async function handleLogout(request: Request): Promise<NextResponse> {
   return successResponse({ message: 'Logged out successfully' })
 }
 
-export const POST = withErrorHandling(handleLogout)
+export const POST = withRateLimit('auth')(withErrorHandling(handleLogout))

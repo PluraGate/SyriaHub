@@ -132,7 +132,7 @@ export function SuggestedPostsCarousel({
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
-            const scrollAmount = 320 // Card width + gap
+            const scrollAmount = 324 // Card width (300) + gap (24)
             scrollRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
@@ -147,7 +147,7 @@ export function SuggestedPostsCarousel({
                     <Sparkles className="w-5 h-5 text-primary dark:text-accent-light" />
                     <h3 className="font-semibold text-text dark:text-dark-text">{displayTitle}</h3>
                 </div>
-                <div className="flex gap-4 overflow-hidden py-1">
+                <div className="flex gap-6 overflow-hidden py-4 px-4 -mx-4">
                     {Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="min-w-[300px] skeleton h-40 rounded-xl" />
                     ))}
@@ -187,7 +187,7 @@ export function SuggestedPostsCarousel({
 
             <div
                 ref={scrollRef}
-                className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 pt-1 px-1"
+                className="flex gap-6 overflow-x-auto scrollbar-hide pb-8 pt-4 px-4 -mx-4"
                 style={{ scrollSnapType: 'x mandatory' }}
             >
                 {posts.map((post) => (

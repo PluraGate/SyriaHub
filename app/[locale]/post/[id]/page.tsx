@@ -27,6 +27,7 @@ import { CiteButton } from '@/components/CiteButton'
 import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { SpatialContextCard } from '@/components/spatial'
+import { PostCharts } from '@/components/PostCharts'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -344,13 +345,13 @@ export default async function PostPage(props: PostPageProps) {
                 <span>{t('minRead', { count: readingTime })}</span>
               </div>
 
-              {/* Academic Impact Score - if available */}
+              {/* Knowledge Impact Score - if available */}
               {post.academic_impact_score && post.academic_impact_score > 0 && (
                 <>
                   <span className="text-gray-300 dark:text-gray-700">•</span>
                   <div
                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold"
-                    title="Academic Impact Score: Based on quality citations and scholarly engagement"
+                    title="Knowledge Impact Score: Based on quality citations and scholarly engagement"
                   >
                     <GraduationCap className="w-3.5 h-3.5" />
                     <span>{t('impact')}: {post.academic_impact_score.toFixed(1)}</span>
@@ -463,6 +464,14 @@ export default async function PostPage(props: PostPageProps) {
                 </ReactMarkdown>
               </TextSelectionHandler>
             </div>
+
+            {/* Data Visualizations */}
+            {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
+              <PostCharts
+                chartBlocks={post.metadata.chartBlocks}
+                linkedResources={linkedResources}
+              />
+            )}
 
             {/* Spatial Context - between content and citations */}
             <SpatialContextCard

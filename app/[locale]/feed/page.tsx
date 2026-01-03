@@ -12,6 +12,12 @@ import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FeedCardSkeletonCompact } from '@/components/ui/skeleton'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { ImpactStoriesSection } from '@/components/ImpactStoriesSection'
 import { Post } from '@/types'
 import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
@@ -224,23 +230,23 @@ export default function FeedPage() {
                 <button
                   onClick={() => setFeedTab('all')}
                   className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'all'
-                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
-                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                    ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
-                  <Sparkles className="w-4 h-4 inline mr-2" />
+                  <Sparkles className="w-4 h-4 inline ltr:mr-2 rtl:ml-2" />
                   {t('allPosts')}
                 </button>
                 <button
                   onClick={() => setFeedTab('following')}
                   className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'following'
-                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
-                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                    ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
                   {t('following')}
                   {followingIds.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
+                    <span className="ltr:ml-2 rtl:mr-2 px-2 py-0.5 text-xs bg-primary/20 text-primary dark:bg-primary/30 dark:text-emerald-300 rounded-full font-semibold">
                       {followingIds.length}
                     </span>
                   )}
@@ -251,18 +257,23 @@ export default function FeedPage() {
             {/* Sort + Filter */}
             <div className="flex items-center gap-3">
               {/* Sort Dropdown */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
+              <DropdownMenu>
+                <DropdownMenuTrigger className="inline-flex items-center justify-between gap-2 px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-border focus:ring-2 focus:ring-primary focus:outline-none transition-colors min-w-[140px]">
+                  <span>{SORT_OPTIONS.find(opt => opt.value === sortBy)?.label}</span>
+                  <ChevronDown className="w-4 h-4 text-text-light" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-[140px]">
                   {SORT_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    <DropdownMenuItem
+                      key={opt.value}
+                      onClick={() => setSortBy(opt.value)}
+                      className={sortBy === opt.value ? 'bg-gray-100 dark:bg-dark-border font-medium' : ''}
+                    >
+                      {opt.label}
+                    </DropdownMenuItem>
                   ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
-              </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Type Filter */}
               <div className="flex bg-gray-100 dark:bg-dark-surface rounded-xl p-1">
@@ -271,8 +282,8 @@ export default function FeedPage() {
                     key={type}
                     onClick={() => setFilter(type)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === type
-                      ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
-                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                      ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                       }`}
                   >
                     {type === 'all' ? t('all') : type === 'article' ? t('article') : t('question')}

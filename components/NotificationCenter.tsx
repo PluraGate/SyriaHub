@@ -22,6 +22,8 @@ import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
 import { useNotifications } from '@/components/NotificationsProvider'
 
+const CLEARED_NOTIFICATIONS_KEY = 'syriahub_cleared_notifications'
+
 interface Notification {
     id: string
     type: 'mention' | 'reply' | 'follow' | 'fork' | 'citation' | 'like' | 'system' | 'moderation'
@@ -62,33 +64,71 @@ const notificationColors: Record<string, string> = {
     moderation: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20',
 }
 
+// Helper to load cleared IDs from localStorage
+function loadClearedIds(): Set<string> {
+    if (typeof window === 'undefined') return new Set()
+    try {
+        const stored = localStorage.getItem(CLEARED_NOTIFICATIONS_KEY)
+        if (stored) {
+            return new Set(JSON.parse(stored))
+        }
+    } catch (e) {
+        console.error('Failed to load cleared notifications:', e)
+    }
+    return new Set()
+}
+
+// Helper to save cleared IDs to localStorage
+function saveClearedIds(ids: Set<string>) {
+    if (typeof window === 'undefined') return
+    try {
+        localStorage.setItem(CLEARED_NOTIFICATIONS_KEY, JSON.stringify([...ids]))
+    } catch (e) {
+        console.error('Failed to save cleared notifications:', e)
+    }
+}
+
 export function NotificationCenter({ userId }: { userId: string }) {
     const [isOpen, setIsOpen] = useState(false)
     const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications()
     const [filter, setFilter] = useState<NotificationFilter>('all')
     const [markingAll, setMarkingAll] = useState(false)
+    const [clearedIds, setClearedIds] = useState<Set<string>>(() => {
+        // Initialize from localStorage (only runs on client)
+        if (typeof window !== 'undefined') {
+            return loadClearedIds()
+        }
+        return new Set()
+    })
 
     const handleMarkAllAsRead = async () => {
         setMarkingAll(true)
+        // Mark as read AND hide from dropdown (persisted to localStorage)
+        const allIds = notifications.map(n => n.id)
+        const newClearedIds = new Set([...clearedIds, ...allIds])
+        setClearedIds(newClearedIds)
+        saveClearedIds(newClearedIds)
         await markAllAsRead()
         setMarkingAll(false)
     }
 
     const filteredNotifications = useMemo(() => {
-        const list = notifications as any[]
+        // Filter out cleared notifications
+        const visibleList = (notifications as any[]).filter(n => !clearedIds.has(n.id))
+        
         switch (filter) {
             case 'unread':
-                return list.filter(n => !n.is_read)
+                return visibleList.filter(n => !n.is_read)
             case 'mentions':
-                return list.filter(n => n.type === 'mention' || n.type === 'reply')
+                return visibleList.filter(n => n.type === 'mention' || n.type === 'reply')
             case 'social':
-                return list.filter(n => ['follow', 'like', 'fork', 'citation'].includes(n.type))
+                return visibleList.filter(n => ['follow', 'like', 'fork', 'citation'].includes(n.type))
             case 'system':
-                return list.filter(n => n.type === 'system' || n.type === 'moderation')
+                return visibleList.filter(n => n.type === 'system' || n.type === 'moderation')
             default:
-                return list
+                return visibleList
         }
-    }, [notifications, filter])
+    }, [notifications, filter, clearedIds])
 
     return (
         <div className="relative">
@@ -128,7 +168,7 @@ export function NotificationCenter({ userId }: { userId: string }) {
                         <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-border flex-shrink-0">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="font-semibold text-text dark:text-dark-text">Notifications</h3>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
                                     {unreadCount > 0 && (
                                         <Button
                                             size="sm"
@@ -142,7 +182,7 @@ export function NotificationCenter({ userId }: { userId: string }) {
                                             ) : (
                                                 <CheckCheck className="w-3.5 h-3.5" />
                                             )}
-                                            Mark all read
+                                            Mark all as read
                                         </Button>
                                     )}
                                     <Link href="/settings/notifications">

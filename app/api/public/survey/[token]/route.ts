@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit } from '@/lib/rateLimit'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 import crypto from 'crypto'
 
 interface RouteParams {
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // POST /api/public/survey/[token] - Submit anonymous response
-// SECURITY: Apply rate limiting to prevent abuse
+// SECURITY: Apply rate limiting and optional Turnstile to prevent abuse
 async function handlePost(request: NextRequest, { params }: RouteParams) {
     const { token } = await params
     const supabase = await createClient()
@@ -109,10 +110,10 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
-    // Fetch survey
+    // Fetch survey with Turnstile requirement setting
     const { data: survey, error: surveyError } = await supabase
         .from('surveys')
-        .select('id, allow_multiple_responses, end_date')
+        .select('id, allow_multiple_responses, end_date, require_turnstile')
         .eq('public_token', token)
         .eq('allow_public_responses', true)
         .eq('status', 'active')
@@ -131,6 +132,19 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
             { error: 'This survey has ended' },
             { status: 400 }
         )
+    }
+
+    // SECURITY: Verify Turnstile if required for this survey
+    // Surveys can opt-in to Turnstile for enhanced bot protection
+    if ((survey as Record<string, unknown>).require_turnstile) {
+        const turnstileToken = request.headers.get('x-turnstile-token')
+        const isValid = await verifyTurnstileToken(turnstileToken)
+        if (!isValid) {
+            return NextResponse.json(
+                { error: 'Bot verification failed. Please complete the CAPTCHA.' },
+                { status: 403 }
+            )
+        }
     }
 
     // Check for duplicate response

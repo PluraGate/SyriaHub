@@ -9,7 +9,7 @@ import { BookmarkButton } from './BookmarkButton'
 import { getAvatarGradient, getInitials } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
 import { useTranslations } from 'next-intl'
 
@@ -38,14 +38,20 @@ interface EventPost {
 interface EventCardProps {
     event: EventPost
     currentUser?: User | null
+    isPast?: boolean
 }
 
-export function EventCard({ event, currentUser }: EventCardProps) {
+export function EventCard({ event, currentUser, isPast = false }: EventCardProps) {
     const router = useRouter()
     const t = useTranslations('Common')
     const tEvents = useTranslations('Events')
     const [isDeleting, setIsDeleting] = useState(false)
     const [showConfirmation, setShowConfirmation] = useState(false)
+    const [hasMounted, setHasMounted] = useState(false)
+
+    useEffect(() => {
+        setHasMounted(true)
+    }, [])
 
     const startDate = new Date(event.metadata.start_time)
     const endDate = event.metadata.end_time ? new Date(event.metadata.end_time) : null
@@ -107,10 +113,24 @@ export function EventCard({ event, currentUser }: EventCardProps) {
     }
 
     return (
-        <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden relative">
+        <div className="card hover:border-primary/50 transition-colors group flex flex-col md:flex-row overflow-hidden relative min-h-[160px]">
             {/* Actions for Author (Delete) and all users (Bookmark) */}
-            <div className="absolute top-2 right-2 z-20 flex items-center gap-2">
-                <BookmarkButton postId={event.id} className="bg-white/80 dark:bg-dark-surface/80 shadow-sm border border-gray-100 dark:border-dark-border" />
+            <div className="absolute top-3 right-3 z-30 flex items-center gap-2 pointer-events-auto">
+                {isPast && hasMounted && (
+                    <div className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-500/20 text-gray-400 dark:bg-gray-600/30 dark:text-gray-300 shadow-sm border border-gray-400/20 dark:border-gray-500/30">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="translate-y-[1.65px]">{tEvents('ended')}</span>
+                    </div>
+                )}
+                {event.approval_status === 'rejected' && hasMounted && (
+                    <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-lg border border-red-500 animate-fade-in-up">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        {tEvents('rejected')}
+                    </div>
+                )}
+                <div className="flex items-center bg-white/90 dark:bg-dark-surface/90 backdrop-blur-md rounded-full border border-gray-100 dark:border-dark-border shadow-sm">
+                    <BookmarkButton postId={event.id} className="p-2" />
+                </div>
 
                 {isAuthor && (
                     <>
@@ -182,26 +202,24 @@ export function EventCard({ event, currentUser }: EventCardProps) {
                     <div>
                         <div className="flex items-start justify-between gap-4 mb-2">
                             <Link href={`/events/${event.id}`} className="group-hover:text-primary transition-colors">
-                                <h3 className={`text-xl font-bold line-clamp-2 ${status === 'cancelled' ? 'text-text-light dark:text-dark-text-muted line-through' : 'text-text dark:text-dark-text'}`}>
+                                <h3 className={`text-xl font-bold line-clamp-2 ${status === 'cancelled' || event.approval_status === 'rejected' ? 'text-text-light dark:text-dark-text-muted line-through' : 'text-text dark:text-dark-text'}`}>
                                     {event.title}
                                 </h3>
                             </Link>
-                            <div className="flex gap-2">
-                                {event.approval_status === 'rejected' && (
-                                    <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                        <AlertTriangle className="w-3 h-3" />
-                                        {tEvents('rejected')}
-                                    </span>
-                                )}
-                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-4 text-sm text-text-light dark:text-dark-text-muted mb-4">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5" suppressHydrationWarning>
                                 <Clock className="w-4 h-4" />
                                 <span>
-                                    {format(startDate, 'h:mm a')}
-                                    {endDate && ` - ${format(endDate, 'h:mm a')}`}
+                                    {hasMounted ? (
+                                        <>
+                                            {format(startDate, 'h:mm a')}
+                                            {endDate && ` - ${format(endDate, 'h:mm a')}`}
+                                        </>
+                                    ) : (
+                                        '--:--'
+                                    )}
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5">

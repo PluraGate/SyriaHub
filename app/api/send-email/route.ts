@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email'
 import { createServerClient } from '@/lib/supabaseClient'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         // SECURITY: Only allow service-role access to prevent abuse
         // End users should not be able to send arbitrary emails
@@ -40,3 +41,5 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
+
+export const POST = withRateLimit('write')(handlePost)

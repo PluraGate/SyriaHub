@@ -176,7 +176,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
       {/* Back Navigation */}
       <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
-        <div className="container-custom max-w-6xl py-4">
+        <div className="container-custom w-full max-w-6xl py-4">
           <Link
             href="/feed"
             className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
@@ -187,7 +187,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
         </div>
       </div>
 
-      <main className="container-custom max-w-6xl py-8 flex-1">
+      <main className="container-custom w-full max-w-6xl py-8 flex-1">
         <ProfileHeader
           profile={displayProfile}
           stats={{
