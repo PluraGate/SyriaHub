@@ -72,7 +72,7 @@ describe('Auth API Routes', () => {
       })
 
       expect(response.success).toBe(true)
-      expect(response.data.user.email).toBe('test@example.com')
+      expect(response.data?.user.email).toBe('test@example.com')
     })
 
     it('should reject login with invalid credentials', async () => {
@@ -125,7 +125,7 @@ describe('Auth API Routes', () => {
       }
 
       const results = await Promise.all(attempts)
-      const rateLimited = results.filter((r) => r.rateLimited)
+      const rateLimited = results.filter((r) => 'rateLimited' in r && r.rateLimited)
 
       // Last attempt should be rate limited (in real implementation)
       expect(rateLimited.length).toBeGreaterThanOrEqual(0)
