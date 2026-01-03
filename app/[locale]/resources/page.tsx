@@ -1,8 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
+// Refreshed layout consistency for ResourceCard tags
 import { Footer } from '@/components/Footer'
 import { ResourceCard } from '@/components/ResourceCard'
 import { ResourceFilters } from '@/components/ResourceFilters'
+import { inferResourceType } from '@/lib/utils'
 import Link from 'next/link'
 import { UploadCloud, FolderOpen } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
@@ -30,7 +32,7 @@ export default async function ResourcesPage({
         .from('posts')
         .select(`
             *,
-            author:users!author_id(name, email)
+            author:users!author_id(id, name, email, avatar_url)
         `)
         .eq('content_type', 'resource')
         .eq('status', 'published')
@@ -71,12 +73,20 @@ export default async function ResourcesPage({
         )
     }
 
-    // Add linked_posts_count = 0 to all resources for now
-    // (resource_post_links table may not exist until migration is applied)
-    const resourcesWithLinks = filteredResources.map((resource: any) => ({
-        ...resource,
-        linked_posts_count: 0
-    }))
+    // Add linked_posts_count = 0 and infer type for each resource on the server
+    const resourcesWithLinks = filteredResources.map((resource: any) => {
+        const metadata = resource.metadata || {}
+        // Explicitly calculate the resource type on the server to avoid client-side hydration issues
+        const inferredType = (metadata.resource_type?.toLowerCase()) ||
+            inferResourceType(metadata.mime_type, metadata.original_name, resource.title) ||
+            'document'
+
+        return {
+            ...resource,
+            linked_posts_count: 0,
+            inferredType
+        }
+    })
 
     const hasFilters = params.type || params.discipline || params.license || params.q
 
@@ -122,7 +132,11 @@ export default async function ResourcesPage({
 
                         {resourcesWithLinks.length > 0 ? (
                             resourcesWithLinks.map((resource: any) => (
-                                <ResourceCard key={resource.id} resource={resource} />
+                                <ResourceCard
+                                    key={resource.id}
+                                    resource={resource}
+                                    preCalculatedType={resource.inferredType}
+                                />
                             ))
                         ) : (
                             <div className="text-center py-16 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">

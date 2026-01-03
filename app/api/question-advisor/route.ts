@@ -58,6 +58,19 @@ async function handleRequest(request: NextRequest) {
                 p_tokens: 0
             })
 
+            // Save to question history
+            await supabase.from('question_history').insert({
+                user_id: user.id,
+                question,
+                context: context || null,
+                clarity_score: mockResult.clarity_score,
+                measurability_score: mockResult.visibility?.score || 0,
+                scope_assessment: mockResult.scope_analysis?.assessment,
+                has_bias: mockResult.bias_detection?.has_bias || false,
+                suggestions: mockResult.suggestions || [],
+                refined_versions: mockResult.refined_versions || []
+            })
+
             return NextResponse.json(mockResult)
         }
 
@@ -145,6 +158,19 @@ ${context ? `Additional context: ${context}` : ''}`
             p_user_id: user.id,
             p_feature: 'question_advisor',
             p_tokens: tokensUsed
+        })
+
+        // Save to question history
+        await supabase.from('question_history').insert({
+            user_id: user.id,
+            question,
+            context: context || null,
+            clarity_score: analysisResult.clarity_score,
+            measurability_score: analysisResult.measurability?.score || 0,
+            scope_assessment: analysisResult.scope_analysis?.assessment,
+            has_bias: analysisResult.bias_detection?.has_bias || false,
+            suggestions: analysisResult.suggestions || [],
+            refined_versions: analysisResult.refined_versions || []
         })
 
         return NextResponse.json(analysisResult)

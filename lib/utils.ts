@@ -49,3 +49,23 @@ export function getAvatarGradient(id?: string): string {
   const index = id.charCodeAt(0) % gradients.length
   return gradients[index]
 }
+export function inferResourceType(mimeType?: string, fileName?: string, title?: string): string | null {
+  const mime = mimeType?.toLowerCase() || '';
+  const ext = fileName?.split('.').pop()?.toLowerCase() || '';
+  const lowerTitle = title?.toLowerCase() || '';
+
+  // 1. Inference from MIME/Extension
+  if (mime.includes('pdf') || ['doc', 'docx', 'pdf', 'txt', 'rtf'].includes(ext)) return 'paper';
+  if (mime.includes('csv') || mime.includes('excel') || mime.includes('spreadsheet') || mime.includes('json') || ['csv', 'xlsx', 'xls', 'json', 'tsv'].includes(ext)) return 'dataset';
+  if (mime.includes('image') || mime.includes('video') || mime.includes('audio') || ['png', 'jpg', 'jpeg', 'gif', 'svg', 'mp4', 'mov', 'mp3', 'wav'].includes(ext)) return 'media';
+  if (['zip', 'tar', 'gz', 'exe', 'sh', 'py', 'js', 'ipynb'].includes(ext)) return 'tool';
+
+  // 2. Inference from Title keywords
+  if (['report', 'study', 'paper', 'article', 'document', 'research', 'guide', 'publication'].some(k => lowerTitle.includes(k))) return 'paper';
+  if (['dataset', 'data', 'statistics', 'stats', 'database', 'excel', 'spreadsheet', 'csv', 'registry'].some(k => lowerTitle.includes(k))) return 'dataset';
+  if (['tool', 'app', 'software', 'script', 'plugin', 'calculator', 'utility', 'library'].some(k => lowerTitle.includes(k))) return 'tool';
+  if (['kit', 'media', 'collection', 'pack', 'images', 'video', 'audio', 'visual', 'gallery'].some(k => lowerTitle.includes(k))) return 'media';
+  if (['template', 'format', 'form', 'structure', 'framework', 'boilerplate'].some(k => lowerTitle.includes(k))) return 'template';
+
+  return null;
+}

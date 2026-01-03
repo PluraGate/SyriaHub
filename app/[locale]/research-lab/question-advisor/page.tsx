@@ -10,12 +10,24 @@ export default async function QuestionAdvisorPage() {
 
     // Check AI usage limits
     let usageLimits = null
+    let questionHistory: any[] = []
+    
     if (user) {
-        const { data } = await supabase.rpc('check_ai_usage_limit', {
+        const { data: limitsData } = await supabase.rpc('check_ai_usage_limit', {
             p_user_id: user.id,
             p_feature: 'question_advisor'
         })
-        usageLimits = data?.[0]
+        usageLimits = limitsData?.[0]
+
+        // Fetch question history
+        const { data: historyData } = await supabase
+            .from('question_history')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(20)
+        
+        questionHistory = historyData || []
     }
 
     return (
@@ -33,6 +45,7 @@ export default async function QuestionAdvisorPage() {
                     <QuestionAdvisor
                         userId={user?.id}
                         usageLimits={usageLimits}
+                        initialHistory={questionHistory}
                     />
                 </main>
             </div>

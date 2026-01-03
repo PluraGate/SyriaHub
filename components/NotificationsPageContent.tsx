@@ -131,7 +131,7 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
     }
 
     return (
-        <div className="max-w-3xl mx-auto">
+        <div className="w-full max-w-3xl mx-auto">
             <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
                     <Link
@@ -193,7 +193,7 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
                 <div className="card p-8 text-center">
                     <NoNotificationsIllustration className="w-32 h-32 mx-auto mb-4 opacity-80" />
                     <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
-                        {filter === 'all' ? t('allCaughtUp') : t('noFilteredNotifications', { filter: t(`types.${filter === 'reply' ? 'replies' : filter}`) })}
+                        {filter === 'all' ? t('allCaughtUp') : t('noFilteredNotifications', { filter: t(filterKeys.find(f => f.value === filter)?.labelKey ?? 'types.all') })}
                     </p>
                     <p className="text-xs text-text-light dark:text-dark-text-muted">
                         {filter === 'all'

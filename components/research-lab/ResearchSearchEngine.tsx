@@ -432,7 +432,7 @@ export function ResearchSearchEngine() {
                         <button
                             onClick={() => setActiveTab('search')}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'search'
-                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >
@@ -445,7 +445,7 @@ export function ResearchSearchEngine() {
                                 loadSavedSearches()
                             }}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'saved'
-                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >
@@ -562,11 +562,11 @@ export function ResearchSearchEngine() {
             {activeTab === 'search' && (
                 <>
                     {/* Source Toggle */}
-                    <div className="inline-flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg">
+                    <div className="inline-flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg mb-4">
                         <button
                             onClick={() => setSearchSource('all')}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${searchSource === 'all'
-                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >
@@ -575,7 +575,7 @@ export function ResearchSearchEngine() {
                         <button
                             onClick={() => setSearchSource('internal')}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${searchSource === 'internal'
-                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >
@@ -585,7 +585,7 @@ export function ResearchSearchEngine() {
                         <button
                             onClick={() => setSearchSource('web')}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${searchSource === 'web'
-                                ? 'bg-white dark:bg-dark-surface text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                                 }`}
                         >

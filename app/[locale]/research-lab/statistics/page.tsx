@@ -16,12 +16,12 @@ export default async function StatisticsPage() {
         .order('updated_at', { ascending: false })
         .limit(5) : { data: null }
 
-    // Fetch resources (datasets) for importing
+    // Fetch resources (datasets) for importing - only JSON/CSV files
     const { data: datasets } = await supabase
-        .from('posts')
-        .select('id, title, metadata')
-        .eq('content_type', 'resource')
-        .eq('status', 'published')
+        .from('resources')
+        .select('id, title, description, file_url, file_type, file_size')
+        .in('file_type', ['application/json', 'text/csv', 'application/csv'])
+        .order('created_at', { ascending: false })
         .limit(20)
 
     // Fetch user's surveys with response counts

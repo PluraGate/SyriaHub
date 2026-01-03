@@ -86,6 +86,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
     const [showSecondary, setShowSecondary] = useState(false)
     const [loadingSurvey, setLoadingSurvey] = useState<string | null>(null)
     const [loadingPoll, setLoadingPoll] = useState<string | null>(null)
+    const [loadingResource, setLoadingResource] = useState<string | null>(null)
     const { showToast } = useToast()
 
     // Chart types with localized labels
@@ -388,7 +389,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         className={`
                             flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors
                             ${activeTab === tab.id
-                                ? 'border-primary text-primary'
+                                ? 'border-secondary text-primary dark:text-secondary'
                                 : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                             }
                         `}
@@ -539,17 +540,79 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                             <FileSpreadsheet className="w-5 h-5 text-emerald-500" />
                             {t('importFromResources')}
                         </h3>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted mb-3">
+                            JSON & CSV files only
+                        </p>
                         {availableDatasets.length > 0 ? (
                             <div className="space-y-2 max-h-60 overflow-y-auto">
                                 {availableDatasets.map((dataset: any) => (
                                     <button
                                         key={dataset.id}
-                                        className="w-full flex items-center gap-3 p-3 text-left border border-gray-200 dark:border-dark-border rounded-lg hover:border-primary transition-colors"
+                                        onClick={async () => {
+                                            if (!dataset.file_url) {
+                                                showToast('No file URL available', 'error')
+                                                return
+                                            }
+                                            setLoadingResource(dataset.id)
+                                            try {
+                                                const response = await fetch(dataset.file_url)
+                                                const text = await response.text()
+                                                
+                                                if (dataset.file_type?.includes('json')) {
+                                                    const json = JSON.parse(text)
+                                                    if (Array.isArray(json)) {
+                                                        setChartData(json.slice(0, 20))
+                                                        setActiveTab('charts')
+                                                        showToast('Data imported successfully!', 'success')
+                                                    } else {
+                                                        showToast('JSON must be an array of objects', 'error')
+                                                    }
+                                                } else {
+                                                    // CSV
+                                                    const lines = text.trim().split('\n').filter(l => l.trim())
+                                                    if (lines.length < 2) {
+                                                        showToast('CSV needs at least a header and one data row', 'error')
+                                                        return
+                                                    }
+                                                    const headers = lines[0].split(',').map(h => h.trim())
+                                                    const data = lines.slice(1).map(line => {
+                                                        const values = line.split(',').map(v => v.trim())
+                                                        const obj: any = { name: values[0] }
+                                                        headers.slice(1).forEach((header, i) => {
+                                                            const num = parseFloat(values[i + 1])
+                                                            if (!isNaN(num)) obj[header.toLowerCase()] = num
+                                                        })
+                                                        return obj
+                                                    })
+                                                    setChartData(data.slice(0, 20))
+                                                    setActiveTab('charts')
+                                                    showToast('CSV imported successfully!', 'success')
+                                                }
+                                            } catch (error) {
+                                                console.error('Import error:', error)
+                                                showToast('Failed to import data', 'error')
+                                            } finally {
+                                                setLoadingResource(null)
+                                            }
+                                        }}
+                                        disabled={loadingResource === dataset.id}
+                                        className="w-full flex items-center gap-3 p-3 text-left border border-gray-200 dark:border-dark-border rounded-lg hover:border-primary dark:hover:border-secondary transition-colors disabled:opacity-50"
                                     >
-                                        <FileSpreadsheet className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                                        <span className="text-sm text-text dark:text-dark-text truncate">
-                                            {dataset.title}
-                                        </span>
+                                        {loadingResource === dataset.id ? (
+                                            <Loader2 className="w-5 h-5 text-emerald-500 flex-shrink-0 animate-spin" />
+                                        ) : (
+                                            <FileSpreadsheet className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                                        )}
+                                        <div className="min-w-0 flex-1">
+                                            <span className="text-sm text-text dark:text-dark-text truncate block">
+                                                {dataset.title}
+                                            </span>
+                                            {dataset.file_type && (
+                                                <span className="text-xs text-text-light dark:text-dark-text-muted">
+                                                    {dataset.file_type.includes('json') ? 'JSON' : 'CSV'}
+                                                </span>
+                                            )}
+                                        </div>
                                     </button>
                                 ))}
                             </div>

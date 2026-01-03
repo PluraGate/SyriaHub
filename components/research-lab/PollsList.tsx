@@ -14,7 +14,8 @@ import {
     BarChart2,
     MoreVertical,
     XCircle,
-    Share2
+    Share2,
+    CheckCircle2
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ar, enUS } from 'date-fns/locale'
@@ -454,7 +455,7 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-sm text-text dark:text-dark-text flex items-center gap-2">
                                                 {index === 0 && totalVotes > 0 && (
-                                                    <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
+                                                    <span className="text-xs px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded">
                                                         {t('pollsPage.leading')}
                                                     </span>
                                                 )}
@@ -466,7 +467,7 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                                         </div>
                                         <div className="h-3 bg-gray-100 dark:bg-dark-bg rounded-full overflow-hidden">
                                             <div
-                                                className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
+                                                className="h-full bg-secondary/80 dark:bg-secondary/60 rounded-full transition-all duration-500"
                                                 style={{ width: `${percentage}%` }}
                                             />
                                         </div>
@@ -549,6 +550,12 @@ function PollCard({
                         <h3 className="text-lg font-semibold text-text dark:text-dark-text">
                             {poll.question}
                         </h3>
+                        {hasVoted && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                <CheckCircle2 className="w-3 h-3" />
+                                {t('pollsPage.voted')}
+                            </span>
+                        )}
                         {!poll.is_active && (
                             <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 rounded-full">
                                 {t('pollsPage.closed')}
@@ -726,7 +733,7 @@ function PollCard({
                                         </div>
                                     )}
                                     {wasVotedFor && (
-                                        <Check className="w-4 h-4 text-primary" />
+                                        <Check className="w-4 h-4 text-primary dark:text-emerald-400" />
                                     )}
                                     <span className="text-text dark:text-dark-text">
                                         {option.text}
@@ -765,7 +772,7 @@ function PollCard({
                     {hasVoted && (
                         <button
                             onClick={onShowResults}
-                            className="btn btn-ghost btn-sm flex items-center gap-1"
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-text-light dark:text-secondary hover:text-text dark:hover:text-secondary-light transition-colors"
                         >
                             <BarChart2 className="w-4 h-4" />
                             {t('results')}

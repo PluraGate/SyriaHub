@@ -3,13 +3,9 @@ import { ArrowRight, Sparkles, Search, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { SearchBar } from '@/components/SearchBar'
-import { TagsCloud } from '@/components/TagsCloud'
+import { HomeContentFilter } from '@/components/HomeContentFilter'
 
-import { ActivityFeedCompact } from '@/components/ActivityFeed'
 import { SocialProofBanner } from '@/components/SocialProofBanner'
-import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
-import { RelatedAuthors } from '@/components/RelatedAuthors'
 import { OnboardingModal } from '@/components/OnboardingModal'
 import { EpistemicOnboarding } from '@/components/EpistemicOnboarding'
 
@@ -18,7 +14,6 @@ import { HeroEditorial } from '@/components/HeroEditorial'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
-import { TrendingPosts } from '@/components/TrendingPosts'
 
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
@@ -79,123 +74,14 @@ export default async function Home({
                   <SocialProofBanner />
                 </div>
 
-                {/* Search Bar */}
-                <div className="mb-12 flex justify-center">
-                  <SearchBar />
-                </div>
-
-                {/* Tags Cloud */}
-                <div className="mb-16">
-                  <h2 className="text-2xl font-display font-semibold text-center mb-8 text-primary dark:text-dark-text">
-                    {t('popularTopics')}
-                  </h2>
-                  <TagsCloud />
-                </div>
-
-                {/* Featured Posts - Bento Grid */}
-                {featuredPosts.length > 0 && (
-                  <div className="mb-16">
-                    <div className="flex items-center justify-between mb-8">
-                      <h2 className="text-3xl font-display font-bold text-text dark:text-dark-text">
-                        {t('featured')}
-                      </h2>
-                      <Link
-                        href="/feed"
-                        className="text-primary dark:text-primary-light hover:text-primary-dark font-medium flex items-center gap-2 transition-colors"
-                      >
-                        {t('viewAll')}
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-
-                    <BentoGrid columns={4} gap="md">
-                      {/* Large featured post */}
-                      {featuredPosts[0] && (
-                        <BentoGridItem size="2x2">
-                          <FeaturedPost post={featuredPosts[0]} size="large" showTrending />
-                        </BentoGridItem>
-                      )}
-
-                      {/* Medium posts */}
-                      {featuredPosts[1] && (
-                        <BentoGridItem size="1x1">
-                          <FeaturedPost post={featuredPosts[1]} size="small" accentColor="accent" />
-                        </BentoGridItem>
-                      )}
-                      {featuredPosts[2] && (
-                        <BentoGridItem size="1x1">
-                          <FeaturedPost post={featuredPosts[2]} size="small" accentColor="secondary" />
-                        </BentoGridItem>
-                      )}
-
-                      {/* Horizontal card */}
-                      {featuredPosts[3] && (
-                        <BentoGridItem size="2x1">
-                          <MagazineCard post={featuredPosts[3]} variant="horizontal" className="h-full" />
-                        </BentoGridItem>
-                      )}
-                    </BentoGrid>
-                  </div>
-                )}
-
-                {/* Two-column layout: Recent posts + Sidebar */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Main Content Column - Recent Posts as Magazine Cards */}
-                  <div className="lg:col-span-2 space-y-12">
-                    <div>
-                      <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-display font-semibold text-text dark:text-dark-text">
-                          {t('recentResearch')}
-                        </h2>
-                      </div>
-
-                      <div className="grid gap-6 md:grid-cols-2">
-                        {recentPosts.map((post: any) => (
-                          <MagazineCard key={post.id} post={post} variant="standard" />
-                        ))}
-                      </div>
-
-                      {recentPosts.length === 0 && featuredPosts.length === 0 && (
-                        <div className="text-center py-16 text-text-light dark:text-dark-text-muted">
-                          <p className="text-lg mb-4">{t('noPosts')}</p>
-                          <Link href="/editor" className="btn btn-primary">
-                            {t('createPost')}
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Suggested Posts Carousel */}
-                    <SuggestedPostsCarousel limit={6} />
-                  </div>
-
-                  {/* Sidebar Column - "Context Stack" */}
-                  <div className="space-y-6">
-                    {/* Section Header */}
-                    <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide">
-                      {t('context')}
-                    </h3>
-
-                    {/* Active Discussions */}
-                    <div>
-                      <TrendingPosts />
-                    </div>
-
-                    {/* Recent Activity */}
-                    <div>
-                      <ActivityFeedCompact limit={5} />
-                    </div>
-
-                    {/* Related Researchers */}
-                    <div className="card p-4">
-                      <RelatedAuthors currentUserId={user.id} limit={4} />
-                    </div>
-                  </div>
-                </div>
+                {/* Home Content with Filter */}
+                <HomeContentFilter
+                  featuredPosts={featuredPosts}
+                  recentPosts={recentPosts}
+                  userId={user.id}
+                />
               </div>
             </section>
-
-
           </>
         ) : (
           <>

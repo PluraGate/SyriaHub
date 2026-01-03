@@ -9,6 +9,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Forced restart for ResourceCard consistency
+    reactStrictMode: true,
   },
   images: {
     remotePatterns: [
