@@ -105,6 +105,8 @@ const eslintConfig = [
             'node_modules/**',
             'out/**',
             'public/**',
+            'playwright-report/**',
+            'test-results/**',
             '*.config.js',
             '*.config.mjs',
             'sentry.*.config.ts',

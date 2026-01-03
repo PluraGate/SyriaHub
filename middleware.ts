@@ -3,6 +3,16 @@ import { updateSession } from '@/lib/supabase/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+/**
+ * Generate a cryptographic nonce for CSP
+ * Uses Web Crypto API available in Edge runtime
+ */
+function createNonce(): string {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return btoa(String.fromCharCode(...bytes)).replace(/=+$/g, '');
+}
+
 const intlMiddleware = createMiddleware({
     // A list of all locales that are supported
     locales: ['en', 'ar'],
@@ -57,7 +67,10 @@ function isRateLimited(ip: string) {
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-
+    
+    // Generate nonce for CSP
+    const nonce = createNonce();
+    
     // 0. Coming Soon Mode Gate
     // When SYRIAHUB_MODE=coming-soon, redirect ALL routes to /coming-soon
     // Exception: the coming-soon page itself, static assets, and API routes
@@ -76,7 +89,7 @@ export async function middleware(request: NextRequest) {
 
     // 2. Update session and get user
     const finalResponse = await updateSession(request, response);
-
+    
     // 3. Protected routes check
     // SECURITY: Only allow test bypass in development environment
     const isTestBypass = process.env.NODE_ENV === 'development' && request.headers.get('x-test-bypass') === 'true';
@@ -122,11 +135,35 @@ export async function middleware(request: NextRequest) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }
 
-    // 5. Apply Security Headers
-    // Note: 'unsafe-inline' required for Next.js hydration scripts
-    // 'unsafe-eval' required for map libraries (Leaflet/Mapbox)
+    // 5. Apply Security Headers with nonce-based CSP
+    // Nonce enables strict CSP without unsafe-inline
+    // strict-dynamic allows trusted scripts to load additional scripts
+    const csp = [
+        "default-src 'self'",
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://va.vercel-scripts.com`,
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        "img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://cdnjs.cloudflare.com",
+        "frame-src https://challenges.cloudflare.com",
+        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org",
+        "object-src 'none'",
+    ].join('; ');
+
+    // Forward CSP + nonce to app rendering so Next can nonce internal scripts
+    const existingRequestHeaders = finalResponse.headers.get('x-middleware-override-headers');
+    const requestHeaderList = new Set(
+        existingRequestHeaders
+            ? existingRequestHeaders.split(',').map(header => header.trim()).filter(Boolean)
+            : []
+    );
+    requestHeaderList.add('x-nonce');
+    requestHeaderList.add('content-security-policy');
+    finalResponse.headers.set('x-middleware-override-headers', Array.from(requestHeaderList).join(','));
+    finalResponse.headers.set('x-middleware-request-x-nonce', nonce);
+    finalResponse.headers.set('x-middleware-request-content-security-policy', csp);
+    
     const securityHeaders = {
-        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://cdnjs.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org;",
+        'Content-Security-Policy': csp,
         'X-Frame-Options': 'DENY',
         'X-Content-Type-Options': 'nosniff',
         'Referrer-Policy': 'strict-origin-when-cross-origin',

@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // DELETE /api/question-advisor/history/[id]
-export async function DELETE(
+async function handleDelete(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const supabase = await createClient()
     const { id } = await params
 
@@ -38,3 +45,5 @@ export async function DELETE(
         )
     }
 }
+
+export const DELETE = withRateLimit('write')(handleDelete)

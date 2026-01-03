@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 import OpenAI from 'openai'
 
@@ -11,6 +12,11 @@ const openai = new OpenAI({
 // POST: Semantic search with explainability
 // ============================================
 async function handlePost(request: NextRequest) {
+    // CSRF protection - prevents cross-site abuse of OpenAI API calls
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const startTime = Date.now()
 
     try {
