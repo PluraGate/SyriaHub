@@ -98,3 +98,5 @@ async function handlePost(request: NextRequest) {
 
     return NextResponse.json(data)
 }
+
+export const POST = withRateLimit('write')(handlePost)

@@ -298,7 +298,7 @@ export default async function ResearchLabPage() {
                 <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-purple-50 dark:from-primary/10 dark:via-dark-bg dark:to-purple-900/10 py-16 md:py-24">
                     <div className="container-custom relative z-10">
                         <div className="max-w-3xl">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/50 dark:bg-white/10 backdrop-blur-sm border border-white/20 dark:border-white/10 text-accent dark:text-accent-light text-sm font-medium mb-6">
                                 <Sparkles className="w-4 h-4" />
                                 {t('researchTools')}
                             </div>
@@ -357,7 +357,7 @@ export default async function ResearchLabPage() {
                                                     <Icon className="w-6 h-6" />
                                                 </div>
                                                 <div className="flex-1">
-                                                    <h3 className="text-xl font-display font-semibold text-text dark:text-dark-text mb-2 group-hover:text-primary transition-colors">
+                                                    <h3 className="text-xl font-display font-semibold text-text dark:text-dark-text mb-2 group-hover:text-primary dark:group-hover:text-secondary transition-colors">
                                                         {feature.title}
                                                     </h3>
                                                     <p className="text-text-light dark:text-dark-text-muted mb-4">
@@ -367,7 +367,7 @@ export default async function ResearchLabPage() {
                                                         <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-dark-bg rounded-full text-text-light dark:text-dark-text-muted">
                                                             {feature.stats}
                                                         </span>
-                                                        <ArrowRight className="w-5 h-5 text-gray-300 dark:text-dark-border group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                                        <ArrowRight className="w-5 h-5 text-gray-300 dark:text-dark-border group-hover:text-primary dark:group-hover:text-secondary group-hover:translate-x-1 transition-all" />
                                                     </div>
                                                 </div>
                                             </div>

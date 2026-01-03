@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchAllExternalSources, ExternalResult } from '@/lib/externalData'
+import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
 // Web search API - integrates with external data sources
@@ -16,6 +17,11 @@ interface WebSearchResult {
 }
 
 async function handlePost(request: NextRequest) {
+    // CSRF protection - prevents cross-site abuse of external API calls
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const { query, limit = 10 } = await request.json()
 

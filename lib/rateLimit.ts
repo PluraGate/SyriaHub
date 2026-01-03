@@ -190,24 +190,11 @@ export function withRateLimit(
             req: NextRequest | Request,
             context?: any
         ): Promise<NextResponse> {
-            // Get user ID from auth header or null
-            const authHeader = req.headers.get('authorization')
-            let userId: string | null = null
-
-            // Try to extract user ID from JWT if present
-            if (authHeader?.startsWith('Bearer ')) {
-                try {
-                    const token = authHeader.substring(7)
-                    // Simple extraction - in production use proper JWT verification
-                    const payload = JSON.parse(atob(token.split('.')[1]))
-                    userId = payload.sub || null
-                } catch {
-                    // Ignore parsing errors
-                }
-            }
-
+            // SECURITY: Use IP-only for rate limiting to prevent spoofing
+            // Unverified JWT tokens can be forged to evade per-user limits
+            // For verified user rate limiting, use applyVerifiedRateLimit instead
             const ipAddress = getClientIP(req.headers)
-            const result = checkRateLimit(userId, ipAddress, type)
+            const result = checkRateLimit(null, ipAddress, type)
 
             if (!result.success) {
                 return NextResponse.json(
@@ -243,25 +230,11 @@ export async function applyRateLimit(
     req: NextRequest | Request,
     type: RateLimitType = 'read'
 ): Promise<{ allowed: boolean; response?: NextResponse }> {
+    // SECURITY: Use IP-only for rate limiting to prevent spoofing
+    // Unverified JWT tokens can be forged to evade per-user limits
     const ipAddress = getClientIP(req.headers)
 
-    // Try to get user ID from cookie or header
-    let userId: string | null = null
-    // Ensure req is NextRequest to access cookies
-    if (req instanceof NextRequest) {
-        const authCookie = req.cookies.get('sb-auth-token')?.value
-        if (authCookie) {
-            try {
-                const payload = JSON.parse(atob(authCookie.split('.')[1]))
-                userId = payload.sub || null
-            } catch {
-                // Ignore
-            }
-        }
-    }
-
-
-    const result = checkRateLimit(userId, ipAddress, type)
+    const result = checkRateLimit(null, ipAddress, type)
 
     if (!result.success) {
         return {

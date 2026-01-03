@@ -74,7 +74,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
     }
 
     return (
-        <div>
+        <div className="w-full">
             {/* Tabs - only show if more than one tab has content */}
             {availableTabs.length > 1 && (
                 <div className="flex items-center gap-2 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl mb-8 max-w-xl overflow-x-auto">
@@ -98,7 +98,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
             )}
 
             {/* Content */}
-            <div className="min-h-[300px]">
+            <div className="min-h-[300px] w-full">
                 {activeTab === 'posts' && researchPosts.length > 0 && (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {researchPosts.map((post) => (

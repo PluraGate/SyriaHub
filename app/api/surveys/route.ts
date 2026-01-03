@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit } from '@/lib/rateLimit'
+import { validateOrigin } from '@/lib/apiUtils'
 
 // GET /api/surveys - List surveys
 export async function GET(request: NextRequest) {
@@ -38,6 +39,11 @@ export async function GET(request: NextRequest) {
 
 // POST /api/surveys - Create a new survey
 async function handlePost(request: NextRequest) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const supabase = await createClient()
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
