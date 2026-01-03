@@ -5,7 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle, Table, Link2, Quote } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle, Table, Link2, Quote, BarChart3, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -19,6 +19,7 @@ import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { ChartBlock, ChartConfig } from '@/components/ChartBlock'
 import { cn } from '@/lib/utils'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
 import { useTranslations } from 'next-intl'
@@ -86,6 +87,7 @@ export default function EditorPage() {
   const [linkedResources, setLinkedResources] = useState<any[]>([])
   const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false)
   const [editorKey, setEditorKey] = useState(0) // Key to force RichEditor remount
+  const [chartBlocks, setChartBlocks] = useState<ChartConfig[]>([])
 
   // Epistemic Architecture fields
   const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
@@ -285,6 +287,11 @@ export default function EditorPage() {
           if (data.spatial_coverage) setSpatialCoverage(data.spatial_coverage)
           if (data.spatial_geometry) setSpatialGeometry(data.spatial_geometry)
 
+          // Load chart blocks from metadata
+          if (data.metadata?.chartBlocks) {
+            setChartBlocks(data.metadata.chartBlocks)
+          }
+
           if (data.group_id) {
             const { data: groupData } = await supabase
               .from('groups')
@@ -420,6 +427,14 @@ export default function EditorPage() {
         }
         if (spatialGeometry) {
           postData.spatial_geometry = spatialGeometry
+        }
+
+        // Include chart blocks in metadata if any exist
+        if (chartBlocks.length > 0) {
+          postData.metadata = {
+            ...(postData.metadata as Record<string, unknown> || {}),
+            chartBlocks: chartBlocks.filter(c => c.resourceId) // Only save configured charts
+          }
         }
 
         console.log('Saving post with data:', postData)
@@ -907,6 +922,55 @@ export default function EditorPage() {
               </div>
             </div>
           </CollapsibleSection>
+
+          {/* Optional Section: Data Visualizations - Uses Linked Resources */}
+          {linkedResources.length > 0 && (
+            <CollapsibleSection
+              title={t('page.sections.dataVisualizations') || 'Data Visualizations'}
+              icon={BarChart3}
+              description={t('page.sections.dataVisualizationsDesc') || 'Create interactive charts from your linked datasets'}
+              defaultOpen={chartBlocks.length > 0}
+              badge={chartBlocks.length > 0 ? `${chartBlocks.length}` : undefined}
+              className="bg-white dark:bg-dark-surface"
+            >
+              <div className="space-y-4">
+                {chartBlocks.map((chart, index) => (
+                  <ChartBlock
+                    key={`chart-${index}`}
+                    config={chart}
+                    linkedResources={linkedResources}
+                    onChange={(updatedConfig) => {
+                      const newCharts = [...chartBlocks]
+                      newCharts[index] = updatedConfig
+                      setChartBlocks(newCharts)
+                    }}
+                    onRemove={() => {
+                      setChartBlocks(chartBlocks.filter((_, i) => i !== index))
+                    }}
+                    isEditing={true}
+                  />
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setChartBlocks([...chartBlocks, {
+                    resourceId: '',
+                    resourceTitle: '',
+                    chartType: 'bar',
+                    showLegend: true
+                  }])}
+                  className="w-full py-3 px-4 border-2 border-dashed border-gray-200 dark:border-dark-border rounded-xl text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t('page.addChart') || 'Add Chart Visualization'}
+                </button>
+
+                <p className="text-xs text-text-light dark:text-dark-text-muted">
+                  {t('page.chartHelp') || 'Charts will be displayed in your published post. Link dataset resources above to enable visualizations.'}
+                </p>
+              </div>
+            </CollapsibleSection>
+          )}
 
           {/* Optional Section: Research Coverage - Separate Card (for Articles and Traces) */}
           {(contentType === 'article' || contentType === 'trace') && (

@@ -473,7 +473,9 @@
                 "referencesResources": "Linked Resources & References",
                 "referencesResourcesDesc": "Connect datasets, papers, tools, and cite your sources",
                 "researchCoverage": "Research Coverage",
-                "researchCoverageDesc": "Define when and where your research applies"
+                "researchCoverageDesc": "Define when and where your research applies",
+                "dataVisualizations": "Data Visualizations",
+                "dataVisualizationsDesc": "Create interactive charts from your linked datasets"
             },
             "contentTypeHelp": {
                 "article": "In-depth research articles, analysis, or reports. Ideal for publishing findings with citations.",
@@ -481,7 +483,28 @@
                 "trace": "Collective memory artefacts: photos, audio, documents, testimonies. Fragments of evidence that aren't full articles."
             },
             "editWindowTitle": "24-Hour Edit Window",
-            "editWindowDescription": "Once published, you can edit this post for 24 hours. After that, it will be locked for transparency and academic integrity."
+            "editWindowDescription": "Once published, you can edit this post for 24 hours. After that, it will be locked for transparency and academic integrity.",
+            "addChart": "Add Chart Visualization",
+            "chartHelp": "Charts will be displayed in your published post. Link dataset resources above to enable visualizations."
+        },
+        "chart": {
+            "types": {
+                "bar": "Bar Chart",
+                "line": "Line Chart",
+                "pie": "Pie Chart",
+                "area": "Area Chart"
+            },
+            "selectResource": "Select a Dataset",
+            "selectResourceDesc": "Choose a linked dataset resource to visualize",
+            "noDatasets": "No dataset resources linked. Link a dataset first in the Resources section above.",
+            "noData": "No data to display",
+            "removeBlock": "Remove Chart Block",
+            "chartType": "Chart Type",
+            "nameColumn": "Name Column",
+            "valueColumn": "Value Column",
+            "chartTitle": "Chart Title",
+            "showLegend": "Show Legend",
+            "changeDataset": "Change Dataset"
         },
         "firstTimePrompt": {
             "title": "Welcome, Contributor",
@@ -1645,7 +1668,20 @@
             "pollCreated": "Poll created!",
             "pollDeleted": "Poll deleted successfully",
             "pollClosed": "Poll closed",
-            "by": "by"
+            "by": "by",
+            "exportData": "Export Data",
+            "exportSuccess": "Poll results exported successfully",
+            "exportError": "Failed to export poll results",
+            "saveToResources": "Save to Resources",
+            "savedToResources": "Poll results saved to Resources!",
+            "saveToResourcesError": "Failed to save to resources"
+        },
+        "surveysPage": {
+            "copyLink": "Copy Link",
+            "export": "Export",
+            "saveToResources": "Save to Resources",
+            "savedToResources": "Survey results saved to Resources!",
+            "saveToResourcesError": "Failed to save to resources"
         },
         "footprint": {
             "title": "Your Participation",

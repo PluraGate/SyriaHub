@@ -27,6 +27,7 @@ import { CiteButton } from '@/components/CiteButton'
 import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { SpatialContextCard } from '@/components/spatial'
+import { PostCharts } from '@/components/PostCharts'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -463,6 +464,14 @@ export default async function PostPage(props: PostPageProps) {
                 </ReactMarkdown>
               </TextSelectionHandler>
             </div>
+
+            {/* Data Visualizations */}
+            {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
+              <PostCharts
+                chartBlocks={post.metadata.chartBlocks}
+                linkedResources={linkedResources}
+              />
+            )}
 
             {/* Spatial Context - between content and citations */}
             <SpatialContextCard
