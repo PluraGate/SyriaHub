@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
+import dotenv from 'dotenv'
+import path from 'path'
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({

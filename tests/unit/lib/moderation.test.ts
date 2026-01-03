@@ -249,8 +249,8 @@ describe('Moderation Module', () => {
 
       const warning = generateModerationWarning(result)
 
-      expect(warning).toContain('hate')
-      expect(warning).toContain('violence')
+      expect(warning).toContain('Hate')
+      expect(warning).toContain('Violence')
       expect(warning).toContain('community guidelines')
     })
 
