@@ -535,7 +535,7 @@ export default function EditorPage() {
         setSaving(false)
       }
     },
-    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, coverImage, linkedResources, clearDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry]
+    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, coverImage, linkedResources, clearDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry, chartBlocks]
   )
 
   const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {

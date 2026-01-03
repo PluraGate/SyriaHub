@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
 // Track post view
 async function handlePost(request: NextRequest) {
+    // CSRF protection (lower priority but still protects against cross-site tracking abuse)
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     try {
         const body = await request.json()
         const { postId, sessionId, duration, scrollDepth, referrer } = body

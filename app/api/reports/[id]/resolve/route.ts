@@ -1,13 +1,21 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { NextResponse } from 'next/server'
+import { validateOrigin } from '@/lib/apiUtils'
+import { withRateLimit } from '@/lib/rateLimit'
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    // CSRF protection
+    if (!validateOrigin(request)) {
+        return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    }
+
     const { id } = await params
     const supabase = await createClient()
 
     // Verify admin
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return new Response('Unauthorized', { status: 401 })
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data: userData } = await supabase
         .from('users')
@@ -16,7 +24,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         .single()
 
     if (!userData || !['admin', 'moderator'].includes(userData.role)) {
-        return new Response('Forbidden', { status: 403 })
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Update report status
@@ -27,8 +35,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     if (error) {
         console.error('Error resolving report:', error)
-        return new Response('Error', { status: 500 })
+        return NextResponse.json({ error: 'Error resolving report' }, { status: 500 })
     }
 
     redirect('/admin/reports')
 }
+
+export const POST = withRateLimit('write')(handlePost)

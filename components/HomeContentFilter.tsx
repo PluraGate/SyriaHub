@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Filter, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -56,7 +56,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
   }
 
   // Filter posts based on query (searches title, content, excerpt, tags, and author name)
-  const filterPosts = (posts: Post[]) => {
+  const filterPosts = useCallback((posts: Post[]) => {
     if (!filterQuery.trim()) return posts
     
     const query = normalizeText(filterQuery)
@@ -75,10 +75,10 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
         authorName.includes(query)
       )
     })
-  }
+  }, [filterQuery])
 
-  const filteredFeatured = useMemo(() => filterPosts(featuredPosts), [featuredPosts, filterQuery])
-  const filteredRecent = useMemo(() => filterPosts(recentPosts), [recentPosts, filterQuery])
+  const filteredFeatured = useMemo(() => filterPosts(featuredPosts), [filterPosts, featuredPosts])
+  const filteredRecent = useMemo(() => filterPosts(recentPosts), [filterPosts, recentPosts])
 
   const hasResults = filteredFeatured.length > 0 || filteredRecent.length > 0
   const isFiltering = filterQuery.trim().length > 0

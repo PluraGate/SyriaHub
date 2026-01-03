@@ -7,19 +7,42 @@ export interface ApiResponse<T = any> {
   data?: T
   error?: string
   message?: string
+  requestId?: string
+}
+
+/**
+ * Generate a unique request ID for tracing and debugging
+ * Format: req_<timestamp_base36>_<random_9chars>
+ * Example: req_lz5k8m2_a1b2c3d4e
+ */
+export function generateRequestId(): string {
+  return `req_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 11)}`
+}
+
+/**
+ * Add request ID header to a response
+ */
+export function withRequestId(response: NextResponse, requestId: string): NextResponse {
+  response.headers.set('x-request-id', requestId)
+  return response
 }
 
 /**
  * Create a successful JSON response
  */
-export function successResponse<T>(data: T, status = 200): NextResponse<ApiResponse<T>> {
-  return NextResponse.json(
+export function successResponse<T>(data: T, status = 200, requestId?: string): NextResponse<ApiResponse<T>> {
+  const response = NextResponse.json(
     {
       success: true,
       data,
+      ...(requestId && { requestId }),
     },
     { status }
   )
+  if (requestId) {
+    response.headers.set('x-request-id', requestId)
+  }
+  return response
 }
 
 /**
@@ -27,15 +50,21 @@ export function successResponse<T>(data: T, status = 200): NextResponse<ApiRespo
  */
 export function errorResponse(
   message: string,
-  status = 400
+  status = 400,
+  requestId?: string
 ): NextResponse<ApiResponse> {
-  return NextResponse.json(
+  const response = NextResponse.json(
     {
       success: false,
       error: message,
+      ...(requestId && { requestId }),
     },
     { status }
   )
+  if (requestId) {
+    response.headers.set('x-request-id', requestId)
+  }
+  return response
 }
 
 /**
@@ -157,7 +186,7 @@ export function validateRequiredFields<T extends Record<string, any>>(
 }
 
 /**
- * Wrap async route handler with error handling
+ * Wrap async route handler with error handling and request ID tracking
  */
 export function withErrorHandling(
   handler: (request: Request, context?: any) => Promise<NextResponse>,
@@ -171,8 +200,14 @@ export function withErrorHandling(
   }
 ) {
   return async (request: Request, context?: any): Promise<NextResponse> => {
+    // Generate request ID for correlation
+    const requestId = generateRequestId()
+    
     try {
       const response = await handler(request, context)
+
+      // Always add request ID to successful responses
+      response.headers.set('x-request-id', requestId)
 
       const cacheOptions = options?.cache
       if (cacheOptions && cacheOptions.enabled !== false && request.method === 'GET') {
@@ -195,24 +230,25 @@ export function withErrorHandling(
 
       return response
     } catch (error) {
-      console.error('API Error:', error)
+      // Log with request ID for correlation
+      console.error(`[${requestId}] API Error:`, error)
       
       if (error instanceof Error) {
         // Handle specific error types
         if (error.message === 'Unauthorized') {
-          return unauthorizedResponse()
+          return withRequestId(unauthorizedResponse(), requestId)
         }
         if (error.message.startsWith('Forbidden')) {
-          return forbiddenResponse(error.message)
+          return withRequestId(forbiddenResponse(error.message), requestId)
         }
         if (error.message.includes('not found')) {
-          return notFoundResponse()
+          return withRequestId(notFoundResponse(), requestId)
         }
         
-        return errorResponse(error.message)
+        return errorResponse(error.message, 400, requestId)
       }
       
-      return errorResponse('An unexpected error occurred', 500)
+      return errorResponse('An unexpected error occurred', 500, requestId)
     }
   }
 }

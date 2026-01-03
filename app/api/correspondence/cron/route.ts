@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { withRateLimit } from '@/lib/rateLimit'
 
 // This endpoint should be called by a cron job (e.g., Vercel Cron)
 // It uses the service role to bypass RLS and deliver pending correspondence
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     try {
         // Verify cron secret to prevent unauthorized access
         const authHeader = request.headers.get('authorization')
@@ -62,6 +63,9 @@ export async function POST(request: NextRequest) {
 }
 
 // Also support GET for manual testing (protected by same secret)
-export async function GET(request: NextRequest) {
-    return POST(request)
+async function handleGet(request: NextRequest) {
+    return handlePost(request)
 }
+
+export const POST = withRateLimit('write')(handlePost)
+export const GET = withRateLimit('write')(handleGet)

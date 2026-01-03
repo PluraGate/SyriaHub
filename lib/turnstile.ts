@@ -17,10 +17,14 @@ interface TurnstileVerifyResponse {
  * @returns true if verification passed, false otherwise
  */
 export async function verifyTurnstileToken(token: string | null): Promise<boolean> {
-    // If no secret key configured, skip verification (development mode)
+    // SECURITY: Fail closed in production if secret key is missing
     const secretKey = process.env.TURNSTILE_SECRET_KEY
     if (!secretKey) {
-        console.warn('Turnstile: TURNSTILE_SECRET_KEY not set, skipping verification')
+        if (process.env.NODE_ENV === 'production') {
+            console.error('SECURITY: Turnstile TURNSTILE_SECRET_KEY not configured in production!')
+            return false // Fail closed in production
+        }
+        console.warn('Turnstile: TURNSTILE_SECRET_KEY not set, skipping verification (dev mode)')
         return true
     }
 

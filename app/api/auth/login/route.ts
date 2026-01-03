@@ -7,6 +7,7 @@ import {
   parseRequestBody,
   validateRequiredFields,
   withErrorHandling,
+  validateOrigin,
 } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
@@ -16,6 +17,11 @@ interface LoginRequest {
 }
 
 async function handleLogin(request: Request): Promise<NextResponse> {
+  // CSRF protection
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+  }
+
   const supabase = await createServerClient()
 
   // Parse request body
