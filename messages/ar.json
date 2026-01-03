@@ -44,6 +44,7 @@
         "remove": "إزالة",
         "view": "عرض",
         "download": "تحميل",
+        "downloads": "تحميلات",
         "upload": "رفع",
         "attending": "حاضر",
         "processing": "جارٍ المعالجة...",
@@ -273,7 +274,7 @@
         "featured": "المميزة",
         "latestResearch": "أحدث الأبحاث",
         "sortNew": "الأحدث",
-        "sortHot": "الساخن",
+        "sortHot": "الأكثر نقاشاً",
         "sortTopWeek": "الأعلى هذا الأسبوع",
         "sortTopMonth": "الأعلى هذا الشهر",
         "sortTopAll": "الأعلى على الإطلاق"
@@ -465,6 +466,15 @@
             "geographicRegion": "المنطقة الجغرافية",
             "geographicPlaceholder": "مثال: حلب، إدلب، دمشق",
             "coverageHelp": "حدد الفترة الزمنية والموقع الذي يغطيه بحثك لتمكين التصفية الزمنية والجغرافية.",
+            "references": "المراجع",
+            "referencesHelp": "أضف مراجع من منشورات SyriaHub أو مصادر خارجية (DOI، رابط).",
+            "optional": "اختياري",
+            "sections": {
+                "referencesResources": "الموارد المرتبطة والمراجع",
+                "referencesResourcesDesc": "اربط مجموعات البيانات والأوراق البحثية والأدوات واستشهد بمصادرك",
+                "researchCoverage": "التغطية البحثية",
+                "researchCoverageDesc": "حدد متى وأين ينطبق بحثك"
+            },
             "contentTypeHelp": {
                 "article": "مقالات بحثية معمقة أو تحليلات أو تقارير. مثالية لنشر النتائج مع الاستشهادات.",
                 "question": "أسئلة بحثية تبحث عن إجابات من المجتمع. رائعة للتعهيد الجماعي للمعرفة.",
@@ -553,7 +563,9 @@
         "trending": "رائج",
         "minRead": "{count} د",
         "event": "فعالية",
-        "context": "السياق"
+        "context": "السياق",
+        "noFilterResults": "لا توجد نتائج مطابقة للتصفية",
+        "clearFilter": "مسح التصفية"
     },
     "Footer": {
         "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية.",
@@ -726,7 +738,8 @@
         "moreAttendees": "+{count} آخرين",
         "beFirstToRsvp": "كن أول من يحجز!",
         "eventCancelled": "تم إلغاء هذا الحدث",
-        "eventPostponed": "تم تأجيل هذا الحدث"
+        "eventPostponed": "تم تأجيل هذا الحدث",
+        "ended": "انتهى"
     },
     "Groups": {
         "title": "المجموعات",
@@ -828,6 +841,7 @@
         "markAllAsRead": "تحديد الكل كمقروء",
         "markAsRead": "تحديد كمقروء",
         "clearAll": "مسح الكل",
+        "clearRead": "مسح المقروءة",
         "noNotifications": "لا توجد إشعارات",
         "noNotificationsDesc": "أنت على اطلاع بكل جديد!",
         "allCaughtUp": "أنت على اطلاع بكل جديد!",
@@ -1530,7 +1544,7 @@
         "title": "مختبر البحث",
         "subtitle": "أدوات للبحث والاستطلاعات وتحليل البيانات.",
         "heroSubtitle": "أدوات قوية للباحثين: أنشئ استبيانات، وأجرِ استطلاعات، وحلّل البيانات، وحسّن أسئلتك البحثية بمساعدة الذكاء الاصطناعي.",
-        "researchTools": "أدوات البحث",
+        "researchTools": "اكتشف وحلّل",
         "polls": "استطلاعات الرأي",
         "surveys": "الاستبيانات",
         "statistics": "الإحصائيات",
@@ -1611,6 +1625,7 @@
             "beFirstPoll": "كن أول من ينشئ استطلاعاً!",
             "descriptionOptional": "الوصف (اختياري)",
             "closed": "مغلق",
+            "voted": "صوّت",
             "multipleChoice": "اختيار متعدد",
             "pollResults": "نتائج الاستطلاع",
             "totalVotesLabel": "إجمالي الأصوات",
@@ -1669,7 +1684,8 @@
             "noActiveSurveys": "لا توجد استبيانات نشطة حالياً",
             "takeSurvey": "شارك في الاستبيان",
             "viewResults": "عرض النتائج",
-            "editSurvey": "تعديل الاستبيان"
+            "editSurvey": "تعديل الاستبيان",
+            "completed": "مكتمل"
         },
         "nav": {
             "overview": "نظرة عامة",
@@ -2355,6 +2371,9 @@
         "useThis": "استخدم هذا",
         "copied": "تم النسخ!",
         "questionUpdated": "تم تحديث السؤال!",
+        "questionHistory": "سجل الأسئلة",
+        "historyDeleted": "تم حذف العنصر من السجل",
+        "delete": "حذف",
         "tips": {
             "title": "نصائح لأسئلة بحثية جيدة",
             "specific": "كن محدداً ومركّزاً",
@@ -2366,7 +2385,8 @@
         "errors": {
             "enterQuestion": "أدخل سؤالاً بحثياً",
             "loginRequired": "سجّل الدخول لاستخدام مستشار الأسئلة",
-            "dailyLimit": "تم الوصول للحد اليومي. حاول مرة أخرى غداً!"
+            "dailyLimit": "تم الوصول للحد اليومي. حاول مرة أخرى غداً!",
+            "deleteFailed": "فشل حذف العنصر من السجل"
         }
     },
     "EditorExtras": {
@@ -2528,7 +2548,8 @@
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "أدخل كلمة المرور",
         "passwordCreate": "6 أحرف على الأقل",
-        "searchPlaceholder": "بحث..."
+        "searchPlaceholder": "بحث...",
+        "filterPlaceholder": "…تصفية المحتوى الظاهر"
     },
     "Statistics": {
         "dataPlaceholder": "مثال: 10، 20، 30، 40، 50",

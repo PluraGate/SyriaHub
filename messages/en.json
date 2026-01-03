@@ -44,6 +44,7 @@
         "remove": "Remove",
         "view": "View",
         "download": "Download",
+        "downloads": "Downloads",
         "upload": "Upload",
         "attending": "Attending",
         "processing": "Processing...",
@@ -273,7 +274,7 @@
         "featured": "Featured",
         "latestResearch": "Latest Research",
         "sortNew": "Newest",
-        "sortHot": "Hot",
+        "sortHot": "Most Discussed",
         "sortTopWeek": "Top This Week",
         "sortTopMonth": "Top This Month",
         "sortTopAll": "Top All Time"
@@ -465,6 +466,15 @@
             "geographicRegion": "Geographic Region",
             "geographicPlaceholder": "e.g., Aleppo, Idlib, Damascus",
             "coverageHelp": "Specify the time period and location your research covers to enable temporal and geographic filtering.",
+            "references": "References",
+            "referencesHelp": "Add references to SyriaHub posts or external sources (DOI, URL).",
+            "optional": "Optional",
+            "sections": {
+                "referencesResources": "Linked Resources & References",
+                "referencesResourcesDesc": "Connect datasets, papers, tools, and cite your sources",
+                "researchCoverage": "Research Coverage",
+                "researchCoverageDesc": "Define when and where your research applies"
+            },
             "contentTypeHelp": {
                 "article": "In-depth research articles, analysis, or reports. Ideal for publishing findings with citations.",
                 "question": "Research questions seeking answers from the community. Great for crowdsourcing knowledge.",
@@ -553,7 +563,9 @@
         "trending": "Trending",
         "minRead": "{count} min",
         "event": "Event",
-        "context": "Context"
+        "context": "Context",
+        "noFilterResults": "No results match your filter",
+        "clearFilter": "Clear filter"
     },
     "Footer": {
         "description": "A collaborative research commons for Syrian knowledge, context, and memory.",
@@ -575,7 +587,7 @@
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
         "updates": "Updates",
         "platformStage": "Beta",
-        "platformVersion": "v0.6.2",
+        "platformVersion": "v0.7.0",
         "platformSustainability": "Platform Sustainability",
         "sustainabilityIntro": "SyriaHub is a non-profit research commons. When contributions are accepted, they are used exclusively to sustain the shared infrastructure that enables long-term access, research integrity, and platform reliability.",
         "sustainabilityDataInfrastructure": "Data Infrastructure",
@@ -726,7 +738,8 @@
         "moreAttendees": "+{count} more",
         "beFirstToRsvp": "Be the first to RSVP!",
         "eventCancelled": "This event has been cancelled",
-        "eventPostponed": "This event has been postponed"
+        "eventPostponed": "This event has been postponed",
+        "ended": "Ended"
     },
     "Groups": {
         "title": "Groups",
@@ -828,6 +841,7 @@
         "markAllAsRead": "Mark all as read",
         "markAsRead": "Mark as read",
         "clearAll": "Clear all",
+        "clearRead": "Clear read",
         "noNotifications": "No notifications",
         "noNotificationsDesc": "You're all caught up!",
         "allCaughtUp": "All caught up!",
@@ -1530,7 +1544,7 @@
         "title": "Research Lab",
         "subtitle": "Tools for research, surveys, and data analysis.",
         "heroSubtitle": "Powerful tools for researchers: create surveys, run polls, analyze data, and refine your research questions with AI assistance.",
-        "researchTools": "Research Tools",
+        "researchTools": "Discover & Analyze",
         "polls": "Polls",
         "surveys": "Surveys",
         "statistics": "Statistics",
@@ -1611,6 +1625,7 @@
             "beFirstPoll": "Be the first to create a poll!",
             "descriptionOptional": "Description (optional)",
             "closed": "Closed",
+            "voted": "Voted",
             "multipleChoice": "Multiple choice",
             "pollResults": "Poll Results",
             "totalVotesLabel": "total votes",
@@ -1669,7 +1684,8 @@
             "noActiveSurveys": "No active surveys available right now",
             "takeSurvey": "Take Survey",
             "viewResults": "View Results",
-            "editSurvey": "Edit Survey"
+            "editSurvey": "Edit Survey",
+            "completed": "Completed"
         },
         "nav": {
             "overview": "Overview",
@@ -2355,6 +2371,9 @@
         "useThis": "Use this",
         "copied": "Copied to clipboard!",
         "questionUpdated": "Question updated!",
+        "questionHistory": "Question History",
+        "historyDeleted": "History item deleted",
+        "delete": "Delete",
         "tips": {
             "title": "Tips for Good Research Questions",
             "specific": "Be specific and focused",
@@ -2366,7 +2385,8 @@
         "errors": {
             "enterQuestion": "Please enter a research question",
             "loginRequired": "Please log in to use the Question Advisor",
-            "dailyLimit": "Daily limit reached. Try again tomorrow!"
+            "dailyLimit": "Daily limit reached. Try again tomorrow!",
+            "deleteFailed": "Failed to delete history item"
         }
     },
     "EditorExtras": {
@@ -2528,7 +2548,8 @@
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Enter your password",
         "passwordCreate": "At least 6 characters",
-        "searchPlaceholder": "Search..."
+        "searchPlaceholder": "Search...",
+        "filterPlaceholder": "Filter visible content…"
     },
     "Statistics": {
         "dataPlaceholder": "e.g., 10, 20, 30, 40, 50",

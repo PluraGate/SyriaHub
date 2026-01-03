@@ -12,7 +12,8 @@ import {
     Eye,
     Edit,
     Trash2,
-    ExternalLink
+    ExternalLink,
+    CheckCircle2
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { getTranslations } from 'next-intl/server'
@@ -50,6 +51,14 @@ export default async function SurveysPage() {
         .order('created_at', { ascending: false })
         .limit(10)
 
+    // Fetch survey IDs the user has already participated in
+    const { data: userResponses } = user ? await supabase
+        .from('survey_responses')
+        .select('survey_id')
+        .eq('respondent_id', user.id) : { data: null }
+    
+    const completedSurveyIds = new Set(userResponses?.map(r => r.survey_id) || [])
+
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
             <Navbar user={user} />
@@ -84,7 +93,7 @@ export default async function SurveysPage() {
                     {user && (
                         <section className="mb-12">
                             <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                                <ClipboardList className="w-5 h-5 text-primary" />
+                                <ClipboardList className="w-5 h-5 text-accent" />
                                 {t('mySurveys')}
                             </h2>
 
@@ -179,11 +188,19 @@ export default async function SurveysPage() {
                                         href={`/research-lab/surveys/${survey.id}`}
                                         className="block bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5 hover:border-primary/50 transition-colors group"
                                     >
-                                        <div className="flex items-start justify-between gap-4">
+                                        <div className="flex items-center justify-between gap-4">
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors mb-1">
-                                                    {survey.title}
-                                                </h3>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="text-lg font-semibold text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-secondary transition-colors">
+                                                        {survey.title}
+                                                    </h3>
+                                                    {completedSurveyIds.has(survey.id) && (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                                            <CheckCircle2 className="w-3 h-3" />
+                                                            {t('surveysPage.completed')}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 {survey.description && (
                                                     <p className="text-text-light dark:text-dark-text-muted text-sm line-clamp-2 mb-3">
                                                         {survey.description}
@@ -199,8 +216,8 @@ export default async function SurveysPage() {
                                                     </span>
                                                 </div>
                                             </div>
-                                            <span className="btn btn-outline btn-sm whitespace-nowrap">
-                                                {t('surveysPage.takeSurvey')}
+                                            <span className={`btn btn-sm whitespace-nowrap shrink-0 ${completedSurveyIds.has(survey.id) ? 'btn-ghost text-text-light dark:text-dark-text-muted' : 'btn-outline'}`}>
+                                                {completedSurveyIds.has(survey.id) ? t('surveysPage.viewResults') : t('surveysPage.takeSurvey')}
                                             </span>
                                         </div>
                                     </Link>

@@ -207,7 +207,7 @@ export function TrendingPosts() {
             {posts.length > 0 && (
                 <Link
                     href="/feed?sort=hot"
-                    className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-primary hover:bg-primary/5 transition-colors border-t border-gray-100 dark:border-dark-border"
+                    className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-primary dark:text-secondary hover:bg-primary/5 dark:hover:bg-secondary/5 transition-colors border-t border-gray-100 dark:border-dark-border"
                 >
                     {t('viewAll')}
                     <ChevronRight className="w-4 h-4" />

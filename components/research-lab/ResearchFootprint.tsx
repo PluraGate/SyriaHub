@@ -95,11 +95,11 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Vote className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                                    <span className="text-xs text-text dark:text-dark-text">
                                         {t('footprint.pollsVoted')}
                                     </span>
                                 </div>
-                                <span className="text-lg font-bold text-text dark:text-dark-text">
+                                <span className="text-sm font-bold text-text dark:text-dark-text">
                                     {stats.pollsVoted}
                                 </span>
                             </div>
@@ -108,11 +108,11 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <ClipboardList className="w-4 h-4 text-blue-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                                    <span className="text-xs text-text dark:text-dark-text">
                                         {t('footprint.surveysCompleted')}
                                     </span>
                                 </div>
-                                <span className="text-lg font-bold text-text dark:text-dark-text">
+                                <span className="text-sm font-bold text-text dark:text-dark-text">
                                     {stats.surveysCompleted}
                                 </span>
                             </div>
@@ -128,7 +128,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                         href={stats.lastActivity.type === 'poll'
                                             ? `/research-lab/polls`
                                             : `/research-lab/surveys/${stats.lastActivity.id}`}
-                                        className="text-sm text-primary hover:underline line-clamp-1"
+                                        className="text-sm text-primary dark:text-secondary hover:underline line-clamp-1"
                                     >
                                         {stats.lastActivity.title}
                                     </Link>
@@ -150,7 +150,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                     </div>
                                     <div className="h-1.5 bg-gray-100 dark:bg-dark-bg rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-gradient-to-r from-primary/60 to-primary rounded-full transition-all duration-500"
+                                            className="h-full bg-gradient-to-r from-secondary/60 to-secondary dark:from-secondary dark:to-emerald-400 rounded-full transition-all duration-500"
                                             style={{ width: `${progressPercent}%` }}
                                         />
                                     </div>
@@ -168,7 +168,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                             </h3>
                             <Link
                                 href="/research-lab/polls"
-                                className="text-xs text-primary hover:underline flex items-center gap-1"
+                                className="text-xs text-primary dark:text-secondary hover:underline flex items-center gap-1"
                             >
                                 {t('footprint.viewAll')}
                                 <ArrowRight className="w-3 h-3" />
@@ -187,7 +187,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                         <Vote className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
+                                        <p className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary dark:group-hover:text-secondary transition-colors">
                                             {poll.question}
                                         </p>
                                         <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted mt-0.5">
@@ -201,7 +201,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                             </span>
                                         </div>
                                     </div>
-                                    <BarChart2 className="w-4 h-4 text-gray-300 dark:text-dark-border group-hover:text-primary transition-colors" />
+                                    <BarChart2 className="w-4 h-4 text-gray-300 dark:text-dark-text-muted group-hover:text-primary dark:group-hover:text-secondary transition-colors" />
                                 </Link>
                             ))}
 
@@ -216,7 +216,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                         <ClipboardList className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
+                                        <p className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary dark:group-hover:text-secondary transition-colors">
                                             {survey.title}
                                         </p>
                                         <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted mt-0.5">
@@ -230,7 +230,7 @@ export function ResearchFootprint({ stats, variant = 'full', className }: Resear
                                             </span>
                                         </div>
                                     </div>
-                                    <BarChart2 className="w-4 h-4 text-gray-300 dark:text-dark-border group-hover:text-primary transition-colors" />
+                                    <BarChart2 className="w-4 h-4 text-gray-300 dark:text-dark-text-muted group-hover:text-primary dark:group-hover:text-secondary transition-colors" />
                                 </Link>
                             ))}
 

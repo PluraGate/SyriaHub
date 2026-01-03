@@ -160,7 +160,7 @@ export function FeaturedPost({
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-primary rounded-full shadow-sm">
                                     <Calendar className="w-3.5 h-3.5 text-white" />
                                     <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                        Event
+                                        {t('event')}
                                     </span>
                                 </div>
                             )}
@@ -247,14 +247,14 @@ export function FeaturedPost({
                 {/* Content */}
                 <div className="relative z-10 p-6 space-y-3">
                     <div className="flex items-center justify-between">
-                        {post.tags && post.tags.length > 0 && (
-                            <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
+                        {post.tags && post.tags.length > 0 && !isEvent && (
+                            <span className="text-xs font-semibold uppercase tracking-wider text-white/80">
                                 {post.tags[0]}
                             </span>
                         )}
                         {isEvent && (
                             <span className="text-xs font-bold text-white bg-primary/80 backdrop-blur-md px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                Event
+                                {t('event')}
                             </span>
                         )}
                     </div>
@@ -265,7 +265,7 @@ export function FeaturedPost({
 
                     <div className="flex items-center gap-4 text-sm text-white/70">
                         {isEvent ? (
-                            <div className="flex items-center gap-1.5 font-medium text-white">
+                            <div className="flex items-center gap-1.5 font-medium text-white/90">
                                 <Calendar className="w-4 h-4" />
                                 <span>{eventDate}</span>
                             </div>
@@ -299,12 +299,20 @@ export function FeaturedPost({
                 className
             )}
         >
-            {/* Category dot */}
+            {/* Category indicator */}
             <div className="flex items-center gap-2 mb-3">
-                <div className={cn('w-2 h-2 rounded-full', isEvent ? 'bg-primary' : colors.bg)} />
-                <span className={cn('text-xs font-semibold uppercase tracking-wider', isEvent ? 'text-primary' : colors.text)}>
-                    {isEvent ? t('trending') : (post.tags?.[0] || 'Research')}
-                </span>
+                {isEvent ? (
+                    <span className="text-[11px] font-medium text-text-light dark:text-dark-text-muted bg-gray-100/80 dark:bg-dark-border/50 backdrop-blur-sm px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        {t('event')}
+                    </span>
+                ) : (
+                    <>
+                        <div className={cn('w-2 h-2 rounded-full', colors.bg)} />
+                        <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
+                            {post.tags?.[0] || 'Research'}
+                        </span>
+                    </>
+                )}
             </div>
 
             <h3 className="text-base font-semibold text-text dark:text-dark-text line-clamp-2 group-hover:text-primary transition-colors flex-1">
@@ -313,7 +321,7 @@ export function FeaturedPost({
 
             <div className="mt-4 pt-3 border-t border-gray-100 dark:border-dark-border flex items-center justify-between text-xs text-text-muted dark:text-dark-text-muted">
                 {isEvent ? (
-                    <div className="flex items-center gap-1.5 text-primary font-medium w-full">
+                    <div className="flex items-center gap-1.5 w-full">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>{eventDate}</span>
                     </div>

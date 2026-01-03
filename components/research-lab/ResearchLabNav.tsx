@@ -130,7 +130,7 @@ export function ResearchLabNav({ className }: ResearchLabNavProps) {
                         className={cn(
                             'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm transition-colors',
                             isActive(item.href, item.exact)
-                                ? 'bg-primary/10 text-primary font-medium'
+                                ? 'bg-primary/10 dark:bg-secondary/10 text-primary dark:text-secondary font-medium'
                                 : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
                         )}
                         title={item.label}
