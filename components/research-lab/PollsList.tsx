@@ -15,7 +15,11 @@ import {
     MoreVertical,
     XCircle,
     Share2,
-    CheckCircle2
+    CheckCircle2,
+    Download,
+    FileJson,
+    FileSpreadsheet,
+    Upload
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ar, enUS } from 'date-fns/locale'
@@ -415,7 +419,160 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
 // Poll Results Modal
 function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }) {
     const t = useTranslations('ResearchLab')
+    const { showToast } = useToast()
+    const [isExporting, setIsExporting] = useState(false)
+    const [isSavingToResources, setIsSavingToResources] = useState(false)
     const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote_count, 0)
+
+    const getPollData = () => {
+        return {
+            poll: {
+                id: poll.id,
+                question: poll.question,
+                description: poll.description || null,
+                isMultipleChoice: poll.is_multiple_choice,
+                isAnonymous: poll.is_anonymous,
+                totalVotes,
+                createdAt: poll.created_at,
+                endDate: poll.end_date || null,
+                isActive: poll.is_active
+            },
+            results: poll.options.map(opt => ({
+                option: opt.text,
+                votes: opt.vote_count,
+                percentage: totalVotes > 0 ? Math.round((opt.vote_count / totalVotes) * 100) : 0
+            })),
+            exportedAt: new Date().toISOString()
+        }
+    }
+
+    const handleExportCSV = () => {
+        setIsExporting(true)
+        try {
+            const headers = ['Option', 'Votes', 'Percentage']
+            const rows = poll.options
+                .sort((a, b) => b.vote_count - a.vote_count)
+                .map(opt => {
+                    const percentage = totalVotes > 0 ? Math.round((opt.vote_count / totalVotes) * 100) : 0
+                    return [
+                        opt.text.includes(',') ? `"${opt.text}"` : opt.text,
+                        opt.vote_count.toString(),
+                        `${percentage}%`
+                    ].join(',')
+                })
+
+            const csvContent = [
+                `# Poll: ${poll.question}`,
+                `# Total Votes: ${totalVotes}`,
+                `# Exported: ${new Date().toISOString()}`,
+                '',
+                headers.join(','),
+                ...rows
+            ].join('\n')
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `poll_${poll.question.slice(0, 30).replace(/[^a-z0-9]/gi, '_')}_results.csv`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+
+            showToast(t('pollsPage.exportSuccess') || 'Poll results exported to CSV', 'success')
+        } catch {
+            showToast(t('pollsPage.exportError') || 'Failed to export poll results', 'error')
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
+    const handleExportJSON = () => {
+        setIsExporting(true)
+        try {
+            const data = getPollData()
+            const jsonContent = JSON.stringify(data, null, 2)
+
+            const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `poll_${poll.question.slice(0, 30).replace(/[^a-z0-9]/gi, '_')}_results.json`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+
+            showToast(t('pollsPage.exportSuccess') || 'Poll results exported to JSON', 'success')
+        } catch {
+            showToast(t('pollsPage.exportError') || 'Failed to export poll results', 'error')
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
+    const handleSaveToResources = async () => {
+        setIsSavingToResources(true)
+        try {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            
+            if (!user) {
+                showToast('Please log in to save to resources', 'error')
+                return
+            }
+
+            const data = getPollData()
+            const jsonContent = JSON.stringify(data, null, 2)
+            const fileName = `poll_${poll.question.slice(0, 30).replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.json`
+
+            // Upload to storage
+            const { error: uploadError } = await supabase.storage
+                .from('resources')
+                .upload(`${user.id}/${fileName}`, new Blob([jsonContent], { type: 'application/json' }), {
+                    contentType: 'application/json',
+                    upsert: false
+                })
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('resources')
+                .getPublicUrl(`${user.id}/${fileName}`)
+
+            // Create resource post
+            const { error: postError } = await supabase
+                .from('posts')
+                .insert({
+                    title: `Poll Results: ${poll.question}`,
+                    content: `Dataset exported from poll "${poll.question}" with ${totalVotes} total votes.`,
+                    tags: ['dataset', 'poll-results', 'research-data'],
+                    content_type: 'resource',
+                    author_id: user.id,
+                    status: 'published',
+                    metadata: {
+                        url: publicUrl,
+                        size: jsonContent.length,
+                        mime_type: 'application/json',
+                        original_name: fileName,
+                        downloads: 0,
+                        resource_type: 'dataset',
+                        source_type: 'poll',
+                        source_id: poll.id
+                    }
+                })
+
+            if (postError) throw postError
+
+            showToast(t('pollsPage.savedToResources') || 'Poll results saved to Resources!', 'success')
+        } catch (error) {
+            console.error('Error saving to resources:', error)
+            showToast(t('pollsPage.saveToResourcesError') || 'Failed to save to resources', 'error')
+        } finally {
+            setIsSavingToResources(false)
+        }
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -474,6 +631,43 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                                     </div>
                                 )
                             })}
+                    </div>
+
+                    {/* Export Actions */}
+                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-dark-border">
+                        <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
+                            {t('pollsPage.exportData') || 'Export Data'}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={handleExportCSV}
+                                disabled={isExporting || totalVotes === 0}
+                                className="btn btn-outline btn-sm flex items-center gap-2"
+                            >
+                                <FileSpreadsheet className="w-4 h-4" />
+                                CSV
+                            </button>
+                            <button
+                                onClick={handleExportJSON}
+                                disabled={isExporting || totalVotes === 0}
+                                className="btn btn-outline btn-sm flex items-center gap-2"
+                            >
+                                <FileJson className="w-4 h-4" />
+                                JSON
+                            </button>
+                            <button
+                                onClick={handleSaveToResources}
+                                disabled={isSavingToResources || totalVotes === 0}
+                                className="btn btn-primary btn-sm flex items-center gap-2"
+                            >
+                                {isSavingToResources ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Upload className="w-4 h-4" />
+                                )}
+                                {t('pollsPage.saveToResources') || 'Save to Resources'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
