@@ -9,9 +9,11 @@ import {
 } from '@/lib/patternDetector'
 
 // Mock governorate data
-const mockGovernorates = [
+const mockGovernorates: import('@/lib/spatialQueries').GovernorateFeature[] = [
   {
     name: 'Damascus',
+    name_ar: 'دمشق',
+    type: 'governorate',
     geometry: {
       type: 'Point' as const,
       coordinates: [36.2919, 33.5138],
@@ -19,6 +21,8 @@ const mockGovernorates = [
   },
   {
     name: 'Aleppo',
+    name_ar: 'حلب',
+    type: 'governorate',
     geometry: {
       type: 'Point' as const,
       coordinates: [37.1343, 36.2021],
@@ -26,6 +30,8 @@ const mockGovernorates = [
   },
   {
     name: 'Homs',
+    name_ar: 'حمص',
+    type: 'governorate',
     geometry: {
       type: 'Point' as const,
       coordinates: [36.7167, 34.7333],
@@ -33,6 +39,8 @@ const mockGovernorates = [
   },
   {
     name: 'Deir-ez-Zor',
+    name_ar: 'دير الزور',
+    type: 'governorate',
     geometry: {
       type: 'Point' as const,
       coordinates: [40.1408, 35.3358],
@@ -40,6 +48,8 @@ const mockGovernorates = [
   },
   {
     name: 'Al-Hasakeh',
+    name_ar: 'الحسكة',
+    type: 'governorate',
     geometry: {
       type: 'Point' as const,
       coordinates: [40.7500, 36.5000],
@@ -48,9 +58,11 @@ const mockGovernorates = [
 ]
 
 // Mock polygon governorates for boundary testing
-const mockPolygonGovernorates = [
+const mockPolygonGovernorates: import('@/lib/spatialQueries').GovernorateFeature[] = [
   {
     name: 'Damascus',
+    name_ar: 'دمشق',
+    type: 'governorate',
     geometry: {
       type: 'Polygon' as const,
       coordinates: [[[36.0, 33.0], [36.5, 33.0], [36.5, 34.0], [36.0, 34.0], [36.0, 33.0]]],
@@ -58,6 +70,8 @@ const mockPolygonGovernorates = [
   },
   {
     name: 'Rural Damascus',
+    name_ar: 'ريف دمشق',
+    type: 'governorate',
     geometry: {
       type: 'Polygon' as const,
       coordinates: [[[36.5, 33.0], [37.0, 33.0], [37.0, 34.0], [36.5, 34.0], [36.5, 33.0]]],
@@ -234,7 +248,7 @@ describe('Pattern Detector Module', () => {
     it('should only flag points in large governorates', () => {
       // Point in Deir-ez-Zor (large governorate)
       const pointInLarge = { lat: 35.3, lng: 40.1 }
-      
+
       const result = detectServiceCoverageQuestion(pointInLarge, mockGovernorates)
 
       // May detect if point is in a known large governorate

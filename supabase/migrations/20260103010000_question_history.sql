@@ -21,16 +21,19 @@ CREATE INDEX IF NOT EXISTS idx_question_history_created_at ON question_history(c
 ALTER TABLE question_history ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own history
+DROP POLICY IF EXISTS "Users can view own question history" ON question_history;
 CREATE POLICY "Users can view own question history"
     ON question_history FOR SELECT
     USING (auth.uid() = user_id);
 
 -- Users can insert their own history
+DROP POLICY IF EXISTS "Users can insert own question history" ON question_history;
 CREATE POLICY "Users can insert own question history"
     ON question_history FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
 -- Users can delete their own history
+DROP POLICY IF EXISTS "Users can delete own question history" ON question_history;
 CREATE POLICY "Users can delete own question history"
     ON question_history FOR DELETE
     USING (auth.uid() = user_id);

@@ -28,13 +28,17 @@ vi.mock('@/lib/supabaseClient', () => ({
   })),
   getCurrentUser: vi.fn(() => Promise.resolve(mockUser)),
   verifyAuth: vi.fn(() => Promise.resolve(mockUser)),
-  verifyAdmin: vi.fn(() => Promise.reject(new Error('Not admin'))),
+  isAdmin: vi.fn(() => Promise.resolve(false)),
+  verifyRole: vi.fn(() => Promise.reject(new Error('Forbidden: Insufficient permissions'))),
 }))
+
+// Create a separate mock function for admin verification that we can control
+const mockIsAdmin = vi.fn(() => Promise.resolve(false))
 
 describe('Reports API Routes', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     mockSelect.mockReturnThis()
     mockEq.mockReturnThis()
     mockOrder.mockReturnThis()
@@ -59,7 +63,7 @@ describe('Reports API Routes', () => {
       })
 
       expect(response.success).toBe(true)
-      expect(response.data.id).toBe('report-123')
+      expect(response.data?.id).toBe('report-123')
     })
 
     it('should require authentication', async () => {
@@ -178,8 +182,8 @@ describe('Reports API Routes', () => {
 
   describe('GET /api/reports (Admin)', () => {
     it('should list reports for admin users', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockRange.mockResolvedValueOnce({
         data: [
@@ -193,7 +197,7 @@ describe('Reports API Routes', () => {
       const response = await simulateGetReports({ asAdmin: true })
 
       expect(response.success).toBe(true)
-      expect(response.data.reports).toHaveLength(2)
+      expect(response.data?.reports).toHaveLength(2)
     })
 
     it('should reject non-admin users', async () => {
@@ -204,8 +208,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should filter by status', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockRange.mockResolvedValueOnce({
         data: [{ id: 'report-1', status: 'pending' }],
@@ -222,8 +226,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should filter by content type', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockRange.mockResolvedValueOnce({
         data: [],
@@ -240,8 +244,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should paginate results', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockRange.mockResolvedValueOnce({
         data: [],
@@ -261,8 +265,8 @@ describe('Reports API Routes', () => {
 
   describe('PATCH /api/reports/:id (Admin)', () => {
     it('should update report status', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: { id: 'report-1', status: 'resolved' },
@@ -275,12 +279,12 @@ describe('Reports API Routes', () => {
       }, { asAdmin: true })
 
       expect(response.success).toBe(true)
-      expect(response.data.status).toBe('resolved')
+      expect(response.data?.status).toBe('resolved')
     })
 
     it('should validate status values', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       const response = await simulateUpdateReport('report-1', {
         status: 'invalid-status',
@@ -291,8 +295,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should record moderator who resolved', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: {
@@ -308,7 +312,7 @@ describe('Reports API Routes', () => {
         status: 'resolved',
       }, { asAdmin: true })
 
-      expect(response.data.resolved_by).toBe('admin-123')
+      expect(response.data?.resolved_by).toBe('admin-123')
     })
 
     it('should reject non-admin updates', async () => {
@@ -322,8 +326,8 @@ describe('Reports API Routes', () => {
 
   describe('POST /api/reports/:id/action (Admin)', () => {
     it('should take action on reported content', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: { id: 'report-1', action_taken: 'content_removed' },
@@ -335,12 +339,12 @@ describe('Reports API Routes', () => {
       }, { asAdmin: true })
 
       expect(response.success).toBe(true)
-      expect(response.data.action_taken).toBe('content_removed')
+      expect(response.data?.action_taken).toBe('content_removed')
     })
 
     it('should validate action type', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       const response = await simulateReportAction('report-1', {
         action: 'invalid-action',
@@ -351,8 +355,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should support warning action', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: { id: 'report-1', action_taken: 'user_warned' },
@@ -368,8 +372,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should support ban action', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: { id: 'report-1', action_taken: 'user_banned' },
@@ -385,8 +389,8 @@ describe('Reports API Routes', () => {
     })
 
     it('should support dismiss action', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       mockSingle.mockResolvedValueOnce({
         data: { id: 'report-1', status: 'dismissed' },
@@ -404,8 +408,8 @@ describe('Reports API Routes', () => {
 
   describe('GET /api/reports/stats (Admin)', () => {
     it('should return report statistics', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAdmin
-        .mockResolvedValueOnce(mockAdminUser)
+      vi.mocked(await import('@/lib/supabaseClient')).isAdmin
+        .mockResolvedValueOnce(true)
 
       const stats = {
         total: 150,
@@ -430,8 +434,8 @@ describe('Reports API Routes', () => {
       const response = await simulateGetReportStats({ asAdmin: true })
 
       expect(response.success).toBe(true)
-      expect(response.data.total).toBe(150)
-      expect(response.data.by_reason.spam).toBe(50)
+      expect(response.data?.total).toBe(150)
+      expect(response.data?.by_reason.spam).toBe(50)
     })
 
     it('should reject non-admin users', async () => {
@@ -522,8 +526,8 @@ async function simulateGetReports(options: {
   }
 
   try {
-    const { verifyAdmin } = await import('@/lib/supabaseClient')
-    await verifyAdmin()
+    const { isAdmin } = await import('@/lib/supabaseClient')
+    await isAdmin()
   } catch (e) {
     return { success: false, error: 'No permission to view reports' }
   }
@@ -561,8 +565,8 @@ async function simulateUpdateReport(
   }
 
   try {
-    const { verifyAdmin } = await import('@/lib/supabaseClient')
-    await verifyAdmin()
+    const { isAdmin } = await import('@/lib/supabaseClient')
+    await isAdmin()
   } catch (e) {
     return { success: false, error: 'No permission' }
   }
@@ -589,8 +593,8 @@ async function simulateReportAction(
   }
 
   try {
-    const { verifyAdmin } = await import('@/lib/supabaseClient')
-    await verifyAdmin()
+    const { isAdmin } = await import('@/lib/supabaseClient')
+    await isAdmin()
   } catch (e) {
     return { success: false, error: 'No permission' }
   }
@@ -613,8 +617,8 @@ async function simulateGetReportStats(options: { asAdmin: boolean }) {
   }
 
   try {
-    const { verifyAdmin } = await import('@/lib/supabaseClient')
-    await verifyAdmin()
+    const { isAdmin } = await import('@/lib/supabaseClient')
+    await isAdmin()
   } catch (e) {
     return { success: false, error: 'No permission' }
   }

@@ -50,7 +50,12 @@ vi.mock('@/lib/supabaseClient', () => ({
 
 // Mock moderation
 vi.mock('@/lib/moderation', () => ({
-  checkContent: vi.fn(() => Promise.resolve({ flagged: false })),
+  checkContent: vi.fn((_text?: string, _title?: string) => Promise.resolve({
+    moderation: { flagged: false },
+    plagiarism: { isPlagiarized: false, similarityScore: 0 },
+    shouldBlock: false,
+    warnings: []
+  })),
 }))
 
 // Mock recommendation analysis
@@ -60,13 +65,13 @@ vi.mock('@/lib/recommendationAnalysis', () => ({
 
 // Mock rate limit
 vi.mock('@/lib/rateLimit', () => ({
-  withRateLimit: (handler: Function) => handler,
+  withRateLimit: (handler: (...args: unknown[]) => unknown) => handler,
 }))
 
 describe('Posts API Routes', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Default mock implementations
     mockSelect.mockReturnThis()
     mockOrder.mockReturnThis()
@@ -99,18 +104,18 @@ describe('Posts API Routes', () => {
       })
 
       const request = new Request('http://localhost/api/posts')
-      
+
       // Import the handler (would be the actual route handler)
       // For testing, we simulate the behavior
       const response = await simulateGetPosts(request)
 
-      expect(response.data.posts).toEqual(mockPosts)
-      expect(response.data.pagination.limit).toBeDefined()
+      expect(response.data?.posts).toEqual(mockPosts)
+      expect(response.data?.pagination.limit).toBeDefined()
     })
 
     it('should apply tag filter when provided', async () => {
       const request = new Request('http://localhost/api/posts?tag=research')
-      
+
       mockRange.mockResolvedValueOnce({
         data: [{ id: '1', title: 'Research Post', tags: ['research'] }],
         error: null,
@@ -124,7 +129,7 @@ describe('Posts API Routes', () => {
 
     it('should apply author filter when provided', async () => {
       const request = new Request('http://localhost/api/posts?author_id=user-123')
-      
+
       mockRange.mockResolvedValueOnce({
         data: [{ id: '1', title: 'User Post', author_id: 'user-123' }],
         error: null,
@@ -138,7 +143,7 @@ describe('Posts API Routes', () => {
 
     it('should sanitize search query to prevent pattern injection', async () => {
       const request = new Request('http://localhost/api/posts?search=test%25injection')
-      
+
       mockRange.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -155,7 +160,7 @@ describe('Posts API Routes', () => {
 
     it('should enforce maximum pagination limit', async () => {
       const request = new Request('http://localhost/api/posts?limit=1000')
-      
+
       mockRange.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -165,7 +170,7 @@ describe('Posts API Routes', () => {
       const response = await simulateGetPosts(request)
 
       // Should cap at maxLimit (50)
-      expect(response.data.pagination.limit).toBeLessThanOrEqual(50)
+      expect(response.data?.pagination.limit).toBeLessThanOrEqual(50)
     })
 
     it('should handle database errors gracefully', async () => {
@@ -201,7 +206,7 @@ describe('Posts API Routes', () => {
       const response = await simulateCreatePost(postData)
 
       expect(response.success).toBe(true)
-      expect(response.data.id).toBe('new-post-123')
+      expect(response.data?.id).toBe('new-post-123')
     })
 
     it('should reject posts with short titles', async () => {
@@ -255,10 +260,14 @@ describe('Posts API Routes', () => {
     it('should handle moderated content', async () => {
       const { checkContent } = await import('@/lib/moderation')
       vi.mocked(checkContent).mockResolvedValueOnce({
-        flagged: true,
-        categories: { hate: true },
-        categoryScores: { hate: 0.9 },
-        details: ['Hate speech detected'],
+        moderation: {
+          flagged: true,
+          categories: { hate: true },
+          categoryScores: { hate: 0.9 },
+        },
+        plagiarism: { isPlagiarized: false, similarityScore: 0 },
+        shouldBlock: false,
+        warnings: ['Hate speech detected'],
       })
 
       const postData = {

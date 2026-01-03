@@ -6,7 +6,7 @@ import BadgeDisplay from './BadgeDisplay'
 import ReputationScore from './ReputationScore'
 import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
-import { MapPin, Link as LinkIcon, Building2, Calendar, CalendarDays, Users, FileText, Quote, Zap, GraduationCap, Mail } from 'lucide-react'
+import { MapPin, Link as LinkIcon, Building2, Calendar, CalendarDays, Users, FileText, Quote, Zap, GraduationCap, Mail, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
@@ -82,6 +82,7 @@ function StatItem({
 
 export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySettings }: ProfileHeaderProps) {
     const [mounted, setMounted] = useState(false)
+    const [statsOpen, setStatsOpen] = useState(false)
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional SSR hydration pattern
         setMounted(true)
@@ -143,13 +144,23 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                                         <ReputationScore score={profile.reputation} size="md" />
                                     )}
                                 </div>
-                                {/* Email display - styled like navbar menu, guarded for hydration */}
+                                {/* Email display - premium pill design with icon */}
                                 {mounted && profile.email && (
                                     <a
                                         href={`mailto:${profile.email}`}
-                                        className="text-sm text-text-light dark:text-dark-text-muted hover:text-primary transition-colors block -mt-1 mb-1.5 animate-in fade-in duration-200"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 mt-1 mb-1 rounded-full text-xs font-medium 
+                                            bg-gray-100/80 dark:bg-white/10 
+                                            text-gray-600 dark:text-gray-300 
+                                            hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary-light
+                                            border border-gray-200/50 dark:border-white/10
+                                            backdrop-blur-sm
+                                            transition-all duration-200 
+                                            hover:scale-[1.02] hover:shadow-sm
+                                            animate-in fade-in slide-in-from-left-2 duration-300
+                                            group"
                                     >
-                                        {profile.email}
+                                        <Mail className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                                        <span className="truncate max-w-[200px]">{profile.email}</span>
                                     </a>
                                 )}
                                 {/* Role and XP inline - XP always rendered but hidden until mounted */}
@@ -241,8 +252,44 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     </div>
                 )}
 
-                {/* Stats with visual bars - softened border */}
-                <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 pt-5 border-t border-gray-100 dark:border-white/10 px-1" suppressHydrationWarning>
+                {/* Stats Toggle Header */}
+                <button
+                    onClick={() => setStatsOpen(!statsOpen)}
+                    className="w-full flex items-center justify-between mt-6 py-3 px-3 border-t border-gray-100 dark:border-white/10 group hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors rounded-lg"
+                >
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-primary dark:group-hover:text-white transition-colors">
+                            Knowledge Impact & Statistics
+                        </span>
+                        {!statsOpen && (
+                            <div className="flex items-center gap-3 text-sm animate-in fade-in duration-300">
+                                <div className="h-4 w-px bg-gray-200 dark:bg-white/10" />
+                                <div className="flex items-center gap-1.5 text-text-light dark:text-dark-text-muted">
+                                    <GraduationCap className="w-3.5 h-3.5" />
+                                    <span>
+                                        Impact: <span className="font-semibold text-text dark:text-dark-text">{stats?.academic_impact || 0}</span>
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-text-light dark:text-dark-text-muted">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    <span>
+                                        Posts: <span className="font-semibold text-text dark:text-dark-text">{stats?.post_count || 0}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="p-1.5 hover:bg-gray-100 dark:hover:bg-dark-bg rounded-lg transition-colors text-gray-400 dark:text-gray-500 group-hover:text-primary dark:group-hover:text-white">
+                        {statsOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </div>
+                </button>
+
+                {/* Stats with visual bars - Collapsible */}
+                <div className={cn(
+                    "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 overflow-hidden transition-all duration-300 ease-in-out",
+                    statsOpen ? "max-h-[500px] opacity-100 mt-5 pb-2" : "max-h-0 opacity-0 mt-0"
+                )} suppressHydrationWarning>
                     <StatItem
                         icon={FileText}
                         value={stats?.post_count || 0}
@@ -278,10 +325,10 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={GraduationCap}
                         value={stats?.academic_impact || 0}
-                        label="Academic Impact"
+                        label="Knowledge Impact"
                         maxValue={100}
                         color="emerald"
-                        tooltip="Aggregate scholarly impact score based on quality citations across all posts"
+                        tooltip="Knowledge Impact: How this work contributes to the collective understanding through citations and reuse"
                         mounted={mounted}
                     />
                 </div>

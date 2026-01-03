@@ -5,12 +5,16 @@ const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable React Strict Mode for better development warnings
+  reactStrictMode: true,
+  // Explicitly set turbopack root to prevent lockfile detection issues
+  turbopack: {
+    root: __dirname,
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Forced restart for ResourceCard consistency
-    reactStrictMode: true,
   },
   images: {
     remotePatterns: [

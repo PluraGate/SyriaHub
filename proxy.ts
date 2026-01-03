@@ -65,7 +65,7 @@ function isRateLimited(ip: string) {
     return stats.count > RATE_LIMIT;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     
     // Generate nonce for CSP

@@ -10,7 +10,7 @@ const mockOrder = vi.fn().mockReturnThis()
 const mockIs = vi.fn().mockReturnThis()
 const mockSingle = vi.fn()
 
-const mockFrom = vi.fn(() => ({
+const mockFrom = vi.fn((_tableName?: string) => ({
   select: mockSelect,
   insert: mockInsert,
   update: mockUpdate,
@@ -33,13 +33,18 @@ vi.mock('@/lib/supabaseClient', () => ({
 
 // Mock moderation
 vi.mock('@/lib/moderation', () => ({
-  checkContent: vi.fn(() => Promise.resolve({ flagged: false })),
+  checkContent: vi.fn((_text?: string, _title?: string) => Promise.resolve({
+    moderation: { flagged: false },
+    plagiarism: { isPlagiarized: false, similarityScore: 0 },
+    shouldBlock: false,
+    warnings: []
+  })),
 }))
 
 describe('Comments API Routes', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset chain mocks
     mockSelect.mockReturnThis()
     mockEq.mockReturnThis()
@@ -80,7 +85,7 @@ describe('Comments API Routes', () => {
       const response = await simulateGetComments('post-123')
 
       expect(response.success).toBe(true)
-      expect(response.data.comments).toHaveLength(2)
+      expect(response.data?.comments).toHaveLength(2)
     })
 
     it('should require post_id parameter', async () => {
@@ -126,7 +131,7 @@ describe('Comments API Routes', () => {
 
       const response = await simulateGetComments('post-123', { includeReplies: true })
 
-      expect(response.data.comments[0].replies).toBeDefined()
+      expect(response.data?.comments[0].replies).toBeDefined()
     })
 
     it('should handle database errors', async () => {
@@ -159,7 +164,7 @@ describe('Comments API Routes', () => {
       })
 
       expect(response.success).toBe(true)
-      expect(response.data.id).toBe('new-comment-123')
+      expect(response.data?.id).toBe('new-comment-123')
     })
 
     it('should require authentication', async () => {
@@ -209,7 +214,7 @@ describe('Comments API Routes', () => {
       })
 
       expect(response.success).toBe(true)
-      expect(response.data.parent_id).toBe('comment-1')
+      expect(response.data?.parent_id).toBe('comment-1')
     })
 
     it('should check content for moderation', async () => {
@@ -220,9 +225,14 @@ describe('Comments API Routes', () => {
 
       const { checkContent } = await import('@/lib/moderation')
       vi.mocked(checkContent).mockResolvedValueOnce({
-        flagged: true,
-        categories: { harassment: true },
-        categoryScores: { harassment: 0.95 },
+        moderation: {
+          flagged: true,
+          categories: { harassment: true },
+          categoryScores: { harassment: 0.95 },
+        },
+        plagiarism: { isPlagiarized: false, similarityScore: 0 },
+        shouldBlock: false,
+        warnings: [],
       })
 
       const response = await simulateCreateComment({
@@ -430,7 +440,7 @@ function sanitizeHtml(content: string): string {
 }
 
 async function simulateGetComments(
-  postId: string, 
+  postId: string,
   options: { includeReplies?: boolean } = {}
 ) {
   if (!postId) {
@@ -441,11 +451,11 @@ async function simulateGetComments(
   mockFrom('comments')
   mockSelect('*, author:profiles(*)')
   mockEq('post_id', postId)
-  
+
   if (!options.includeReplies) {
     mockIs('parent_id', null)
   }
-  
+
   // mockOrder should be called to set up the sort and then return the result
   const result = mockOrder('created_at', { ascending: true })
 
@@ -495,8 +505,8 @@ async function simulateCreateComment(body: {
 
   return {
     success: true,
-    data: { 
-      id: result.data.id, 
+    data: {
+      id: result.data.id,
       parent_id: body.parent_id || null,
     },
     sanitizedContent,
@@ -509,7 +519,7 @@ async function simulateUpdateComment(
 ) {
   // Check ownership
   const ownerCheck = await mockSingle()
-  
+
   if (ownerCheck.data.author_id !== mockUser.id) {
     return { success: false, error: 'No permission to modify this comment' }
   }
@@ -528,7 +538,7 @@ async function simulateDeleteComment(
 ) {
   // Check ownership
   const ownerCheck = await mockSingle()
-  
+
   if (ownerCheck.data.author_id !== mockUser.id) {
     return { success: false, error: 'No permission to delete this comment' }
   }
@@ -547,7 +557,7 @@ async function simulateDeleteComment(
 async function simulateVoteComment(commentId: string, vote: number) {
   // Check if trying to vote on own comment
   const commentCheck = await mockSingle()
-  
+
   if (commentCheck.data?.author_id === mockUser.id) {
     return { success: false, error: 'Cannot vote on own comment' }
   }

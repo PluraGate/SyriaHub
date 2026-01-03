@@ -56,6 +56,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('ProfileLabels')
+    const [isCollapsed, setIsCollapsed] = useState(false)
 
     // Load user skills and endorsements
     useEffect(() => {
@@ -317,11 +318,16 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
         )
     }
 
+
+
     return (
-        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 transition-all">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="flex items-center gap-2 group hover:opacity-80 transition-opacity flex-1"
+                >
                     <Award className="w-5 h-5 text-primary" />
                     <h3 className="text-lg font-semibold text-text dark:text-dark-text">
                         {t('skillsEndorsements')}
@@ -331,229 +337,247 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                             ({skills.reduce((sum, s) => sum + s.endorsement_count, 0)} endorsements)
                         </span>
                     )}
-                </div>
-                {isOwnProfile && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowAddSkill(!showAddSkill)}
+                </button>
+                <div className="flex items-center gap-2">
+                    {isOwnProfile && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation()
+                                setShowAddSkill(!showAddSkill)
+                                if (isCollapsed) setIsCollapsed(false)
+                            }}
+                        >
+                            <Plus className="w-4 h-4 me-1" />
+                            {t('addSkill')}
+                        </Button>
+                    )}
+                    <button
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-dark-bg rounded-lg transition-colors text-gray-400 dark:text-gray-500 hover:text-primary"
                     >
-                        <Plus className="w-4 h-4 mr-1" />
-                        {t('addSkill')}
-                    </Button>
-                )}
+                        {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+                    </button>
+                </div>
             </div>
 
-            {/* Add Skill Panel - Unified Autocomplete Design */}
-            {showAddSkill && isOwnProfile && (
-                <div className="mb-6 p-4 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
-                    <div className="space-y-3">
-                        {/* Unified Search/Add Input */}
-                        <div className="relative">
+            {/* Collapsible Content */}
+            <div className={cn(
+                "overflow-hidden transition-all duration-300",
+                isCollapsed ? "max-h-0 opacity-0" : "max-h-[2000px] opacity-100"
+            )}>
+                {/* Add Skill Panel - Unified Autocomplete Design */}
+                {showAddSkill && isOwnProfile && (
+                    <div className="mb-6 p-4 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
+                        <div className="space-y-3">
+                            {/* Unified Search/Add Input */}
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
-                                <input
-                                    type="text"
-                                    value={searchQuery || newSkillName}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value)
-                                        setNewSkillName(e.target.value)
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && (searchQuery || newSkillName).trim()) {
-                                            e.preventDefault()
-                                            // If there are matching skills, add the first one
-                                            if (filteredAvailableSkills.length > 0) {
-                                                handleAddSkill(filteredAvailableSkills[0].id)
-                                            } else {
-                                                // No matches, create custom skill
-                                                handleCreateAndAddSkill()
-                                            }
-                                        }
-                                        if (e.key === 'Escape') {
-                                            setShowAddSkill(false)
-                                            setSearchQuery('')
-                                            setNewSkillName('')
-                                        }
-                                    }}
-                                    placeholder="Type a skill name..."
-                                    autoFocus
-                                    className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                />
-                            </div>
-
-                            {/* Autocomplete Dropdown - Shows immediately */}
-                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-surface rounded-lg border border-gray-200 dark:border-dark-border shadow-lg overflow-hidden z-10 max-h-64 overflow-y-auto">
-                                {loadingSkills ? (
-                                    <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                        Loading skills...
-                                    </div>
-                                ) : filteredAvailableSkills.length > 0 ? (
-                                    <>
-                                        {filteredAvailableSkills.slice(0, 8).map((skill, index) => (
-                                            <button
-                                                key={skill.id}
-                                                onClick={() => handleAddSkill(skill.id)}
-                                                disabled={addingSkill}
-                                                className={cn(
-                                                    "w-full flex items-center justify-between px-3 py-2.5 text-left transition-colors",
-                                                    index === 0
-                                                        ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
-                                                        : "hover:bg-gray-50 dark:hover:bg-dark-bg"
-                                                )}
-                                            >
-                                                <span className="flex items-center gap-2">
-                                                    <Award className={cn(
-                                                        "w-4 h-4",
-                                                        skill.is_recognized
-                                                            ? "text-primary"
-                                                            : "text-gray-400 dark:text-gray-500"
-                                                    )} />
-                                                    <span className="font-medium text-text dark:text-dark-text">
-                                                        {skill.name}
-                                                    </span>
-                                                </span>
-                                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-bg px-2 py-0.5 rounded">
-                                                    {skill.category}
-                                                </span>
-                                            </button>
-                                        ))}
-                                        {filteredAvailableSkills.length > 8 && (
-                                            <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-dark-bg text-center">
-                                                +{filteredAvailableSkills.length - 8} more results
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    /* No matches - show create option */
-                                    <div className="p-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                No matching skills found
-                                            </span>
-                                        </div>
-                                        <button
-                                            onClick={handleCreateAndAddSkill}
-                                            disabled={addingSkill || !(searchQuery || newSkillName).trim()}
-                                            className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Add &quot;{(searchQuery || newSkillName).trim()}&quot; as new skill
-                                        </button>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            <span className="text-xs text-gray-500 dark:text-gray-400">Category:</span>
-                                            <select
-                                                value={newSkillCategory}
-                                                onChange={(e) => setNewSkillCategory(e.target.value)}
-                                                className="flex-1 h-8 text-xs rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg px-2"
-                                            >
-                                                {SKILL_CATEGORIES.map(cat => (
-                                                    <option key={cat} value={cat}>{cat}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Helper Text */}
-                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                            <span className="inline-block w-4 h-4 bg-gray-100 dark:bg-dark-border rounded text-center text-[10px] leading-4 font-mono">↵</span>
-                            Press Enter to add • Esc to cancel
-                        </p>
-                    </div>
-                </div>
-            )}
-
-            {/* Skills by Category */}
-            {skills.length === 0 ? (
-                <p className="text-text-light dark:text-dark-text-muted text-sm">
-                    {isOwnProfile
-                        ? 'Add skills to your profile so others can endorse you.'
-                        : 'No skills added yet.'}
-                </p>
-            ) : (
-                <div className="space-y-4">
-                    {Object.entries(skillsByCategory).map(([category, catSkills]) => (
-                        <div key={category}>
-                            <h4 className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-2">
-                                {t(category.toLowerCase().replace(' ', '') as any) || category}
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                                {catSkills.map(skill => (
-                                    <div key={skill.skill_id} className="relative group">
-                                        <SkillBadge
-                                            skillId={skill.skill_id}
-                                            name={skill.skill_name}
-                                            category={skill.skill_category}
-                                            isRecognized={skill.is_recognized}
-                                            endorsementCount={skill.endorsement_count}
-                                            hasEndorsed={endorsedSkills.has(skill.skill_id)}
-                                            onEndorse={currentUserId ? () => handleEndorse(skill.skill_id) : undefined}
-                                            isOwnProfile={isOwnProfile}
-                                        />
-                                        {/* Expand endorsers */}
-                                        {skill.endorsement_count > 0 && (
-                                            <button
-                                                onClick={() => setExpandedSkill(
-                                                    expandedSkill === skill.skill_id ? null : skill.skill_id
-                                                )}
-                                                className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                {expandedSkill === skill.skill_id
-                                                    ? <ChevronUp className="w-3 h-3" />
-                                                    : <ChevronDown className="w-3 h-3" />
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
+                                    <input
+                                        type="text"
+                                        value={searchQuery || newSkillName}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value)
+                                            setNewSkillName(e.target.value)
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && (searchQuery || newSkillName).trim()) {
+                                                e.preventDefault()
+                                                // If there are matching skills, add the first one
+                                                if (filteredAvailableSkills.length > 0) {
+                                                    handleAddSkill(filteredAvailableSkills[0].id)
+                                                } else {
+                                                    // No matches, create custom skill
+                                                    handleCreateAndAddSkill()
                                                 }
-                                            </button>
-                                        )}
-                                        {/* Remove button for own profile */}
-                                        {isOwnProfile && (
+                                            }
+                                            if (e.key === 'Escape') {
+                                                setShowAddSkill(false)
+                                                setSearchQuery('')
+                                                setNewSkillName('')
+                                            }
+                                        }}
+                                        placeholder="Type a skill name..."
+                                        autoFocus
+                                        className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                    />
+                                </div>
+
+                                {/* Autocomplete Dropdown - Shows immediately */}
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-surface rounded-lg border border-gray-200 dark:border-dark-border shadow-lg overflow-hidden z-10 max-h-64 overflow-y-auto">
+                                    {loadingSkills ? (
+                                        <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                            Loading skills...
+                                        </div>
+                                    ) : filteredAvailableSkills.length > 0 ? (
+                                        <>
+                                            {filteredAvailableSkills.slice(0, 8).map((skill, index) => (
+                                                <button
+                                                    key={skill.id}
+                                                    onClick={() => handleAddSkill(skill.id)}
+                                                    disabled={addingSkill}
+                                                    className={cn(
+                                                        "w-full flex items-center justify-between px-3 py-2.5 text-left transition-colors",
+                                                        index === 0
+                                                            ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
+                                                            : "hover:bg-gray-50 dark:hover:bg-dark-bg"
+                                                    )}
+                                                >
+                                                    <span className="flex items-center gap-2">
+                                                        <Award className={cn(
+                                                            "w-4 h-4",
+                                                            skill.is_recognized
+                                                                ? "text-primary"
+                                                                : "text-gray-400 dark:text-gray-500"
+                                                        )} />
+                                                        <span className="font-medium text-text dark:text-dark-text">
+                                                            {skill.name}
+                                                        </span>
+                                                    </span>
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-bg px-2 py-0.5 rounded">
+                                                        {skill.category}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                            {filteredAvailableSkills.length > 8 && (
+                                                <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-dark-bg text-center">
+                                                    +{filteredAvailableSkills.length - 8} more results
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        /* No matches - show create option */
+                                        <div className="p-3">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                    No matching skills found
+                                                </span>
+                                            </div>
                                             <button
-                                                onClick={() => handleRemoveSkill(skill.skill_id)}
-                                                className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={handleCreateAndAddSkill}
+                                                disabled={addingSkill || !(searchQuery || newSkillName).trim()}
+                                                className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
                                             >
-                                                ×
+                                                <Plus className="w-4 h-4" />
+                                                Add &quot;{(searchQuery || newSkillName).trim()}&quot; as new skill
                                             </button>
-                                        )}
-                                    </div>
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <span className="text-xs text-gray-500 dark:text-gray-400">Category:</span>
+                                                <select
+                                                    value={newSkillCategory}
+                                                    onChange={(e) => setNewSkillCategory(e.target.value)}
+                                                    className="flex-1 h-8 text-xs rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg px-2"
+                                                >
+                                                    {SKILL_CATEGORIES.map(cat => (
+                                                        <option key={cat} value={cat}>{cat}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Helper Text */}
+                            <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                <span className="inline-block w-4 h-4 bg-gray-100 dark:bg-dark-border rounded text-center text-[10px] leading-4 font-mono">↵</span>
+                                Press Enter to add • Esc to cancel
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Skills by Category */}
+                {skills.length === 0 ? (
+                    <p className="text-text-light dark:text-dark-text-muted text-sm">
+                        {isOwnProfile
+                            ? 'Add skills to your profile so others can endorse you.'
+                            : 'No skills added yet.'}
+                    </p>
+                ) : (
+                    <div className="space-y-4">
+                        {Object.entries(skillsByCategory).map(([category, catSkills]) => (
+                            <div key={category}>
+                                <h4 className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-2">
+                                    {t(category.toLowerCase().replace(' ', '') as any) || category}
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {catSkills.map(skill => (
+                                        <div key={skill.skill_id} className="relative group">
+                                            <SkillBadge
+                                                skillId={skill.skill_id}
+                                                name={skill.skill_name}
+                                                category={skill.skill_category}
+                                                isRecognized={skill.is_recognized}
+                                                endorsementCount={skill.endorsement_count}
+                                                hasEndorsed={endorsedSkills.has(skill.skill_id)}
+                                                onEndorse={currentUserId ? () => handleEndorse(skill.skill_id) : undefined}
+                                                isOwnProfile={isOwnProfile}
+                                            />
+                                            {/* Expand endorsers */}
+                                            {skill.endorsement_count > 0 && (
+                                                <button
+                                                    onClick={() => setExpandedSkill(
+                                                        expandedSkill === skill.skill_id ? null : skill.skill_id
+                                                    )}
+                                                    className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    {expandedSkill === skill.skill_id
+                                                        ? <ChevronUp className="w-3 h-3" />
+                                                        : <ChevronDown className="w-3 h-3" />
+                                                    }
+                                                </button>
+                                            )}
+                                            {/* Remove button for own profile */}
+                                            {isOwnProfile && (
+                                                <button
+                                                    onClick={() => handleRemoveSkill(skill.skill_id)}
+                                                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Expanded endorsers list */}
+                                {catSkills.map(skill => (
+                                    expandedSkill === skill.skill_id && skill.endorsers.length > 0 && (
+                                        <div key={`${skill.skill_id}-endorsers`} className="mt-3 p-3 bg-gray-50 dark:bg-dark-surface-hover rounded-lg">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Users className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                                                <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                    Endorsed by:
+                                                </span>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {skill.endorsers.map((endorser: Endorser) => (
+                                                    <Link
+                                                        key={endorser.id}
+                                                        href={`/profile/${endorser.id}`}
+                                                        className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-dark-surface rounded-full border border-gray-200 dark:border-dark-border hover:border-primary/50 transition-colors"
+                                                    >
+                                                        <UserAvatar
+                                                            name={endorser.name}
+                                                            avatarUrl={endorser.avatar_url}
+                                                            size="sm"
+                                                        />
+                                                        <span className="text-sm text-text dark:text-dark-text hover:text-primary transition-colors">
+                                                            {endorser.name || 'Anonymous'}
+                                                        </span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
                                 ))}
                             </div>
-                            {/* Expanded endorsers list */}
-                            {catSkills.map(skill => (
-                                expandedSkill === skill.skill_id && skill.endorsers.length > 0 && (
-                                    <div key={`${skill.skill_id}-endorsers`} className="mt-3 p-3 bg-gray-50 dark:bg-dark-surface-hover rounded-lg">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Users className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
-                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                Endorsed by:
-                                            </span>
-                                        </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {skill.endorsers.map((endorser: Endorser) => (
-                                                <Link
-                                                    key={endorser.id}
-                                                    href={`/profile/${endorser.id}`}
-                                                    className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-dark-surface rounded-full border border-gray-200 dark:border-dark-border hover:border-primary/50 transition-colors"
-                                                >
-                                                    <UserAvatar
-                                                        name={endorser.name}
-                                                        avatarUrl={endorser.avatar_url}
-                                                        size="sm"
-                                                    />
-                                                    <span className="text-sm text-text dark:text-dark-text hover:text-primary transition-colors">
-                                                        {endorser.name || 'Anonymous'}
-                                                    </span>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

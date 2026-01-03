@@ -262,7 +262,7 @@ describe('Citations Module', () => {
       const ris = generateRIS(dataNoContent)
 
       // Should not include AB field when no abstract available
-      expect(ris).not.toMatch(/^AB  - $/m)
+      expect(ris).not.toMatch(/^AB {2}- $/m)
     })
   })
 

@@ -53,14 +53,47 @@ async function waitForUserProfile(supabase: ReturnType<typeof createAdminClient>
 
 describe('counter audit', () => {
   if (!hasDbConfig) {
-    it.skip('requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY', () => {})
+    it.skip('requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY', () => { })
     return
   }
 
   const supabase = createAdminClient()
   const createdUserIds: string[] = []
+  const createdPostIds: string[] = []
+  const createdPollIds: string[] = []
+  const createdGapIds: string[] = []
 
   afterAll(async () => {
+    // Clean up in reverse order of dependencies
+    // 1. Delete research gap upvotes (via gap deletion cascade)
+    // 2. Delete research gaps
+    for (const gapId of createdGapIds) {
+      await supabase.from('research_gap_upvotes').delete().eq('gap_id', gapId)
+      await supabase.from('research_gaps').delete().eq('id', gapId)
+    }
+
+    // 3. Delete poll votes and polls
+    for (const pollId of createdPollIds) {
+      await supabase.from('poll_votes').delete().eq('poll_id', pollId)
+      await supabase.from('polls').delete().eq('id', pollId)
+    }
+
+    // 4. Delete comments, citations, post_votes, and posts
+    for (const postId of createdPostIds) {
+      await supabase.from('comments').delete().eq('post_id', postId)
+      await supabase.from('citations').delete().eq('source_post_id', postId)
+      await supabase.from('citations').delete().eq('target_post_id', postId)
+      await supabase.from('post_votes').delete().eq('post_id', postId)
+      await supabase.from('posts').delete().eq('id', postId)
+    }
+
+    // 5. Delete follows between test users
+    for (const userId of createdUserIds) {
+      await supabase.from('follows').delete().eq('follower_id', userId)
+      await supabase.from('follows').delete().eq('following_id', userId)
+    }
+
+    // 6. Finally delete users
     await Promise.all(
       createdUserIds.map(async (userId) => {
         await supabase.auth.admin.deleteUser(userId)
@@ -129,6 +162,9 @@ describe('counter audit', () => {
     if (postsError || !posts || posts.length < 3) {
       throw postsError || new Error('Failed to create test posts')
     }
+
+    // Track created post IDs for cleanup
+    createdPostIds.push(...posts.map(p => p.id))
 
     const articlePost = posts.find(p => p.author_id === userA.user.id && p.content_type === 'article')
     const eventPost = posts.find(p => p.author_id === userA.user.id && p.content_type === 'event')
@@ -219,6 +255,9 @@ describe('counter audit', () => {
       throw pollError || new Error('Failed to create test poll')
     }
 
+    // Track created poll ID for cleanup
+    createdPollIds.push(poll.id)
+
     const { error: pollVotesError } = await supabase
       .from('poll_votes')
       .insert([
@@ -251,6 +290,9 @@ describe('counter audit', () => {
     if (gapError || !gap) {
       throw gapError || new Error('Failed to create test research gap')
     }
+
+    // Track created research gap ID for cleanup
+    createdGapIds.push(gap.id)
 
     const { error: gapUpvoteError } = await supabase
       .from('research_gap_upvotes')
