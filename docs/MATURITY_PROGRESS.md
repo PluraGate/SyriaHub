@@ -51,8 +51,8 @@ This document tracks progress on the SyriaHub Platform Maturity Roadmap.
 
 
 ### Security
-- [ ] Hardware Security (WebAuthn/Passkey for high-privileged roles)
-- [ ] Forensic Audit Logs (external secure logging pipeline)
+- [x] Hardware Security → **TOTP 2FA** (optional in profile settings)
+- [x] Forensic Audit Logs (external secure logging pipeline)
 
 ### Testing
 - [x] Visual Regression Testing (Playwright Component Testing / Chromatic)
