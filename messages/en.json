@@ -2047,6 +2047,39 @@
             "line1": "SyriaHub is an independent research platform developed and stewarded within the PluraGate network.",
             "line2": "PluraGate provides organisational, technical, and governance support to multiple public-interest initiatives. Each project within the network operates with its own scope, editorial autonomy, and research mandate.",
             "line3": "SyriaHub retains full independence over its content, methodologies, and moderation practices."
+        },
+        "security": {
+            "title": "Security Policy",
+            "subtitle": "How we protect your data and how to report vulnerabilities responsibly.",
+            "vdp": {
+                "title": "Vulnerability Disclosure Policy",
+                "intro": "We take security seriously. If you discover a security vulnerability, we encourage you to report it responsibly using the process below.",
+                "step1Title": "Report via Email",
+                "step2Title": "48-Hour Response",
+                "step2Desc": "We acknowledge all reports within 48 hours",
+                "step3Title": "Resolution",
+                "step3Desc": "Timeline provided within 7 days"
+            },
+            "scope": {
+                "title": "What to Report",
+                "inScope": "In Scope",
+                "outOfScope": "Out of Scope",
+                "item1": "Authentication and authorization vulnerabilities",
+                "item2": "Data exposure or leakage issues",
+                "item3": "Cross-site scripting (XSS) attacks",
+                "item4": "Server-side request forgery (SSRF)",
+                "outItem1": "Denial of service (DoS) attacks",
+                "outItem2": "Social engineering attacks",
+                "outItem3": "Physical security issues"
+            },
+            "commitment": {
+                "title": "Our Commitment",
+                "commitment1": "Acknowledge your report within 48 hours",
+                "commitment2": "Provide a resolution timeline within 7 days",
+                "commitment3": "Credit you publicly (if desired) after resolution",
+                "commitment4": "Never take legal action against good-faith reporters"
+            },
+            "securityTxt": "Machine-readable security policy available at"
         }
     },
     "Faq": {

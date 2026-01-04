@@ -52,7 +52,11 @@ export function AppealButton({ postId, postTitle, onAppealSubmitted }: AppealBut
             // Check if appeal already exists
             const { data: existingAppeal } = await supabase
                 .from('moderation_appeals')
-                .select('id, status')
+                .select(`
+                    id, 
+                    status,
+                    deliberation:jury_deliberations(final_decision)
+                `)
                 .eq('post_id', postId)
                 .eq('user_id', user.id)
                 .single()
@@ -205,7 +209,9 @@ export function AppealButton({ postId, postTitle, onAppealSubmitted }: AppealBut
 /**
  * Inline appeal status badge
  */
-export function AppealStatus({ status }: { status: 'pending' | 'approved' | 'rejected' }) {
+export function AppealStatus({ status, decision }: { status: 'pending' | 'approved' | 'rejected', decision?: string | null }) {
+    const isSplit = status === 'rejected' && decision === 'split';
+
     const config = {
         pending: {
             label: 'Appeal Pending',
@@ -216,7 +222,7 @@ export function AppealStatus({ status }: { status: 'pending' | 'approved' | 'rej
             className: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
         },
         rejected: {
-            label: 'Appeal Rejected',
+            label: isSplit ? 'Appeal Rejected (No Consensus)' : 'Appeal Rejected',
             className: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
         }
     }
@@ -224,7 +230,10 @@ export function AppealStatus({ status }: { status: 'pending' | 'approved' | 'rej
     const { label, className } = config[status]
 
     return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${className}`}>
+        <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${className}`}
+            title={isSplit ? 'The jury could not reach a majority consensus, so the original decision stands.' : undefined}
+        >
             <Scale className="w-3 h-3" />
             {label}
         </span>

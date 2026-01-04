@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { MagazineCard } from '@/components/MagazineCard'
 import { GroupCard } from '@/components/GroupCard'
 import { EventCard } from '@/components/EventCard'
-import { FileText, Users, BookOpen, Calendar } from 'lucide-react'
+import { FileText, Users, BookOpen, Calendar, FolderOpen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface UserActivityFeedProps {
@@ -12,12 +12,13 @@ interface UserActivityFeedProps {
     groups: any[]
 }
 
-type TabType = 'posts' | 'events' | 'groups'
+type TabType = 'posts' | 'resources' | 'events' | 'groups'
 
 export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
     const t = useTranslations('Gamification')
     const tNav = useTranslations('Navigation')
     const researchPosts = posts.filter(p => !p.content_type || p.content_type === 'article' || p.content_type === 'question' || p.content_type === 'answer')
+    const resourcePosts = posts.filter(p => p.content_type === 'resource')
     const eventPosts = posts.filter(p => p.content_type === 'event')
 
     // Determine which tabs have content
@@ -31,6 +32,15 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                 icon: FileText,
                 count: researchPosts.length,
                 colorClass: 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
+            })
+        }
+        if (resourcePosts.length > 0) {
+            tabs.push({
+                id: 'resources',
+                label: 'Resources',
+                icon: FolderOpen,
+                count: resourcePosts.length,
+                colorClass: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
             })
         }
         if (eventPosts.length > 0) {
@@ -53,7 +63,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         }
 
         return tabs
-    }, [researchPosts.length, eventPosts.length, groups.length])
+    }, [researchPosts.length, resourcePosts.length, eventPosts.length, groups.length])
 
     // Default to first available tab, or 'posts' if nothing available
     const [activeTab, setActiveTab] = useState<TabType>(availableTabs[0]?.id || 'posts')
@@ -103,6 +113,14 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {researchPosts.map((post) => (
                             <MagazineCard key={post.id} post={post} variant="standard" />
+                        ))}
+                    </div>
+                )}
+
+                {activeTab === 'resources' && resourcePosts.length > 0 && (
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {resourcePosts.map((resource) => (
+                            <MagazineCard key={resource.id} post={resource} variant="standard" />
                         ))}
                     </div>
                 )}

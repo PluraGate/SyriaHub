@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { containsHumanitarianKeywords } from '@/lib/patternDetector'
+import { containsHumanitarianKeywords } from '@/domain/spatial/patternDetector'
 
 interface NearbyPostsResult {
     postCount: number

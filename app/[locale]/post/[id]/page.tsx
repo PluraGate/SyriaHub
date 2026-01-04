@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap } from 'lucide-react'
+import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap, Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
@@ -418,6 +418,21 @@ export default async function PostPage(props: PostPageProps) {
                 postContent={post.content}
                 postTags={post.tags}
               />
+
+              {/* Download Button - for resources */}
+              {post.content_type === 'resource' && post.metadata?.url && (
+                <a
+                  href={post.metadata.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                >
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="w-4 h-4" />
+                    Download
+                  </Button>
+                </a>
+              )}
 
               <div className="flex-1" />
 
