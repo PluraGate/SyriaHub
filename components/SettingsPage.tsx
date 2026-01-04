@@ -15,7 +15,8 @@ import {
     RotateCcw,
     Ticket,
     MessageSquarePlus,
-    X
+    X,
+    Shield
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
@@ -23,6 +24,7 @@ import { useToast } from '@/components/ui/toast'
 import { InviteManager } from '@/components/InviteManager'
 import { FeedbackSection } from '@/components/feedback'
 import { useTranslations } from 'next-intl'
+import { TwoFactorSetup } from '@/components/auth/TwoFactorSetup'
 
 interface SettingsPageProps {
     user: {
@@ -35,7 +37,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
     const { preferences, updatePreference, updateNestedPreference, resetToDefaults, loading } = usePreferences()
     const { showToast } = useToast()
     const t = useTranslations('Settings')
-    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'editor' | 'invites' | 'feedback'>('appearance')
+    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'security' | 'editor' | 'invites' | 'feedback'>('appearance')
 
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
         try {
@@ -73,6 +75,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
         { id: 'notifications', label: t('notifications'), icon: Bell },
         { id: 'display', label: t('displaySettings.title'), icon: Eye },
         { id: 'privacy', label: t('privacyTab'), icon: Lock },
+        { id: 'security', label: 'Security', icon: Shield },
         { id: 'editor', label: t('editorSettings.title'), icon: FileEdit },
         { id: 'invites', label: t('invitesSection.title'), icon: Ticket },
         { id: 'feedback', label: t('feedbackSection.title'), icon: MessageSquarePlus },
@@ -177,7 +180,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                                 key={option.value}
                                                 onClick={() => updatePreference('theme', option.value as UserPreferences['theme'])}
                                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
-                                                    ? 'border-primary bg-primary/10 text-primary dark:text-primary-light'
+                                                    ? 'border-primary bg-primary text-white shadow-sm'
                                                     : 'border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
@@ -356,6 +359,19 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                 checked={preferences.privacy.allow_messages}
                                 onChange={(v) => handleUpdate('privacy', 'allow_messages', v)}
                             />
+                        </div>
+                    )}
+
+                    {/* Security */}
+                    {activeSection === 'security' && (
+                        <div className="space-y-6">
+                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                                Security
+                            </h2>
+                            <p className="text-text-light dark:text-dark-text-muted mb-6">
+                                Enhance your account security with additional protection.
+                            </p>
+                            <TwoFactorSetup userId={user.id} />
                         </div>
                     )}
 
