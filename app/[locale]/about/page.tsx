@@ -27,6 +27,7 @@ const sections = [
     { href: '/about/ethics', icon: Shield, key: 'ethics', descKey: 'content.ethicsIntro' },
     { href: '/about/methodology', icon: Settings, key: 'methodology', descKey: 'content.methodologyIntro' },
     { href: '/about/roles', icon: Users, key: 'roles', descKey: 'content.methodologyIntro' },
+    { href: '/about/security', icon: Shield, key: 'security.title', descKey: 'security.subtitle' },
     { href: '/about/faq', icon: HelpCircle, key: 'faq', descKey: 'subtitle' },
 ]
 

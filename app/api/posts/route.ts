@@ -14,7 +14,7 @@ import {
   withOriginValidation,
 } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
-import { checkContent } from '@/lib/moderation'
+import { checkContent } from '@/domain/moderation/service'
 import { analyzePostForRecommendations } from '@/lib/recommendationAnalysis'
 import type { CreatePostInput } from '@/types'
 

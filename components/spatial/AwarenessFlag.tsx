@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { AlertTriangle, X, Info, ChevronRight } from 'lucide-react'
-import type { DetectedPattern } from '@/lib/patternDetector'
+import type { DetectedPattern } from '@/domain/spatial/patternDetector'
 
 interface AwarenessFlagProps {
     patterns: DetectedPattern[]
@@ -69,10 +69,10 @@ export function AwarenessFlag({ patterns, className = '' }: AwarenessFlagProps) 
                                 <div className="mt-1.5 flex items-center gap-2 group cursor-help"
                                     title={`${Math.round(pattern.confidence * 100)}% confidence`}>
                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${pattern.confidence >= 0.85
-                                            ? 'bg-amber-200 dark:bg-amber-700/50 text-amber-800 dark:text-amber-200'
-                                            : pattern.confidence >= 0.70
-                                                ? 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300'
-                                                : 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                                        ? 'bg-amber-200 dark:bg-amber-700/50 text-amber-800 dark:text-amber-200'
+                                        : pattern.confidence >= 0.70
+                                            ? 'bg-amber-100 dark:bg-amber-800/40 text-amber-700 dark:text-amber-300'
+                                            : 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
                                         }`}>
                                         {pattern.confidence >= 0.85
                                             ? t('confidenceStrong')

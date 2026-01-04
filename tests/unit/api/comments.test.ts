@@ -223,7 +223,7 @@ describe('Comments API Routes', () => {
         error: null,
       })
 
-      const { checkContent } = await import('@/lib/moderation')
+      const { checkContent } = await import('@/domain/moderation/service')
       vi.mocked(checkContent).mockResolvedValueOnce({
         moderation: {
           flagged: true,
@@ -494,7 +494,7 @@ async function simulateCreateComment(body: {
 
   const sanitizedContent = sanitizeHtml(body.content)
 
-  const { checkContent } = await import('@/lib/moderation')
+  const { checkContent } = await import('@/domain/moderation/service')
   await checkContent(body.content)
 
   const result = await mockSingle()

@@ -258,7 +258,7 @@ describe('Posts API Routes', () => {
     })
 
     it('should handle moderated content', async () => {
-      const { checkContent } = await import('@/lib/moderation')
+      const { checkContent } = await import('@/domain/moderation/service')
       vi.mocked(checkContent).mockResolvedValueOnce({
         moderation: {
           flagged: true,
@@ -344,7 +344,7 @@ async function simulateCreatePost(body: any) {
   }
 
   // Check moderation
-  const { checkContent } = await import('@/lib/moderation')
+  const { checkContent } = await import('@/domain/moderation/service')
   await checkContent(body.content)
 
   const result = await mockSingle()
