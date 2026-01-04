@@ -319,7 +319,7 @@ export default function EditorPage() {
       if (hasBypass) {
         console.log('[Editor] Test Mode Auth Bypass Active (useEffect)')
         setUser({
-          id: 'test-user-id',
+          id: '00000000-0000-0000-0000-000000000000',
           aud: 'authenticated',
           role: 'authenticated',
           email: 'test@example.com',
@@ -665,233 +665,233 @@ export default function EditorPage() {
               )}
 
               {/* First-Time Contributor Prompt */}
-            {showFirstTimePrompt && !postIdParam && (
-              <FirstTimeContributorPrompt
-                onDismiss={() => {
-                  setShowFirstTimePrompt(false)
-                  if (typeof window !== 'undefined') {
-                    sessionStorage.setItem('firstTimePromptSeen', 'true')
-                  }
-                }}
-              />
-            )}
-
-            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-
-              {/* Content Type Toggle */}
-              <div className="space-y-2">
-                <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
-                  <button
-                    type="button"
-                    onClick={() => setContentType('article')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
-                      ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
-                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
-                      }`}
-                    title={t('page.contentTypeHelp.article')}
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    {t('page.article')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setContentType('question')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
-                      ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
-                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
-                      }`}
-                    title={t('page.contentTypeHelp.question')}
-                  >
-                    <HelpCircle className="w-4 h-4" />
-                    {t('page.question')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setContentType('trace')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
-                      ? 'bg-white dark:bg-dark-surface text-secondary-dark dark:text-white/80 shadow-sm'
-                      : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
-                      }`}
-                    title={t('page.contentTypeHelp.trace')}
-                  >
-                    <Camera className="w-4 h-4" />
-                    {t('page.trace')}
-                  </button>
-                </div>
-                {/* Help text for selected content type */}
-                <p className="text-xs text-text-light dark:text-dark-text-muted italic">
-                  {contentType === 'article' && t('page.contentTypeHelp.article')}
-                  {contentType === 'question' && t('page.contentTypeHelp.question')}
-                  {contentType === 'trace' && t('page.contentTypeHelp.trace')}
-                </p>
-              </div>
-
-              {/* Cover Image */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-text dark:text-dark-text">
-                  {t('coverImage')}
-                </label>
-                {user && (
-                  <CoverImageUpload
-                    value={coverImage}
-                    onChange={setCoverImage}
-                    userId={user.id}
-                  />
-                )}
-              </div>
-
-              {/* Title */}
-              <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-semibold text-text dark:text-dark-text">
-                  {t('title')}
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  autoComplete="off"
-                  placeholder={contentType === 'question' ? t('page.titlePlaceholderQuestion') : t('page.titlePlaceholderArticle')}
-                  value={title}
-                  onChange={event => setTitle(event.target.value)}
-                  className="w-full px-4 py-3.5 text-lg rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+              {showFirstTimePrompt && !postIdParam && (
+                <FirstTimeContributorPrompt
+                  onDismiss={() => {
+                    setShowFirstTimePrompt(false)
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.setItem('firstTimePromptSeen', 'true')
+                    }
+                  }}
                 />
-                {errors.title && <p className="text-sm text-accent">{errors.title}</p>}
-              </div>
+              )}
 
-              {/* Content */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="content" className="text-sm font-semibold text-text dark:text-dark-text">
-                    {t('content')}
-                  </label>
-                  <div className="flex items-center gap-2">
+              <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+
+                {/* Content Type Toggle */}
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
                     <button
                       type="button"
-                      onClick={() => setUseRichEditor(!useRichEditor)}
-                      className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${useRichEditor
-                        ? 'bg-primary text-white border-primary'
-                        : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary'
+                      onClick={() => setContentType('article')}
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
+                        ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
+                        : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
+                      title={t('page.contentTypeHelp.article')}
                     >
-                      <Type className="h-3.5 w-3.5" />
-                      {t('page.visualEditor')}
+                      <BookOpen className="w-4 h-4" />
+                      {t('page.article')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContentType('question')}
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
+                        ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
+                        : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                        }`}
+                      title={t('page.contentTypeHelp.question')}
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                      {t('page.question')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContentType('trace')}
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
+                        ? 'bg-white dark:bg-dark-surface text-secondary-dark dark:text-white/80 shadow-sm'
+                        : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                        }`}
+                      title={t('page.contentTypeHelp.trace')}
+                    >
+                      <Camera className="w-4 h-4" />
+                      {t('page.trace')}
                     </button>
                   </div>
-                </div>
-
-                {useRichEditor ? (
-                  <RichEditor
-                    key={editorKey}
-                    value={content}
-                    onChange={setContent}
-                    placeholder="Write your content here..."
-                    userId={user?.id}
-                  />
-                ) : (
-                  <textarea
-                    id="content"
-                    name="content"
-                    value={content}
-                    onChange={event => setContent(event.target.value)}
-                    placeholder="Write your content here. Markdown is supported..."
-                    className="min-h-[20rem] w-full px-4 py-4 text-base leading-relaxed rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all resize-y"
-                  />
-                )}
-                {errors.content && <p className="text-sm text-accent">{errors.content}</p>}
-              </div>
-
-              {/* Tags */}
-              <div className="space-y-2">
-                <label htmlFor="tags" className="text-sm font-semibold text-text dark:text-dark-text">
-                  {t('tags')}
-                </label>
-                <input
-                  id="tags"
-                  name="tags"
-                  type="text"
-                  value={tags}
-                  onChange={event => setTags(event.target.value)}
-                  placeholder="methodology, ethics, syria"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                />
-                {tagList.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {tagList.map(tag => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1.5 text-xs font-semibold bg-white/50 dark:bg-white/10 text-text/50 dark:text-white/70 rounded-lg border border-gray-200/50 dark:border-white/10 backdrop-blur-sm"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* License */}
-              <div className="space-y-2">
-                <label htmlFor="license" className="text-sm font-semibold text-text dark:text-dark-text">
-                  {t('license')}
-                </label>
-                <select
-                  id="license"
-                  value={license}
-                  onChange={e => setLicense(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
-                >
-                  <option value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</option>
-                  <option value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</option>
-                  <option value="CC0-1.0">{tLicenses('CC0-1_0')}</option>
-                  <option value="MIT">{tLicenses('MIT')}</option>
-                  <option value="All Rights Reserved">{tLicenses('All Rights Reserved')}</option>
-                </select>
-                <div className="text-xs text-text-light dark:text-dark-text-muted space-y-1">
-                  <p>{tLicenses('helpText')}</p>
-                  <p className={cn(
-                    "font-medium",
-                    license === 'All Rights Reserved' ? "text-amber-600 dark:text-amber-400" : "text-primary dark:text-primary-light"
-                  )}>
-                    {tLicenses(`descriptions.${license.replace(/\./g, '_')}`)}
+                  {/* Help text for selected content type */}
+                  <p className="text-xs text-text-light dark:text-dark-text-muted italic">
+                    {contentType === 'article' && t('page.contentTypeHelp.article')}
+                    {contentType === 'question' && t('page.contentTypeHelp.question')}
+                    {contentType === 'trace' && t('page.contentTypeHelp.trace')}
                   </p>
                 </div>
-              </div>
-            </form>
-          </div>
 
-          {/* Optional Section: References & Resources - Separate Card */}
-          <CollapsibleSection
-            title={t('page.sections.referencesResources')}
-            icon={Link2}
-            description={t('page.sections.referencesResourcesDesc')}
-            defaultOpen={linkedResources.length > 0 || citations.length > 0}
-            badge={linkedResources.length + citations.length > 0 ? `${linkedResources.length + citations.length}` : undefined}
-            className="bg-white dark:bg-dark-surface"
-          >
-            <div className="space-y-6">
-              {/* Linked Resources */}
-              <ResourceLinker
-                selectedResources={linkedResources}
-                onChange={setLinkedResources}
-                userId={user?.id}
-              />
-
-              {/* References / Citations */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                {/* Cover Image */}
+                <div className="space-y-2">
                   <label className="text-sm font-semibold text-text dark:text-dark-text">
-                    {t('page.references')}
+                    {t('coverImage')}
                   </label>
-                  <AddCitationDialog
-                    citations={citations}
-                    onCitationsChange={setCitations}
-                  />
+                  {user && (
+                    <CoverImageUpload
+                      value={coverImage}
+                      onChange={setCoverImage}
+                      userId={user.id}
+                    />
+                  )}
                 </div>
-                {citations.length > 0 && (
-                  <div className="space-y-2 p-3 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border">
-                    {citations.map((citation, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between gap-2 p-2 bg-white dark:bg-dark-surface rounded-lg text-sm"
+
+                {/* Title */}
+                <div className="space-y-2">
+                  <label htmlFor="title" className="text-sm font-semibold text-text dark:text-dark-text">
+                    {t('title')}
+                  </label>
+                  <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    autoComplete="off"
+                    placeholder={contentType === 'question' ? t('page.titlePlaceholderQuestion') : t('page.titlePlaceholderArticle')}
+                    value={title}
+                    onChange={event => setTitle(event.target.value)}
+                    className="w-full px-4 py-3.5 text-lg rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                  />
+                  {errors.title && <p className="text-sm text-accent">{errors.title}</p>}
+                </div>
+
+                {/* Content */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="content" className="text-sm font-semibold text-text dark:text-dark-text">
+                      {t('content')}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setUseRichEditor(!useRichEditor)}
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${useRichEditor
+                          ? 'bg-primary text-white border-primary'
+                          : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary'
+                          }`}
+                      >
+                        <Type className="h-3.5 w-3.5" />
+                        {t('page.visualEditor')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {useRichEditor ? (
+                    <RichEditor
+                      key={editorKey}
+                      value={content}
+                      onChange={setContent}
+                      placeholder="Write your content here..."
+                      userId={user?.id}
+                    />
+                  ) : (
+                    <textarea
+                      id="content"
+                      name="content"
+                      value={content}
+                      onChange={event => setContent(event.target.value)}
+                      placeholder="Write your content here. Markdown is supported..."
+                      className="min-h-[20rem] w-full px-4 py-4 text-base leading-relaxed rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all resize-y"
+                    />
+                  )}
+                  {errors.content && <p className="text-sm text-accent">{errors.content}</p>}
+                </div>
+
+                {/* Tags */}
+                <div className="space-y-2">
+                  <label htmlFor="tags" className="text-sm font-semibold text-text dark:text-dark-text">
+                    {t('tags')}
+                  </label>
+                  <input
+                    id="tags"
+                    name="tags"
+                    type="text"
+                    value={tags}
+                    onChange={event => setTags(event.target.value)}
+                    placeholder="methodology, ethics, syria"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                  />
+                  {tagList.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {tagList.map(tag => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1.5 text-xs font-semibold bg-white/50 dark:bg-white/10 text-text/50 dark:text-white/70 rounded-lg border border-gray-200/50 dark:border-white/10 backdrop-blur-sm"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* License */}
+                <div className="space-y-2">
+                  <label htmlFor="license" className="text-sm font-semibold text-text dark:text-dark-text">
+                    {t('license')}
+                  </label>
+                  <select
+                    id="license"
+                    value={license}
+                    onChange={e => setLicense(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                  >
+                    <option value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</option>
+                    <option value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</option>
+                    <option value="CC0-1.0">{tLicenses('CC0-1_0')}</option>
+                    <option value="MIT">{tLicenses('MIT')}</option>
+                    <option value="All Rights Reserved">{tLicenses('All Rights Reserved')}</option>
+                  </select>
+                  <div className="text-xs text-text-light dark:text-dark-text-muted space-y-1">
+                    <p>{tLicenses('helpText')}</p>
+                    <p className={cn(
+                      "font-medium",
+                      license === 'All Rights Reserved' ? "text-amber-600 dark:text-amber-400" : "text-primary dark:text-primary-light"
+                    )}>
+                      {tLicenses(`descriptions.${license.replace(/\./g, '_')}`)}
+                    </p>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Optional Section: References & Resources - Separate Card */}
+            <CollapsibleSection
+              title={t('page.sections.referencesResources')}
+              icon={Link2}
+              description={t('page.sections.referencesResourcesDesc')}
+              defaultOpen={linkedResources.length > 0 || citations.length > 0}
+              badge={linkedResources.length + citations.length > 0 ? `${linkedResources.length + citations.length}` : undefined}
+              className="bg-white dark:bg-dark-surface"
+            >
+              <div className="space-y-6">
+                {/* Linked Resources */}
+                <ResourceLinker
+                  selectedResources={linkedResources}
+                  onChange={setLinkedResources}
+                  userId={user?.id}
+                />
+
+                {/* References / Citations */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-semibold text-text dark:text-dark-text">
+                      {t('page.references')}
+                    </label>
+                    <AddCitationDialog
+                      citations={citations}
+                      onCitationsChange={setCitations}
+                    />
+                  </div>
+                  {citations.length > 0 && (
+                    <div className="space-y-2 p-3 bg-gray-50 dark:bg-dark-bg rounded-xl border border-gray-200 dark:border-dark-border">
+                      {citations.map((citation, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between gap-2 p-2 bg-white dark:bg-dark-surface rounded-lg text-sm"
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {citation.type === 'internal' ? (
@@ -903,185 +903,185 @@ export default function EditorPage() {
                               {citation.type === 'internal'
                                 ? citation.target_post?.title
                                 : citation.external_title || citation.external_doi || citation.external_url}
-                          </span>
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCitations(citations.filter((_, i) => i !== index))}
+                            className="p-1 text-text-light hover:text-red-500 transition-colors"
+                          >
+                            ×
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setCitations(citations.filter((_, i) => i !== index))}
-                          className="p-1 text-text-light hover:text-red-500 transition-colors"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                  {t('page.referencesHelp')}
-                </p>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-text-light dark:text-dark-text-muted">
+                    {t('page.referencesHelp')}
+                  </p>
+                </div>
               </div>
-            </div>
-          </CollapsibleSection>
+            </CollapsibleSection>
 
-          {/* Optional Section: Data Visualizations - Uses Linked Resources */}
-          {linkedResources.length > 0 && (
-            <CollapsibleSection
-              title={t('page.sections.dataVisualizations') || 'Data Visualizations'}
-              icon={BarChart3}
-              description={t('page.sections.dataVisualizationsDesc') || 'Create interactive charts from your linked datasets'}
-              defaultOpen={chartBlocks.length > 0}
-              badge={chartBlocks.length > 0 ? `${chartBlocks.length}` : undefined}
-              className="bg-white dark:bg-dark-surface"
-            >
-              <div className="space-y-4">
-                {chartBlocks.map((chart, index) => (
-                  <ChartBlock
-                    key={`chart-${index}`}
-                    config={chart}
-                    linkedResources={linkedResources}
-                    onChange={(updatedConfig) => {
-                      const newCharts = [...chartBlocks]
-                      newCharts[index] = updatedConfig
-                      setChartBlocks(newCharts)
-                    }}
-                    onRemove={() => {
-                      setChartBlocks(chartBlocks.filter((_, i) => i !== index))
-                    }}
-                    isEditing={true}
-                  />
-                ))}
+            {/* Optional Section: Data Visualizations - Uses Linked Resources */}
+            {linkedResources.length > 0 && (
+              <CollapsibleSection
+                title={t('page.sections.dataVisualizations') || 'Data Visualizations'}
+                icon={BarChart3}
+                description={t('page.sections.dataVisualizationsDesc') || 'Create interactive charts from your linked datasets'}
+                defaultOpen={chartBlocks.length > 0}
+                badge={chartBlocks.length > 0 ? `${chartBlocks.length}` : undefined}
+                className="bg-white dark:bg-dark-surface"
+              >
+                <div className="space-y-4">
+                  {chartBlocks.map((chart, index) => (
+                    <ChartBlock
+                      key={`chart-${index}`}
+                      config={chart}
+                      linkedResources={linkedResources}
+                      onChange={(updatedConfig) => {
+                        const newCharts = [...chartBlocks]
+                        newCharts[index] = updatedConfig
+                        setChartBlocks(newCharts)
+                      }}
+                      onRemove={() => {
+                        setChartBlocks(chartBlocks.filter((_, i) => i !== index))
+                      }}
+                      isEditing={true}
+                    />
+                  ))}
 
+                  <button
+                    type="button"
+                    onClick={() => setChartBlocks([...chartBlocks, {
+                      resourceId: '',
+                      resourceTitle: '',
+                      chartType: 'bar',
+                      showLegend: true
+                    }])}
+                    className="w-full py-3 px-4 border-2 border-dashed border-gray-200 dark:border-dark-border rounded-xl text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    {t('page.addChart') || 'Add Chart Visualization'}
+                  </button>
+
+                  <p className="text-xs text-text-light dark:text-dark-text-muted">
+                    {t('page.chartHelp') || 'Charts will be displayed in your published post. Link dataset resources above to enable visualizations.'}
+                  </p>
+                </div>
+              </CollapsibleSection>
+            )}
+
+            {/* Optional Section: Research Coverage - Separate Card (for Articles and Traces) */}
+            {(contentType === 'article' || contentType === 'trace') && (
+              <CollapsibleSection
+                title={t('page.sections.researchCoverage')}
+                icon={MapPin}
+                description={t('page.sections.researchCoverageDesc')}
+                defaultOpen={!!(temporalCoverageStart || temporalCoverageEnd || spatialCoverage)}
+                badge={t('page.optional')}
+                className="bg-white dark:bg-dark-surface"
+              >
+                <div className="space-y-4">
+                  {/* Temporal Coverage */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label htmlFor="temporalStart" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {t('page.periodStart')}
+                      </label>
+                      <input
+                        id="temporalStart"
+                        type="date"
+                        value={temporalCoverageStart}
+                        onChange={e => setTemporalCoverageStart(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="temporalEnd" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {t('page.periodEnd')}
+                      </label>
+                      <input
+                        id="temporalEnd"
+                        type="date"
+                        value={temporalCoverageEnd}
+                        onChange={e => setTemporalCoverageEnd(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Spatial Coverage - Map-based editor */}
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {t('page.geographicRegion')}
+                    </label>
+                    <SpatialEditor
+                      value={spatialCoverage}
+                      geometry={spatialGeometry}
+                      onChange={(placeName, geo) => {
+                        setSpatialCoverage(placeName)
+                        setSpatialGeometry(geo || null)
+                      }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-text-light dark:text-dark-text-muted">
+                    {t('page.coverageHelp')}
+                  </p>
+                </div>
+              </CollapsibleSection>
+            )}
+
+            {/* 24-Hour Edit Window Notice & Action Buttons */}
+            <div className="space-y-4">
+              {!postIdParam && (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-amber-800 dark:text-amber-300">
+                      {t('page.editWindowTitle')}
+                    </p>
+                    <p className="text-amber-700 dark:text-amber-400 opacity-90 mt-1">
+                      {t('page.editWindowDescription')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3">
                 <button
                   type="button"
-                  onClick={() => setChartBlocks([...chartBlocks, {
-                    resourceId: '',
-                    resourceTitle: '',
-                    chartType: 'bar',
-                    showLegend: true
-                  }])}
-                  className="w-full py-3 px-4 border-2 border-dashed border-gray-200 dark:border-dark-border rounded-xl text-text-light dark:text-dark-text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                  disabled={saving}
+                  onClick={handleDraft}
+                  className="flex-1 sm:flex-none px-6 py-3 text-sm font-semibold rounded-xl border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary hover:text-primary transition-all disabled:opacity-50"
                 >
-                  <Plus className="w-4 h-4" />
-                  {t('page.addChart') || 'Add Chart Visualization'}
+                  {t('saveDraft')}
                 </button>
-
-                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                  {t('page.chartHelp') || 'Charts will be displayed in your published post. Link dataset resources above to enable visualizations.'}
-                </p>
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => persistPost(true)}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
+                >
+                  <Save className="h-4 w-4" />
+                  {saving ? t('page.publishing') : t('publish')}
+                </button>
               </div>
-            </CollapsibleSection>
-          )}
 
-          {/* Optional Section: Research Coverage - Separate Card (for Articles and Traces) */}
-          {(contentType === 'article' || contentType === 'trace') && (
-            <CollapsibleSection
-              title={t('page.sections.researchCoverage')}
-              icon={MapPin}
-              description={t('page.sections.researchCoverageDesc')}
-              defaultOpen={!!(temporalCoverageStart || temporalCoverageEnd || spatialCoverage)}
-              badge={t('page.optional')}
-              className="bg-white dark:bg-dark-surface"
-            >
-              <div className="space-y-4">
-                {/* Temporal Coverage */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label htmlFor="temporalStart" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {t('page.periodStart')}
-                    </label>
-                    <input
-                      id="temporalStart"
-                      type="date"
-                      value={temporalCoverageStart}
-                      onChange={e => setTemporalCoverageStart(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label htmlFor="temporalEnd" className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {t('page.periodEnd')}
-                    </label>
-                    <input
-                      id="temporalEnd"
-                      type="date"
-                      value={temporalCoverageEnd}
-                      onChange={e => setTemporalCoverageEnd(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                    />
-                  </div>
+              {/* Autosave Indicator */}
+              {!postIdParam && (
+                <div className="flex justify-end">
+                  <AutosaveIndicator lastSaved={lastSaved} />
                 </div>
-
-                {/* Spatial Coverage - Map-based editor */}
-                <div className="space-y-2">
-                  <label className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted">
-                    <MapPin className="w-3.5 h-3.5" />
-                    {t('page.geographicRegion')}
-                  </label>
-                  <SpatialEditor
-                    value={spatialCoverage}
-                    geometry={spatialGeometry}
-                    onChange={(placeName, geo) => {
-                      setSpatialCoverage(placeName)
-                      setSpatialGeometry(geo || null)
-                    }}
-                  />
-                </div>
-
-                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                  {t('page.coverageHelp')}
-                </p>
-              </div>
-            </CollapsibleSection>
-          )}
-
-          {/* 24-Hour Edit Window Notice & Action Buttons */}
-          <div className="space-y-4">
-            {!postIdParam && (
-              <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-amber-800 dark:text-amber-300">
-                    {t('page.editWindowTitle')}
-                  </p>
-                  <p className="text-amber-700 dark:text-amber-400 opacity-90 mt-1">
-                    {t('page.editWindowDescription')}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex flex-col-reverse sm:flex-row gap-3">
-              <button
-                type="button"
-                disabled={saving}
-                onClick={handleDraft}
-                className="flex-1 sm:flex-none px-6 py-3 text-sm font-semibold rounded-xl border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary hover:text-primary transition-all disabled:opacity-50"
-              >
-                {t('saveDraft')}
-              </button>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => persistPost(true)}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
-              >
-                <Save className="h-4 w-4" />
-                {saving ? t('page.publishing') : t('publish')}
-              </button>
+              )}
             </div>
 
-            {/* Autosave Indicator */}
-            {!postIdParam && (
-              <div className="flex justify-end">
-                <AutosaveIndicator lastSaved={lastSaved} />
-              </div>
-            )}
-          </div>
-
-          {/* End of Main Content Column */}
+            {/* End of Main Content Column */}
           </div>
 
           {/* Sidebar */}
