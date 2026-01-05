@@ -555,7 +555,11 @@
         "displayName": "Display Name",
         "updateInfo": "Update your profile information",
         "saveChanges": "Save Changes",
-        "researchInterests": "Research Interests"
+        "researchInterests": "Research Interests",
+        "characters": "characters",
+        "changeImage": "Change Image",
+        "uploadImage": "Upload Image",
+        "remove": "Remove"
     },
     "Landing": {
         "heroTitle": "Research Made Collaborative",
@@ -584,7 +588,7 @@
         "upcomingEvents": "Upcoming Events",
         "featured": "Featured",
         "trending": "Trending",
-        "minRead": "{count} min",
+        "minRead": "{count} min read",
         "event": "Event",
         "context": "Context",
         "noFilterResults": "No results match your filter",
@@ -1317,17 +1321,18 @@
             "activeToday": "Active Today"
         },
         "dashboardPage": {
-            "title": "Admin Overview",
+            "title": "Admin Dashboard",
             "quickLinks": "Quick Links",
-            "viewStats": "View platform stats",
-            "totalUsers": "total users",
-            "pending": "pending",
-            "viewChanges": "View changes",
+            "viewStats": "View detailed platform statistics",
+            "totalUsers": "Total Users",
+            "pending": "Pending",
+            "viewChanges": "View audit logs",
             "moderationQueue": "Moderation Queue",
             "contentAppeals": "Content Appeals",
-            "noAppeals": "No pending appeals",
+            "noAppeals": "No appeals pending review",
             "viewPost": "View Post"
         },
+        "schemaregistry": "Schema Registry",
         "contentPage": {
             "title": "Content Management",
             "subtitle": "Review and manage all posts on the platform.",
@@ -1450,7 +1455,10 @@
             "alreadyUsed": "{color} (already used)",
             "labelArabic": "Arabic Label",
             "labelArabicPlaceholder": "Enter Arabic translation...",
-            "labelArabicHint": "Optional - helps Arabic users discover content"
+            "labelArabicHint": "Optional - helps Arabic users discover content",
+            "labelEnglish": "English Label",
+            "labelEnglishPlaceholder": "Enter English translation...",
+            "labelEnglishHint": "Optional - helps English users discover content"
         },
         "waitlistPage": {
             "title": "Waitlist Management",
@@ -1511,7 +1519,9 @@
             "exportCsv": "Export CSV",
             "totalChanges": "Total role changes recorded",
             "changedBy": "Changed by",
-            "reason": "Reason"
+            "reason": "Reason",
+            "oldRole": "Old Role",
+            "newRole": "New Role"
         },
         "moderationQueue": {
             "title": "Content Moderation",
@@ -1532,7 +1542,11 @@
         "user": "User",
         "role": "Role",
         "joined": "Joined",
-        "activity": "Activity",
+        "activity": {
+            "label": "Activity",
+            "posts": "Posts",
+            "comments": "Comments"
+        },
         "actions": "Actions",
         "changeRole": "Change Role",
         "suspend": "Suspend",
@@ -2712,7 +2726,9 @@
         "completeYourProfile": "Complete Your Profile",
         "suggested": "Suggested",
         "optionalExtras": "Optional Extras",
-        "privacyNote": "100% achievable without sharing location or personal data"
+        "privacyNote": "100% achievable without sharing location or personal data",
+        "bonusXpEarned": "+{count} bonus XP earned",
+        "itemsRemaining": "{count} items remaining"
     },
     "Session": {
         "researchTrail": "Research Trail",
@@ -2745,7 +2761,7 @@
         "noPostsYet": "No posts available yet.",
         "featured": "Featured",
         "viewAllPosts": "→ View all",
-        "minRead": "{count} min",
+        "minRead": "{count} min read",
         "min": "min",
         "event": "Event"
     },
@@ -2774,8 +2790,15 @@
         "followers": "Followers",
         "citations": "Citations",
         "posts": "Posts",
+        "events": "Events",
+        "knowledgeImpact": "Knowledge Impact",
+        "knowledgeImpactStats": "Knowledge Impact & Statistics",
+        "joined": "Joined {date}",
+        "website": "Website",
+        "backToFeed": "Back to Feed",
         "skillsEndorsements": "Skills & Endorsements",
         "endorsements": "endorsements",
+        "endorsementsCount": "{count} endorsements",
         "addSkill": "Add Skill +",
         "technical": "Technical",
         "domainknowledge": "Domain Knowledge",
@@ -2784,7 +2807,12 @@
         "practicalexpertise": "Practical Expertise",
         "moderator": "Moderator",
         "admin": "Admin",
-        "researcher": "Researcher"
+        "researcher": "Researcher",
+        "member": "Member",
+        "research": "Research",
+        "resources": "Resources",
+        "groups": "Groups",
+        "impact": "Impact"
     },
     "ModerationTriage": {
         "title": "Moderation Queue",

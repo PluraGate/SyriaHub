@@ -271,9 +271,35 @@ export default async function UserGuidePage({ params }: { params: Promise<{ loca
                 </h2>
                 <p>
                     {isArabic
-                        ? 'يتم مراجعة كل المحتوى المنشور للحفاظ على الجودة. إذا تم رفض محتواك، يمكنك الاستئناف مع شرح.'
-                        : 'All published content goes through review to ensure quality. If your content is rejected, you can appeal with an explanation.'}
+                        ? 'يتم مراجعة كل المحتوى المنشور للحفاظ على الجودة. تستخدم المنصة نظام إشراف متعدد الطبقات:'
+                        : 'All published content goes through review to ensure quality. The platform uses a multi-layered moderation system:'}
                 </p>
+                <ul className="not-prose my-4 space-y-2">
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الفلترة الآلية:' : 'AI Pre-Filter:'}</strong> {isArabic ? 'يتم فحص المحتوى تلقائياً للكشف عن خطاب الكراهية والتحرش والبريد العشوائي' : 'Content is automatically scanned for hate speech, harassment, and spam'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'بلاغات المجتمع:' : 'Community Reports:'}</strong> {isArabic ? 'يمكن لأي مستخدم الإبلاغ عن محتوى مخالف' : 'Any user can report content that violates guidelines'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المشرفون البشريون:' : 'Human Moderators:'}</strong> {isArabic ? 'مراجعة المحتوى المُبلَّغ عنه واتخاذ القرارات' : 'Review flagged content and make decisions'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <span className="text-primary dark:text-secondary">•</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'لجنة المحلفين:' : 'Jury Panel:'}</strong> {isArabic ? 'للحالات المعقدة، يتم المراجعة من قبل عدة مشرفين' : 'Complex cases are reviewed by multiple moderators'}</span>
+                    </li>
+                </ul>
+                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 not-prose my-4">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                        <strong>{isArabic ? 'عملية الاستئناف:' : 'Appeals Process:'}</strong>{' '}
+                        {isArabic
+                            ? 'إذا تم رفض محتواك أو تعليقه، يمكنك تقديم استئناف مع شرح. تتم مراجعة الاستئنافات من قبل مشرفين مستقلين عن القرار الأصلي.'
+                            : 'If your content is rejected or suspended, you can submit an appeal with an explanation. Appeals are reviewed by moderators independent of the original decision.'}
+                    </p>
+                </div>
 
                 {/* Analytics */}
                 <h2 id="analytics" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">

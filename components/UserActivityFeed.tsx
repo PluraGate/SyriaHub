@@ -17,6 +17,7 @@ type TabType = 'posts' | 'resources' | 'events' | 'groups'
 export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
     const t = useTranslations('Gamification')
     const tNav = useTranslations('Navigation')
+    const tLabels = useTranslations('ProfileLabels')
     const researchPosts = posts.filter(p => !p.content_type || p.content_type === 'article' || p.content_type === 'question' || p.content_type === 'answer')
     const resourcePosts = posts.filter(p => p.content_type === 'resource')
     const eventPosts = posts.filter(p => p.content_type === 'event')
@@ -28,7 +29,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         if (researchPosts.length > 0) {
             tabs.push({
                 id: 'posts',
-                label: 'Research',
+                label: tLabels('research'),
                 icon: FileText,
                 count: researchPosts.length,
                 colorClass: 'bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light'
@@ -37,7 +38,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         if (resourcePosts.length > 0) {
             tabs.push({
                 id: 'resources',
-                label: 'Resources',
+                label: tLabels('resources'),
                 icon: FolderOpen,
                 count: resourcePosts.length,
                 colorClass: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
@@ -46,7 +47,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         if (eventPosts.length > 0) {
             tabs.push({
                 id: 'events',
-                label: 'Events',
+                label: tLabels('events'),
                 icon: Calendar,
                 count: eventPosts.length,
                 colorClass: 'bg-secondary/20 text-secondary-dark dark:text-secondary'
@@ -55,7 +56,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         if (groups.length > 0) {
             tabs.push({
                 id: 'groups',
-                label: 'Groups',
+                label: tLabels('groups'),
                 icon: Users,
                 count: groups.length,
                 colorClass: 'bg-accent/20 text-accent-dark dark:text-accent'
@@ -63,7 +64,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
         }
 
         return tabs
-    }, [researchPosts.length, resourcePosts.length, eventPosts.length, groups.length])
+    }, [researchPosts.length, resourcePosts.length, eventPosts.length, groups.length, tLabels])
 
     // Default to first available tab, or 'posts' if nothing available
     const [activeTab, setActiveTab] = useState<TabType>(availableTabs[0]?.id || 'posts')
@@ -93,7 +94,7 @@ export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${activeTab === tab.id
-                                ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
+                                ? 'bg-white dark:bg-dark-bg text-primary dark:text-dark-text shadow-sm'
                                 : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                                 }`}
                         >

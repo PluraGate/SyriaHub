@@ -176,6 +176,90 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
                     })}
                 </div>
 
+                {/* Security Infrastructure (from Jan 2026 Audit) */}
+                <h3 className="text-xl font-semibold text-text dark:text-dark-text mt-8 mb-4">
+                    {isRTL ? 'البنية التحتية للأمان' : 'Security Infrastructure'}
+                </h3>
+
+                <p className="text-text-muted dark:text-dark-text-muted mb-4">
+                    {isRTL
+                        ? 'تخضع منصتنا لمراجعات أمنية منتظمة. فيما يلي التدابير الأمنية المطبقة اعتباراً من يناير 2026:'
+                        : 'Our platform undergoes regular security reviews. Here are the security measures implemented as of January 2026:'
+                    }
+                </p>
+
+                <div className="not-prose grid gap-4 md:grid-cols-2 mb-8">
+                    <div className="p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                        <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-primary dark:text-secondary" />
+                            {isRTL ? 'التحقق من الأصل' : 'Origin Validation'}
+                        </h4>
+                        <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                            {isRTL
+                                ? 'جميع نقاط النهاية المتغيرة محمية بالتحقق من أصل الطلب لمنع هجمات تزوير الطلبات عبر المواقع (CSRF).'
+                                : 'All mutation endpoints are protected with origin validation to prevent Cross-Site Request Forgery (CSRF) attacks.'
+                            }
+                        </p>
+                    </div>
+                    <div className="p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                        <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-primary dark:text-secondary" />
+                            {isRTL ? 'تحديد معدل الطلبات' : 'Rate Limiting'}
+                        </h4>
+                        <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                            {isRTL
+                                ? 'حماية من إساءة الاستخدام عبر تحديد معدل الطلبات المستند إلى IP على جميع نقاط النهاية.'
+                                : 'IP-based rate limiting on all endpoints protects against abuse and brute-force attacks.'
+                            }
+                        </p>
+                    </div>
+                    <div className="p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                        <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-primary dark:text-secondary" />
+                            {isRTL ? 'التحقق من Turnstile' : 'Turnstile Verification'}
+                        </h4>
+                        <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                            {isRTL
+                                ? 'حماية من الروبوتات على النماذج العامة مع فشل آمن في وضع الإنتاج.'
+                                : 'Bot protection on public forms with fail-closed behavior in production mode.'
+                            }
+                        </p>
+                    </div>
+                    <div className="p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                        <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                            <Lock className="w-4 h-4 text-primary dark:text-secondary" />
+                            {isRTL ? 'الرموز التشفيرية' : 'Cryptographic Tokens'}
+                        </h4>
+                        <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                            {isRTL
+                                ? 'جميع الرموز العامة يتم إنشاؤها باستخدام دوال تشفير آمنة (gen_random_bytes).'
+                                : 'All public tokens are generated using secure cryptographic functions (gen_random_bytes).'
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                {/* Protected Endpoints */}
+                <div className="not-prose mb-8 p-5 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+                    <h4 className="font-semibold text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        {isRTL ? 'نقاط النهاية المحمية' : 'Protected Endpoints'}
+                    </h4>
+                    <p className="text-sm text-green-700 dark:text-green-300 mb-2">
+                        {isRTL
+                            ? 'جميع نقاط النهاية الحساسة محمية بالتحقق من الأصل وتحديد معدل الطلبات:'
+                            : 'All sensitive endpoints are protected with origin validation and rate limiting:'
+                        }
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {['Posts', 'Comments', 'Reports', 'Moderation', 'Votes', 'Bookmarks', 'Polls', 'Surveys'].map((endpoint) => (
+                            <span key={endpoint} className="px-2 py-1 rounded bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300 text-xs font-mono">
+                                {endpoint}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Security.txt Link */}
                 <div className="not-prose mt-8 p-4 rounded-lg bg-gray-100 dark:bg-dark-bg border border-border dark:border-dark-border">
                     <div className="flex items-center justify-between">

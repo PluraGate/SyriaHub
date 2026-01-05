@@ -9,6 +9,7 @@ import { ProfileHeader } from '@/components/ProfileHeader'
 import { EndorsementSection } from '@/components/EndorsementSection'
 import { UserActivityFeed } from '@/components/UserActivityFeed'
 import { ProfileCompletionCard } from '@/components/ProfileCompletionCard'
+import { getTranslations } from 'next-intl/server'
 
 interface ProfilePageProps {
   params: Promise<{
@@ -20,6 +21,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   const params = await props.params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const t = await getTranslations('ProfileLabels')
 
   // Fetch profile data - use select('*') to avoid column mismatch issues
   const { data: profile, error: profileError } = await supabase
@@ -97,7 +99,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
             href="/feed"
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Back to Feed
+            {t('backToFeed')}
           </Link>
         </main>
         <Footer />
@@ -182,7 +184,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
             className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Feed
+            {t('backToFeed')}
           </Link>
         </div>
       </div>

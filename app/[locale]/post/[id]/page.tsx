@@ -38,6 +38,9 @@ import { Button } from '@/components/ui/button'
 import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { PostHeroBackground } from '@/components/PostHeroBackground'
+import { SchemaFieldDisplay, SchemaFieldValue } from '@/components/post/SchemaFieldDisplay'
+
+
 
 interface PostPageProps {
   params: Promise<{
@@ -223,6 +226,30 @@ export default async function PostPage(props: PostPageProps) {
     `)
     .eq('post_id', id)
 
+
+  // Fetch Schema Registry Values
+  const { data: schemaValuesData } = await supabase
+    .from('schema_post_field_values')
+    .select(`
+        value,
+        field:schema_fields(field_key),
+        version:schema_field_versions(display_name, field_type, registry_id)
+    `)
+    .eq('post_id', id)
+    .eq('is_current', true)
+
+  const schemaValues: SchemaFieldValue[] = (schemaValuesData || []).map((item: any) => {
+    const field = Array.isArray(item.field) ? item.field[0] : item.field
+    const version = Array.isArray(item.version) ? item.version[0] : item.version
+    return {
+      value: item.value,
+      field: {
+        display_name: version?.display_name || field?.field_key || 'Unknown',
+        field_key: field?.field_key || ''
+      },
+      version: version
+    }
+  })
 
   if (resourceLinksData) {
     linkedResources = resourceLinksData
@@ -641,6 +668,11 @@ export default async function PostPage(props: PostPageProps) {
               </h3>
               <KnowledgeGraph centerPostId={post.id} />
             </div>
+
+            {/* Dynamic Schema Fields (Research Metadata) */}
+            {schemaValues.length > 0 && (
+              <SchemaFieldDisplay fields={schemaValues} />
+            )}
 
             {/* Epistemic Recommendations - To Broaden This Inquiry */}
             <EpistemicRecommendations postId={post.id} postTags={post.tags || []} />

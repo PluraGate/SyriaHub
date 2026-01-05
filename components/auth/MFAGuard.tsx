@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TwoFactorVerify } from './TwoFactorVerify'
@@ -25,11 +25,7 @@ export function MFAGuard({ children, redirectTo = '/feed' }: MFAGuardProps) {
     const supabase = createClient()
     const router = useRouter()
 
-    useEffect(() => {
-        checkMFAStatus()
-    }, [])
-
-    async function checkMFAStatus() {
+    const checkMFAStatus = useCallback(async () => {
         try {
             // Get the current session's assurance level
             const { data: { session } } = await supabase.auth.getSession()
@@ -77,9 +73,15 @@ export function MFAGuard({ children, redirectTo = '/feed' }: MFAGuardProps) {
             console.error('Error checking MFA status:', err)
             setLoading(false)
         }
-    }
+    }, [supabase, router])
 
-    async function handleMFAVerified() {
+    useEffect(() => {
+        void (async () => {
+            await checkMFAStatus()
+        })()
+    }, [checkMFAStatus])
+
+    function handleMFAVerified() {
         setNeedsMFA(false)
         router.refresh()
     }

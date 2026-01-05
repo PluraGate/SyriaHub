@@ -5,6 +5,8 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
+import { SchemaFieldRenderer } from '@/components/editor/SchemaFieldRenderer'
+import { SchemaFieldVersion } from '@/types'
 import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle, Table, Link2, Quote, BarChart3, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
@@ -89,12 +91,6 @@ export default function EditorPage() {
   const [editorKey, setEditorKey] = useState(0) // Key to force RichEditor remount
   const [chartBlocks, setChartBlocks] = useState<ChartConfig[]>([])
 
-  // Epistemic Architecture fields
-  const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
-  const [temporalCoverageEnd, setTemporalCoverageEnd] = useState('')
-  const [spatialCoverage, setSpatialCoverage] = useState('')
-  const [spatialGeometry, setSpatialGeometry] = useState<any>(null)
-
   // Real-time collaboration for editing existing posts
   const { collaborators, isConnected, userColor } = useCollaboration({
     documentId: postIdParam || 'new',
@@ -116,6 +112,75 @@ export default function EditorPage() {
     enabled: !postIdParam && preferences.editor.autosave, // Respect user autosave preference
     debounceMs: (preferences.editor.autosave_interval || 30) * 1000, // Use user's interval preference
   })
+
+  // Epistemic Architecture fields
+  const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
+  const [temporalCoverageEnd, setTemporalCoverageEnd] = useState('')
+  const [spatialCoverage, setSpatialCoverage] = useState('')
+  const [spatialGeometry, setSpatialGeometry] = useState<any>(null)
+
+  // SCHEMA REGISTRY STATE
+  const [schemaFields, setSchemaFields] = useState<SchemaFieldVersion[]>([])
+  const [schemaValues, setSchemaValues] = useState<Record<string, any>>({})
+  const [schemaErrors, setSchemaErrors] = useState<Record<string, string>>({})
+  const [loadingSchema, setLoadingSchema] = useState(false)
+
+  // ... existing code ...
+
+  // Fetch schema fields when content type changes
+  useEffect(() => {
+    async function loadSchemaFields() {
+      setLoadingSchema(true)
+      // Use the RPC function we created in the migration
+      const { data, error } = await supabase.rpc('get_fields_for_content_type', {
+        p_content_type: contentType
+      })
+
+      if (error) {
+        console.error('Error loading schema fields:', error)
+      } else {
+        setSchemaFields(data || [])
+      }
+      setLoadingSchema(false)
+    }
+
+    loadSchemaFields()
+  }, [contentType, supabase])
+
+  // Load existing schema values when editing
+  useEffect(() => {
+    async function loadSchemaValues() {
+      if (!postIdParam) return
+
+      const { data, error } = await supabase
+        .from('schema_post_field_values')
+        .select(`
+                field_id,
+                value,
+                field_version:schema_field_versions!inner(field_type)
+            `)
+        .eq('post_id', postIdParam)
+        .eq('is_current', true)
+
+      if (error) {
+        console.error('Error loading schema values:', error)
+        return
+      }
+
+      if (data) {
+        const values: Record<string, any> = {}
+        data.forEach(item => {
+          values[item.field_id] = item.value
+        })
+        setSchemaValues(values)
+      }
+    }
+
+    if (!initializing) {
+      loadSchemaValues()
+    }
+  }, [postIdParam, supabase, initializing])
+
 
   // Check for existing draft on mount
   useEffect(() => {
@@ -379,8 +444,24 @@ export default function EditorPage() {
     if (!title.trim()) nextErrors.title = 'Give your post a descriptive title.'
     if (!content.trim()) nextErrors.content = 'Add some content before publishing.'
     setErrors(nextErrors)
-    return Object.keys(nextErrors).length === 0
-  }, [content, title])
+
+    // Validate required schema fields
+    const nextSchemaErrors: Record<string, string> = {}
+    schemaFields.forEach(field => {
+      if (field.is_required) {
+        const value = schemaValues[field.field_id]
+        const isEmpty = value === undefined || value === null || value === '' ||
+          (Array.isArray(value) && value.length === 0) ||
+          (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)
+        if (isEmpty) {
+          nextSchemaErrors[field.field_id] = `${field.display_name} is required`
+        }
+      }
+    })
+    setSchemaErrors(nextSchemaErrors)
+
+    return Object.keys(nextErrors).length === 0 && Object.keys(nextSchemaErrors).length === 0
+  }, [content, title, schemaFields, schemaValues])
 
   const persistPost = useCallback(
     async (publish: boolean) => {
@@ -507,6 +588,42 @@ export default function EditorPage() {
           await supabase.from('resource_post_links').insert(resourceLinks)
         }
 
+        // Save Schema Field Values
+        // First invalidate existing values if editing (always do this, even if clearing all values)
+        if (postIdParam) {
+          await supabase
+            .from('schema_post_field_values')
+            .update({ is_current: false })
+            .eq('post_id', data.id)
+        }
+
+        if (Object.keys(schemaValues).length > 0) {
+          // Prepare new values
+          const fieldValues = Object.entries(schemaValues).map(([fieldId, value]) => {
+            // Find the current version for this field
+            const field = schemaFields.find(f => f.field_id === fieldId)
+            if (!field || !field.id) return null
+
+            return {
+              post_id: data.id,
+              field_id: fieldId,
+              field_version_id: field.id,
+              value: value
+            }
+          }).filter(Boolean)
+
+          if (fieldValues.length > 0) {
+            const { error: schemaError } = await supabase
+              .from('schema_post_field_values')
+              .insert(fieldValues)
+
+            if (schemaError) {
+              console.error('Error saving schema values:', schemaError)
+              // We don't block the post save, but we log it
+            }
+          }
+        }
+
         showToast(publish ? 'Post published successfully!' : 'Draft saved successfully.', 'success')
 
         // Clear localStorage draft after successful publish
@@ -515,7 +632,8 @@ export default function EditorPage() {
         }
 
         await new Promise(resolve => setTimeout(resolve, 1500))
-        router.push(publish ? (group ? `/groups/${group.id}` : `/post/${data.id}`) : '/feed')
+        // Drafts go to the post view page (so user can continue editing), published posts to group or post page
+        router.push(group ? `/groups/${group.id}` : `/post/${data.id}`)
       } catch (error: any) {
         // Log detailed error for debugging
         console.error('Failed to store post', error)
@@ -535,7 +653,7 @@ export default function EditorPage() {
         setSaving(false)
       }
     },
-    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, coverImage, linkedResources, clearDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry, chartBlocks]
+    [content, router, showToast, supabase, tags, title, user, validate, contentType, group, postIdParam, citations, license, coverImage, linkedResources, clearDraft, temporalCoverageStart, temporalCoverageEnd, spatialCoverage, spatialGeometry, chartBlocks, schemaFields, schemaValues]
   )
 
   const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
@@ -677,6 +795,21 @@ export default function EditorPage() {
               )}
 
               <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+
+                {/* DYNAMIC SCHEMA FIELDS */}
+                {/* We render them at the top or below content? Requirement says "fields based on content type". 
+                    Let's put them below title but above content for better visibility, or maybe after content?
+                    Usually schema properties like "Research Domain" are meta-data, so maybe after Title or in a sidebar?
+                    The mockup implied they are part of the form. Let's put them after Content Type toggle.
+                */}
+                {schemaFields.length > 0 && (
+                  <SchemaFieldRenderer
+                    fields={schemaFields}
+                    values={schemaValues}
+                    onChange={(fieldId, val) => setSchemaValues(prev => ({ ...prev, [fieldId]: val }))}
+                    errors={schemaErrors}
+                  />
+                )}
 
                 {/* Content Type Toggle */}
                 <div className="space-y-2">

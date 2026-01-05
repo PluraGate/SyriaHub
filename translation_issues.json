@@ -1,0 +1,77 @@
+[
+  {
+    "type": "UNTRANSLATED",
+    "path": "Common.appTitle",
+    "value": "SyriaHub"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Common.arabic",
+    "value": "العربية"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Licenses.Apache-2_0",
+    "value": "Apache 2.0"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Post.internalReference",
+    "value": "SyriaHub"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Footer.github",
+    "value": "GitHub"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Analytics.trends.up",
+    "value": "+{percent}%"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Analytics.trends.down",
+    "value": "{percent}%"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Admin.tagsPage.colorPlaceholder",
+    "value": "#3B82F6"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "ResearchGaps.suggestions.urlPlaceholder",
+    "value": "https://..."
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Forms.colleagueEmail",
+    "value": "colleague@example.com"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Forms.websitePlaceholder",
+    "value": "https://yourwebsite.com"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Forms.researcherEmail",
+    "value": "researcher@university.edu"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Forms.emailPlaceholder",
+    "value": "you@example.com"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Governance.stewardship.operationalFundsHighlight",
+    "value": "LAS Leicester"
+  },
+  {
+    "type": "UNTRANSLATED",
+    "path": "Governance.stewardship.ledgerNoteHighlight",
+    "value": "PluraGate.org"
+  }
+]
