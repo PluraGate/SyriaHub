@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { Search, X, Link2, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, Plus, Loader2, Upload, UploadCloud } from 'lucide-react'
+import { Search, X, Link2, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, Plus, Loader2, Upload, UploadCloud, PenTool } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from 'next-intl'
 
@@ -12,7 +12,7 @@ interface ResourceMetadata {
     original_name?: string
     downloads?: number
     license?: string
-    resource_type?: 'dataset' | 'paper' | 'tool' | 'media' | 'template'
+    resource_type?: 'dataset' | 'paper' | 'tool' | 'media' | 'template' | 'design'
 }
 
 interface Resource {
@@ -38,6 +38,7 @@ const RESOURCE_TYPES = [
     { value: 'tool', label: 'Tool/Software', icon: Wrench },
     { value: 'media', label: 'Media', icon: Film },
     { value: 'template', label: 'Template', icon: FileSpreadsheet },
+    { value: 'design', label: 'Design', icon: PenTool },
 ]
 
 const RESOURCE_TYPE_ICONS = {
@@ -46,6 +47,7 @@ const RESOURCE_TYPE_ICONS = {
     tool: Wrench,
     media: Film,
     template: FileSpreadsheet,
+    design: PenTool,
 }
 
 const RESOURCE_TYPE_COLORS = {
@@ -54,6 +56,7 @@ const RESOURCE_TYPE_COLORS = {
     tool: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
     media: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
     template: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    design: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
 }
 
 export function ResourceLinker({

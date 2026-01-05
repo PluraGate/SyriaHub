@@ -62,21 +62,26 @@ export function FirstContributionPrompt() {
     ]
 
     useEffect(() => {
-        // Only show after onboarding has been completed
+        // Load completed steps from local storage
         if (typeof window === 'undefined') return
 
-        const hasSeenPrompt = localStorage.getItem(FIRST_CONTRIBUTION_KEY)
-        const hasCompletedPrompt = localStorage.getItem(FIRST_CONTRIBUTION_COMPLETED_KEY)
-
-        // Load completed steps
         try {
             const saved = localStorage.getItem('syriahub_contribution_steps')
             if (saved) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setCompletedSteps(JSON.parse(saved))
             }
         } catch {
             // Ignore parse errors
         }
+    }, [])
+
+    useEffect(() => {
+        // Only show after onboarding has been completed
+        if (typeof window === 'undefined') return
+
+        const hasSeenPrompt = localStorage.getItem(FIRST_CONTRIBUTION_KEY)
+        const hasCompletedPrompt = localStorage.getItem(FIRST_CONTRIBUTION_COMPLETED_KEY)
 
         // Show prompt if:
         // 1. User has completed onboarding
@@ -155,8 +160,8 @@ export function FirstContributionPrompt() {
                             <div
                                 key={step.id}
                                 className={`h-1.5 flex-1 rounded-full transition-colors ${completedSteps.includes(step.id)
-                                        ? 'bg-primary'
-                                        : 'bg-gray-200 dark:bg-dark-border'
+                                    ? 'bg-primary'
+                                    : 'bg-gray-200 dark:bg-dark-border'
                                     }`}
                             />
                         ))}
@@ -175,15 +180,15 @@ export function FirstContributionPrompt() {
                                 key={step.id}
                                 onClick={() => handleStepClick(step, idx)}
                                 className={`w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all ${isCompleted
-                                        ? 'bg-primary/5 dark:bg-primary/10'
-                                        : isCurrent
-                                            ? 'bg-gray-50 dark:bg-dark-bg ring-2 ring-primary/20'
-                                            : 'hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                    ? 'bg-primary/5 dark:bg-primary/10'
+                                    : isCurrent
+                                        ? 'bg-gray-50 dark:bg-dark-bg ring-2 ring-primary/20'
+                                        : 'hover:bg-gray-50 dark:hover:bg-dark-bg'
                                     }`}
                             >
                                 <div className={`p-2 rounded-lg ${isCompleted
-                                        ? 'bg-primary/20 text-primary'
-                                        : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted'
+                                    ? 'bg-primary/20 text-primary'
+                                    : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted'
                                     }`}>
                                     <StepIcon className="w-4 h-4" />
                                 </div>
@@ -191,8 +196,8 @@ export function FirstContributionPrompt() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <span className={`text-sm font-medium ${isCompleted
-                                                ? 'text-primary line-through'
-                                                : 'text-text dark:text-dark-text'
+                                            ? 'text-primary line-through'
+                                            : 'text-text dark:text-dark-text'
                                             }`}>
                                             {t(step.titleKey)}
                                         </span>
@@ -208,8 +213,8 @@ export function FirstContributionPrompt() {
                                 </div>
 
                                 <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isCompleted
-                                        ? 'text-primary'
-                                        : 'text-gray-300 dark:text-dark-border'
+                                    ? 'text-primary'
+                                    : 'text-gray-300 dark:text-dark-border'
                                     }`} />
                             </button>
                         )

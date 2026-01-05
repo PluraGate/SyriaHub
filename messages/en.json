@@ -719,14 +719,16 @@
             "paper": "Paper/Report",
             "tool": "Tool/Software",
             "media": "Media",
-            "template": "Template"
+            "template": "Template",
+            "design": "Design"
         },
         "typeDescriptions": {
             "dataset": "CSV, Excel, JSON data files",
-            "paper": "Research papers, reports, documents",
+            "paper": "PDFs, research papers, reports, documents",
             "tool": "Scripts, applications, utilities",
             "media": "Images, videos, audio files",
-            "template": "Forms, formats, frameworks"
+            "template": "Forms, formats, frameworks",
+            "design": "CAD, 3D models, architectural drawings"
         },
         "upload": {
             "title": "Upload Resource",
@@ -741,7 +743,21 @@
             "tagsHint": "Select the disciplines and topics that apply to this resource",
             "licenseLabel": "License",
             "submitButton": "Upload Resource",
+            "submitting": "Uploading...",
             "uploading": "Uploading..."
+        },
+        "slug": {
+            "shortTitleLabel": "Resource ID",
+            "shortTitlePlaceholder": "e.g. population-survey-2024",
+            "shortTitleHint": "A short, URL-friendly identifier. Auto-generated from title, but you can customize it.",
+            "shortTitleRequired": "Please enter a short title for the URL",
+            "regenerate": "Reset",
+            "aiSuggest": "AI Suggest",
+            "aiSuggestionApplied": "AI suggestion applied",
+            "fallbackApplied": "Auto-generated suggestion applied",
+            "suggestionFailed": "Suggestion failed, using auto-generate",
+            "generatedUrl": "Generated URL (permanent after upload)",
+            "immutableWarning": "This URL cannot be changed after publishing"
         },
         "usedInPosts": "Used in {count} posts",
         "downloads": "{count} downloads"
@@ -1717,13 +1733,6 @@
             "savedToResources": "Poll results saved to Resources!",
             "saveToResourcesError": "Failed to save to resources"
         },
-        "surveysPage": {
-            "copyLink": "Copy Link",
-            "export": "Export",
-            "saveToResources": "Save to Resources",
-            "savedToResources": "Survey results saved to Resources!",
-            "saveToResourcesError": "Failed to save to resources"
-        },
         "footprint": {
             "title": "Your Participation",
             "subtitle": "Your contribution to collective research",
@@ -1762,7 +1771,12 @@
             "takeSurvey": "Take Survey",
             "viewResults": "View Results",
             "editSurvey": "Edit Survey",
-            "completed": "Completed"
+            "completed": "Completed",
+            "copyLink": "Copy Link",
+            "export": "Export",
+            "saveToResources": "Save to Resources",
+            "savedToResources": "Survey results saved to Resources!",
+            "saveToResourcesError": "Failed to save to resources"
         },
         "nav": {
             "overview": "Overview",

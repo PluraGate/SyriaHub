@@ -44,6 +44,14 @@ This document tracks progress on the SyriaHub Platform Maturity Roadmap.
   - Added unit tests for `SpatialEditor` (5 tests) covering rendering, search, drawing modes.
   - `AuthForm` already has extensive tests.
 
+### Data Integrity & UX
+- [x] **Resource Naming System (Anti-Rot)**
+  - **Deterministic Slugs**: Implemented `[type]-[discipline]-[title]-[date]-[hash]` format.
+  - **Lazy Backfill**: Existing resources get canonical slugs on first access.
+  - **Immutable URLs**: Redirects from legacy UUIDs to permanent slugs.
+  - **AI Assist**: GPT-4o-mini powered short title suggestions for uploaders.
+  - **Extended Types**: Added support for 'Design' (CAD/3D) and better PDF handling.
+
 ## 🔄 Remaining Items
 
 ### Architecture

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -11,14 +11,16 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X } from 'lucide-react'
+import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, Check, AlertCircle, PenTool } from 'lucide-react'
+import { generateShortTitle, sanitizeForSlug, generateResourceSlug } from '@/lib/utils/slug-generator'
 
 const RESOURCE_TYPES = [
-    { value: 'dataset', label: 'Dataset', icon: Database, description: 'CSV, Excel, JSON data files' },
-    { value: 'paper', label: 'Paper/Report', icon: FileType, description: 'Research papers, reports, documents' },
-    { value: 'tool', label: 'Tool/Software', icon: Wrench, description: 'Scripts, applications, utilities' },
-    { value: 'media', label: 'Media', icon: Film, description: 'Images, videos, audio files' },
-    { value: 'template', label: 'Template', icon: FileSpreadsheet, description: 'Forms, formats, frameworks' },
+    { value: 'dataset', label: 'Dataset', icon: Database, description: 'CSV, Excel, JSON data files', color: 'text-emerald-500 dark:text-emerald-400', activeBorder: 'border-emerald-500 dark:border-emerald-500', activeBg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+    { value: 'paper', label: 'Paper/Report', icon: FileType, description: 'PDFs, research papers, reports, documents', color: 'text-blue-500 dark:text-blue-400', activeBorder: 'border-blue-500 dark:border-blue-500', activeBg: 'bg-blue-50 dark:bg-blue-900/20' },
+    { value: 'tool', label: 'Tool/Software', icon: Wrench, description: 'Scripts, applications, utilities', color: 'text-purple-500 dark:text-purple-400', activeBorder: 'border-purple-500 dark:border-purple-500', activeBg: 'bg-purple-50 dark:bg-purple-900/20' },
+    { value: 'media', label: 'Media', icon: Film, description: 'Images, videos, audio files', color: 'text-pink-500 dark:text-pink-400', activeBorder: 'border-pink-500 dark:border-pink-500', activeBg: 'bg-pink-50 dark:bg-pink-900/20' },
+    { value: 'template', label: 'Template', icon: FileSpreadsheet, description: 'Forms, formats, frameworks', color: 'text-amber-500 dark:text-amber-400', activeBorder: 'border-amber-500 dark:border-amber-500', activeBg: 'bg-amber-50 dark:bg-amber-900/20' },
+    { value: 'design', label: 'Design', icon: PenTool, description: 'CAD, 3D models, architectural drawings', color: 'text-cyan-500 dark:text-cyan-400', activeBorder: 'border-cyan-500 dark:border-cyan-500', activeBg: 'bg-cyan-50 dark:bg-cyan-900/20' },
 ]
 
 const LICENSES = [
@@ -40,8 +42,12 @@ interface Tag {
 }
 
 export default function UploadResourcePage() {
+    const t = useTranslations('Resources.upload')
+    const tSlug = useTranslations('Resources.slug')
     const tLicenses = useTranslations('Licenses')
     const [title, setTitle] = useState('')
+    const [shortTitle, setShortTitle] = useState('')
+    const [shortTitleEdited, setShortTitleEdited] = useState(false)
     const [description, setDescription] = useState('')
     const [resourceType, setResourceType] = useState<string>('')
     const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -50,10 +56,49 @@ export default function UploadResourcePage() {
     const [file, setFile] = useState<File | null>(null)
     const [uploading, setUploading] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [isSuggesting, setIsSuggesting] = useState(false)
 
     const supabase = createClient()
     const router = useRouter()
     const { showToast } = useToast()
+
+    // Optimized: Debounce slug generation to prevent input lag
+    useEffect(() => {
+        if (shortTitleEdited || !title) return
+
+        // Wait 500ms after user stops typing before generating slug
+        const timer = setTimeout(() => {
+            setShortTitle(generateShortTitle(title))
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [title, shortTitleEdited])
+
+
+    // Get primary discipline from selected tags
+    const primaryDiscipline = useMemo(() => {
+        if (selectedTags.length === 0) return 'general'
+        const firstTag = availableTags.find(t => t.label === selectedTags[0])
+        return firstTag?.discipline || 'general'
+    }, [selectedTags, availableTags])
+
+    // Generate preview slug (with placeholder UUID)
+    const previewSlug = useMemo(() => {
+        if (!resourceType || !shortTitle) return null
+
+        // Use a placeholder UUID for preview
+        const previewUuid = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+        const result = generateResourceSlug({
+            resourceType,
+            discipline: primaryDiscipline,
+            shortTitle,
+            date: new Date(),
+            uuid: previewUuid
+        })
+
+        // Replace the placeholder hash with 'xxxxxx' for display
+        return result.slug.replace(/-[a-f0-9]{6}$/, '-xxxxxx')
+    }, [resourceType, primaryDiscipline, shortTitle])
 
     // Check authentication on mount
     useEffect(() => {
@@ -99,6 +144,64 @@ export default function UploadResourcePage() {
         )
     }
 
+    // Handle title changes (slug generation is handled by debounced useEffect)
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.target.value)
+    }
+
+    const handleShortTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const sanitized = sanitizeForSlug(e.target.value, 50)
+        setShortTitle(sanitized)
+        setShortTitleEdited(true)
+    }
+
+    const handleRegenerateShortTitle = () => {
+        setShortTitle(generateShortTitle(title))
+        setShortTitleEdited(false)
+    }
+
+    // AI-powered short title suggestion
+    const handleAISuggest = async () => {
+        if (!title.trim()) {
+            showToast('Please enter a title first', 'error')
+            return
+        }
+
+        setIsSuggesting(true)
+        try {
+            const response = await fetch('/api/suggest-title', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title,
+                    resourceType,
+                    discipline: primaryDiscipline
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to get suggestion')
+            }
+
+            const data = await response.json()
+            if (data.suggestion) {
+                setShortTitle(data.suggestion)
+                setShortTitleEdited(true)
+                showToast(
+                    data.source === 'ai' ? tSlug('aiSuggestionApplied') : tSlug('fallbackApplied'),
+                    'success'
+                )
+            }
+        } catch (error) {
+            console.error('AI suggestion error:', error)
+            // Fallback to deterministic
+            setShortTitle(generateShortTitle(title))
+            showToast(tSlug('suggestionFailed'), 'error')
+        } finally {
+            setIsSuggesting(false)
+        }
+    }
+
     // Group tags by discipline
     const tagsByDiscipline = availableTags.reduce<Record<string, Tag[]>>((acc, tag) => {
         const discipline = tag.discipline || 'Other'
@@ -117,6 +220,10 @@ export default function UploadResourcePage() {
             showToast('Please select a resource type.', 'error')
             return
         }
+        if (!shortTitle.trim()) {
+            showToast(tSlug('shortTitleRequired'), 'error')
+            return
+        }
 
         setUploading(true)
 
@@ -129,10 +236,22 @@ export default function UploadResourcePage() {
                 return
             }
 
-            // 1. Upload File
+            // 1. Generate the post UUID first (for slug hash)
+            const postId = crypto.randomUUID()
+
+            // 2. Generate the canonical slug
+            const slugResult = generateResourceSlug({
+                resourceType,
+                discipline: primaryDiscipline,
+                shortTitle,
+                date: new Date(),
+                uuid: postId
+            })
+
+            // 3. Upload File
             const fileExt = file.name.split('.').pop()
-            // SECURITY: Use crypto.randomUUID() for secure filename generation
-            const fileName = `${crypto.randomUUID()}.${fileExt}`
+            // Use the postId for storage path consistency
+            const fileName = `${postId}.${fileExt}`
             const filePath = `${user.id}/${fileName}`
 
             const { error: uploadError } = await supabase.storage
@@ -145,11 +264,14 @@ export default function UploadResourcePage() {
                 .from('resources')
                 .getPublicUrl(filePath)
 
-            // 2. Create Post
+            // 4. Create Post with slug and short_title
             const { data, error: postError } = await supabase
                 .from('posts')
                 .insert({
+                    id: postId,
                     title,
+                    short_title: slugResult.shortTitle,
+                    slug: slugResult.slug,
                     content: description,
                     tags: selectedTags,
                     content_type: 'resource',
@@ -172,7 +294,8 @@ export default function UploadResourcePage() {
 
             showToast('Your resource has been successfully shared.', 'success')
 
-            router.push(`/resources/${data.id}`)
+            // Navigate to the new slug-based URL
+            router.push(`/resources/${slugResult.slug}`)
         } catch (error: any) {
             console.error('Error uploading resource:', error)
             showToast(error.message || 'Failed to upload resource.', 'error')
@@ -200,13 +323,13 @@ export default function UploadResourcePage() {
 
             <main className="flex-1 container-custom max-w-3xl py-12">
                 <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-8">
-                    Upload Resource
+                    {t('title')}
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-dark-surface p-8 rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
 
                     {/* File Upload Area */}
-                    <div className="border-2 border-dashed border-gray-300 dark:border-dark-border rounded-lg p-8 text-center hover:bg-gray-50 dark:hover:bg-dark-surface-hover transition-colors cursor-pointer relative">
+                    <div className="border-2 border-dashed border-gray-300 dark:border-dark-border rounded-lg p-8 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer relative">
                         <input
                             type="file"
                             onChange={handleFileChange}
@@ -226,10 +349,10 @@ export default function UploadResourcePage() {
                                 <>
                                     <UploadCloud className="w-10 h-10 text-gray-400" />
                                     <p className="font-medium text-text dark:text-dark-text">
-                                        Click or drag file to upload
+                                        {t('selectFile')}
                                     </p>
                                     <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                        PDF, Documents, Datasets, Media (Max 50MB)
+                                        {t('fileTypes')}
                                     </p>
                                 </>
                             )}
@@ -238,7 +361,7 @@ export default function UploadResourcePage() {
 
                     {/* Resource Type Selection */}
                     <div className="space-y-3">
-                        <Label>Resource Type <span className="text-red-500">*</span></Label>
+                        <Label>{t('typeRequired')} <span className="text-red-500">*</span></Label>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                             {RESOURCE_TYPES.map((type) => {
                                 const Icon = type.icon
@@ -248,16 +371,16 @@ export default function UploadResourcePage() {
                                         key={type.value}
                                         type="button"
                                         onClick={() => setResourceType(type.value)}
-                                        className={`p-4 rounded-lg border-2 transition-all text-left ${isSelected
-                                            ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                                            : 'border-gray-200 dark:border-dark-border hover:border-primary/50'
+                                        className={`p-4 rounded-lg border-2 transition-all text-left group ${isSelected
+                                            ? `${type.activeBorder} ${type.activeBg}`
+                                            : 'border-gray-200 dark:border-dark-border hover:border-gray-300 dark:hover:border-gray-600'
                                             }`}
                                     >
-                                        <Icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-primary' : 'text-text-light dark:text-dark-text-muted'}`} />
-                                        <p className={`font-medium ${isSelected ? 'text-primary' : 'text-text dark:text-dark-text'}`}>
+                                        <Icon className={`w-6 h-6 mb-2 transition-colors ${isSelected ? type.color : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
+                                        <p className={`font-medium transition-colors ${isSelected ? 'text-text dark:text-white' : 'text-text dark:text-dark-text'}`}>
                                             {type.label}
                                         </p>
-                                        <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">
+                                        <p className={`text-xs mt-1 transition-colors ${isSelected ? 'text-text-light dark:text-gray-300' : 'text-text-light dark:text-dark-text-muted'}`}>
                                             {type.description}
                                         </p>
                                     </button>
@@ -267,23 +390,95 @@ export default function UploadResourcePage() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="title">{t('titleLabel')} <span className="text-red-500">*</span></Label>
                         <Input
                             id="title"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="e.g. 2024 Humanitarian Aid Report"
+                            onChange={handleTitleChange}
+                            placeholder={t('titlePlaceholder')}
                             required
                         />
                     </div>
 
+                    {/* Short Title / Slug ID - NEW */}
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description <span className="text-red-500">*</span></Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="shortTitle">
+                                {tSlug('shortTitleLabel')} <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex items-center gap-2">
+                                {/* AI Suggest Button */}
+                                <button
+                                    type="button"
+                                    onClick={handleAISuggest}
+                                    disabled={isSuggesting || !title.trim()}
+                                    className="text-xs border border-primary/20 dark:border-primary/50 text-primary dark:text-white bg-primary/5 dark:bg-primary/20 hover:bg-primary/10 dark:hover:bg-primary/30 px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                                >
+                                    {isSuggesting ? (
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="w-3 h-3" />
+                                    )}
+                                    {tSlug('aiSuggest')}
+                                </button>
+                                {/* Regenerate Button (basic) */}
+                                {shortTitleEdited && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRegenerateShortTitle}
+                                        className="text-xs text-primary/70 dark:text-primary-light/70 hover:text-primary dark:hover:text-white flex items-center gap-1 transition-colors font-medium"
+                                    >
+                                        {tSlug('regenerate')}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <Input
+                                id="shortTitle"
+                                value={shortTitle}
+                                onChange={handleShortTitleChange}
+                                placeholder={tSlug('shortTitlePlaceholder')}
+                                maxLength={50}
+                                className="font-mono text-sm pr-16"
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-light dark:text-dark-text-muted">
+                                {shortTitle.length}/50
+                            </span>
+                        </div>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">
+                            {tSlug('shortTitleHint')}
+                        </p>
+                    </div>
+
+                    {/* Slug Preview - NEW */}
+                    {previewSlug && (
+                        <div className="p-4 rounded-lg bg-gray-50 dark:bg-dark-bg border border-gray-200 dark:border-dark-border">
+                            <div className="flex items-start gap-3">
+                                <Link2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium text-text-light dark:text-dark-text-muted mb-1">
+                                        {tSlug('generatedUrl')}
+                                    </p>
+                                    <code className="text-sm font-mono text-primary dark:text-primary-light break-all">
+                                        /resources/{previewSlug}
+                                    </code>
+                                    <p className="text-xs text-text-light dark:text-dark-text-muted mt-2 flex items-center gap-1">
+                                        <AlertCircle className="w-3 h-3" />
+                                        {tSlug('immutableWarning')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="space-y-2">
+                        <Label htmlFor="description">{t('descriptionLabel')} <span className="text-red-500">*</span></Label>
                         <Textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Describe what this resource contains..."
+                            placeholder={t('descriptionPlaceholder')}
                             required
                             className="min-h-[150px]"
                         />
@@ -291,9 +486,9 @@ export default function UploadResourcePage() {
 
                     {/* Discipline Tags */}
                     <div className="space-y-3">
-                        <Label>Disciplines & Tags</Label>
+                        <Label>{t('tagsLabel')}</Label>
                         <p className="text-sm text-text-light dark:text-gray-400">
-                            Select the disciplines and topics that apply to this resource
+                            {t('tagsHint')}
                         </p>
 
                         {/* Selected Tags */}
@@ -346,7 +541,7 @@ export default function UploadResourcePage() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="license">License</Label>
+                        <Label htmlFor="license">{t('licenseLabel')}</Label>
                         <select
                             id="license"
                             value={license}
@@ -364,9 +559,9 @@ export default function UploadResourcePage() {
                     </div>
 
                     <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={uploading || !file || !resourceType} size="lg">
+                        <Button type="submit" disabled={uploading || !file || !resourceType || !shortTitle.trim()} size="lg">
                             {uploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            {uploading ? 'Uploading...' : 'Upload Resource'}
+                            {uploading ? t('uploading') : t('submitButton')}
                         </Button>
                     </div>
                 </form>
