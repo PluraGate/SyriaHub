@@ -21,7 +21,8 @@ import {
     BookOpen,
     Activity,
     Database, // Added Database icon
-    Settings // Added Settings icon
+    Settings, // Added Settings icon
+    Award // Added Award icon for Skills
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
@@ -90,6 +91,11 @@ const navItems = [
         label: 'Tags',
         href: '/admin/tags',
         icon: Tag,
+    },
+    {
+        label: 'Skills',
+        href: '/admin/skills',
+        icon: Award,
     },
 
     {
@@ -218,6 +224,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                         'Reports': 'reports',
                         'Appeals': 'appeals',
                         'Tags': 'tags',
+                        'Skills': 'skills',
                         'Waitlist': 'waitlist',
                         'Coordination': 'coordination',
                         'Feedback': 'feedback',

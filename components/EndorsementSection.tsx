@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SkillBadge } from './SkillBadge'
@@ -52,11 +52,25 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
     const [searchQuery, setSearchQuery] = useState('')
     const [addingSkill, setAddingSkill] = useState(false)
     const [loadingSkills, setLoadingSkills] = useState(false)
+    const [inputFocused, setInputFocused] = useState(false)
 
+    const dropdownRef = useRef<HTMLDivElement>(null)
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('ProfileLabels')
     const [isCollapsed, setIsCollapsed] = useState(false)
+
+    // Click outside handler to close dropdown
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setInputFocused(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     // Load user skills and endorsements
     useEffect(() => {
@@ -372,7 +386,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                     <div className="mb-6 p-4 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
                         <div className="space-y-3">
                             {/* Unified Search/Add Input */}
-                            <div className="relative">
+                            <div className="relative" ref={dropdownRef}>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                                     <input
@@ -382,6 +396,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                                             setSearchQuery(e.target.value)
                                             setNewSkillName(e.target.value)
                                         }}
+                                        onFocus={() => setInputFocused(true)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter' && (searchQuery || newSkillName).trim()) {
                                                 e.preventDefault()
@@ -397,6 +412,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                                                 setShowAddSkill(false)
                                                 setSearchQuery('')
                                                 setNewSkillName('')
+                                                setInputFocused(false)
                                             }
                                         }}
                                         placeholder="Type a skill name..."
@@ -405,79 +421,89 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                                     />
                                 </div>
 
-                                {/* Autocomplete Dropdown - Shows immediately */}
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-surface rounded-lg border border-gray-200 dark:border-dark-border shadow-lg overflow-hidden z-10 max-h-64 overflow-y-auto">
-                                    {loadingSkills ? (
-                                        <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                            Loading skills...
-                                        </div>
-                                    ) : filteredAvailableSkills.length > 0 ? (
-                                        <>
-                                            {filteredAvailableSkills.slice(0, 8).map((skill, index) => (
-                                                <button
-                                                    key={skill.id}
-                                                    onClick={() => handleAddSkill(skill.id)}
-                                                    disabled={addingSkill}
-                                                    className={cn(
-                                                        "w-full flex items-center justify-between px-3 py-2.5 text-left transition-colors",
-                                                        index === 0
-                                                            ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
-                                                            : "hover:bg-gray-50 dark:hover:bg-dark-bg"
-                                                    )}
-                                                >
-                                                    <span className="flex items-center gap-2">
-                                                        <Award className={cn(
-                                                            "w-4 h-4",
-                                                            skill.is_recognized
-                                                                ? "text-primary"
-                                                                : "text-gray-400 dark:text-gray-500"
-                                                        )} />
-                                                        <span className="font-medium text-text dark:text-dark-text">
-                                                            {skill.name}
+                                {/* Autocomplete Dropdown - Shows only when input is focused */}
+                                {inputFocused && (
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-surface rounded-lg border border-gray-200 dark:border-dark-border shadow-lg overflow-hidden z-10 max-h-64 overflow-y-auto">
+                                        {loadingSkills ? (
+                                            <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                Loading skills...
+                                            </div>
+                                        ) : filteredAvailableSkills.length > 0 ? (
+                                            <>
+                                                {filteredAvailableSkills.slice(0, 8).map((skill, index) => (
+                                                    <button
+                                                        key={skill.id}
+                                                        onClick={() => handleAddSkill(skill.id)}
+                                                        disabled={addingSkill}
+                                                        className={cn(
+                                                            "w-full flex items-center justify-between px-3 py-2.5 text-left transition-colors",
+                                                            index === 0
+                                                                ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
+                                                                : "hover:bg-gray-50 dark:hover:bg-dark-bg"
+                                                        )}
+                                                    >
+                                                        <span className="flex items-center gap-2">
+                                                            <Award className={cn(
+                                                                "w-4 h-4",
+                                                                skill.is_recognized
+                                                                    ? "text-primary"
+                                                                    : "text-gray-400 dark:text-gray-500"
+                                                            )} />
+                                                            <span className="font-medium text-text dark:text-dark-text">
+                                                                {skill.name}
+                                                            </span>
                                                         </span>
+                                                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-bg px-2 py-0.5 rounded">
+                                                            {skill.category}
+                                                        </span>
+                                                    </button>
+                                                ))}
+                                                {filteredAvailableSkills.length > 8 && (
+                                                    <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-dark-bg text-center">
+                                                        +{filteredAvailableSkills.length - 8} more results
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            /* No matches - show create option */
+                                            <div className="p-3">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                        No matching skills found
                                                     </span>
-                                                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-bg px-2 py-0.5 rounded">
-                                                        {skill.category}
-                                                    </span>
-                                                </button>
-                                            ))}
-                                            {filteredAvailableSkills.length > 8 && (
-                                                <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-dark-bg text-center">
-                                                    +{filteredAvailableSkills.length - 8} more results
                                                 </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        /* No matches - show create option */
-                                        <div className="p-3">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                    No matching skills found
-                                                </span>
-                                            </div>
-                                            <button
-                                                onClick={handleCreateAndAddSkill}
-                                                disabled={addingSkill || !(searchQuery || newSkillName).trim()}
-                                                className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                                Add &quot;{(searchQuery || newSkillName).trim()}&quot; as new skill
-                                            </button>
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <span className="text-xs text-gray-500 dark:text-gray-400">Category:</span>
-                                                <select
-                                                    value={newSkillCategory}
-                                                    onChange={(e) => setNewSkillCategory(e.target.value)}
-                                                    className="flex-1 h-8 text-xs rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg px-2"
+                                                {/* Category selector - always visible above add button */}
+                                                <div className="mt-3 flex items-center gap-2">
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Category:</span>
+                                                    <select
+                                                        value={newSkillCategory}
+                                                        onChange={(e) => setNewSkillCategory(e.target.value)}
+                                                        className="flex-1 h-8 text-xs rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text px-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer"
+                                                        style={{
+                                                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                                            backgroundPosition: 'right 0.5rem center',
+                                                            backgroundRepeat: 'no-repeat',
+                                                            backgroundSize: '1.5em 1.5em',
+                                                            paddingRight: '2.5rem'
+                                                        }}
+                                                    >
+                                                        {SKILL_CATEGORIES.map(cat => (
+                                                            <option key={cat} value={cat} className="bg-white dark:bg-dark-bg text-text dark:text-dark-text">{cat}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <button
+                                                    onClick={handleCreateAndAddSkill}
+                                                    disabled={addingSkill || !(searchQuery || newSkillName).trim()}
+                                                    className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
                                                 >
-                                                    {SKILL_CATEGORIES.map(cat => (
-                                                        <option key={cat} value={cat}>{cat}</option>
-                                                    ))}
-                                                </select>
+                                                    <Plus className="w-4 h-4" />
+                                                    Add &quot;{(searchQuery || newSkillName).trim()}&quot; as new skill
+                                                </button>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Helper Text */}
