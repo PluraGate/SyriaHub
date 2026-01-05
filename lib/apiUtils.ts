@@ -78,7 +78,7 @@ export function handleSupabaseError(error: PostgrestError | Error | null): NextR
   // Check if it's a PostgrestError
   if ('code' in error) {
     const pgError = error as PostgrestError
-    
+
     // Map common Postgres error codes to user-friendly messages
     switch (pgError.code) {
       case '23505': // unique_violation
@@ -149,17 +149,17 @@ export function sanitizePaginationParams(
   options: { maxLimit?: number; defaultLimit?: number } = {}
 ): { limit: number; offset: number } {
   const { maxLimit = 100, defaultLimit = 20 } = options
-  
+
   let limit = parseInt(params.get('limit') || String(defaultLimit), 10)
   let offset = parseInt(params.get('offset') || '0', 10)
-  
+
   // Ensure non-negative and within bounds
   limit = Math.max(1, Math.min(limit, maxLimit))
   offset = Math.max(0, offset)
-  
+
   // Prevent extremely large offsets that could cause performance issues
   offset = Math.min(offset, 10000)
-  
+
   return { limit, offset }
 }
 
@@ -179,7 +179,7 @@ export function validateRequiredFields<T extends Record<string, any>>(
   requiredFields: (keyof T)[]
 ): void {
   const missing = requiredFields.filter(field => !data[field])
-  
+
   if (missing.length > 0) {
     throw new Error(`Missing required fields: ${missing.join(', ')}`)
   }
@@ -202,7 +202,7 @@ export function withErrorHandling(
   return async (request: Request, context?: any): Promise<NextResponse> => {
     // Generate request ID for correlation
     const requestId = generateRequestId()
-    
+
     try {
       const response = await handler(request, context)
 
@@ -232,7 +232,7 @@ export function withErrorHandling(
     } catch (error) {
       // Log with request ID for correlation
       console.error(`[${requestId}] API Error:`, error)
-      
+
       if (error instanceof Error) {
         // Handle specific error types
         if (error.message === 'Unauthorized') {
@@ -244,10 +244,10 @@ export function withErrorHandling(
         if (error.message.includes('not found')) {
           return withRequestId(notFoundResponse(), requestId)
         }
-        
+
         return errorResponse(error.message, 400, requestId)
       }
-      
+
       return errorResponse('An unexpected error occurred', 500, requestId)
     }
   }
@@ -258,11 +258,11 @@ export function withErrorHandling(
  */
 export function extractIdFromParams(params: any): string {
   const id = params?.id
-  
+
   if (!id || typeof id !== 'string') {
     throw new Error('Invalid or missing ID parameter')
   }
-  
+
   return id
 }
 
@@ -276,26 +276,36 @@ export function extractIdFromParams(params: any): string {
 export function validateOrigin(request: Request): boolean {
   const origin = request.headers.get('origin')
   const referer = request.headers.get('referer')
-  
+
   // Get allowed origins from environment
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://syriahub.com'
+  const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : null
+
   const allowedOrigins = [
     siteUrl,
     new URL(siteUrl).origin,
+    'https://syriahub.org',
+    'https://www.syriahub.org',
+    'https://syriahub.com',
+    'https://www.syriahub.com',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
   ]
-  
+
+  if (vercelUrl) {
+    allowedOrigins.push(vercelUrl)
+  }
+
   // In development, be more permissive
   if (process.env.NODE_ENV === 'development') {
     return true
   }
-  
+
   // Check origin header first (preferred)
   if (origin) {
     return allowedOrigins.some(allowed => origin === allowed || origin === new URL(allowed).origin)
   }
-  
+
   // Fall back to referer header
   if (referer) {
     try {
@@ -305,7 +315,7 @@ export function validateOrigin(request: Request): boolean {
       return false
     }
   }
-  
+
   // If no origin or referer, reject (could be a direct request from non-browser)
   // Exception: Some legitimate tools don't send origin, but we err on the side of security
   return false
