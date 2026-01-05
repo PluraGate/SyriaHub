@@ -18,13 +18,16 @@ vi.mock('@/lib/supabaseClient', () => ({
     verifyAuth: vi.fn(() => Promise.resolve({ user: null, error: null }))
 }))
 
+// Increase timeout for dynamic imports of Next.js API routes
+const IMPORT_TIMEOUT = 30000
+
 describe('API Route Structure', () => {
     describe('Health API', () => {
         it('should have proper exports', async () => {
             const healthModule = await import('@/app/api/health/route')
             expect(healthModule.GET).toBeDefined()
             expect(typeof healthModule.GET).toBe('function')
-        })
+        }, IMPORT_TIMEOUT)
     })
 
     describe('Posts API', () => {
@@ -32,6 +35,6 @@ describe('API Route Structure', () => {
             const postsModule = await import('@/app/api/posts/route')
             expect(postsModule.GET).toBeDefined()
             expect(postsModule.POST).toBeDefined()
-        })
+        }, IMPORT_TIMEOUT)
     })
 })

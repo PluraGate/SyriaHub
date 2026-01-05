@@ -5,7 +5,7 @@ All notable changes to the SyriaHub project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.3] - 2026-01-05
+## [0.8.0] - 2026-01-05
 
 ### Updated - Platform Documentation Refresh
 
@@ -35,13 +35,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added AI Ethics & Constraints section (Transparency, Reversibility, No Profiling, Hedging Language)
 - Added Data Handling Principles section
 
+### Added - First Contribution Path
+- **FirstContributionPrompt Component**: A dismissible prompt that appears after onboarding completion
+- Guides new users through: browse → comment → cite → publish
+- Progress tracking with localStorage persistence
+- Full i18n support (English and Arabic)
+- Integrates with existing onboarding flow, only showing after EpistemicOnboarding is completed
+
+---
+
+## Post-Launch Roadmap
+
+### UX Refinements (Low Priority)
+- ~~**First Contribution Path**~~: ✅ Implemented in 0.8.0. Monitor real user behavior and adjust messaging based on feedback.
+
+---
+
 ## [0.6.2] - 2026-01-01
 
 ### Added
 - Platform maturity indicators in Footer (Beta · v0.6.2).
 - Semantic versioning alignment across technical artifacts.
 
-## [1.1.0] - 2025-11-05
+## [0.2.0] - 2025-11-05
 
 ### Added - Complete Database Schema
 
@@ -118,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2025-01-01
+## [0.1.0] - 2025-11-01
 
 ### Added - Initial Project Setup
 

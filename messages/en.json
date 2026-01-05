@@ -242,6 +242,33 @@
             "tagline": "\"Building a shared archive of truth for Syria's future.\""
         }
     },
+    "FirstContribution": {
+        "title": "Your First Steps",
+        "subtitle": "Start your research journey",
+        "dismiss": "Dismiss",
+        "skipForNow": "Skip for now",
+        "completed": "completed",
+        "browse": {
+            "title": "Browse Research",
+            "description": "Explore the feed to discover what others are researching",
+            "action": "Go to Feed"
+        },
+        "comment": {
+            "title": "Join a Discussion",
+            "description": "Leave a thoughtful comment on a post that interests you",
+            "action": "Find Posts"
+        },
+        "cite": {
+            "title": "Explore Citations",
+            "description": "See how research connects in the Research Lab",
+            "action": "Open Research Lab"
+        },
+        "publish": {
+            "title": "Share Your Work",
+            "description": "Publish your first article, question, or trace",
+            "action": "Start Writing"
+        }
+    },
     "Help": {
         "askTitle": "Ask a Question",
         "askDesc": "Get answers from the community",
@@ -614,7 +641,7 @@
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
         "updates": "Updates",
         "platformStage": "Beta",
-        "platformVersion": "v0.7.0",
+        "platformVersion": "v0.8.0",
         "platformSustainability": "Platform Sustainability",
         "sustainabilityIntro": "SyriaHub is a non-profit research commons. When contributions are accepted, they are used exclusively to sustain the shared infrastructure that enables long-term access, research integrity, and platform reliability.",
         "sustainabilityDataInfrastructure": "Data Infrastructure",
