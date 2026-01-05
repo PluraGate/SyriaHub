@@ -490,9 +490,14 @@ function wrapPluraGateEmailLayout({ lang, dir, title, bodyHtml, cta }: PluraGate
             <td class="content">
               ${bodyHtml}
               
-              <div style="margin: 32px 0; text-align: center;">
-                <a href="${cta.url}" style="display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">${cta.label}</a>
-              </div>
+              <!-- CTA Button - Table-based for email client compatibility -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 32px auto; text-align: center;">
+                <tr>
+                  <td style="border-radius: 8px; background-color: #1e7a6e;" bgcolor="#1e7a6e">
+                    <a href="${cta.url}" target="_blank" style="display: inline-block; padding: 14px 36px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${cta.label}</a>
+                  </td>
+                </tr>
+              </table>
               
               <p style="font-size: 13px; color: #6b7280; text-align: center; margin: 24px 0 0;">
                 ${isRTL ? 'إذا لم يعمل الزر، انسخ والصق الرابط التالي في متصفحك:' : 'If the button does not work, copy and paste the following link into your browser:'}

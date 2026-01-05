@@ -35,8 +35,8 @@ async function handleSignup(request: Request): Promise<NextResponse> {
   const { email, password, name, affiliation } = body
 
   // Validate password strength
-  if (password.length < 8) {
-    return errorResponse('Password must be at least 8 characters long', 422)
+  if (password.length < 6) {
+    return errorResponse('Password must be at least 6 characters long', 422)
   }
 
   // Create auth user

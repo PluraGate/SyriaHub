@@ -7,10 +7,11 @@ import { useTranslations } from 'next-intl'
 
 interface SignupFormProps {
     preValidatedCode: string
+    preFilledEmail?: string
     action: (formData: FormData) => Promise<void>
 }
 
-export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
+export function SignupForm({ preValidatedCode, preFilledEmail = '', action }: SignupFormProps) {
     const [turnstileToken, setTurnstileToken] = useState<string>('')
     const [captchaError, setCaptchaError] = useState(false)
     const t = useTranslations('Auth.signupPage')
@@ -70,6 +71,7 @@ export function SignupForm({ preValidatedCode, action }: SignupFormProps) {
                     type="email"
                     autoComplete="email"
                     required
+                    defaultValue={preFilledEmail}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                     placeholder="you@example.com"
                 />
