@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { createServerClient } from './supabaseClient'
 
 interface EmailOptions {
@@ -11,11 +12,14 @@ interface EmailOptions {
 // Email configuration constants
 const EMAIL_CONFIG = {
   fromName: 'SyriaHub via PluraGate',
-  fromEmail: process.env.SMTP_USER || 'admin@pluragate.org',
+  fromEmail: process.env.RESEND_FROM_EMAIL || 'admin@pluragate.org',
   replyTo: process.env.SMTP_REPLY_TO || 'admin@pluragate.org',
 }
 
-// Create reusable transporter
+// Initialize Resend client (if API key is available)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+
+// Create reusable nodemailer transporter (fallback)
 const createTransporter = () => {
   const host = process.env.SMTP_HOST || 'smtp.gmail.com'
   const port = parseInt(process.env.SMTP_PORT || '465')
@@ -46,6 +50,9 @@ const createTransporter = () => {
   return nodemailer.createTransport(config)
 }
 
+/**
+ * Send email using Resend (preferred) or fallback to nodemailer
+ */
 export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
   const supabase = await createServerClient()
 
@@ -69,7 +76,42 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
       return true
     }
 
-    // Local/Server-side Sending
+    // Use Resend if API key is configured (better deliverability)
+    if (resend) {
+      console.log('📧 Sending email via Resend...')
+
+      const { data, error } = await resend.emails.send({
+        from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
+        to: [to],
+        subject,
+        html,
+        text: text || html.replace(/<[^>]*>/g, ''),
+        replyTo: EMAIL_CONFIG.replyTo,
+        headers: {
+          'List-Unsubscribe': '<mailto:unsubscribe@pluragate.org>',
+        },
+      })
+
+      if (error) {
+        console.error('❌ Resend error:', error.message)
+        throw new Error(error.message)
+      }
+
+      console.log('✅ Email sent via Resend:', data?.id)
+
+      // Log to database
+      await supabase.from('email_logs').insert({
+        recipient_email: to,
+        subject,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      })
+
+      return true
+    }
+
+    // Fallback to nodemailer (Gmail SMTP)
+    console.log('📧 Sending email via nodemailer (SMTP fallback)...')
     const transporter = createTransporter()
 
     // Verify transporter connection before sending
@@ -81,7 +123,7 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     }
 
     await transporter.sendMail({
-      from: `"${EMAIL_CONFIG.fromName}" <${EMAIL_CONFIG.fromEmail}>`,
+      from: `"${EMAIL_CONFIG.fromName}" <${process.env.SMTP_USER || EMAIL_CONFIG.fromEmail}>`,
       replyTo: EMAIL_CONFIG.replyTo,
       to,
       subject,
