@@ -359,7 +359,7 @@ export default function ResearcherAnalyticsDashboard() {
                 </div>
 
                 {/* Charts Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
+                <div className="grid grid-cols-1 gap-6 lg:gap-8 mb-8">
                     {/* Views Over Time Chart */}
                     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden shadow-sm">
                         <div className="p-5 border-b border-gray-100 dark:border-dark-border">
@@ -551,10 +551,10 @@ export default function ResearcherAnalyticsDashboard() {
                         {topPosts.length > 0 && (
                             <Link
                                 href="/feed"
-                                className="flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                                className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light transition-colors"
                             >
                                 {t('viewAll')}
-                                <ArrowUpRight className="w-4 h-4" />
+                                <ArrowUpRight className="w-3.5 h-3.5" />
                             </Link>
                         )}
                     </div>
@@ -584,12 +584,12 @@ export default function ResearcherAnalyticsDashboard() {
                                     {/* Post Info */}
                                     <div className="flex-1 min-w-0">
                                         <Link href={`/post/${post.id}`}>
-                                            <h3 className="font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
+                                            <h3 className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
                                                 {post.title}
                                             </h3>
                                         </Link>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <span className="px-2 py-0.5 text-xs rounded-md bg-primary/10 text-primary font-medium">
+                                            <span className="px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-md bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light font-bold">
                                                 {post.content_type}
                                             </span>
                                             <span className="text-xs text-text-light dark:text-dark-text-muted">

@@ -403,3 +403,111 @@ export interface SendCorrespondenceResponse {
   scheduled_delivery_at?: string
   error?: string
 }
+
+// ============================================
+// SCHEMA REGISTRY TYPES (Admin-Managed)
+// ============================================
+
+export type SchemaFieldType =
+  | 'text' | 'number' | 'boolean' | 'date' | 'datetime'
+  | 'select' | 'multiselect' | 'registry_ref' | 'registry_ref_multi'
+  | 'geo_point' | 'geo_polygon' | 'url' | 'file'
+  | 'json' | 'rich_text'
+
+export type SchemaVisibility = 'public' | 'author_only' | 'admin_only'
+
+export interface SchemaRegistry {
+  id: string
+  registry_key: string
+  display_name: string
+  display_name_ar?: string
+  description?: string
+  is_active: boolean
+  created_by?: string
+  created_at: string
+  updated_at: string
+  items?: SchemaItem[]
+}
+
+export interface SchemaItem {
+  id: string
+  registry_id: string
+  item_key: string
+  display_name: string
+  display_name_ar?: string
+  description?: string
+  parent_id?: string
+  sort_order: number
+  metadata: Record<string, unknown>
+  is_deprecated: boolean
+  deprecated_in_favor_of?: string
+  created_at: string
+  updated_at: string
+  children?: SchemaItem[]
+}
+
+export interface SchemaField {
+  id: string
+  field_key: string
+  current_version_id?: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  current_version?: SchemaFieldVersion
+}
+
+export interface SchemaFieldVersion {
+  id: string
+  field_id: string
+  version: number
+  display_name: string
+  display_name_ar?: string
+  description?: string
+  field_type: SchemaFieldType
+  registry_id?: string
+  constraints: SchemaFieldConstraints
+  default_value?: unknown
+  visibility: SchemaVisibility
+  applies_to: ContentType[]
+  is_required: boolean
+  is_searchable: boolean
+  is_filterable: boolean
+  sort_order: number
+  created_at: string
+  registry?: SchemaRegistry
+}
+
+export interface SchemaFieldConstraints {
+  min?: number
+  max?: number
+  minLength?: number
+  maxLength?: number
+  pattern?: string
+  options?: { value: string; label: string; label_ar?: string }[]
+  jsonSchema?: Record<string, unknown>
+}
+
+export interface SchemaPostFieldValue {
+  id: string
+  post_id: string
+  field_id: string
+  field_version_id: string
+  value: unknown
+  is_current: boolean
+  created_at: string
+  updated_at: string
+  field?: SchemaField
+  field_version?: SchemaFieldVersion
+}
+
+export interface SchemaAuditLogEntry {
+  id: string
+  table_name: string
+  record_id: string
+  action: 'create' | 'update' | 'delete' | 'deprecate'
+  old_values?: Record<string, unknown>
+  new_values?: Record<string, unknown>
+  changed_by?: string
+  change_reason?: string
+  created_at: string
+}

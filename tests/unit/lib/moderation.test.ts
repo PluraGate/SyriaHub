@@ -5,7 +5,7 @@ import {
   moderateContentWithPerspective,
   generateModerationWarning,
   ModerationResult,
-} from '@/lib/moderation'
+} from '@/domain/moderation/service'
 
 // Mock fetch globally
 const mockFetch = vi.fn()
@@ -26,14 +26,14 @@ describe('Moderation Module', () => {
   describe('moderateContentWithOpenAI', () => {
     it('should return safe result when API key is not configured', async () => {
       const result = await moderateContentWithOpenAI('Test content')
-      
+
       expect(result.flagged).toBe(false)
       expect(result.details).toContain('AI moderation disabled - API key not configured')
     })
 
     it('should call OpenAI API when key is configured', async () => {
       vi.stubEnv('OPENAI_API_KEY', 'test-api-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
@@ -61,7 +61,7 @@ describe('Moderation Module', () => {
 
     it('should flag content when OpenAI detects violations', async () => {
       vi.stubEnv('OPENAI_API_KEY', 'test-api-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
@@ -89,7 +89,7 @@ describe('Moderation Module', () => {
 
     it('should handle API errors gracefully (fail open)', async () => {
       vi.stubEnv('OPENAI_API_KEY', 'test-api-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: false,
         statusText: 'Internal Server Error',
@@ -103,7 +103,7 @@ describe('Moderation Module', () => {
 
     it('should handle network errors gracefully', async () => {
       vi.stubEnv('OPENAI_API_KEY', 'test-api-key')
-      
+
       mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
       const result = await moderateContentWithOpenAI('Test content')
@@ -115,14 +115,14 @@ describe('Moderation Module', () => {
   describe('moderateContentWithPerspective', () => {
     it('should return safe result when API key is not configured', async () => {
       const result = await moderateContentWithPerspective('Test content')
-      
+
       expect(result.flagged).toBe(false)
       expect(result.details).toContain('Perspective API disabled - API key not configured')
     })
 
     it('should call Perspective API when key is configured', async () => {
       vi.stubEnv('PERSPECTIVE_API_KEY', 'test-perspective-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
@@ -146,7 +146,7 @@ describe('Moderation Module', () => {
 
     it('should flag toxic content above threshold', async () => {
       vi.stubEnv('PERSPECTIVE_API_KEY', 'test-perspective-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
@@ -169,7 +169,7 @@ describe('Moderation Module', () => {
   describe('moderateContent (main function)', () => {
     it('should try OpenAI first when configured', async () => {
       vi.stubEnv('OPENAI_API_KEY', 'test-openai-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
@@ -189,7 +189,7 @@ describe('Moderation Module', () => {
 
     it('should fall back to Perspective when OpenAI not configured', async () => {
       vi.stubEnv('PERSPECTIVE_API_KEY', 'test-perspective-key')
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({

@@ -206,7 +206,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                             className="resize-none h-24"
                         />
                         <p className="text-xs text-text-light dark:text-dark-text-muted">
-                            {formData.bio.length}/300 characters
+                            {formData.bio.length}/300 {t('characters')}
                         </p>
                     </div>
 
@@ -294,10 +294,10 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                             {loading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    Saving...
+                                    {tCommon('saving')}
                                 </>
                             ) : (
-                                'Save Changes'
+                                t('saveChanges')
                             )}
                         </Button>
                     </div>

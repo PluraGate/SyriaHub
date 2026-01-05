@@ -14,7 +14,7 @@ import {
     temporalRelevance,
     calculateBbox,
     pointInPolygon
-} from './spatialQueries'
+} from '@/lib/spatialQueries'
 
 // Pattern IDs following the spec
 export type PatternId = 'P1' | 'P2' | 'P3' | 'P4' | 'P5'
@@ -122,6 +122,11 @@ export function detectBoundarySpillover(
     const config = PATTERNS.P3
     if (!config.enabled) return null
 
+    // Guard against malformed inputs
+    if (!geometry || typeof geometry !== 'object' || !geometry.type || !geometry.coordinates) {
+        return null
+    }
+
     const spanningGovs = findSpanningGovernorates(geometry, governorates)
 
     // Pattern detected if geometry spans 2+ governorates
@@ -168,6 +173,7 @@ export function detectAccessDiscontinuity(
     let minDistance = Infinity
 
     for (const gov of governorates) {
+        if (!gov.geometry) continue
         if (gov.geometry.type === 'Point' && Array.isArray(gov.geometry.coordinates) && gov.geometry.coordinates.length >= 2) {
             const coords = gov.geometry.coordinates as any[]
             const govCenter: Point = {
@@ -192,6 +198,7 @@ export function detectAccessDiscontinuity(
 
     for (const gov of governorates) {
         if (gov.name === containingGov.name) continue
+        if (!gov.geometry) continue
         if (gov.geometry.type === 'Point' && Array.isArray(gov.geometry.coordinates) && gov.geometry.coordinates.length >= 2) {
             const coords = gov.geometry.coordinates as any[]
             const govCenter: Point = {
@@ -259,6 +266,8 @@ export function detectServiceCoverageQuestion(
     let minDistance = Infinity
 
     for (const gov of governorates) {
+        // Guard against malformed governorate data
+        if (!gov.geometry) continue
         // For polygon geometries, check containment
         if (gov.geometry.type === 'Polygon') {
             const polygon: Polygon = {
@@ -363,7 +372,7 @@ export async function detectNetworkBottleneck(
 
     try {
         // Dynamic import to avoid bundling issues on server
-        const { analyzeRoadNetwork } = await import('./overpassClient')
+        const { analyzeRoadNetwork } = await import('@/lib/overpassClient')
         const analysis = await analyzeRoadNetwork(point.lat, point.lng, 15)
 
         if (!analysis.hasLimitedAccess) return null

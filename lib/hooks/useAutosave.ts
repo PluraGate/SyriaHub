@@ -50,12 +50,31 @@ export function useAutosave({
         lastSaved: null
     })
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const pendingDataRef = useRef<Omit<DraftData, 'lastSaved'> | null>(null)
     const storageKey = `syrealize_draft_${key}`
 
-    // Check for existing draft on mount
-    useEffect(() => {
-        if (!enabled) return
+    // Immediate save function (no debounce) - used for beforeunload
+    const flushSave = useCallback(() => {
+        if (!enabled || !pendingDataRef.current) return
+        
+        const data = pendingDataRef.current
+        if (!data.title.trim() && !data.content.trim()) return
 
+        try {
+            const draftWithTimestamp: DraftData = {
+                ...data,
+                lastSaved: Date.now(),
+            }
+            localStorage.setItem(storageKey, JSON.stringify(draftWithTimestamp))
+            pendingDataRef.current = null
+        } catch (error) {
+            console.error('Error flushing draft:', error)
+        }
+    }, [storageKey, enabled])
+
+    // Check for existing draft on mount - ALWAYS check regardless of `enabled` preference
+    // This ensures users can restore drafts even if they've disabled autosave
+    useEffect(() => {
         try {
             const stored = localStorage.getItem(storageKey)
             if (stored) {
@@ -83,12 +102,39 @@ export function useAutosave({
             console.error('Error loading draft:', error)
             localStorage.removeItem(storageKey)
         }
-    }, [storageKey, enabled])
+    }, [storageKey]) // Removed `enabled` dependency - always check for drafts
+
+    // Save pending drafts when user leaves or switches tabs
+    useEffect(() => {
+        if (!enabled) return
+
+        const handleBeforeUnload = () => {
+            flushSave()
+        }
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                flushSave()
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
+            flushSave() // Also flush on unmount
+        }
+    }, [enabled, flushSave])
 
     // Save draft function
     const saveDraft = useCallback(
         (data: Omit<DraftData, 'lastSaved'>) => {
             if (!enabled) return
+
+            // Store pending data for flush on unmount/beforeunload
+            pendingDataRef.current = data
 
             // Clear any pending saves
             if (saveTimeoutRef.current) {
@@ -100,6 +146,7 @@ export function useAutosave({
                 try {
                     // Don't save empty drafts
                     if (!data.title.trim() && !data.content.trim()) {
+                        pendingDataRef.current = null
                         return
                     }
 
@@ -109,6 +156,7 @@ export function useAutosave({
                     }
 
                     localStorage.setItem(storageKey, JSON.stringify(draftWithTimestamp))
+                    pendingDataRef.current = null // Clear pending after successful save
                     setState({
                         hasDraft: true,
                         draftData: draftWithTimestamp,
@@ -132,6 +180,7 @@ export function useAutosave({
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current)
         }
+        pendingDataRef.current = null // Clear pending data
         localStorage.removeItem(storageKey)
         setState({ hasDraft: false, draftData: null, lastSaved: null })
     }, [storageKey])

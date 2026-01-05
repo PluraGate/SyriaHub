@@ -242,6 +242,33 @@
             "tagline": "\"Building a shared archive of truth for Syria's future.\""
         }
     },
+    "FirstContribution": {
+        "title": "Your First Steps",
+        "subtitle": "Start your research journey",
+        "dismiss": "Dismiss",
+        "skipForNow": "Skip for now",
+        "completed": "completed",
+        "browse": {
+            "title": "Browse Research",
+            "description": "Explore the feed to discover what others are researching",
+            "action": "Go to Feed"
+        },
+        "comment": {
+            "title": "Join a Discussion",
+            "description": "Leave a thoughtful comment on a post that interests you",
+            "action": "Find Posts"
+        },
+        "cite": {
+            "title": "Explore Citations",
+            "description": "See how research connects in the Research Lab",
+            "action": "Open Research Lab"
+        },
+        "publish": {
+            "title": "Share Your Work",
+            "description": "Publish your first article, question, or trace",
+            "action": "Start Writing"
+        }
+    },
     "Help": {
         "askTitle": "Ask a Question",
         "askDesc": "Get answers from the community",
@@ -555,7 +582,11 @@
         "displayName": "Display Name",
         "updateInfo": "Update your profile information",
         "saveChanges": "Save Changes",
-        "researchInterests": "Research Interests"
+        "researchInterests": "Research Interests",
+        "characters": "characters",
+        "changeImage": "Change Image",
+        "uploadImage": "Upload Image",
+        "remove": "Remove"
     },
     "Landing": {
         "heroTitle": "Research Made Collaborative",
@@ -584,7 +615,7 @@
         "upcomingEvents": "Upcoming Events",
         "featured": "Featured",
         "trending": "Trending",
-        "minRead": "{count} min",
+        "minRead": "{count} min read",
         "event": "Event",
         "context": "Context",
         "noFilterResults": "No results match your filter",
@@ -610,7 +641,7 @@
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
         "updates": "Updates",
         "platformStage": "Beta",
-        "platformVersion": "v0.7.0",
+        "platformVersion": "v0.8.0",
         "platformSustainability": "Platform Sustainability",
         "sustainabilityIntro": "SyriaHub is a non-profit research commons. When contributions are accepted, they are used exclusively to sustain the shared infrastructure that enables long-term access, research integrity, and platform reliability.",
         "sustainabilityDataInfrastructure": "Data Infrastructure",
@@ -688,14 +719,16 @@
             "paper": "Paper/Report",
             "tool": "Tool/Software",
             "media": "Media",
-            "template": "Template"
+            "template": "Template",
+            "design": "Design"
         },
         "typeDescriptions": {
             "dataset": "CSV, Excel, JSON data files",
-            "paper": "Research papers, reports, documents",
+            "paper": "PDFs, research papers, reports, documents",
             "tool": "Scripts, applications, utilities",
             "media": "Images, videos, audio files",
-            "template": "Forms, formats, frameworks"
+            "template": "Forms, formats, frameworks",
+            "design": "CAD, 3D models, architectural drawings"
         },
         "upload": {
             "title": "Upload Resource",
@@ -710,7 +743,21 @@
             "tagsHint": "Select the disciplines and topics that apply to this resource",
             "licenseLabel": "License",
             "submitButton": "Upload Resource",
+            "submitting": "Uploading...",
             "uploading": "Uploading..."
+        },
+        "slug": {
+            "shortTitleLabel": "Resource ID",
+            "shortTitlePlaceholder": "e.g. population-survey-2024",
+            "shortTitleHint": "A short, URL-friendly identifier. Auto-generated from title, but you can customize it.",
+            "shortTitleRequired": "Please enter a short title for the URL",
+            "regenerate": "Reset",
+            "aiSuggest": "AI Suggest",
+            "aiSuggestionApplied": "AI suggestion applied",
+            "fallbackApplied": "Auto-generated suggestion applied",
+            "suggestionFailed": "Suggestion failed, using auto-generate",
+            "generatedUrl": "Generated URL (permanent after upload)",
+            "immutableWarning": "This URL cannot be changed after publishing"
         },
         "usedInPosts": "Used in {count} posts",
         "downloads": "{count} downloads"
@@ -1317,17 +1364,18 @@
             "activeToday": "Active Today"
         },
         "dashboardPage": {
-            "title": "Admin Overview",
+            "title": "Admin Dashboard",
             "quickLinks": "Quick Links",
-            "viewStats": "View platform stats",
-            "totalUsers": "total users",
-            "pending": "pending",
-            "viewChanges": "View changes",
+            "viewStats": "View detailed platform statistics",
+            "totalUsers": "Total Users",
+            "pending": "Pending",
+            "viewChanges": "View audit logs",
             "moderationQueue": "Moderation Queue",
             "contentAppeals": "Content Appeals",
-            "noAppeals": "No pending appeals",
+            "noAppeals": "No appeals pending review",
             "viewPost": "View Post"
         },
+        "schemaregistry": "Schema Registry",
         "contentPage": {
             "title": "Content Management",
             "subtitle": "Review and manage all posts on the platform.",
@@ -1450,7 +1498,10 @@
             "alreadyUsed": "{color} (already used)",
             "labelArabic": "Arabic Label",
             "labelArabicPlaceholder": "Enter Arabic translation...",
-            "labelArabicHint": "Optional - helps Arabic users discover content"
+            "labelArabicHint": "Optional - helps Arabic users discover content",
+            "labelEnglish": "English Label",
+            "labelEnglishPlaceholder": "Enter English translation...",
+            "labelEnglishHint": "Optional - helps English users discover content"
         },
         "waitlistPage": {
             "title": "Waitlist Management",
@@ -1511,7 +1562,9 @@
             "exportCsv": "Export CSV",
             "totalChanges": "Total role changes recorded",
             "changedBy": "Changed by",
-            "reason": "Reason"
+            "reason": "Reason",
+            "oldRole": "Old Role",
+            "newRole": "New Role"
         },
         "moderationQueue": {
             "title": "Content Moderation",
@@ -1532,7 +1585,11 @@
         "user": "User",
         "role": "Role",
         "joined": "Joined",
-        "activity": "Activity",
+        "activity": {
+            "label": "Activity",
+            "posts": "Posts",
+            "comments": "Comments"
+        },
         "actions": "Actions",
         "changeRole": "Change Role",
         "suspend": "Suspend",
@@ -1676,13 +1733,6 @@
             "savedToResources": "Poll results saved to Resources!",
             "saveToResourcesError": "Failed to save to resources"
         },
-        "surveysPage": {
-            "copyLink": "Copy Link",
-            "export": "Export",
-            "saveToResources": "Save to Resources",
-            "savedToResources": "Survey results saved to Resources!",
-            "saveToResourcesError": "Failed to save to resources"
-        },
         "footprint": {
             "title": "Your Participation",
             "subtitle": "Your contribution to collective research",
@@ -1721,7 +1771,12 @@
             "takeSurvey": "Take Survey",
             "viewResults": "View Results",
             "editSurvey": "Edit Survey",
-            "completed": "Completed"
+            "completed": "Completed",
+            "copyLink": "Copy Link",
+            "export": "Export",
+            "saveToResources": "Save to Resources",
+            "savedToResources": "Survey results saved to Resources!",
+            "saveToResourcesError": "Failed to save to resources"
         },
         "nav": {
             "overview": "Overview",
@@ -2047,6 +2102,39 @@
             "line1": "SyriaHub is an independent research platform developed and stewarded within the PluraGate network.",
             "line2": "PluraGate provides organisational, technical, and governance support to multiple public-interest initiatives. Each project within the network operates with its own scope, editorial autonomy, and research mandate.",
             "line3": "SyriaHub retains full independence over its content, methodologies, and moderation practices."
+        },
+        "security": {
+            "title": "Security Policy",
+            "subtitle": "How we protect your data and how to report vulnerabilities responsibly.",
+            "vdp": {
+                "title": "Vulnerability Disclosure Policy",
+                "intro": "We take security seriously. If you discover a security vulnerability, we encourage you to report it responsibly using the process below.",
+                "step1Title": "Report via Email",
+                "step2Title": "48-Hour Response",
+                "step2Desc": "We acknowledge all reports within 48 hours",
+                "step3Title": "Resolution",
+                "step3Desc": "Timeline provided within 7 days"
+            },
+            "scope": {
+                "title": "What to Report",
+                "inScope": "In Scope",
+                "outOfScope": "Out of Scope",
+                "item1": "Authentication and authorization vulnerabilities",
+                "item2": "Data exposure or leakage issues",
+                "item3": "Cross-site scripting (XSS) attacks",
+                "item4": "Server-side request forgery (SSRF)",
+                "outItem1": "Denial of service (DoS) attacks",
+                "outItem2": "Social engineering attacks",
+                "outItem3": "Physical security issues"
+            },
+            "commitment": {
+                "title": "Our Commitment",
+                "commitment1": "Acknowledge your report within 48 hours",
+                "commitment2": "Provide a resolution timeline within 7 days",
+                "commitment3": "Credit you publicly (if desired) after resolution",
+                "commitment4": "Never take legal action against good-faith reporters"
+            },
+            "securityTxt": "Machine-readable security policy available at"
         }
     },
     "Faq": {
@@ -2679,7 +2767,9 @@
         "completeYourProfile": "Complete Your Profile",
         "suggested": "Suggested",
         "optionalExtras": "Optional Extras",
-        "privacyNote": "100% achievable without sharing location or personal data"
+        "privacyNote": "100% achievable without sharing location or personal data",
+        "bonusXpEarned": "+{count} bonus XP earned",
+        "itemsRemaining": "{count} items remaining"
     },
     "Session": {
         "researchTrail": "Research Trail",
@@ -2712,7 +2802,7 @@
         "noPostsYet": "No posts available yet.",
         "featured": "Featured",
         "viewAllPosts": "→ View all",
-        "minRead": "{count} min",
+        "minRead": "{count} min read",
         "min": "min",
         "event": "Event"
     },
@@ -2741,8 +2831,15 @@
         "followers": "Followers",
         "citations": "Citations",
         "posts": "Posts",
+        "events": "Events",
+        "knowledgeImpact": "Knowledge Impact",
+        "knowledgeImpactStats": "Knowledge Impact & Statistics",
+        "joined": "Joined {date}",
+        "website": "Website",
+        "backToFeed": "Back to Feed",
         "skillsEndorsements": "Skills & Endorsements",
         "endorsements": "endorsements",
+        "endorsementsCount": "{count} endorsements",
         "addSkill": "Add Skill +",
         "technical": "Technical",
         "domainknowledge": "Domain Knowledge",
@@ -2751,7 +2848,12 @@
         "practicalexpertise": "Practical Expertise",
         "moderator": "Moderator",
         "admin": "Admin",
-        "researcher": "Researcher"
+        "researcher": "Researcher",
+        "member": "Member",
+        "research": "Research",
+        "resources": "Resources",
+        "groups": "Groups",
+        "impact": "Impact"
     },
     "ModerationTriage": {
         "title": "Moderation Queue",

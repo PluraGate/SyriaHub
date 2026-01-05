@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { MapPin, Search, Trash2, Circle as CircleIcon, Pentagon, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import dynamic from 'next/dynamic'
-import { detectPatterns, type DetectedPattern } from '@/lib/patternDetector'
+import { detectPatterns, type DetectedPattern } from '@/domain/spatial/patternDetector'
 import { AwarenessFlag } from './AwarenessFlag'
 import type { GovernorateFeature } from '@/lib/spatialQueries'
 

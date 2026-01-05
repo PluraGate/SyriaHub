@@ -196,8 +196,8 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
                         </h3>
                         <p className="text-sm text-text-light dark:text-dark-text-muted">
                             {is_complete
-                                ? `+${bonus_xp} bonus XP earned`
-                                : `${missing_core.length} items remaining`
+                                ? t('bonusXpEarned', { count: bonus_xp })
+                                : t('itemsRemaining', { count: missing_core.length })
                             }
                         </p>
                     </div>

@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap } from 'lucide-react'
+import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap, Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
@@ -38,6 +38,9 @@ import { Button } from '@/components/ui/button'
 import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { PostHeroBackground } from '@/components/PostHeroBackground'
+import { SchemaFieldDisplay, SchemaFieldValue } from '@/components/post/SchemaFieldDisplay'
+
+
 
 interface PostPageProps {
   params: Promise<{
@@ -223,6 +226,30 @@ export default async function PostPage(props: PostPageProps) {
     `)
     .eq('post_id', id)
 
+
+  // Fetch Schema Registry Values
+  const { data: schemaValuesData } = await supabase
+    .from('schema_post_field_values')
+    .select(`
+        value,
+        field:schema_fields(field_key),
+        version:schema_field_versions(display_name, field_type, registry_id)
+    `)
+    .eq('post_id', id)
+    .eq('is_current', true)
+
+  const schemaValues: SchemaFieldValue[] = (schemaValuesData || []).map((item: any) => {
+    const field = Array.isArray(item.field) ? item.field[0] : item.field
+    const version = Array.isArray(item.version) ? item.version[0] : item.version
+    return {
+      value: item.value,
+      field: {
+        display_name: version?.display_name || field?.field_key || 'Unknown',
+        field_key: field?.field_key || ''
+      },
+      version: version
+    }
+  })
 
   if (resourceLinksData) {
     linkedResources = resourceLinksData
@@ -418,6 +445,21 @@ export default async function PostPage(props: PostPageProps) {
                 postContent={post.content}
                 postTags={post.tags}
               />
+
+              {/* Download Button - for resources */}
+              {post.content_type === 'resource' && post.metadata?.url && (
+                <a
+                  href={post.metadata.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                >
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="w-4 h-4" />
+                    Download
+                  </Button>
+                </a>
+              )}
 
               <div className="flex-1" />
 
@@ -626,6 +668,11 @@ export default async function PostPage(props: PostPageProps) {
               </h3>
               <KnowledgeGraph centerPostId={post.id} />
             </div>
+
+            {/* Dynamic Schema Fields (Research Metadata) */}
+            {schemaValues.length > 0 && (
+              <SchemaFieldDisplay fields={schemaValues} />
+            )}
 
             {/* Epistemic Recommendations - To Broaden This Inquiry */}
             <EpistemicRecommendations postId={post.id} postTags={post.tags || []} />

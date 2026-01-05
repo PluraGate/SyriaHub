@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { verifyTurnstileToken } from '@/lib/turnstile'
 import { AlertCircle, BookOpen, Users, Sparkles } from 'lucide-react'
+import { logAuthEvent } from '@/lib/auditLog'
 
 export default async function LoginPage({
   searchParams,
@@ -39,16 +40,20 @@ export default async function LoginPage({
 
     const supabase = await createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
     if (error) {
       console.error('Login error:', error)
+      // Log failed login attempt
+      await logAuthEvent('login_failed', null, { email, error: error.message })
       redirect(`/auth/login?error=${error.message}`)
     }
 
+    // Log successful login
+    await logAuthEvent('login_success', data.user?.id, { email })
     redirect('/feed')
   }
 

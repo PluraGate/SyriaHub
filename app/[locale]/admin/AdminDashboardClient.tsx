@@ -160,7 +160,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
       <Navbar user={navbarUser} />
 
       <div className="flex">
-        <AdminSidebar className="sticky top-0 h-[calc(100vh-64px)]" />
+        <AdminSidebar />
 
         <main className="flex-1 p-6 md:p-8">
           <div className="max-w-7xl mx-auto">

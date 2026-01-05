@@ -27,6 +27,23 @@ const TAG_COLORS = [
     '#6b5b6b', '#4a5d6b', '#6b6b5b', '#5b4d4d',
 ]
 
+// Detect if text is primarily Arabic
+function detectLanguage(text: string): 'ar' | 'en' | 'mixed' {
+    if (!text) return 'en'
+    // Arabic Unicode range: \u0600-\u06FF (Arabic), \u0750-\u077F (Arabic Supplement)
+    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F]/g
+    const arabicMatches = text.match(arabicPattern) || []
+    const totalLetters = text.replace(/[\s\d\p{P}]/gu, '').length
+    
+    if (totalLetters === 0) return 'en'
+    
+    const arabicRatio = arabicMatches.length / totalLetters
+    
+    if (arabicRatio > 0.5) return 'ar'
+    if (arabicRatio > 0.2) return 'mixed'
+    return 'en'
+}
+
 interface UnverifiedTag {
     tag: string
     usage_count: number
@@ -40,11 +57,15 @@ export default function AdminTagsPage() {
     const [approvingTag, setApprovingTag] = useState<string | null>(null)
     const [decliningTag, setDecliningTag] = useState<string | null>(null)
     const [newTagColor, setNewTagColor] = useState(TAG_COLORS[0])
-    const [newTagLabelAr, setNewTagLabelAr] = useState('')
+    const [newTagTranslation, setNewTagTranslation] = useState('')
     const [dialogOpen, setDialogOpen] = useState(false)
     const [declineDialogOpen, setDeclineDialogOpen] = useState(false)
     const [declining, setDeclining] = useState(false)
     const [usedColors, setUsedColors] = useState<string[]>([])
+
+    // Detect language of the tag being approved
+    const tagLanguage = approvingTag ? detectLanguage(approvingTag) : 'en'
+    const isTagArabic = tagLanguage === 'ar'
 
     const supabase = createClient()
     const { showToast } = useToast()
@@ -88,7 +109,7 @@ export default function AdminTagsPage() {
     const handleApproveClick = (tag: string) => {
         setApprovingTag(tag)
         setNewTagColor(suggestNextColor)
-        setNewTagLabelAr('')
+        setNewTagTranslation('')
         setDialogOpen(true)
     }
 
@@ -96,13 +117,22 @@ export default function AdminTagsPage() {
         if (!approvingTag) return
 
         try {
+            // If tag is Arabic, store translation as English label; otherwise as Arabic label
+            const insertData = isTagArabic 
+                ? {
+                    label: newTagTranslation || approvingTag, // Use English translation as main label if provided
+                    label_ar: approvingTag, // Original Arabic tag
+                    color: newTagColor,
+                }
+                : {
+                    label: approvingTag,
+                    label_ar: newTagTranslation || null,
+                    color: newTagColor,
+                }
+
             const { error } = await supabase
                 .from('tags')
-                .insert({
-                    label: approvingTag,
-                    color: newTagColor,
-                    label_ar: newTagLabelAr || null
-                })
+                .insert(insertData)
 
             if (error) throw error
 
@@ -153,7 +183,7 @@ export default function AdminTagsPage() {
             <Navbar />
 
             <div className="flex">
-                <AdminSidebar className="sticky top-0 h-[calc(100vh-64px)]" />
+                <AdminSidebar />
 
                 <main className="flex-1 p-6 md:p-8">
                     <div className="max-w-4xl mx-auto">
@@ -263,22 +293,22 @@ export default function AdminTagsPage() {
                             </div>
                         </div>
 
-                        {/* Arabic Translation Input */}
+                        {/* Dynamic Translation Input - shows English or Arabic based on tag language */}
                         <div className="space-y-2">
-                            <Label htmlFor="labelAr" className="text-text dark:text-dark-text font-medium">
-                                {t('labelArabic')}
+                            <Label htmlFor="labelTranslation" className="text-text dark:text-dark-text font-medium">
+                                {isTagArabic ? t('labelEnglish') : t('labelArabic')}
                             </Label>
                             <Input
-                                id="labelAr"
+                                id="labelTranslation"
                                 type="text"
-                                value={newTagLabelAr}
-                                onChange={(e) => setNewTagLabelAr(e.target.value)}
+                                value={newTagTranslation}
+                                onChange={(e) => setNewTagTranslation(e.target.value)}
                                 className="bg-white dark:bg-dark-bg border-gray-200 dark:border-dark-border text-text dark:text-dark-text"
-                                placeholder={t('labelArabicPlaceholder')}
-                                dir="rtl"
+                                placeholder={isTagArabic ? t('labelEnglishPlaceholder') : t('labelArabicPlaceholder')}
+                                dir={isTagArabic ? 'ltr' : 'rtl'}
                             />
                             <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                {t('labelArabicHint')}
+                                {isTagArabic ? t('labelEnglishHint') : t('labelArabicHint')}
                             </p>
                         </div>
 

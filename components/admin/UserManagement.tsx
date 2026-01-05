@@ -303,7 +303,7 @@ export function UserManagement() {
                                         {t('joined')}
                                     </th>
                                     <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('activity')}
+                                        {t('activity.label')}
                                     </th>
                                     <th className="px-4 py-3 text-end text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
                                         {t('actions')}
