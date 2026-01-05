@@ -2,28 +2,86 @@ import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { CommentsSection } from '@/components/CommentsSection'
-import { notFound } from 'next/navigation'
-import { FileText, Download, Calendar, User, HardDrive } from 'lucide-react'
+import { notFound, redirect } from 'next/navigation'
+import { FileText, Download, Calendar, User, HardDrive, Link2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
 import { PostHistoryButton } from '@/components/PostHistoryButton'
 
-export default async function ResourceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+/**
+ * Checks if a string is a valid UUID v4
+ */
+function isUUID(str: string): boolean {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    return uuidRegex.test(str)
+}
+
+export default async function ResourceDetailsPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
+    const { id, locale } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const { data: resource } = await supabase
-        .from('posts')
-        .select(`
-      *,
-      author:users!author_id(name, email)
-    `)
-        .eq('id', id)
-        .single()
+    let resource
 
-    if (!resource || resource.content_type !== 'resource') notFound()
+    // Determine if id is a UUID or a slug
+    if (isUUID(id)) {
+        // Lookup by UUID
+        const { data } = await supabase
+            .from('posts')
+            .select(`
+                *,
+                author:users!author_id(name, email, avatar_url)
+            `)
+            .eq('id', id)
+            .eq('content_type', 'resource')
+            .single()
+
+        resource = data
+
+        // If resource has a slug, redirect to the canonical slug URL
+        if (resource?.slug) {
+            redirect(`/${locale}/resources/${resource.slug}`)
+        }
+
+        // If no slug, try to backfill one (lazy backfill)
+        if (resource && !resource.slug) {
+            const { data: backfilledSlug } = await supabase
+                .rpc('get_resource_slug', { p_post_id: id })
+
+            if (backfilledSlug) {
+                // Refresh resource data with new slug
+                const { data: refreshed } = await supabase
+                    .from('posts')
+                    .select(`
+                        *,
+                        author:users!author_id(name, email, avatar_url)
+                    `)
+                    .eq('id', id)
+                    .single()
+
+                if (refreshed?.slug) {
+                    redirect(`/${locale}/resources/${refreshed.slug}`)
+                }
+                resource = refreshed || resource
+            }
+        }
+    } else {
+        // Lookup by slug (primary method)
+        const { data } = await supabase
+            .from('posts')
+            .select(`
+                *,
+                author:users!author_id(name, email, avatar_url)
+            `)
+            .eq('slug', id)
+            .eq('content_type', 'resource')
+            .single()
+
+        resource = data
+    }
+
+    if (!resource) notFound()
 
     const formatSize = (bytes: number) => {
         if (bytes === 0) return '0 B'
@@ -70,8 +128,18 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
                                         <Download className="w-4 h-4" />
                                         <span>{metadata.downloads || 0} Downloads</span>
                                     </div>
-                                    <PostHistoryButton postId={id} />
+                                    <PostHistoryButton postId={resource.id} />
                                 </div>
+
+                                {/* Show canonical slug if available */}
+                                {resource.slug && (
+                                    <div className="mt-3 flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">
+                                        <Link2 className="w-3 h-3" />
+                                        <code className="font-mono bg-gray-100 dark:bg-dark-bg px-2 py-0.5 rounded">
+                                            {resource.slug}
+                                        </code>
+                                    </div>
+                                )}
                             </div>
 
                             <a
@@ -108,8 +176,8 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
                     </div>
                 </div>
 
-                <CommentsSection postId={id} />
-                <ViewTracker postId={id} />
+                <CommentsSection postId={resource.id} />
+                <ViewTracker postId={resource.id} />
             </main>
 
             <Footer />

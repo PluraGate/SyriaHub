@@ -43,6 +43,11 @@ SyriaHub now includes enterprise-grade research capabilities:
 - **Achievement Badges**: 15+ automated badges for research excellence.
 - **Trust Profiles**: Role-based permissions and community reputation management.
 
+### 📚 Digital Archive
+- **Canonical Slugs**: Permanent, human-readable URLs (`/resources/dataset-health-aleppo-2024`) that are immune to link rot.
+- **AI Cataloging**: Automated suggestion of semantic short-titles.
+- **Design Ready**: Support for CAD/3D architectural assets alongside papers and datasets.
+
 ### 🌐 Global Reach
 - **Full i18n**: Arabic (RTL) and English support across the entire platform.
 - **PWA Ready**: Offline support, service worker caching, and installable mobile experience.

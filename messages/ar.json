@@ -168,25 +168,7 @@
         }
     },
     "Onboarding": {
-        "setupWelcome": "مرحباً بك في سيريا هاب!",
-        "title": "أكمل ملفك الشخصي",
-        "subtitle": "أخبرنا قليلاً عن نفسك للاستفادة القصوى من سيريا هاب.",
-        "step1Title": "معلوماتك",
-        "step2Title": "معلومات مهنية",
-        "step3Title": "أنت جاهز!",
-        "step3Description": "ملفك الشخصي جاهز. ابدأ استكشاف مجتمع البحث!",
-        "nameLabel": "الاسم الكامل",
-        "namePlaceholder": "أدخل اسمك الكامل",
-        "bioLabel": "نبذة عنك",
-        "bioPlaceholder": "أخبرنا عن نفسك واهتماماتك البحثية...",
-        "affiliationLabel": "الانتماء",
-        "affiliationPlaceholder": "جامعة، منظمة، أو شركة",
-        "locationLabel": "الموقع",
-        "locationPlaceholder": "المدينة، البلد",
-        "websiteLabel": "الموقع الإلكتروني",
         "back": "رجوع",
-        "continue": "متابعة",
-        "finish": "ابدأ الآن",
         "saving": "جارٍ الحفظ...",
         "skipForNow": "تخطي الآن ←",
         "step": "الخطوة {current} من {total}",
@@ -720,14 +702,16 @@
             "paper": "ورقة بحثية",
             "tool": "أداة برمجية",
             "media": "وسائط",
-            "template": "قالب"
+            "template": "قالب",
+            "design": "تصميم"
         },
         "typeDescriptions": {
             "dataset": "ملفات بيانات CSV، Excel، JSON",
-            "paper": "أوراق بحثية، تقارير، مستندات",
+            "paper": "ملفات PDF، أوراق بحثية، تقارير، مستندات",
             "tool": "برامج، تطبيقات، أدوات مساعدة",
             "media": "صور، فيديوهات، ملفات صوتية",
-            "template": "نماذج، قوالب، أطر عمل"
+            "template": "نماذج، قوالب، أطر عمل",
+            "design": "ملفات CAD، نماذج ثلاثية الأبعاد، رسومات معمارية"
         },
         "upload": {
             "title": "رفع مورد",
@@ -742,7 +726,21 @@
             "tagsHint": "اختر التخصصات والمواضيع المتعلقة بهذا المورد",
             "licenseLabel": "الترخيص",
             "submitButton": "رفع المورد",
+            "submitting": "جارٍ الرفع...",
             "uploading": "جارٍ الرفع..."
+        },
+        "slug": {
+            "shortTitleLabel": "معرّف المورد",
+            "shortTitlePlaceholder": "مثال: تعداد-السكان-2024",
+            "shortTitleHint": "معرّف قصير صديق للرابط. يُنشأ تلقائياً من العنوان، لكن يمكنك تعديله.",
+            "shortTitleRequired": "يرجى إدخال عنوان قصير للرابط",
+            "regenerate": "إعادة التعيين",
+            "aiSuggest": "اقتراح ذكي",
+            "aiSuggestionApplied": "تم تطبيق الاقتراح الذكي",
+            "fallbackApplied": "تم تطبيق الاقتراح التلقائي",
+            "suggestionFailed": "فشل الاقتراح، جاري الإنشاء التلقائي",
+            "generatedUrl": "الرابط المُنشأ (دائم بعد الرفع)",
+            "immutableWarning": "لا يمكن تغيير هذا الرابط بعد النشر"
         },
         "usedInPosts": "مستخدم في {count} منشور",
         "downloads": "{count} تحميل"

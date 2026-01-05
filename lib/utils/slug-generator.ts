@@ -38,7 +38,7 @@ export interface SlugResult {
 /**
  * Valid resource types
  */
-export const VALID_RESOURCE_TYPES = ['dataset', 'paper', 'tool', 'media', 'template'] as const
+export const VALID_RESOURCE_TYPES = ['dataset', 'paper', 'tool', 'media', 'template', 'design'] as const
 export type ResourceType = typeof VALID_RESOURCE_TYPES[number]
 
 /**

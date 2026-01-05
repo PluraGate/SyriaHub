@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { FileText, Download, Calendar, Database, FileType, Wrench, Film, FileSpreadsheet, Link2, Clock } from 'lucide-react'
+import { FileText, Download, Calendar, Database, FileType, Wrench, Film, FileSpreadsheet, Link2, Clock, PenTool } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from './TagChip'
 import { cn, getInitials, getAvatarGradient, inferResourceType } from '@/lib/utils'
@@ -16,7 +16,7 @@ interface ResourceMetadata {
     original_name: string
     downloads: number
     license?: string
-    resource_type?: 'dataset' | 'paper' | 'tool' | 'media' | 'template'
+    resource_type?: 'dataset' | 'paper' | 'tool' | 'media' | 'template' | 'design'
 }
 
 interface ResourcePost {
@@ -47,6 +47,7 @@ const RESOURCE_TYPE_CONFIG = {
     tool: { icon: Wrench, label: 'Tool', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
     media: { icon: Film, label: 'Media', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
     template: { icon: FileSpreadsheet, label: 'Template', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+    design: { icon: PenTool, label: 'Design', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
     document: { icon: FileText, label: 'Resource', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400' },
 }
 
