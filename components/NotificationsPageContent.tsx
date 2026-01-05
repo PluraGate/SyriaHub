@@ -189,126 +189,128 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
                 )}
             </div>
 
-            {filteredNotifications.length === 0 ? (
-                <div className="card p-8 text-center">
-                    <NoNotificationsIllustration className="w-32 h-32 mx-auto mb-4 opacity-80" />
-                    <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
-                        {filter === 'all' ? t('allCaughtUp') : t('noFilteredNotifications', { filter: t(filterKeys.find(f => f.value === filter)?.labelKey ?? 'types.all') })}
-                    </p>
-                    <p className="text-xs text-text-light dark:text-dark-text-muted">
-                        {filter === 'all'
-                            ? t('noNotificationsYet').split('.')[1]?.trim() || t('noNotificationsYet')
-                            : t('tryChangingFilter')}
-                    </p>
-                </div>
-            ) : (
-                <div className="card overflow-hidden divide-y divide-gray-100 dark:divide-dark-border">
-                    {filteredNotifications.map(notification => (
-                        <div
-                            key={notification.id}
-                            className={cn(
-                                'p-4 transition-colors',
-                                !notification.is_read && 'bg-primary/5 dark:bg-primary/10'
-                            )}
-                        >
-                            <div className="flex gap-3">
-                                {/* Icon */}
-                                <div className={cn(
-                                    'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
-                                    typeColors[notification.type] || typeColors.system
-                                )}>
-                                    {getIcon(notification.type)}
-                                </div>
-
-                                {/* Content */}
-                                <div className="flex-1 min-w-0">
-                                    <div
-                                        onClick={() => handleNotificationClick(notification)}
-                                        className="cursor-pointer"
-                                    >
-                                        <p className={cn(
-                                            'text-sm text-text dark:text-dark-text',
-                                            !notification.is_read && 'font-semibold'
-                                        )}>
-                                            {notification.title || notification.content}
-                                        </p>
-                                        {notification.message && (
-                                            <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-0.5">
-                                                {notification.message}
-                                            </p>
-                                        )}
-                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                            {formatSaved(new Date(notification.created_at))}
-                                        </p>
+            <div className="w-full">
+                {filteredNotifications.length === 0 ? (
+                    <div className="card p-8 text-center">
+                        <NoNotificationsIllustration className="w-32 h-32 mx-auto mb-4 opacity-80" />
+                        <p className="text-sm font-medium text-text dark:text-dark-text mb-1">
+                            {filter === 'all' ? t('allCaughtUp') : t('noFilteredNotifications', { filter: t(filterKeys.find(f => f.value === filter)?.labelKey ?? 'types.all') })}
+                        </p>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted">
+                            {filter === 'all'
+                                ? t('noNotificationsYet').split('.')[1]?.trim() || t('noNotificationsYet')
+                                : t('tryChangingFilter')}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="card overflow-hidden divide-y divide-gray-100 dark:divide-dark-border">
+                        {filteredNotifications.map(notification => (
+                            <div
+                                key={notification.id}
+                                className={cn(
+                                    'p-4 transition-colors',
+                                    !notification.is_read && 'bg-primary/5 dark:bg-primary/10'
+                                )}
+                            >
+                                <div className="flex gap-3">
+                                    {/* Icon */}
+                                    <div className={cn(
+                                        'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
+                                        typeColors[notification.type] || typeColors.system
+                                    )}>
+                                        {getIcon(notification.type)}
                                     </div>
 
-                                    {/* Inline Reply */}
-                                    {notification.type === 'reply' && notification.post_id && (
-                                        <div className="mt-2">
-                                            {replyingTo === notification.id ? (
-                                                <div className="space-y-2">
-                                                    <textarea
-                                                        value={replyContent}
-                                                        onChange={(e) => setReplyContent(e.target.value)}
-                                                        placeholder={t('replyPlaceholder')}
-                                                        rows={2}
-                                                        className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none focus:outline-none focus:ring-1 focus:ring-primary"
-                                                    />
-                                                    <div className="flex items-center gap-2">
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={() => handleReply(notification)}
-                                                            disabled={submittingReply || !replyContent.trim()}
-                                                        >
-                                                            {submittingReply ? (
-                                                                <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                                                            ) : (
-                                                                <Reply className="w-3 h-3 mr-1" />
-                                                            )}
-                                                            {t('reply')}
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => {
-                                                                setReplyingTo(null)
-                                                                setReplyContent('')
-                                                            }}
-                                                        >
-                                                            {t('cancel')}
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <button
-                                                    onClick={() => setReplyingTo(notification.id)}
-                                                    className="text-xs text-primary hover:text-primary-dark dark:hover:text-primary-light flex items-center gap-1"
-                                                >
-                                                    <Reply className="w-3 h-3" />
-                                                    {t('quickReply')}
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex-shrink-0 flex items-start gap-1">
-                                    {!notification.is_read && (
-                                        <button
-                                            onClick={() => markAsRead(notification.id)}
-                                            className="p-1.5 rounded-full text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
-                                            title={t('markAsRead')}
+                                    {/* Content */}
+                                    <div className="flex-1 min-w-0">
+                                        <div
+                                            onClick={() => handleNotificationClick(notification)}
+                                            className="cursor-pointer"
                                         >
-                                            <Check className="w-4 h-4" />
-                                        </button>
-                                    )}
+                                            <p className={cn(
+                                                'text-sm text-text dark:text-dark-text',
+                                                !notification.is_read && 'font-semibold'
+                                            )}>
+                                                {notification.title || notification.content}
+                                            </p>
+                                            {notification.message && (
+                                                <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-0.5">
+                                                    {notification.message}
+                                                </p>
+                                            )}
+                                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                                {formatSaved(new Date(notification.created_at))}
+                                            </p>
+                                        </div>
+
+                                        {/* Inline Reply */}
+                                        {notification.type === 'reply' && notification.post_id && (
+                                            <div className="mt-2">
+                                                {replyingTo === notification.id ? (
+                                                    <div className="space-y-2">
+                                                        <textarea
+                                                            value={replyContent}
+                                                            onChange={(e) => setReplyContent(e.target.value)}
+                                                            placeholder={t('replyPlaceholder')}
+                                                            rows={2}
+                                                            className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <div className="flex items-center gap-2">
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => handleReply(notification)}
+                                                                disabled={submittingReply || !replyContent.trim()}
+                                                            >
+                                                                {submittingReply ? (
+                                                                    <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                                                                ) : (
+                                                                    <Reply className="w-3 h-3 mr-1" />
+                                                                )}
+                                                                {t('reply')}
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    setReplyingTo(null)
+                                                                    setReplyContent('')
+                                                                }}
+                                                            >
+                                                                {t('cancel')}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => setReplyingTo(notification.id)}
+                                                        className="text-xs text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-white flex items-center gap-1"
+                                                    >
+                                                        <Reply className="w-3 h-3" />
+                                                        {t('quickReply')}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex-shrink-0 flex items-start gap-1">
+                                        {!notification.is_read && (
+                                            <button
+                                                onClick={() => markAsRead(notification.id)}
+                                                className="p-1.5 rounded-full text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
+                                                title={t('markAsRead')}
+                                            >
+                                                <Check className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

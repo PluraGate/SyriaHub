@@ -5,6 +5,36 @@ All notable changes to the SyriaHub project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.3] - 2026-01-05
+
+### Updated - Platform Documentation Refresh
+
+#### Privacy Policy
+- Added AI Content Moderation disclosure (OpenAI/Perspective API usage)
+- Added Data Retention policies section
+- Enhanced Data Security section with Origin Validation, Rate Limiting, Bot Protection details
+- Added No-Profiling Commitment section
+- Updated last modified date
+
+#### Security Page
+- Added Security Infrastructure section from January 2026 audit
+- Added Origin Validation, Rate Limiting, Turnstile Verification, Cryptographic Tokens details
+- Added Protected Endpoints overview
+
+#### User Guide
+- Enhanced Moderation & Community section with multi-layered moderation system details
+- Added AI Pre-Filter, Community Reports, Human Moderators, Jury Panel descriptions
+- Added Appeals Process information box
+
+#### Methodology Page
+- Added AI Pre-Screening as first quality assurance step
+- Added AI Moderation Details section (multi-category detection, fail-safe design, auto-report)
+- Added Plagiarism Detection infrastructure section
+
+#### Ethics Page
+- Added AI Ethics & Constraints section (Transparency, Reversibility, No Profiling, Hedging Language)
+- Added Data Handling Principles section
+
 ## [0.6.2] - 2026-01-01
 
 ### Added

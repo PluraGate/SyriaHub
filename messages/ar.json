@@ -5,7 +5,7 @@
         "primaryCta": "ابدأ الآن",
         "secondaryCta": "استكشف الأبحاث",
         "languageSwitcher": "اللغة",
-        "english": "English",
+        "english": "الإنجليزية",
         "arabic": "العربية",
         "loading": "جارٍ التحميل...",
         "save": "حفظ",
@@ -193,6 +193,7 @@
         "next": "التالي",
         "beginResearch": "ابدأ البحث",
         "closeOnboarding": "إغلاق التعريف",
+        "getStarted": "ابدأ الآن",
         "welcome": {
             "title": "مرحباً بك في SyriaHub",
             "subtitle": "رفيقك البحثي",
@@ -555,7 +556,11 @@
         "displayName": "اسم العرض",
         "updateInfo": "تحديث معلومات ملفك الشخصي",
         "saveChanges": "حفظ التغييرات",
-        "researchInterests": "اهتمامات بحثية"
+        "researchInterests": "اهتمامات بحثية",
+        "characters": "حرف",
+        "changeImage": "تغيير الصورة",
+        "uploadImage": "رفع صورة",
+        "remove": "إزالة"
     },
     "Landing": {
         "heroTitle": "البحث العلمي بأسلوب تعاوني",
@@ -584,7 +589,7 @@
         "upcomingEvents": "الفعاليات القادمة",
         "featured": "مميز",
         "trending": "رائج",
-        "minRead": "{count} د",
+        "minRead": "{count} د قراءة",
         "event": "فعالية",
         "context": "السياق",
         "noFilterResults": "لا توجد نتائج مطابقة للتصفية",
@@ -1317,17 +1322,18 @@
             "activeToday": "النشطون اليوم"
         },
         "dashboardPage": {
-            "title": "نظرة عامة على الإدارة",
+            "title": "لوحة تحكم المسؤول",
             "quickLinks": "روابط سريعة",
-            "viewStats": "عرض إحصائيات المنصة",
+            "viewStats": "عرض إحصاءات المنصة التفصيلية",
             "totalUsers": "إجمالي المستخدمين",
-            "pending": "معلق",
-            "viewChanges": "عرض التغييرات",
+            "pending": "قيد الانتظار",
+            "viewChanges": "عرض سجلات التدقيق",
             "moderationQueue": "قائمة الإشراف",
             "contentAppeals": "طعون المحتوى",
             "noAppeals": "لا توجد طعون معلقة",
             "viewPost": "عرض المنشور"
         },
+        "schemaregistry": "سجل المخططات",
         "contentPage": {
             "title": "إدارة المحتوى",
             "subtitle": "مراجعة وإدارة جميع المنشورات على المنصة.",
@@ -1450,7 +1456,10 @@
             "alreadyUsed": "{color} (مستخدم بالفعل)",
             "labelArabic": "التسمية (بالعربية)",
             "labelArabicPlaceholder": "أدخل الترجمة العربية...",
-            "labelArabicHint": "اختياري - يساعد المستخدمين العرب على اكتشاف المحتوى"
+            "labelArabicHint": "اختياري - يساعد المستخدمين العرب على اكتشاف المحتوى",
+            "labelEnglish": "التسمية (بالإنجليزية)",
+            "labelEnglishPlaceholder": "أدخل الترجمة الإنجليزية...",
+            "labelEnglishHint": "اختياري - يساعد المستخدمين الناطقين بالإنجليزية على اكتشاف المحتوى"
         },
         "waitlistPage": {
             "title": "إدارة قائمة الانتظار",
@@ -1511,7 +1520,9 @@
             "exportCsv": "تصدير CSV",
             "totalChanges": "إجمالي تغييرات الأدوار المسجلة",
             "changedBy": "تم التغيير بواسطة",
-            "reason": "السبب"
+            "reason": "السبب",
+            "oldRole": "الدور السابق",
+            "newRole": "الدور الجديد"
         },
         "moderationQueue": {
             "title": "إدارة المحتوى",
@@ -1532,7 +1543,11 @@
         "user": "المستخدم",
         "role": "الدور",
         "joined": "انضم",
-        "activity": "النشاط",
+        "activity": {
+            "label": "النشاط",
+            "posts": "المنشورات",
+            "comments": "التعليقات"
+        },
         "actions": "الإجراءات",
         "changeRole": "تغيير الدور",
         "suspend": "تعليق الحساب",
@@ -1681,7 +1696,16 @@
             "export": "تصدير",
             "saveToResources": "حفظ في الموارد",
             "savedToResources": "تم حفظ نتائج الاستبيان في الموارد!",
-            "saveToResourcesError": "فشل الحفظ في الموارد"
+            "saveToResourcesError": "فشل الحفظ في الموارد",
+            "subtitle": "أنشئ وأدر استبيانات البحث مع أنواع أسئلة متعددة",
+            "noSurveys": "لا توجد استبيانات بعد",
+            "createFirst": "أنشئ أول استبيان لبدء جمع الردود",
+            "activeSurveysToParticipate": "استبيانات نشطة للمشاركة",
+            "noActiveSurveys": "لا توجد استبيانات نشطة حالياً",
+            "takeSurvey": "شارك في الاستبيان",
+            "viewResults": "عرض النتائج",
+            "editSurvey": "تعديل الاستبيان",
+            "completed": "مكتمل"
         },
         "footprint": {
             "title": "مشاركتك",
@@ -1711,17 +1735,6 @@
                 "poll": "استطلاع",
                 "survey": "استبيان"
             }
-        },
-        "surveysPage": {
-            "subtitle": "أنشئ وأدر استبيانات البحث مع أنواع أسئلة متعددة",
-            "noSurveys": "لا توجد استبيانات بعد",
-            "createFirst": "أنشئ أول استبيان لبدء جمع الردود",
-            "activeSurveysToParticipate": "استبيانات نشطة للمشاركة",
-            "noActiveSurveys": "لا توجد استبيانات نشطة حالياً",
-            "takeSurvey": "شارك في الاستبيان",
-            "viewResults": "عرض النتائج",
-            "editSurvey": "تعديل الاستبيان",
-            "completed": "مكتمل"
         },
         "nav": {
             "overview": "نظرة عامة",
@@ -2172,64 +2185,6 @@
         },
         "howToAdvance": "كيفية الترقي",
         "advanceDescription": "يمكن للأعضاء التقدم ليصبحوا باحثين من خلال نظام طلب ترقية الدور. تعتمد الترقية على المساهمة المجتمعية والخبرة والالتزام بالإرشادات."
-    },
-    "Onboarding": {
-        "step": "الخطوة {current} من {total}",
-        "back": "رجوع",
-        "next": "التالي",
-        "beginResearch": "ابدأ البحث",
-        "closeOnboarding": "إغلاق التعريف",
-        "welcome": {
-            "title": "مرحباً بك في SyriaHub",
-            "subtitle": "رفيقك البحثي",
-            "description": "SyriaHub هي منصة معرفية مُصمّمة للبحث في إعادة الإعمار بعد النزاعات، والدراسات الحضرية، والحفاظ على التراث، واتخاذ القرارات المبنية على الأدلة.",
-            "mission": "الرسالة",
-            "missionDesc": "ربط الباحثين بأدلة موثوقة ومتنوعة",
-            "community": "المجتمع",
-            "communityDesc": "تعاون مع باحثين وممارسين من حول العالم",
-            "tagline": "أداة بحثية — وليست منصة تواصل اجتماعي"
-        },
-        "create": {
-            "title": "أنشئ وشارك",
-            "subtitle": "ساهم في قاعدة المعرفة",
-            "description": "طرق متعددة للمساهمة بأبحاثك والتفاعل مع المجتمع:",
-            "articles": "مقالات بحثية",
-            "articlesDesc": "انشر نتائجك بتنسيق غني، مع الاستشهادات والوسائط",
-            "questions": "أسئلة وأجوبة",
-            "questionsDesc": "اطرح أسئلة بحثية واحصل على إجابات الخبراء",
-            "events": "فعاليات",
-            "eventsDesc": "أنشئ مؤتمرات وورش عمل وندوات إلكترونية مع تتبع الحضور",
-            "fork": "نسخ وتطوير",
-            "forkDesc": "ابنِ على أعمال الآخرين مع الإسناد الصحيح"
-        },
-        "researchLab": {
-            "title": "مختبر البحث",
-            "subtitle": "أدوات بحثية مدعومة بالذكاء الاصطناعي",
-            "description": "أدوات متخصصة مُصمّمة للبحث الدقيق المبني على الأدلة:",
-            "search": "بحث متعدد المصادر",
-            "searchDesc": "ابحث في المحتوى الداخلي + واجهات ReliefWeb و HDX و البنك الدولي",
-            "advisor": "مستشار الأسئلة الذكي",
-            "advisorDesc": "احصل على ملاحظات حول أسئلتك البحثية ومنهجيتك",
-            "surveys": "استطلاعات واستبيانات",
-            "surveysDesc": "أنشئ أدوات بحثية احترافية مع تحليلات",
-            "graph": "خريطة المعرفة",
-            "graphDesc": "تصوّر الروابط بين المواضيع والتخصصات"
-        },
-        "epistemic": {
-            "title": "النزاهة المعرفية",
-            "subtitle": "الفهم أولاً، لا التوافق",
-            "description": "هذه المنصة مُصمّمة بشكل مختلف. نُعطي الأولوية للفهم والتغطية الشاملة:",
-            "principle1": "لا نبني ملفات تفضيلية",
-            "principle1Desc": "لا نتتبع الإعجابات ولا نبني ملفات أيديولوجية عنك",
-            "principle2": "الاختلاف مقصود",
-            "principle2Desc": "ستصادف وجهات نظر متباينة — بتصميم مسبق، لا بالصدفة",
-            "principle3": "شفافية كاملة",
-            "principle3Desc": "كل توصية تشرح بالضبط سبب ظهورها",
-            "tagline": "نُحسّن للفهم والتغطية، لا للتفاعل والتوافق."
-        },
-        "skipForNow": "تخطي الآن",
-        "getStarted": "ابدأ الآن",
-        "saving": "جارِ الحفظ..."
     },
     "Gamification": {
         "title": "نظام المكافآت والمستويات",
@@ -2712,7 +2667,9 @@
         "completeYourProfile": "أكمل ملفك الشخصي",
         "suggested": "مقترح",
         "optionalExtras": "إضافات اختيارية",
-        "privacyNote": "100% قابل للإنجاز دون مشاركة الموقع أو البيانات الشخصية"
+        "privacyNote": "100% قابل للإنجاز دون مشاركة الموقع أو البيانات الشخصية",
+        "bonusXpEarned": "+ {count} نقاط XP إضافية",
+        "itemsRemaining": "{count} عناصر متبقية"
     },
     "Session": {
         "researchTrail": "مسار البحث",
@@ -2745,7 +2702,7 @@
         "noPostsYet": "لا توجد منشورات بعد.",
         "featured": "مميز",
         "viewAllPosts": "← عرض الكل",
-        "minRead": "{count} د",
+        "minRead": "{count} د قراءة",
         "min": "د",
         "event": "فعالية"
     },
@@ -2774,8 +2731,15 @@
         "followers": "المتابعون",
         "citations": "الاستشهادات",
         "posts": "المنشورات",
+        "events": "الفعاليات",
+        "knowledgeImpact": "الأثر المعرفي",
+        "knowledgeImpactStats": "الأثر المعرفي والإحصائيات",
+        "joined": "انضم في {date}",
+        "website": "الموقع الإلكتروني",
+        "backToFeed": "العودة للموجز",
         "skillsEndorsements": "المهارات والتوصيات",
         "endorsements": "توصيات",
+        "endorsementsCount": "{count} توصية",
         "addSkill": "إضافة مهارة +",
         "technical": "تقنية",
         "domainknowledge": "المعرفة التخصصية",
@@ -2784,7 +2748,12 @@
         "practicalexpertise": "الخبرة العملية",
         "moderator": "مشرف",
         "admin": "مدير",
-        "researcher": "باحث"
+        "researcher": "باحث",
+        "member": "عضو",
+        "research": "الأبحاث",
+        "resources": "الموارد",
+        "groups": "المجموعات",
+        "impact": "الأثر"
     },
     "ModerationTriage": {
         "title": "قائمة الإشراف",

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import { ImageCropModal } from './ImageCropModal'
+import { useTranslations } from 'next-intl'
 
 interface ImageUploadProps {
     bucket: 'avatars' | 'post_images'
@@ -36,6 +37,7 @@ export function ImageUpload({
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { showToast } = useToast()
     const supabase = createClient()
+    const t = useTranslations('Profile')
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) {
@@ -171,7 +173,7 @@ export function ImageUpload({
                         disabled={uploading}
                         className="bg-primary text-white hover:bg-primary-dark"
                     >
-                        {preview ? 'Change Image' : 'Upload Image'}
+                        {preview ? t('changeImage') : t('uploadImage')}
                     </Button>
                     {preview && (
                         <Button
@@ -185,7 +187,7 @@ export function ImageUpload({
                             disabled={uploading}
                             className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30"
                         >
-                            Remove
+                            {t('remove')}
                         </Button>
                     )}
                 </div>

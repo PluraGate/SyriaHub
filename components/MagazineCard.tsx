@@ -169,7 +169,7 @@ export function MagazineCard({
                             <>
                                 <div className="flex items-center gap-1">
                                     <Clock className="w-3.5 h-3.5" />
-                                    <span>{t('minRead', { count: readingTime })}</span>
+                                    <span className="truncate max-w-[80px]">{t('minRead', { count: readingTime })}</span>
                                 </div>
                                 <span className="text-white/50">·</span>
                                 <span>{formatRelativeTime(post.created_at)}</span>
@@ -219,7 +219,7 @@ export function MagazineCard({
                     <div className="flex items-center gap-3 mt-2 text-xs text-text-muted dark:text-dark-text-muted">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{t('minRead', { count: readingTime })}</span>
+                            <span className="truncate max-w-[80px]">{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
                         <span>{formatRelativeTime(post.created_at)}</span>
@@ -259,7 +259,7 @@ export function MagazineCard({
                 <div className="mt-3 flex items-center justify-between text-xs text-text-muted dark:text-dark-text-muted">
                     <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        <span>{t('minRead', { count: readingTime })}</span>
+                        <span className="truncate max-w-[80px]">{t('minRead', { count: readingTime })}</span>
                     </div>
                     <span>{formatRelativeTime(post.created_at)}</span>
                 </div>
@@ -362,7 +362,7 @@ export function MagazineCard({
                     <div className="flex items-center gap-2 text-xs text-text-muted dark:text-dark-text-muted">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
-                            <span>{t('minRead', { count: readingTime })}</span>
+                            <span className="truncate max-w-[80px]">{t('minRead', { count: readingTime })}</span>
                         </div>
                         <span>·</span>
                         <span>{formatRelativeTime(post.created_at)}</span>

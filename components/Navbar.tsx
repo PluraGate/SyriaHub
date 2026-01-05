@@ -45,13 +45,14 @@ const NavLink = ({ href, children }: { href: string, children: React.ReactNode }
   </Link>
 )
 
-export function Navbar({ user }: NavbarProps) {
+export function Navbar({ user: userProp }: NavbarProps) {
   const t = useTranslations('Navigation')
   const tCommon = useTranslations('Common')
   const pathname = usePathname()
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(user?.user_metadata?.avatar_url || null)
+  const [user, setUser] = useState(userProp)
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(userProp?.user_metadata?.avatar_url || null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, isDark } = useTheme()
@@ -61,6 +62,26 @@ export function Navbar({ user }: NavbarProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional SSR hydration pattern
     setMounted(true)
   }, [])
+
+  // Auto-fetch user if not provided as prop
+  useEffect(() => {
+    if (!userProp) {
+      const supabase = createClient()
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email ?? undefined,
+            user_metadata: data.user.user_metadata as {
+              avatar_url?: string
+              full_name?: string
+              name?: string
+            } | undefined
+          })
+        }
+      })
+    }
+  }, [userProp])
 
   // No longer needed here as we use params or context
   // const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'

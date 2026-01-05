@@ -41,6 +41,8 @@ export default async function Home({
       *,
       author:users!posts_author_id_fkey(id, name, email)
     `)
+    .eq('status', 'published') // Only show published posts
+    .neq('approval_status', 'rejected') // Hide rejected posts
     .order('created_at', { ascending: false })
     .limit(8)
 

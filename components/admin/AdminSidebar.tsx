@@ -19,7 +19,9 @@ import {
     MessageSquarePlus,
     Shield,
     BookOpen,
-    Activity
+    Activity,
+    Database, // Added Database icon
+    Settings // Added Settings icon
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
@@ -53,6 +55,18 @@ const navItems = [
         icon: Search,
     },
     {
+        label: 'Schema Registry', // Added new navigation item
+        href: '/admin/schema',
+        icon: Database,
+        adminOnly: true,
+    },
+    {
+        label: 'Settings', // Added new navigation item
+        href: '/admin/settings',
+        icon: Settings,
+        adminOnly: true,
+    },
+    {
         label: 'Users',
         href: '/admin/users',
         icon: Users,
@@ -77,6 +91,7 @@ const navItems = [
         href: '/admin/tags',
         icon: Tag,
     },
+
     {
         label: 'Waitlist',
         href: '/admin/waitlist',
@@ -160,6 +175,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
             className={cn(
                 'bg-white dark:bg-dark-surface border-e border-gray-200 dark:border-dark-border',
                 'transition-all duration-300 ease-in-out flex flex-col',
+                'sticky top-[65px] h-[calc(100vh-65px)] overflow-hidden self-start',
                 collapsed ? 'w-16' : 'w-64',
                 className
             )}
@@ -195,6 +211,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                         'Analytics': 'analytics',
                         'Platform Health': 'platformHealth',
                         'Search Analytics': 'searchAnalytics',
+                        'Schema Registry': 'schemaregistry',
+                        'Settings': 'settings',
                         'Users': 'users',
                         'Content': 'content',
                         'Reports': 'reports',
@@ -217,12 +235,12 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                             className={cn(
                                 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors',
                                 active
-                                    ? 'bg-primary/10 text-primary dark:bg-primary-light/10 dark:text-primary-light font-medium'
+                                    ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-dark-text font-medium'
                                     : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border hover:text-text dark:hover:text-dark-text'
                             )}
                             title={collapsed ? label : undefined}
                         >
-                            <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-primary-light')} />
+                            <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-dark-text')} />
                             {!collapsed && <span>{label}</span>}
                         </Link>
                     )

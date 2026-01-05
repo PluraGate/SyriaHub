@@ -48,8 +48,8 @@ vi.mock('@/lib/supabaseClient', () => ({
   verifyAuth: vi.fn(() => Promise.resolve(mockUser)),
 }))
 
-// Mock moderation
-vi.mock('@/lib/moderation', () => ({
+// Mock moderation - must use same path as import
+vi.mock('@/domain/moderation/service', () => ({
   checkContent: vi.fn((_text?: string, _title?: string) => Promise.resolve({
     moderation: { flagged: false },
     plagiarism: { isPlagiarized: false, similarityScore: 0 },
@@ -67,6 +67,9 @@ vi.mock('@/lib/recommendationAnalysis', () => ({
 vi.mock('@/lib/rateLimit', () => ({
   withRateLimit: (handler: (...args: unknown[]) => unknown) => handler,
 }))
+
+import { checkContent } from '@/domain/moderation/service'
+import { verifyAuth } from '@/lib/supabaseClient'
 
 describe('Posts API Routes', () => {
   beforeEach(() => {
@@ -244,7 +247,7 @@ describe('Posts API Routes', () => {
     })
 
     it('should reject unauthenticated requests', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAuth
+      (verifyAuth as any)
         .mockRejectedValueOnce(new Error('Unauthorized'))
 
       const postData = {
@@ -258,8 +261,7 @@ describe('Posts API Routes', () => {
     })
 
     it('should handle moderated content', async () => {
-      const { checkContent } = await import('@/domain/moderation/service')
-      vi.mocked(checkContent).mockResolvedValueOnce({
+      (checkContent as any).mockResolvedValueOnce({
         moderation: {
           flagged: true,
           categories: { hate: true },
@@ -278,7 +280,7 @@ describe('Posts API Routes', () => {
       const response = await simulateCreatePost(postData)
 
       // Should still create but flag for review
-      expect(vi.mocked(checkContent)).toHaveBeenCalled()
+      expect(checkContent).toHaveBeenCalled()
     })
   })
 })

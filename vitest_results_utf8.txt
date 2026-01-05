@@ -1,0 +1,600 @@
+﻿node.exe : (node:43924) ExperimentalWarning: CommonJS module 
+C:\Users\AvArc\RiderProjects\SyriaHub\vitest.config.ts is 
+loading ES Module C:\Users\AvArc\RiderProjects\SyriaHub\node_
+modules\@vitejs\plugin-react\dist\index.js using require().
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:43924) Ex 
+   ...sing require().:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Support for loading ES Module in require() is an 
+experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning 
+was created)
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90mC:/Users/AvArc/RiderProjects/SyriaHub[39m
+
+[90mstdout[2m | tests/unit/api/routes.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstdout[2m | tests/unit/components/HomeContentFilter.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+
+[90mstdout[2m | tests/unit/components/AuthForm.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+[90mstdout[2m | tests/unit/components/CommentsSection.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+[90mstdout[2m | tests/unit/api/posts.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+[90mstdout[2m | tests/unit/components/JuryPanel.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/api/comments.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/components/Footer.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: Γ£à audit secrets and track compliance: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/lib/supabase.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöæ add access controls to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+[90mstdout[2m | tests/unit/db/counterAudit.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+[90mstdout[2m | tests/unit/components/SpatialEditor.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/components/UserLevelBadge.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+[90mstdout[2m | tests/unit/components/BadgeDisplay.test.tsx
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+[90mstdout[2m | tests/unit/lib/formatDate.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/lib/citations.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+ [32mΓ£ô[39m tests/unit/lib/citations.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 78[2mms[22m[39m
+[90mstdout[2m | tests/unit/api/routes.test.ts[2m > [22m[2mAPI Route Structure[2m > [22m[2mPosts API[2m > [22m[2mshould have GET and POST handlers
+[22m[39m[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ≡ƒôí add observability to secrets: https://dotenvx.com/ops
+
+ [32mΓ£ô[39m tests/unit/api/routes.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1376[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have proper exports [33m 955[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have GET and POST handlers [33m 418[2mms[22m[39m
+[90mstderr[2m | 
+tests/unit/components/CommentsSection.test.tsx[2m > 
+[22m[2mCommentsSection Component[2m > [22m[2mError 
+handling[2m > [22m[2mshould show error toast on network 
+failure
+[22m[39mComments fetch error: Error: Network error
+    at C:/Users/AvArc/RiderProjects/SyriaHub/tests/unit/compo
+nents/CommentsSection.test.tsx:195:39
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:145:11
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:915:26
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/AvArc/RiderProje
+cts/SyriaHub/[39mnode_modules/[4m@vitest[24m/runner/dist/i
+ndex.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/AvArc/RiderProjects/Sy
+riaHub/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.U
+4xDYhzZ.js:115:27[90m)[39m
+    at trace [90m(file:///C:/Users/AvArc/RiderProjects/Syria
+Hub/[39mnode_modules/[4mvitest[24m/dist/chunks/test.B8ej_Z
+HS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/AvArc/RiderProjects/Syr
+iaHub/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js
+:1653:12[90m)[39m
+
+ [32mΓ£ô[39m tests/unit/components/BadgeDisplay.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 118[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/supabase.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 1614[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should export createClient function [33m 746[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should export middleware utilities [33m 539[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/CommentsSection.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[33m 424[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/UserLevelBadge.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 202[2mms[22m[39m
+ [31mΓ¥»[39m tests/unit/api/comments.test.ts [2m([22m[2m23 tests[22m[2m | [22m[31m9 failed[39m[2m)[22m[33m 2895[2mms[22m[39m
+       [32mΓ£ô[39m should fetch comments for a post[32m 7[2mms[22m[39m
+       [32mΓ£ô[39m should require post_id parameter[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should order comments by creation date[32m 7[2mms[22m[39m
+       [32mΓ£ô[39m should fetch nested replies[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should handle database errors[32m 1[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should create a new comment [33m 1428[2mms[22m[39m
+       [32mΓ£ô[39m should require authentication[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should validate minimum content length[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m should validate maximum content length[32m 1[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should support reply to parent comment [33m 1175[2mms[22m[39m
+[31m       [31m├ù[31m should check content for moderation[39m[32m 8[2mms[22m[39m
+       [32mΓ£ô[39m should sanitize HTML in content[32m 242[2mms[22m[39m
+[31m       [31m├ù[31m should update own comment[39m[32m 8[2mms[22m[39m
+[31m       [31m├ù[31m should reject update of others comment[39m[32m 2[2mms[22m[39m
+[31m       [31m├ù[31m should mark edited comments[39m[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should delete own comment[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m should reject deletion of others comment[39m[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m should soft delete comments with replies[39m[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m should hard delete comments without replies[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m should upvote comment[39m[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m should downvote comment[39m[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should toggle vote off when same vote cast[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m should prevent voting on own comment[39m[32m 1[2mms[22m[39m
+ [31mΓ¥»[39m tests/unit/api/posts.test.ts [2m([22m[2m12 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2969[2mms[22m[39m
+       [32mΓ£ô[39m should fetch posts with default pagination[32m 7[2mms[22m[39m
+       [32mΓ£ô[39m should apply tag filter when provided[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m should apply author filter when provided[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should sanitize search query to prevent pattern injection[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m should enforce maximum pagination limit[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should handle database errors gracefully[32m 1[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should create a new post for authenticated user [33m 2940[2mms[22m[39m
+       [32mΓ£ô[39m should reject posts with short titles[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should require title field[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should require content field[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should reject unauthenticated requests[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m should handle moderated content[39m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/Footer.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 865[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m renders the navigation links [33m 680[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/SpatialEditor.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1173[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m handles search input [33m 729[2mms[22m[39m
+[90mstderr[2m | 
+tests/unit/components/JuryPanel.test.tsx[2m > 
+[22m[2mJuryPanel Component[2m > [22m[2mopens voting 
+dialog on click
+[22m[39mWarning: Missing `Description` or 
+`aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | 
+tests/unit/components/JuryPanel.test.tsx[2m > 
+[22m[2mJuryPanel Component[2m > [22m[2mallows voting 
+workflow
+[22m[39mWarning: Missing `Description` or 
+`aria-describedby={undefined}` for {DialogContent}.
+
+ [32mΓ£ô[39m tests/unit/db/counterAudit.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 4897[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m returns no mismatches in current database [33m 392[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m stays consistent after mutations [33m 1731[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/HomeContentFilter.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 3460[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should filter posts by title [33m 604[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should filter posts by content [33m 366[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should show no results message when filter matches nothing [33m 400[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/AuthForm.test.tsx [2m([22m[2m21 tests[22m[2m)[22m[33m 4800[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should render sign in button [33m 353[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should toggle password visibility [33m 361[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should call onSubmit with email and password [33m 814[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should show loading state during submission [33m 722[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should display error from onSubmit rejection [33m 690[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should handle non-Error rejections gracefully [33m 663[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should update email state on input [33m 316[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/formatDate.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+[90mstderr[2m | 
+tests/unit/components/JuryPanel.test.tsx[2m > 
+[22m[2mJuryPanel Component[2m > [22m[2mhandles 
+submission error
+[22m[39mWarning: Missing `Description` or 
+`aria-describedby={undefined}` for {DialogContent}.
+
+[90mstdout[2m | tests/unit/lib/moderation.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > 
+[22m[2mmoderateContentWithOpenAI[2m > [22m[2mshould 
+return safe result when API key is not configured
+[22m[39mOpenAI API key not configured, skipping AI 
+moderation
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > 
+[22m[2mmoderateContentWithOpenAI[2m > [22m[2mshould 
+handle API errors gracefully (fail open)
+[22m[39mOpenAI moderation error: Error: OpenAI API error: 
+Internal Server Error
+    at moderateContentWithOpenAI (C:/Users/AvArc/RiderProject
+s/SyriaHub/domain/moderation/service.ts:76:13)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:105:5)[39m
+    at C:/Users/AvArc/RiderProjects/SyriaHub/tests/unit/lib/m
+oderation.test.ts:98:22
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:915:20
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > 
+[22m[2mmoderateContentWithOpenAI[2m > [22m[2mshould 
+handle network errors gracefully
+[22m[39mOpenAI moderation error: Error: Network error
+    at C:/Users/AvArc/RiderProjects/SyriaHub/tests/unit/lib/m
+oderation.test.ts:107:39
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:145:11
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:915:26
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/AvArc/RiderProje
+cts/SyriaHub/[39mnode_modules/[4m@vitest[24m/runner/dist/i
+ndex.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/AvArc/RiderProjects/SyriaHub/[3
+9mnode_modules/[4m@vitest[24m/runner/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/AvArc/RiderProjects/Sy
+riaHub/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.U
+4xDYhzZ.js:115:27[90m)[39m
+    at trace [90m(file:///C:/Users/AvArc/RiderProjects/Syria
+Hub/[39mnode_modules/[4mvitest[24m/dist/chunks/test.B8ej_Z
+HS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/AvArc/RiderProjects/Syr
+iaHub/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js
+:1653:12[90m)[39m
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > 
+[22m[2mmoderateContentWithPerspective[2m > 
+[22m[2mshould return safe result when API key is not 
+configured
+[22m[39mPerspective API key not configured, skipping 
+moderation
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > [22m[2mmoderateContent 
+(main function)[2m > [22m[2mshould fall back to 
+Perspective when OpenAI not configured
+[22m[39mOpenAI API key not configured, skipping AI 
+moderation
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > [22m[2mmoderateContent 
+(main function)[2m > [22m[2mshould return safe default 
+when no APIs configured
+[22m[39mOpenAI API key not configured, skipping AI 
+moderation
+
+[90mstderr[2m | tests/unit/lib/moderation.test.ts[2m > 
+[22m[2mModeration Module[2m > [22m[2mmoderateContent 
+(main function)[2m > [22m[2mshould return safe default 
+when no APIs configured
+[22m[39mPerspective API key not configured, skipping 
+moderation
+
+ [32mΓ£ô[39m tests/unit/lib/moderation.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+[90mstdout[2m | tests/unit/lib/fingerprint.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+
+[90mstdout[2m | tests/unit/lib/patternDetector.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+
+[90mstdout[2m | tests/unit/lib/utils.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+ [32mΓ£ô[39m tests/unit/lib/fingerprint.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/utils.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/patternDetector.test.ts [2m([22m[2m50 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+[90mstdout[2m | tests/unit/api/reports.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒôí add observability to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+[90mstdout[2m | tests/unit/lib/apiUtils.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+ [32mΓ£ô[39m tests/unit/api/reports.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+[90mstdout[2m | tests/unit/api/auth.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+[90mstdout[2m | tests/unit/lib/rateLimit.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+ [32mΓ£ô[39m tests/unit/api/auth.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/apiUtils.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+[90mstdout[2m | tests/unit/lib/gamification.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (21) from .env.local -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+ [32mΓ£ô[39m tests/unit/lib/rateLimit.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/lib/gamification.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/components/JuryPanel.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 8085[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m opens voting dialog on click [33m 604[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m allows voting workflow [33m 4104[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m handles submission error [33m 3188[2mms[22m[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m[1m[41m Failed Tests 10 
+[49m[22m[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPOST /api/comments[2m > [22mshould check 
+content for moderation
+[31m[1mTypeError[22m: 
+__vite_ssr_import_0__.vi.mocked(...).mockResolvedValueOnce 
+is not a function[39m
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m227:31[22m[39m
+    [90m225| [39m
+    [90m226| [39m      const { checkContent } = await 
+import('@/domain/moderation/serviΓÇª
+    [90m227| [39m      vi[33m.[39m[34mmocked[39m(checkC
+ontent)[33m.[39m[34mmockResolvedValueOnce[39m({
+    [90m   | [39m                              [31m^[39m
+    [90m228| [39m        moderation[33m:[39m {
+    [90m229| [39m          flagged[33m:[39m 
+[35mtrue[39m[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPATCH /api/comments/:id[2m > [22mshould 
+update own comment
+[31m[1mAssertionError[22m: expected false to be true // 
+Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m278:32[22m[39m
+    [90m276| [39m      })
+    [90m277| [39m
+    [90m278| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m279| [39m    })
+    [90m280| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPATCH /api/comments/:id[2m > [22mshould 
+reject update of others comment
+[31m[1mAssertionError[22m: expected true to be false // 
+Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m291:32[22m[39m
+    [90m289| [39m      })
+    [90m290| [39m
+    [90m291| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mfalse[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m292| [39m      [34mexpect[39m(response[33m.[39m
+error)[33m.[39m[34mtoContain[39m([32m'permission'[39m)
+    [90m293| [39m    })
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPATCH /api/comments/:id[2m > [22mshould 
+mark edited comments
+[31m[1mTypeError[22m: Cannot read properties of undefined 
+(reading 'edited')[39m
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m309:28[22m[39m
+    [90m307| [39m      })
+    [90m308| [39m
+    [90m309| [39m      [34mexpect[39m(response[33m.[39m
+data[33m.[39medited)[33m.[39m[34mtoBe[39m([35mtrue[39
+m)
+    [90m   | [39m                           [31m^[39m
+    [90m310| [39m    })
+    [90m311| [39m  })
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mDELETE /api/comments/:id[2m > [22mshould 
+reject deletion of others comment
+[31m[1mAssertionError[22m: expected true to be false // 
+Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m339:32[22m[39m
+    [90m337| [39m      [35mconst[39m response 
+[33m=[39m [35mawait[39m 
+[34msimulateDeleteComment[39m([32m'comment-1'[39m)
+    [90m338| [39m
+    [90m339| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mfalse[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m340| [39m      [34mexpect[39m(response[33m.[39m
+error)[33m.[39m[34mtoContain[39m([32m'permission'[39m)
+    [90m341| [39m    })
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mDELETE /api/comments/:id[2m > [22mshould 
+soft delete comments with replies
+[31m[1mAssertionError[22m: expected undefined to be true 
+// Object.is equality[39m
+
+[32m- Expected:[39m 
+true
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m356:36[22m[39m
+    [90m354| [39m
+    [90m355| [39m      [90m// Should soft delete to 
+preserve thread structure[39m
+    [90m356| [39m      [34mexpect[39m(response[33m.[39m
+softDeleted)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                                   
+[31m^[39m
+    [90m357| [39m    })
+    [90m358| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[6/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPOST /api/comments/:id/vote[2m > 
+[22mshould upvote comment
+[31m[1mAssertionError[22m: expected false to be true // 
+Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m389:32[22m[39m
+    [90m387| [39m      [35mconst[39m response 
+[33m=[39m [35mawait[39m [34msimulateVoteComment[39m([3
+2m'comment-1'[39m[33m,[39m [34m1[39m)
+    [90m388| [39m
+    [90m389| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m390| [39m      [34mexpect[39m(response[33m.[39m
+data[33m.[39mvote)[33m.[39m[34mtoBe[39m([34m1[39m)
+    [90m391| [39m    })
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[7/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPOST /api/comments/:id/vote[2m > 
+[22mshould downvote comment
+[31m[1mAssertionError[22m: expected undefined to be -1 // 
+Object.is equality[39m
+
+[32m- Expected:[39m 
+-1
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m406:34[22m[39m
+    [90m404| [39m
+    [90m405| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m406| [39m      [34mexpect[39m(response[33m.[39m
+data[33m.[39mvote)[33m.[39m[34mtoBe[39m([33m-[39m[34
+m1[39m)
+    [90m   | [39m                                 
+[31m^[39m
+    [90m407| [39m    })
+    [90m408| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[8/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m 
+tests/unit/api/comments.test.ts[2m > [22mComments API 
+Routes[2m > [22mPOST /api/comments/:id/vote[2m > 
+[22mshould prevent voting on own comment
+[31m[1mAssertionError[22m: expected true to be false // 
+Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2mΓ¥»[22m 
+tests/unit/api/comments.test.ts:[2m431:32[22m[39m
+    [90m429| [39m      [35mconst[39m response 
+[33m=[39m [35mawait[39m [34msimulateVoteComment[39m([3
+2m'comment-1'[39m[33m,[39m [34m1[39m)
+    [90m430| [39m
+    [90m431| [39m      [34mexpect[39m(response[33m.[39m
+success)[33m.[39m[34mtoBe[39m([35mfalse[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m432| [39m      [34mexpect[39m(response[33m.[39m
+error)[33m.[39m[34mtoContain[39m([32m'own'[39m)
+    [90m433| [39m    })
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[9/10]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/api/posts.test.ts[2m > 
+[22mPosts API Routes[2m > [22mPOST /api/posts[2m > 
+[22mshould handle moderated content
+[31m[1mTypeError[22m: 
+__vite_ssr_import_0__.vi.mocked(...).mockResolvedValueOnce 
+is not a function[39m
+[36m [2mΓ¥»[22m 
+tests/unit/api/posts.test.ts:[2m262:31[22m[39m
+    [90m260| [39m    [34mit[39m([32m'should handle 
+moderated content'[39m[33m,[39m [35masync[39m () 
+[33m=>[39m {
+    [90m261| [39m      const { checkContent } = await 
+import('@/domain/moderation/serviΓÇª
+    [90m262| [39m      vi[33m.[39m[34mmocked[39m(checkC
+ontent)[33m.[39m[34mmockResolvedValueOnce[39m({
+    [90m   | [39m                              [31m^[39m
+    [90m263| [39m        moderation[33m:[39m {
+    [90m264| [39m          flagged[33m:[39m 
+[35mtrue[39m[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[10/10]ΓÄ»[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m22 passed[39m[22m[90m (24)[39m
+[2m      Tests [22m [1m[31m10 failed[39m[22m[2m | [22m[1m[32m387 passed[39m[22m[90m (397)[39m
+[2m   Start at [22m 23:57:13
+[2m   Duration [22m 25.15s[2m (transform 8.71s, setup 32.80s, import 33.56s, tests 33.27s, environment 198.86s)[22m
+

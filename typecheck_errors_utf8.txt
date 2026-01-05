@@ -1,0 +1,6 @@
+﻿
+> syriahub@0.6.2 typecheck
+> tsc --noEmit -p tsconfig.typecheck.json
+
+app/[locale]/editor/page.tsx(605,34): error TS2339: Property 'field_version_id' does not exist on type 'SchemaFieldVersion'.
+app/[locale]/editor/page.tsx(610,39): error TS2339: Property 'field_version_id' does not exist on type 'SchemaFieldVersion'.

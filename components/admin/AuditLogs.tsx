@@ -96,10 +96,16 @@ export function AuditLogs() {
             admin: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
         }
 
+        // Helper to get role translation with fallback
+        const getRoleLabel = (role: string) => {
+            const roleKey = `roles.${role}` as any
+            return tUser(roleKey) || role
+        }
+
         return (
             <div className="flex items-center gap-2">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[oldRole as keyof typeof roleColors] || roleColors.researcher}`}>
-                    {tUser(oldRole as any)}
+                    {getRoleLabel(oldRole)}
                 </span>
                 <div className={`${isPromotion ? 'text-green-500' : 'text-red-500'}`}>
                     {isPromotion ? (
@@ -109,21 +115,27 @@ export function AuditLogs() {
                     )}
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${roleColors[newRole as keyof typeof roleColors] || roleColors.researcher}`}>
-                    {tUser(newRole as any)}
+                    {getRoleLabel(newRole)}
                 </span>
             </div>
         )
     }
 
     const exportLogs = () => {
+        // Helper to get role translation with fallback
+        const getRoleLabel = (role: string) => {
+            const roleKey = `roles.${role}` as any
+            return tUser(roleKey) || role
+        }
+
         const csvContent = [
             [
                 t('timestamp'),
                 t('user'),
                 tCommon('email'),
                 t('changedBy'),
-                tUser('oldRole') || 'Old Role',
-                tUser('newRole') || 'New Role',
+                t('oldRole'),
+                t('newRole'),
                 t('reason')
             ].join(','),
             ...logs.map(log => [
@@ -131,8 +143,8 @@ export function AuditLogs() {
                 log.user_name || tCommon('unknown'),
                 log.user_email || tCommon('unknown'),
                 log.changed_by_name || tCommon('unknown'),
-                tUser(log.old_role as any),
-                tUser(log.new_role as any),
+                getRoleLabel(log.old_role),
+                getRoleLabel(log.new_role),
                 `"${(log.reason || '').replace(/"/g, '""')}"`
             ].join(','))
         ].join('\n')

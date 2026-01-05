@@ -334,7 +334,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                     </h3>
                     {skills.length > 0 && (
                         <span className="text-sm text-text-light dark:text-dark-text-muted">
-                            ({skills.reduce((sum, s) => sum + s.endorsement_count, 0)} endorsements)
+                            ({t('endorsementsCount', { count: skills.reduce((sum, s) => sum + s.endorsement_count, 0) })})
                         </span>
                     )}
                 </button>

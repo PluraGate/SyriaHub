@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui/toast'
 import { Shield, ShieldCheck, ShieldOff, Loader2, Copy, Check, AlertTriangle } from 'lucide-react'
 import QRCode from 'qrcode'
@@ -209,7 +210,14 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                             1. Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
                         </p>
                         <div className="flex justify-center p-4 bg-white rounded-xl">
-                            <img src={qrCodeUrl} alt="2FA QR Code" className="w-48 h-48" />
+                            <Image
+                                src={qrCodeUrl}
+                                alt="2FA QR Code"
+                                width={192}
+                                height={192}
+                                className="w-48 h-48"
+                                unoptimized
+                            />
                         </div>
                     </div>
 

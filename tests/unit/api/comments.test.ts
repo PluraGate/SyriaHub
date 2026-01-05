@@ -31,8 +31,8 @@ vi.mock('@/lib/supabaseClient', () => ({
   verifyAuth: vi.fn(() => Promise.resolve(mockUser)),
 }))
 
-// Mock moderation
-vi.mock('@/lib/moderation', () => ({
+// Mock moderation - must use same path as import
+vi.mock('@/domain/moderation/service', () => ({
   checkContent: vi.fn((_text?: string, _title?: string) => Promise.resolve({
     moderation: { flagged: false },
     plagiarism: { isPlagiarized: false, similarityScore: 0 },
@@ -40,6 +40,9 @@ vi.mock('@/lib/moderation', () => ({
     warnings: []
   })),
 }))
+
+import { checkContent } from '@/domain/moderation/service'
+import { verifyAuth } from '@/lib/supabaseClient'
 
 describe('Comments API Routes', () => {
   beforeEach(() => {
@@ -168,7 +171,7 @@ describe('Comments API Routes', () => {
     })
 
     it('should require authentication', async () => {
-      vi.mocked(await import('@/lib/supabaseClient')).verifyAuth
+      (verifyAuth as any)
         .mockRejectedValueOnce(new Error('Unauthorized'))
 
       const response = await simulateCreateComment({
@@ -223,24 +226,23 @@ describe('Comments API Routes', () => {
         error: null,
       })
 
-      const { checkContent } = await import('@/domain/moderation/service')
-      vi.mocked(checkContent).mockResolvedValueOnce({
-        moderation: {
-          flagged: true,
-          categories: { harassment: true },
-          categoryScores: { harassment: 0.95 },
-        },
-        plagiarism: { isPlagiarized: false, similarityScore: 0 },
-        shouldBlock: false,
-        warnings: [],
-      })
+        ; (checkContent as any).mockResolvedValueOnce({
+          moderation: {
+            flagged: true,
+            categories: { harassment: true },
+            categoryScores: { harassment: 0.95 },
+          },
+          plagiarism: { isPlagiarized: false, similarityScore: 0 },
+          shouldBlock: false,
+          warnings: [],
+        })
 
       const response = await simulateCreateComment({
         post_id: 'post-123',
         content: 'Flagged content here',
       })
 
-      expect(vi.mocked(checkContent)).toHaveBeenCalledWith('Flagged content here')
+      expect(checkContent).toHaveBeenCalledWith('Flagged content here')
     })
 
     it('should sanitize HTML in content', async () => {

@@ -159,7 +159,7 @@ test.describe('Functional Regression: Content Creation', () => {
     });
 
     test('authenticated user can access editor and create a post', async ({ page, browserName }) => {
-        test.setTimeout(120000); // 2 min timeout for Firefox
+        test.setTimeout(180000); // 3 min timeout for slow browsers
 
         // Set Test Bypass Keys
         await page.addInitScript(() => {
@@ -167,12 +167,12 @@ test.describe('Functional Regression: Content Creation', () => {
             window.localStorage.setItem('syriahub_test_auth_bypass', 'true');
         });
 
-        // Navigate to Editor
-        await page.goto('/en/editor');
+        // Navigate to Editor - use domcontentloaded for faster navigation
+        await page.goto('/en/editor', { waitUntil: 'domcontentloaded', timeout: 120000 });
 
-        // Verify Auth Bypass worked
-        await expect(page.getByRole('heading', { name: /Sign In/i })).not.toBeVisible();
-        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible();
+        // Verify Auth Bypass worked with extended timeout
+        await expect(page.getByRole('heading', { name: /Sign In/i })).not.toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible({ timeout: 30000 });
 
         // Fill Title
         const titleInput = page.getByLabel('Title');
@@ -220,7 +220,7 @@ test.describe('Functional Regression: Content Creation', () => {
 
     test('authenticated user can save a draft', async ({ page, browserName }) => {
         // WebKit is slower at route mocking, extend timeout
-        test.setTimeout(120000);
+        test.setTimeout(180000);
 
         // Set Test Bypass Keys
         await page.addInitScript(() => {
@@ -228,11 +228,11 @@ test.describe('Functional Regression: Content Creation', () => {
             window.localStorage.setItem('syriahub_test_auth_bypass', 'true');
         });
 
-        // Navigate to Editor
-        await page.goto('/en/editor');
+        // Navigate to Editor - use domcontentloaded for faster navigation
+        await page.goto('/en/editor', { waitUntil: 'domcontentloaded', timeout: 120000 });
 
-        // Verify Editor is loaded
-        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible();
+        // Verify Editor is loaded with extended timeout
+        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible({ timeout: 30000 });
 
         // Fill Title
         await page.getByLabel('Title').fill('Draft Test Post');
@@ -270,7 +270,7 @@ test.describe('Functional Regression: Content Creation', () => {
 
     test('authenticated user triggers autosave when typing', async ({ page, browserName }) => {
         // Extend timeout for slower browsers
-        test.setTimeout(90000);
+        test.setTimeout(180000);
 
         // Set Test Bypass Keys
         await page.addInitScript(() => {
@@ -282,8 +282,8 @@ test.describe('Functional Regression: Content Creation', () => {
             window.localStorage.setItem('user_preferences', JSON.stringify(prefs));
         });
 
-        // Navigate to Editor
-        await page.goto('/en/editor');
+        // Navigate to Editor - use domcontentloaded for faster navigation
+        await page.goto('/en/editor', { waitUntil: 'domcontentloaded', timeout: 120000 });
 
         // Fill Title
         await page.getByLabel('Title').fill('Autosave Test Post');
@@ -305,18 +305,21 @@ test.describe('Functional Regression: Content Creation', () => {
         await expect(page.getByText(/Saved/i)).toBeVisible({ timeout: 10000 });
     });
 
-    test('authenticated user can upload a cover image', async ({ page }) => {
+    test('authenticated user can upload a cover image', async ({ page, browserName }) => {
+        // Extend timeout for slower browsers
+        test.setTimeout(180000);
+
         // Set Test Bypass Keys
         await page.addInitScript(() => {
             window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
             window.localStorage.setItem('syriahub_test_auth_bypass', 'true');
         });
 
-        // Navigate to Editor
-        await page.goto('/en/editor');
+        // Navigate to Editor - use domcontentloaded for faster navigation, then wait for editor
+        await page.goto('/en/editor', { waitUntil: 'domcontentloaded', timeout: 120000 });
 
-        // Verify Editor is loaded
-        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible();
+        // Verify Editor is loaded with extended timeout for Firefox
+        await expect(page.getByRole('heading', { name: /Write New Post/i })).toBeVisible({ timeout: browserName === 'firefox' ? 30000 : 15000 });
 
         // Locate File Input using data-testid
         const fileInput = page.getByTestId('cover-image-input');

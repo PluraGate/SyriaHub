@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import {
     Scale, Clock, Users, CheckCircle, XCircle,
     MinusCircle, AlertTriangle, Loader2, ChevronRight
@@ -223,6 +223,9 @@ function VoteDialog({ open, onClose, juryCase, onVoteSubmitted }: VoteDialogProp
                         <Scale className="w-5 h-5 text-primary" />
                         Cast Your Vote
                     </DialogTitle>
+                    <DialogDescription>
+                        Review the flagged content and the author&apos;s appeal, then cast your vote.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-6 py-4">
