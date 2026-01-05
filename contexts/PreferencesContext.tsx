@@ -146,7 +146,7 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
                     .from('user_preferences')
                     .select('preferences')
                     .eq('user_id', userId)
-                    .single()
+                    .maybeSingle()
 
                 if (data?.preferences) {
                     const dbPrefs = data.preferences as Partial<UserPreferences>

@@ -95,7 +95,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
           .from('users')
           .select('avatar_url, role')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
 
         if (data) {
           if (data.avatar_url && !userAvatarUrl) {

@@ -28,7 +28,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
     .from('users')
     .select('*')
     .eq('id', params.id)
-    .single()
+    .maybeSingle()
 
   if (profileError) {
     console.error('Profile fetch error:', profileError)
@@ -42,7 +42,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   // Fetch user stats
   const { data: statsData } = await supabase
     .rpc('get_user_stats', { user_uuid: params.id })
-    .single()
+    .maybeSingle()
 
   const stats = (statsData || {}) as {
     post_count?: number
@@ -59,7 +59,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
     .from('user_preferences')
     .select('preferences')
     .eq('user_id', params.id)
-    .single()
+    .maybeSingle()
 
   const privacySettings = prefData?.preferences?.privacy || {
     show_profile_public: true,
@@ -76,7 +76,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
       .from('users')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
     isViewerAdmin = viewerData?.role === 'admin' || viewerData?.role === 'moderator'
   }
 
