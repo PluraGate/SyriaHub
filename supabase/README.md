@@ -137,7 +137,262 @@ In your Supabase dashboard:
 3. Configure email templates (optional)
 4. Set up password requirements
 
-### 4. Create Test Users
+### 4. Configure Auth URLs (CRITICAL for Production)
+
+⚠️ **This is essential for email confirmation links to redirect correctly!**
+
+In your Supabase dashboard:
+1. Go to **Authentication** → **URL Configuration**
+2. Set the following:
+
+   | Setting | Development | Production |
+   |---------|-------------|------------|
+   | **Site URL** | `http://localhost:3000` | `https://syriahub.org` |
+   | **Redirect URLs** | `http://localhost:3000/**` | `https://syriahub.org/**` |
+
+3. Add additional redirect URLs if needed:
+   - `https://syriahub.org/auth/callback`
+   - `https://syriahub.org/onboarding`
+   - `https://www.syriahub.org/**` (if using www subdomain)
+
+### 5. Customize Email Templates (CRITICAL for Branding)
+
+To customize Supabase's confirmation emails:
+
+1. Go to **Authentication** → **Email Templates**
+2. Edit the **Confirm signup** template:
+   - Subject: `Confirm your SyriaHub account`
+   - HTML body (example):
+   ```html
+   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111827;padding:40px 20px;">
+     <tr>
+       <td>
+         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#1f2937;border-radius:12px;overflow:hidden;">
+           <!-- Header with PluraGate branding -->
+           <tr>
+             <td style="padding:32px 40px 24px;border-bottom:1px solid #374151;">
+               <span style="color:#1e7a6e;font-size:28px;font-weight:700;">PluraGate</span>
+             </td>
+           </tr>
+           <!-- Content -->
+           <tr>
+             <td style="padding:32px 40px;">
+               <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">Hello,</p>
+               
+               <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">
+                 Thank you for signing up for <strong style="color:#fff;">SyriaHub</strong>. Please confirm your email address to complete your registration.
+               </p>
+
+               <div style="background-color:#374151;border:1px solid #4b5563;padding:20px;border-radius:8px;margin-bottom:24px;">
+                 <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 16px;">
+                   SyriaHub is part of the <strong style="color:#fff;">PluraGate</strong> network, a shared infrastructure for independent knowledge initiatives.
+                 </p>
+                 <p style="font-size:15px;color:#9ca3af;line-height:1.6;margin:0;">
+                   The network provides governance and technical continuity, allowing initiatives like SyriaHub to retain their specific scope and autonomy.
+                 </p>
+               </div>
+
+               <!-- CTA Button - Table-based for email client compatibility -->
+               <table cellpadding="0" cellspacing="0" border="0" style="margin:32px auto;text-align:center;">
+                 <tr>
+                   <td style="border-radius:8px;background-color:#1e7a6e;" bgcolor="#1e7a6e">
+                     <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;">Confirm Email</a>
+                   </td>
+                 </tr>
+               </table>
+
+               <p style="font-size:13px;color:#6b7280;text-align:center;margin:24px 0 0;">
+                 If the button does not work, copy and paste the following link into your browser:
+               </p>
+               <p style="font-size:12px;color:#1e7a6e;word-break:break-all;text-align:center;background-color:#374151;padding:12px;border-radius:6px;margin-top:8px;">
+                 {{ .ConfirmationURL }}
+               </p>
+             </td>
+           </tr>
+           <!-- Footer -->
+           <tr>
+             <td style="padding:24px 40px;background-color:#111827;border-top:1px solid #374151;text-align:center;">
+               <p style="margin:0;font-size:12px;color:#6b7280;">© 2025 PluraGate Network</p>
+               <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">A network of independent knowledge initiatives</p>
+             </td>
+           </tr>
+         </table>
+       </td>
+     </tr>
+   </table>
+   ```
+
+3. **Important**: The `{{ .ConfirmationURL }}` variable is provided by Supabase and includes the redirect back to your site based on the Site URL setting above.
+
+4. **Other Email Templates** - Apply the same dark theme pattern to these:
+
+#### Reset Password Template
+- Subject: `Reset your SyriaHub password`
+```html
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111827;padding:40px 20px;">
+  <tr>
+    <td>
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#1f2937;border-radius:12px;overflow:hidden;">
+        <tr>
+          <td style="padding:32px 40px 24px;border-bottom:1px solid #374151;">
+            <span style="color:#1e7a6e;font-size:28px;font-weight:700;">PluraGate</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px;">
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">Hello,</p>
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">
+              We received a request to reset your password for your <strong style="color:#fff;">SyriaHub</strong> account. Click the button below to set a new password.
+            </p>
+            <table cellpadding="0" cellspacing="0" border="0" style="margin:32px auto;text-align:center;">
+              <tr>
+                <td style="border-radius:8px;background-color:#1e7a6e;" bgcolor="#1e7a6e">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;">Reset Password</a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:13px;color:#9ca3af;text-align:center;margin:24px 0 0;">
+              If you didn't request this, you can safely ignore this email. Your password will remain unchanged.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#111827;border-top:1px solid #374151;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2025 PluraGate Network</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+```
+
+#### Magic Link Template
+- Subject: `Sign in to SyriaHub`
+```html
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111827;padding:40px 20px;">
+  <tr>
+    <td>
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#1f2937;border-radius:12px;overflow:hidden;">
+        <tr>
+          <td style="padding:32px 40px 24px;border-bottom:1px solid #374151;">
+            <span style="color:#1e7a6e;font-size:28px;font-weight:700;">PluraGate</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px;">
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">Hello,</p>
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">
+              Click the button below to sign in to your <strong style="color:#fff;">SyriaHub</strong> account. This link expires in 1 hour.
+            </p>
+            <table cellpadding="0" cellspacing="0" border="0" style="margin:32px auto;text-align:center;">
+              <tr>
+                <td style="border-radius:8px;background-color:#1e7a6e;" bgcolor="#1e7a6e">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;">Sign In</a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:13px;color:#9ca3af;text-align:center;margin:24px 0 0;">
+              If you didn't request this link, you can safely ignore this email.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#111827;border-top:1px solid #374151;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2025 PluraGate Network</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+```
+
+#### Change Email Template
+- Subject: `Confirm your new email address`
+```html
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111827;padding:40px 20px;">
+  <tr>
+    <td>
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#1f2937;border-radius:12px;overflow:hidden;">
+        <tr>
+          <td style="padding:32px 40px 24px;border-bottom:1px solid #374151;">
+            <span style="color:#1e7a6e;font-size:28px;font-weight:700;">PluraGate</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px;">
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">Hello,</p>
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">
+              Please confirm your new email address for your <strong style="color:#fff;">SyriaHub</strong> account by clicking the button below.
+            </p>
+            <table cellpadding="0" cellspacing="0" border="0" style="margin:32px auto;text-align:center;">
+              <tr>
+                <td style="border-radius:8px;background-color:#1e7a6e;" bgcolor="#1e7a6e">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;">Confirm Email</a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:13px;color:#9ca3af;text-align:center;margin:24px 0 0;">
+              If you didn't make this change, please contact support immediately.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#111827;border-top:1px solid #374151;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2025 PluraGate Network</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+```
+
+#### Invite User Template
+- Subject: `You're invited to join SyriaHub`
+```html
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111827;padding:40px 20px;">
+  <tr>
+    <td>
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#1f2937;border-radius:12px;overflow:hidden;">
+        <tr>
+          <td style="padding:32px 40px 24px;border-bottom:1px solid #374151;">
+            <span style="color:#1e7a6e;font-size:28px;font-weight:700;">PluraGate</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px;">
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">Hello,</p>
+            <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0 0 24px;">
+              You've been invited to join <strong style="color:#fff;">SyriaHub</strong>, a platform for research, documentation, and collaborative knowledge focused on Syria.
+            </p>
+            <div style="background-color:#374151;border:1px solid #4b5563;padding:20px;border-radius:8px;margin-bottom:24px;">
+              <p style="font-size:16px;color:#e5e7eb;line-height:1.6;margin:0;">
+                SyriaHub is part of the <strong style="color:#fff;">PluraGate</strong> network, a shared infrastructure for independent knowledge initiatives.
+              </p>
+            </div>
+            <table cellpadding="0" cellspacing="0" border="0" style="margin:32px auto;text-align:center;">
+              <tr>
+                <td style="border-radius:8px;background-color:#1e7a6e;" bgcolor="#1e7a6e">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;">Accept Invitation</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#111827;border-top:1px solid #374151;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2025 PluraGate Network</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+```
+
+### 6. Create Test Users
 
 You can create test users through:
 
@@ -165,7 +420,7 @@ const { data, error } = await supabase.auth.signUp({
 })
 ```
 
-### 5. Seed Sample Data (Optional)
+### 7. Seed Sample Data (Optional)
 
 After creating users through Auth:
 

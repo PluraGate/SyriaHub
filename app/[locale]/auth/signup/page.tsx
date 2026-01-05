@@ -14,7 +14,7 @@ export default async function SignupPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ error?: string; success?: string; code?: string }>
+  searchParams: Promise<{ error?: string; success?: string; code?: string; email?: string }>
 }) {
   const { locale } = await params
   const search = await searchParams
@@ -252,7 +252,7 @@ export default async function SignupPage({
                   </Link>
                 </p>
 
-                <SignupForm preValidatedCode={preValidatedCode} action={handleSignup} />
+                <SignupForm preValidatedCode={preValidatedCode} preFilledEmail={search.email || ''} action={handleSignup} />
 
                 <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
                   {t('termsAgreeLong')}
