@@ -8,6 +8,7 @@ import { HomeContentFilter } from '@/components/HomeContentFilter'
 import { SocialProofBanner } from '@/components/SocialProofBanner'
 import { OnboardingModal } from '@/components/OnboardingModal'
 import { EpistemicOnboarding } from '@/components/EpistemicOnboarding'
+import { FirstContributionPrompt } from '@/components/FirstContributionPrompt'
 
 // New Editorial Components
 import { HeroEditorial } from '@/components/HeroEditorial'
@@ -67,6 +68,9 @@ export default async function Home({
               userEmail={user.email || ''}
               userName={user.user_metadata?.name}
             />
+
+            {/* First Contribution Path - shows after onboarding */}
+            <FirstContributionPrompt />
 
             {/* Feed Section for Logged-in Users */}
             <section className="section pt-20 md:pt-24">

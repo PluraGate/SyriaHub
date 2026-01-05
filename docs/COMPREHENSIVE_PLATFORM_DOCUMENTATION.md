@@ -1,7 +1,7 @@
 # SyriaHub Platform Comprehensive Documentation
 
-**Version:** 0.6.2  
-**Last Updated:** December 21, 2025
+**Version:** 0.8.0  
+**Last Updated:** January 5, 2026
 
 ---
 
