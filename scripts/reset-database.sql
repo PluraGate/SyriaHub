@@ -1,105 +1,53 @@
 -- ============================================
--- DATABASE RESET SCRIPT FOR SYRIAHUB
+-- DATABASE RESET SCRIPT (CLEAN SLATE)
 -- ============================================
--- This script clears all user data from the database
--- while preserving the schema structure.
+-- This script clears all user-generated data from the database
+-- while preserving the structure and essential system data.
 -- 
--- WARNING: This will DELETE all data permanently!
--- Use with caution and only in development/staging.
+-- Recommended Usage:
+-- 1. Local: 'supabase db reset' is preferred.
+-- 2. Remote/Live: Run this script in the Supabase SQL Editor.
 -- ============================================
 
--- Disable triggers temporarily for faster deletion
-SET session_replication_role = replica;
-
--- ============================================
--- CLEAR ALL TABLES (in dependency order)
--- ============================================
-
--- First, clear tables with foreign key dependencies
-TRUNCATE TABLE notifications CASCADE;
-TRUNCATE TABLE post_sessions CASCADE;
-TRUNCATE TABLE read_positions CASCADE;
-TRUNCATE TABLE suggestions CASCADE;
-TRUNCATE TABLE feedback_tickets CASCADE;
-TRUNCATE TABLE moderation_appeals CASCADE;
-TRUNCATE TABLE moderation_actions CASCADE;
-TRUNCATE TABLE knowledge_gaps CASCADE;
-TRUNCATE TABLE precedent_links CASCADE;
-TRUNCATE TABLE precedents CASCADE;
-TRUNCATE TABLE trust_appeals CASCADE;
-TRUNCATE TABLE trust_decisions CASCADE;
-TRUNCATE TABLE trust_scores CASCADE;
-
--- Analytics and tracking
-TRUNCATE TABLE analytics_daily CASCADE;
-TRUNCATE TABLE search_analytics CASCADE;
-TRUNCATE TABLE page_views CASCADE;
-
--- Content interactions
-TRUNCATE TABLE bookmarks CASCADE;
-TRUNCATE TABLE votes CASCADE;
-TRUNCATE TABLE answers CASCADE;
-TRUNCATE TABLE comments CASCADE;
-TRUNCATE TABLE reports CASCADE;
-
--- Citations and references
-TRUNCATE TABLE citations CASCADE;
-
--- Versioning
-TRUNCATE TABLE plagiarism_checks CASCADE;
-TRUNCATE TABLE post_versions CASCADE;
-
--- Groups and memberships
-TRUNCATE TABLE group_invitations CASCADE;
-TRUNCATE TABLE group_members CASCADE;
-
--- Resources and events
-TRUNCATE TABLE resources CASCADE;
-TRUNCATE TABLE events CASCADE;
-
--- Posts (main content)
-TRUNCATE TABLE posts CASCADE;
-
--- Groups
-TRUNCATE TABLE groups CASCADE;
-
--- User-related (preserves auth.users)
-TRUNCATE TABLE user_badges CASCADE;
-
--- Clear users table (will be recreated on next login)
-TRUNCATE TABLE users CASCADE;
-
--- Tags (preserve structure but clear user-created ones if desired)
--- Uncomment the next line if you want to clear custom tags too:
--- TRUNCATE TABLE tags CASCADE;
-
--- Roles are kept (they're system-level)
--- TRUNCATE TABLE roles CASCADE;
-
--- Re-enable triggers
-SET session_replication_role = DEFAULT;
-
--- ============================================
--- RESET SEQUENCES (optional, for fresh IDs)
--- ============================================
--- Not needed for UUID-based tables, but included
--- for any serial/sequence-based columns if added later
-
--- ============================================
--- VERIFICATION
--- ============================================
-DO $$
-DECLARE
-    table_count INTEGER;
+DO $$ 
+DECLARE 
+    r RECORD;
+    v_table_count INTEGER := 0;
 BEGIN
-    SELECT COUNT(*) INTO table_count FROM posts;
-    RAISE NOTICE 'Posts remaining: %', table_count;
+    -- Disable triggers and foreign key checks for the session
+    SET session_replication_role = replica;
     
-    SELECT COUNT(*) INTO table_count FROM users;
-    RAISE NOTICE 'Users remaining: %', table_count;
+    -- Loop through all tables in the public schema
+    FOR r IN (
+        SELECT tablename 
+        FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename NOT IN (
+            -- List of tables to PRESERVE (structure/lookup data)
+            'spatial_ref_sys',       -- PostGIS internal
+            'roles',                 -- System roles
+            'ai_usage_limits',       -- Fixed limits
+            'schema_registries',     -- Dynamic schema structure
+            'schema_items',          -- Dynamic schema items
+            'schema_fields',         -- Dynamic schema fields
+            'schema_field_versions'  -- Dynamic schema versions
+        )
+    ) 
+    LOOP
+        EXECUTE 'TRUNCATE TABLE public.' || quote_ident(r.tablename) || ' CASCADE';
+        v_table_count := v_table_count + 1;
+    END LOOP;
     
-    SELECT COUNT(*) INTO table_count FROM comments;
-    RAISE NOTICE 'Comments remaining: %', table_count;
+    -- Re-enable triggers
+    SET session_replication_role = DEFAULT;
     
-    RAISE NOTICE '✓ Database reset complete!';
+    RAISE NOTICE '✓ Cleaned % tables.', v_table_count;
+    RAISE NOTICE '✓ Database reset to clean slate complete!';
 END $$;
+
+-- ============================================
+-- OPTIONAL: SEED ESSENTIAL DATA
+-- ============================================
+-- If you need to re-seed specific data after truncate, 
+-- you can call specific functions or run inserts here.
+
