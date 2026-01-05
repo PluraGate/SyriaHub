@@ -67,9 +67,10 @@ async function handlePost(request: NextRequest) {
             )
         }
 
-        // Build the invite URL
+        // Build the invite URL with encoded email
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-        const inviteUrl = `${siteUrl}/auth/signup?code=${code.toUpperCase()}`
+        const encodedEmail = encodeURIComponent(recipientEmail.trim())
+        const inviteUrl = `${siteUrl}/auth/signup?code=${code.toUpperCase()}&email=${encodedEmail}`
 
         // Get the appropriate template based on language
         const lang = language === 'ar' ? 'ar' : 'en'
