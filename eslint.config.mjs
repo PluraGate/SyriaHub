@@ -3,6 +3,7 @@ import nextPlugin from '@next/eslint-plugin-next'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
+import boundariesPlugin from 'eslint-plugin-boundaries'
 
 const eslintConfig = [
     // Base JS recommended rules
@@ -18,6 +19,7 @@ const eslintConfig = [
             '@next/next': nextPlugin,
             'react': reactPlugin,
             'react-hooks': reactHooksPlugin,
+            'boundaries': boundariesPlugin,
         },
         languageOptions: {
             globals: {
@@ -75,6 +77,106 @@ const eslintConfig = [
                 jest: 'readonly',
             },
         },
+        settings: {
+            // Resolver for import plugin and boundaries
+            'import/resolver': {
+                typescript: {
+                    alwaysTryTypes: true,
+                    project: './tsconfig.json',
+                },
+            },
+            react: {
+                version: 'detect',
+            },
+            // Boundaries plugin settings - define architectural layers
+            'boundaries/elements': [
+                // Specific Lib layers (must come before generic lib)
+                {
+                    type: 'supabase',
+                    pattern: 'lib/supabase/**/*',
+                },
+                {
+                    type: 'lib-hooks',
+                    pattern: 'lib/hooks/**/*',
+                },
+                {
+                    type: 'i18n',
+                    pattern: ['i18n/**/*', 'lib/i18n/**/*'],
+                },
+                // Generic Lib layer
+                {
+                    type: 'lib',
+                    pattern: 'lib/**/*',
+                    capture: ['category'],
+                },
+
+                // Specific App layers
+                {
+                    type: 'api',
+                    pattern: 'app/api/**/*',
+                    capture: ['domain'],
+                },
+
+                // Component layers
+                {
+                    type: 'components',
+                    pattern: 'components/**/*',
+                    capture: ['category'],
+                },
+                {
+                    type: 'hooks',
+                    pattern: 'hooks/**/*',
+                },
+
+                // Generic App layers
+                {
+                    type: 'app',
+                    pattern: 'app/[locale]/**/*',
+                    capture: ['domain'],
+                },
+                {
+                    type: 'app-root',
+                    pattern: 'app/*',
+                },
+
+                // Other layers
+                {
+                    type: 'tests',
+                    pattern: 'tests/**/*',
+                },
+                {
+                    type: 'e2e',
+                    pattern: 'tests/e2e/**/*',
+                },
+                {
+                    type: 'types',
+                    pattern: 'types/**/*',
+                },
+                {
+                    type: 'contexts',
+                    pattern: 'contexts/**/*',
+                },
+                {
+                    type: 'navigation',
+                    pattern: 'navigation.ts',
+                },
+            ],
+            'boundaries/ignore': [
+                // Ignore test files for boundary checks (tests can import anything)
+                'tests/**/*',
+                '**/*.test.ts',
+                '**/*.test.tsx',
+                '**/*.spec.ts',
+                '**/*.spec.tsx',
+                // Ignore specific root config files
+                'next.config.js',
+                'postcss.config.js',
+                'tailwind.config.ts',
+                'vitest.config.ts',
+                'playwright.config.ts',
+                'eslint.config.mjs',
+            ],
+        },
         rules: {
             ...nextPlugin.configs.recommended.rules,
             ...nextPlugin.configs['core-web-vitals'].rules,
@@ -90,11 +192,49 @@ const eslintConfig = [
             'react/no-unknown-property': 'off', // Next.js uses custom props like 'global' for styled-jsx
             'no-useless-escape': 'off', // Allow useless escapes in regex/strings
             'react/prop-types': 'off', // TypeScript handles prop validation
-        },
-        settings: {
-            react: {
-                version: 'detect',
-            },
+
+            // Boundaries rules - enforce architectural layers
+            'boundaries/element-types': [
+                'warn', // Start with warn to identify violations without breaking build
+                {
+                    default: 'allow',
+                    rules: [
+                        // lib layer should NOT import from components, API, or app
+                        {
+                            from: 'lib',
+                            disallow: ['components', 'api', 'app', 'app-root'],
+                            message: 'Library code should not depend on UI components or API routes. Move shared logic to lib/ instead.',
+                        },
+                        // API routes should NOT import from components or app pages
+                        {
+                            from: 'api',
+                            disallow: ['components', 'app'],
+                            message: 'API routes should not import UI components. Extract shared logic to lib/ if needed.',
+                        },
+                        // Components should NOT import from API routes
+                        {
+                            from: 'components',
+                            disallow: ['api'],
+                            message: 'Components should not directly import API route handlers. Use fetch() or a service layer instead.',
+                        },
+                        // Hooks should NOT import from components or API
+                        {
+                            from: 'hooks',
+                            disallow: ['components', 'api', 'app'],
+                            message: 'Hooks should be reusable and not depend on specific components or API routes.',
+                        },
+                        // Lib hooks same rules as hooks
+                        {
+                            from: 'lib-hooks',
+                            disallow: ['components', 'api', 'app'],
+                            message: 'Library hooks should not depend on UI components or API routes.',
+                        },
+                    ],
+                },
+            ],
+            // Prevent external module imports that bypass layers
+            'boundaries/no-unknown': ['off'],
+            'boundaries/no-unknown-files': ['off'], // Too noisy for now
         },
     },
 
@@ -119,3 +259,4 @@ const eslintConfig = [
 ]
 
 export default eslintConfig
+

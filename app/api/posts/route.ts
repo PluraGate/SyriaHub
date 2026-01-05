@@ -14,7 +14,7 @@ import {
   withOriginValidation,
 } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
-import { checkContent } from '@/lib/moderation'
+import { checkContent } from '@/domain/moderation/service'
 import { analyzePostForRecommendations } from '@/lib/recommendationAnalysis'
 import type { CreatePostInput } from '@/types'
 
@@ -41,6 +41,8 @@ async function handleGetPosts(request: Request): Promise<NextResponse> {
       *,
       author:users!posts_author_id_fkey(id, name, affiliation)
     `)
+    .eq('status', 'published') // Only return published posts
+    .neq('approval_status', 'rejected') // Hide rejected posts
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 

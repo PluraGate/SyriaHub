@@ -14,6 +14,9 @@ import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
 import { useCoverWithFallback, getCoverWithFallback } from '@/lib/coverImages'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import { arSA, enUS } from 'date-fns/locale'
+import { useLocale } from 'next-intl'
 
 interface ProfileHeaderProps {
     profile: any
@@ -83,6 +86,9 @@ function StatItem({
 export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySettings }: ProfileHeaderProps) {
     const [mounted, setMounted] = useState(false)
     const [statsOpen, setStatsOpen] = useState(false)
+    const t = useTranslations('ProfileLabels')
+    const locale = useLocale()
+    const dateLocale = locale === 'ar' ? arSA : enUS
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional SSR hydration pattern
         setMounted(true)
@@ -112,15 +118,17 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                 {/* Avatar and info row */}
                 <div className="flex flex-col sm:flex-row gap-5 -mt-12 sm:-mt-16">
                     {/* Avatar */}
-                    <div className="relative flex-shrink-0">
-                        <Avatar className="w-28 h-28 sm:w-32 sm:h-32 border-4 border-white dark:border-dark-surface shadow-xl bg-white dark:bg-dark-surface">
-                            <AvatarImage src={profile.avatar_url} alt={profile.name} className="object-cover" />
-                            <AvatarFallback className="text-3xl bg-primary text-white">
-                                {profile.name?.[0]?.toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
-                        {/* Online indicator */}
-                        <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white dark:border-dark-surface rounded-full" />
+                    <div className="flex-shrink-0">
+                        <div className="relative inline-block">
+                            <Avatar className="w-28 h-28 sm:w-32 sm:h-32 border-4 border-white dark:border-dark-surface shadow-xl bg-white dark:bg-dark-surface">
+                                <AvatarImage src={profile.avatar_url} alt={profile.name} className="object-cover" />
+                                <AvatarFallback className="text-3xl bg-primary text-white">
+                                    {profile.name?.[0]?.toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
+                            {/* Online indicator */}
+                            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-dark-surface rounded-full" />
+                        </div>
                     </div>
 
                     {/* Name, role, badges - positioned below avatar on mobile, beside on desktop */}
@@ -166,7 +174,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                                 {/* Role and XP inline - XP always rendered but hidden until mounted */}
                                 <div className="flex items-center gap-2 mt-1.5">
                                     <span className="px-2.5 py-0.5 bg-primary/10 text-primary dark:text-white/50 dark:bg-primary/30 rounded-full text-xs font-semibold capitalize border border-primary/10 dark:border-primary/20">
-                                        {profile.role === 'researcher' ? 'Researcher' : profile.role}
+                                        {t(profile.role as 'moderator' | 'admin' | 'researcher' | 'member')}
                                     </span>
                                     {profile.xp_points > 0 && (
                                         <span
@@ -227,13 +235,13 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                             className="flex items-center gap-1.5 hover:text-primary transition-colors"
                         >
                             <LinkIcon className="w-4 h-4" />
-                            <span>Website</span>
+                            <span>{t('website')}</span>
                         </a>
                     )}
                     <div className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
                         <span suppressHydrationWarning>
-                            Joined {mounted ? format(new Date(profile.created_at), 'MMMM yyyy') : '...'}
+                            {t('joined', { date: mounted ? format(new Date(profile.created_at), 'MMMM yyyy', { locale: dateLocale }) : '...' })}
                         </span>
                     </div>
                 </div>
@@ -259,7 +267,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                 >
                     <div className="flex items-center gap-4">
                         <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-primary dark:group-hover:text-white transition-colors">
-                            Knowledge Impact & Statistics
+                            {t('knowledgeImpactStats')}
                         </span>
                         {!statsOpen && (
                             <div className="flex items-center gap-3 text-sm animate-in fade-in duration-300">
@@ -267,13 +275,13 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                                 <div className="flex items-center gap-1.5 text-text-light dark:text-dark-text-muted">
                                     <GraduationCap className="w-3.5 h-3.5" />
                                     <span>
-                                        Impact: <span className="font-semibold text-text dark:text-dark-text">{stats?.academic_impact || 0}</span>
+                                        {t('impact')}: <span className="font-semibold text-text dark:text-dark-text">{stats?.academic_impact || 0}</span>
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-text-light dark:text-dark-text-muted">
                                     <FileText className="w-3.5 h-3.5" />
                                     <span>
-                                        Posts: <span className="font-semibold text-text dark:text-dark-text">{stats?.post_count || 0}</span>
+                                        {t('posts')}: <span className="font-semibold text-text dark:text-dark-text">{stats?.post_count || 0}</span>
                                     </span>
                                 </div>
                             </div>
@@ -293,7 +301,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={FileText}
                         value={stats?.post_count || 0}
-                        label="Posts"
+                        label={t('posts')}
                         maxValue={50}
                         color="primary"
                         mounted={mounted}
@@ -301,7 +309,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={CalendarDays}
                         value={stats?.event_count || 0}
-                        label="Events"
+                        label={t('events')}
                         maxValue={20}
                         color="secondary"
                         mounted={mounted}
@@ -309,7 +317,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={Quote}
                         value={stats?.citation_count || 0}
-                        label="Citations"
+                        label={t('citations')}
                         maxValue={100}
                         color="accent"
                         mounted={mounted}
@@ -317,7 +325,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={Users}
                         value={stats?.follower_count || 0}
-                        label="Followers"
+                        label={t('followers')}
                         maxValue={200}
                         color="accent"
                         mounted={mounted}
@@ -325,7 +333,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     <StatItem
                         icon={GraduationCap}
                         value={stats?.academic_impact || 0}
-                        label="Knowledge Impact"
+                        label={t('knowledgeImpact')}
                         maxValue={100}
                         color="emerald"
                         tooltip="Knowledge Impact: How this work contributes to the collective understanding through citations and reuse"

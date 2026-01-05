@@ -28,7 +28,7 @@ export default async function AdminCoordinationPage() {
         <div className="min-h-screen bg-background dark:bg-dark-bg">
             <Navbar user={user} />
             <div className="flex">
-                <AdminSidebar className="sticky top-0 h-[calc(100vh-64px)]" />
+                <AdminSidebar />
                 <main className="flex-1 p-6 md:p-8">
                     <div className="max-w-5xl mx-auto">
                         <CoordinationCenter isAdmin={isAdmin} />

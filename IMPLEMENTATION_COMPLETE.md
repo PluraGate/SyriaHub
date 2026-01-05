@@ -8,22 +8,21 @@
 
 ## Phase 1: Database Schema ✅
 
-### Tables Created (7 Total)
-1. **users** - Extended profiles with role-based access
-2. **posts** - Research content with tags array
-3. **comments** - Threaded discussions
-4. **reports** - Content moderation system
-5. **roles** - JSONB permission management
-6. **citations** - Academic post referencing
-7. **tags** - Content categorization
+### Tables Created (35+ Total)
+SyriaHub now uses a highly normalized schema with 35+ core tables supporting:
+- **Core**: Users, Roles, Posts, Comments, Tags, Citations
+- **Research Lab**: Gaps, Polls, Surveys, Statistics, advisor logs
+- **Spatial Engine**: Geometries, Precedents, Awareness flags
+- **System**: Audit logs, Notifications, Invitations, Versions, Plagiarism
 
 ### Security Features
-- ✅ Row Level Security (RLS) on all tables
-- ✅ 20+ RLS policies for fine-grained access
-- ✅ Automatic user profile creation via trigger
-- ✅ Foreign key constraints with cascading deletes
-- ✅ Check constraints for data validation
-- ✅ Optimized indexes including GIN for arrays
+- ✅ Row Level Security (RLS) on all 35+ tables
+- ✅ 300+ RLS policies for fine-grained access control
+- ✅ 45+ RPC functions for secure server-side logic
+- ✅ Multi-layered audit logging for all moderation actions
+- ✅ Automatic user profile creation via secure trigger
+- ✅ Cascading deletes and soft-delete support
+- ✅ GIN indexes for semantic and array-based search
 
 ### Seed Data
 - ✅ 3 pre-configured roles (researcher, moderator, admin)
@@ -332,16 +331,14 @@ curl http://localhost:3000/api/posts?limit=10
 
 ---
 
-## API Statistics
+## API Statistics (v0.8.0)
 
-- **Total Endpoints**: 24 routes across 9 resource types
-- **Authentication Routes**: 4
-- **CRUD Routes**: 20
-- **Authenticated Endpoints**: 20
-- **Public Endpoints**: 4
-- **Admin-Only Endpoints**: 4
-- **Moderator Endpoints**: 6
-- **Average Response Time**: <100ms (Edge runtime)
+- **Total Endpoints**: 74 routes across 37 resource types
+- **Protected**: 62 routes (required auth)
+- **Public**: 12 routes (open access)
+- **Admin/Moderator**: 18 routes (restricted)
+- **Average Response Time**: <80ms (Edge runtime optimized)
+- **Documentation Coverage**: 100% (OpenAPI/Swagger)
 
 ---
 

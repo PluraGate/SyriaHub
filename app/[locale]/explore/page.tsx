@@ -64,6 +64,7 @@ function ExplorePageContent() {
       const { data } = await supabase
         .from('posts')
         .select('tags')
+        .eq('status', 'published') // Only get tags from published posts
 
       if (data) {
         const tagsSet = new Set<string>()
@@ -130,6 +131,7 @@ function ExplorePageContent() {
             *,
             author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
+          .eq('status', 'published') // Only show published posts
           .neq('content_type', 'event') // Exclude events
           .neq('approval_status', 'rejected') // Hide rejected posts
           .order('created_at', { ascending: false })
@@ -150,6 +152,7 @@ function ExplorePageContent() {
             author:users!posts_author_id_fkey(id, name, email, avatar_url)
           `)
           .eq('content_type', 'event')
+          .eq('status', 'published') // Only show published events
           .neq('approval_status', 'rejected')
           .order('metadata->>start_time', { ascending: true }) // Sort by event start time
           .limit(10) // Fetch more to allow filtering
