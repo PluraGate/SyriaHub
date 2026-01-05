@@ -11,9 +11,9 @@ export { createBrowserClient, createServerClient }
  */
 export async function getCurrentUser() {
   const supabase = await createServerClient()
-  
+
   const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
-  
+
   if (authError || !authUser) {
     return { user: null, error: authError }
   }
@@ -22,7 +22,7 @@ export async function getCurrentUser() {
     .from('users')
     .select('*')
     .eq('id', authUser.id)
-    .single()
+    .maybeSingle()
 
   if (profileError) {
     return { user: null, error: profileError }
@@ -36,7 +36,7 @@ export async function getCurrentUser() {
  */
 export async function hasRole(requiredRoles: UserRole | UserRole[]): Promise<boolean> {
   const { user } = await getCurrentUser()
-  
+
   if (!user) return false
 
   const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles]
@@ -62,12 +62,12 @@ export async function isAdmin(): Promise<boolean> {
  */
 export async function getUserById(userId: string) {
   const supabase = await createServerClient()
-  
+
   const { data, error } = await supabase
     .from('users')
     .select('*')
     .eq('id', userId)
-    .single()
+    .maybeSingle()
 
   return { user: data as User | null, error }
 }
@@ -85,10 +85,10 @@ export async function isOwner(resourceUserId: string): Promise<boolean> {
  */
 export async function canModify(resourceUserId: string): Promise<boolean> {
   const { user } = await getCurrentUser()
-  
+
   if (!user) return false
   if (user.id === resourceUserId) return true
-  
+
   return ['moderator', 'admin'].includes(user.role)
 }
 
@@ -97,11 +97,11 @@ export async function canModify(resourceUserId: string): Promise<boolean> {
  */
 export async function verifyAuth() {
   const { user, error } = await getCurrentUser()
-  
+
   if (error || !user) {
     throw new Error('Unauthorized')
   }
-  
+
   return user
 }
 
@@ -110,12 +110,12 @@ export async function verifyAuth() {
  */
 export async function verifyRole(requiredRoles: UserRole | UserRole[]) {
   const user = await verifyAuth()
-  
+
   const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles]
-  
+
   if (!roles.includes(user.role)) {
     throw new Error('Forbidden: Insufficient permissions')
   }
-  
+
   return user
 }
