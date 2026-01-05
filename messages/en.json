@@ -70,7 +70,9 @@
             "general": "An error occurred",
             "updateFailed": "Failed to update",
             "adminOnly": "Only administrators can perform this action"
-        }
+        },
+        "pageNotFound": "Page Not Found",
+        "backToHome": "Back to Home"
     },
     "Licenses": {
         "CC-BY-4_0": "CC BY 4.0 (Attribution)",
@@ -186,16 +188,17 @@
         "websiteLabel": "Website",
         "back": "Back",
         "continue": "Continue",
-        "finish": "Get Started",
+        "finish": "Enter the Commons",
         "saving": "Saving...",
         "skipForNow": "Skip for now →",
         "step": "Step {current} of {total}",
         "next": "Next",
         "beginResearch": "Begin Research",
         "closeOnboarding": "Close onboarding",
+        "getStarted": "Enter the Commons",
         "welcome": {
             "title": "Welcome to SyriaHub",
-            "subtitle": "Your Research Companion",
+            "subtitle": "The Research Instrument",
             "description": "SyriaHub is a knowledge platform designed for post-conflict reconstruction research, urban studies, heritage preservation, and evidence-based decision-making.",
             "mission": "Mission",
             "missionDesc": "Connect researchers with reliable, diverse evidence",
@@ -209,12 +212,12 @@
             "description": "Multiple ways to contribute your research and engage with the community:",
             "articles": "Research Articles",
             "articlesDesc": "Publish findings with rich markdown, citations, and media",
+            "fork": "Fork & Remix",
+            "forkDesc": "Build on others' work with proper attribution",
             "questions": "Questions & Answers",
             "questionsDesc": "Ask research questions and get expert answers",
             "events": "Events",
-            "eventsDesc": "Create conferences, workshops, webinars with RSVP tracking",
-            "fork": "Fork & Remix",
-            "forkDesc": "Build on others' work with proper attribution"
+            "eventsDesc": "Create conferences, workshops, webinars with RSVP tracking"
         },
         "researchLab": {
             "title": "Research Lab",
@@ -590,7 +593,7 @@
     },
     "Landing": {
         "heroTitle": "Research Made Collaborative",
-        "heroSubtitle": "A minimalist platform for collaborative knowledge sharing. Create, discover, and organize research with clarity and focus.",
+        "heroSubtitle": "A collaborative research platform. No algorithms, no ranking, no engagement bait — just shared knowledge.",
         "getStarted": "Get Started",
         "browsePosts": "Browse Posts",
         "featuresTitle": "Built for Clarity",
@@ -601,9 +604,9 @@
         "feature2Desc": "Find relevant research with intuitive tagging and search.",
         "feature3Title": "Collaboration",
         "feature3Desc": "Share knowledge and connect with researchers worldwide.",
-        "ctaTitle": "Ready to start sharing?",
+        "ctaTitle": "Ready to contribute?",
         "ctaDesc": "Join our community of researchers and start contributing to collaborative knowledge.",
-        "createAccount": "Create Your Account",
+        "createAccount": "Join the Commons",
         "recentResearch": "Recent Research",
         "viewAll": "View All",
         "popularTopics": "Popular Topics",
@@ -622,10 +625,10 @@
         "clearFilter": "Clear filter"
     },
     "Footer": {
-        "description": "A collaborative research commons for Syrian knowledge, context, and memory.",
+        "description": "A collaborative research commons for Syrian knowledge, context, and memory. SyriaHub is part of the PluraGate network of research platforms.",
         "contribute": "Contribute",
         "quickLinks": "Quick Links",
-        "browseFeed": "Browse Feed",
+        "browseFeed": "Browse Research",
         "writePost": "Write a Post",
         "howItWorks": "How SyriaHub Works",
         "contact": "Contact",
@@ -636,7 +639,7 @@
         "about": "About",
         "governance": "Governance & Trust",
         "privacy": "Privacy Policy",
-        "spatialTeaser": "Spatial knowledge tools in development",
+        "spatialTeaser": "Maps, boundaries, and datasets in development",
         "licensingNote": "Content licensed per author terms.",
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
         "updates": "Updates",
@@ -656,6 +659,34 @@
         "sustainabilityAIDesc": "Retrieval, analysis, moderation support, and research assistance. AI systems are constrained, non-extractive, and do not monetise user data.",
         "sustainabilityStatement": "SyriaHub does not sell data, prioritise engagement metrics, or place knowledge behind paywalls. All funding decisions are guided by the principle of preserving the platform as a public research commons.",
         "sustainabilityContact": "For institutions or individuals interested in supporting this infrastructure, further details are available upon request."
+    },
+    "Contact": {
+        "title": "Contact the Commons",
+        "subtitle": "Get in touch with the maintainers or propose a collaboration.",
+        "contactInfo": "Contact Information",
+        "emailLabel": "Email",
+        "pluragateMember": "PluraGate Network · SyriaHub is a member project",
+        "supportLabel": "Support",
+        "supportText": "Join our community on <github>GitHub</github> for technical support.",
+        "locationLabel": "Location",
+        "digitalOrg": "Digital-first organization",
+        "globalReach": "Global Reach",
+        "operatingUnder": "SyriaHub operates under the PluraGate research network.",
+        "privacyNote": "Your privacy is important to us. We will only use your information to respond to your inquiry.",
+        "placeholders": {
+            "name": "Your name",
+            "email": "you@example.com",
+            "subject": "Topic or context",
+            "message": "What would you like to discuss or propose?"
+        },
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "subject": "Subject",
+            "message": "Message",
+            "send": "Send Message",
+            "sending": "Sending..."
+        }
     },
     "Resources": {
         "linkedResources": "Linked Resources",
@@ -2227,64 +2258,6 @@
         },
         "howToAdvance": "How to Advance",
         "advanceDescription": "Members can apply to become Researchers through the role promotion request system. Advancement is based on community contribution, expertise, and adherence to guidelines."
-    },
-    "Onboarding": {
-        "step": "Step {current} of {total}",
-        "back": "Back",
-        "next": "Next",
-        "beginResearch": "Begin Research",
-        "closeOnboarding": "Close onboarding",
-        "welcome": {
-            "title": "Welcome to SyriaHub",
-            "subtitle": "Your Research Companion",
-            "description": "SyriaHub is a knowledge platform designed for post-conflict reconstruction research, urban studies, heritage preservation, and evidence-based decision-making.",
-            "mission": "Mission",
-            "missionDesc": "Connect researchers with reliable, diverse evidence",
-            "community": "Community",
-            "communityDesc": "Collaborate with researchers & practitioners worldwide",
-            "tagline": "A research instrument — not a social media feed"
-        },
-        "create": {
-            "title": "Create & Share",
-            "subtitle": "Contribute to the Knowledge Base",
-            "description": "Multiple ways to contribute your research and engage with the community:",
-            "articles": "Research Articles",
-            "articlesDesc": "Publish findings with rich markdown, citations, and media",
-            "questions": "Questions & Answers",
-            "questionsDesc": "Ask research questions and get expert answers",
-            "events": "Events",
-            "eventsDesc": "Create conferences, workshops, webinars with RSVP tracking",
-            "fork": "Fork & Remix",
-            "forkDesc": "Build on others' work with proper attribution"
-        },
-        "researchLab": {
-            "title": "Research Lab",
-            "subtitle": "AI-Powered Research Tools",
-            "description": "Access specialized tools designed for rigorous, evidence-based research:",
-            "search": "Multi-Source Search",
-            "searchDesc": "Search internal content + ReliefWeb, HDX, World Bank APIs",
-            "advisor": "AI Question Advisor",
-            "advisorDesc": "Get feedback on research questions and methodology",
-            "surveys": "Polls & Surveys",
-            "surveysDesc": "Create professional research instruments with analytics",
-            "graph": "Knowledge Graph",
-            "graphDesc": "Visualize connections between topics and disciplines"
-        },
-        "epistemic": {
-            "title": "Epistemic Integrity",
-            "subtitle": "Understanding Over Agreement",
-            "description": "This platform is designed differently. We prioritize understanding and coverage over engagement:",
-            "principle1": "No Preference Profiles",
-            "principle1Desc": "We don't track likes or build ideological profiles about you",
-            "principle2": "Intentional Disagreement",
-            "principle2Desc": "You'll encounter contrasting perspectives — by design, not by accident",
-            "principle3": "Full Transparency",
-            "principle3Desc": "Every recommendation explains exactly why it appears",
-            "tagline": "Optimize for understanding and coverage, not engagement and alignment."
-        },
-        "skipForNow": "Skip for now",
-        "getStarted": "Get Started",
-        "saving": "Saving..."
     },
     "Gamification": {
         "title": "Gamification & Levels",

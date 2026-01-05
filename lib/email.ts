@@ -288,6 +288,47 @@ export const emailTemplates = {
       }
     }),
   }),
+
+  contactFormSubmission: (name: string, email: string, subject: string, message: string) => ({
+    subject: `[Contact Form] ${subject}`,
+    html: wrapEmailLayout(`
+      <div style="font-family: 'Segoe UI', sans-serif;">
+        <h2 style="color: #1e293b; margin-top: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;">New Contact Submission</h2>
+        <p style="color: #64748b; font-size: 16px; margin-bottom: 32px;">You learned something new! A visitor has reached out via the contact form.</p>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #94a3b8; width: 100px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">From</td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 600; font-size: 15px;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #94a3b8; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Email</td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 500; font-size: 15px;">
+                <a href="mailto:${email}" style="color: #1e7a6e; text-decoration: none; border-bottom: 1px dotted #1e7a6e;">${email}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #94a3b8; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Subject</td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 600; font-size: 15px;">${subject}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div>
+          <h3 style="color: #0f172a; font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center;">
+            <span style="display: inline-block; width: 4px; height: 18px; background: #1e7a6e; border-radius: 2px; margin-right: 12px;"></span>
+            Message Content
+          </h3>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; color: #334155; line-height: 1.7; white-space: pre-wrap; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">${message}</div>
+        </div>
+        
+        <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #f1f5f9; text-align: center;">
+          <a href="mailto:${email}?subject=Re: ${subject}" style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">Reply to ${name.split(' ')[0]}</a>
+        </div>
+      </div>
+    `),
+  }),
 }
 
 /**
@@ -305,32 +346,31 @@ function wrapEmailLayout(content: string): string {
         .wrapper { width: 100%; table-layout: fixed; background-color: #f8fafc; padding-bottom: 40px; }
         .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #0f172a; border-radius: 16px; overflow: hidden; margin-top: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
         .header { background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 40px 20px; text-align: center; }
-        .logo { color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; text-decoration: none; }
         .content { padding: 40px 30px; }
-        .footer { padding: 20px; text-align: center; color: #64748b; font-size: 13px; }
+        .footer { padding: 32px 20px; text-align: center; color: #64748b; font-size: 13px; }
         .btn { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; }
         @media screen and (max-width: 600px) {
           .content { padding: 30px 20px !important; }
         }
       </style>
     </head>
-    <body>
-      <div class="wrapper">
-        <table class="main">
+    <body style="margin: 0; padding: 0; background-color: #f8fafc;">
+      <div class="wrapper" style="background-color: #f8fafc;">
+        <table class="main" align="center" style="background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
           <tr>
-            <td class="header">
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL}" class="logo">SyriaHub</a>
+            <td class="header" style="background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 40px 20px; text-align: center;">
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="color: #ffffff !important; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; text-decoration: none; font-family: 'Segoe UI', sans-serif;">SyriaHub</a>
             </td>
           </tr>
           <tr>
-            <td class="content">
+            <td class="content" style="padding: 40px 30px; background-color: #ffffff;">
               ${content}
             </td>
           </tr>
         </table>
-        <div class="footer">
-          <p>© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
-          <p>
+        <div class="footer" style="text-align: center; color: #64748b; font-size: 13px; padding: 32px 20px;">
+          <p style="margin: 0 0 8px 0;">© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
+          <p style="margin: 0;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL}/privacy" style="color: #64748b; text-decoration: underline;">Privacy Policy</a> • 
             <a href="${process.env.NEXT_PUBLIC_SITE_URL}/support" style="color: #64748b; text-decoration: underline;">Support</a>
           </p>

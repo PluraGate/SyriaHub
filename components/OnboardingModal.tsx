@@ -152,7 +152,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                 <UserAvatar name={userName} email={userEmail} size="xl" />
                             </div>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                {userName ? `Welcome, ${userName}.` : 'Welcome.'} Ready to share your research?
+                                {userName ? `Welcome, ${userName}.` : 'Welcome.'} Ready to contribute?
                             </p>
                             <div className="grid grid-cols-3 gap-3 pt-4">
                                 <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
@@ -160,12 +160,12 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                     <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Share research</div>
                                 </div>
                                 <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
-                                    <div className="text-sm font-medium text-text dark:text-dark-text">Discuss</div>
+                                    <div className="text-sm font-medium text-text dark:text-dark-text">Deliberate</div>
                                     <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Collaborate</div>
                                 </div>
                                 <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
                                     <div className="text-sm font-medium text-text dark:text-dark-text">Grow</div>
-                                    <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Build reputation</div>
+                                    <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Establish credibility</div>
                                 </div>
                             </div>
                         </div>
@@ -182,7 +182,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Your name"
-                                    className="input"
+                                    className="input dark:bg-dark-bg dark:text-dark-text dark:border-dark-border"
                                 />
                             </div>
                             <div>
@@ -194,7 +194,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                     onChange={(e) => setBio(e.target.value)}
                                     placeholder="Tell us about yourself and your research interests..."
                                     rows={3}
-                                    className="input resize-none"
+                                    className="input resize-none dark:bg-dark-bg dark:text-dark-text dark:border-dark-border"
                                 />
                             </div>
                             <div>
@@ -206,7 +206,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                     value={affiliation}
                                     onChange={(e) => setAffiliation(e.target.value)}
                                     placeholder="University, Organization, or Independent"
-                                    className="input"
+                                    className="input dark:bg-dark-bg dark:text-dark-text dark:border-dark-border"
                                 />
                             </div>
                         </div>
@@ -218,7 +218,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
                                     <Check className="w-5 h-5 text-green-500" />
                                     <span className="text-sm text-text dark:text-dark-text">
-                                        Browse the <strong>Feed</strong> for latest research
+                                        Browse the <strong>Research Stream</strong> for latest work
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
@@ -236,7 +236,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
                                     <Check className="w-5 h-5 text-green-500" />
                                     <span className="text-sm text-text dark:text-dark-text">
-                                        Ask <strong>Questions</strong> and earn reputation
+                                        Ask <strong>Questions</strong> to solve problems
                                     </span>
                                 </div>
                             </div>

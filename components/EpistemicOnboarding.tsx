@@ -112,11 +112,19 @@ export function EpistemicOnboarding() {
                         {t('create.description')}
                     </p>
 
+
                     <div className="grid gap-4">
                         <FeatureRow
                             icon={FileText}
                             title={t('create.articles')}
                             description={t('create.articlesDesc')}
+                            highlight
+                        />
+                        <FeatureRow
+                            icon={GitFork}
+                            title={t('create.fork')}
+                            description={t('create.forkDesc')}
+                            highlight
                         />
                         <FeatureRow
                             icon={MessageSquare}
@@ -127,11 +135,6 @@ export function EpistemicOnboarding() {
                             icon={Calendar}
                             title={t('create.events')}
                             description={t('create.eventsDesc')}
-                        />
-                        <FeatureRow
-                            icon={GitFork}
-                            title={t('create.fork')}
-                            description={t('create.forkDesc')}
                         />
                     </div>
                 </div>
@@ -154,21 +157,25 @@ export function EpistemicOnboarding() {
                             icon={Search}
                             title={t('researchLab.search')}
                             description={t('researchLab.searchDesc')}
+                            tag="Available Now"
                         />
                         <FeatureRow
                             icon={Bot}
                             title={t('researchLab.advisor')}
                             description={t('researchLab.advisorDesc')}
+                            tag="Coming Soon"
                         />
                         <FeatureRow
                             icon={BarChart3}
                             title={t('researchLab.surveys')}
                             description={t('researchLab.surveysDesc')}
+                            tag="Coming Soon"
                         />
                         <FeatureRow
                             icon={Sparkles}
                             title={t('researchLab.graph')}
                             description={t('researchLab.graphDesc')}
+                            tag="Coming Soon"
                         />
                     </div>
                 </div>
@@ -336,19 +343,39 @@ function HighlightCard({
 function FeatureRow({
     icon: Icon,
     title,
-    description
+    description,
+    highlight = false,
+    tag
 }: {
     icon: React.ElementType
     title: string
     description: string
+    highlight?: boolean
+    tag?: string
 }) {
     return (
-        <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-dark-bg rounded-xl hover:bg-gray-100 dark:hover:bg-dark-bg/80 transition-colors">
-            <div className="flex-shrink-0 p-2.5 bg-white dark:bg-dark-surface rounded-xl shadow-sm">
-                <Icon className="w-5 h-5 text-primary" />
+        <div className={`flex items-start gap-4 p-4 rounded-xl transition-colors ${highlight
+                ? 'bg-primary/5 dark:bg-primary/10 border border-primary/20'
+                : 'bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-dark-bg/80'
+            }`}>
+            <div className={`flex-shrink-0 p-2.5 rounded-xl shadow-sm ${highlight ? 'bg-white dark:bg-dark-surface text-primary' : 'bg-white dark:bg-dark-surface text-text-light dark:text-dark-text-muted'
+                }`}>
+                <Icon className={`w-5 h-5 ${highlight ? 'text-primary' : ''}`} />
             </div>
             <div className="flex-1 min-w-0">
-                <h4 className="text-base font-semibold text-text dark:text-dark-text mb-0.5">{title}</h4>
+                <div className="flex items-center gap-2 mb-0.5">
+                    <h4 className={`text-base font-semibold ${highlight ? 'text-primary dark:text-primary-light' : 'text-text dark:text-dark-text'}`}>
+                        {title}
+                    </h4>
+                    {tag && (
+                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${tag === 'Available Now'
+                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                            }`}>
+                            {tag}
+                        </span>
+                    )}
+                </div>
                 <p className="text-sm text-text-light dark:text-dark-text-muted leading-relaxed">{description}</p>
             </div>
         </div>

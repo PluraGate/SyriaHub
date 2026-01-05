@@ -5,7 +5,7 @@
         "primaryCta": "ابدأ الآن",
         "secondaryCta": "استكشف الأبحاث",
         "languageSwitcher": "اللغة",
-        "english": "الإنجليزية",
+        "english": "English",
         "arabic": "العربية",
         "loading": "جارٍ التحميل...",
         "save": "حفظ",
@@ -70,7 +70,9 @@
             "general": "حدث خطأ ما",
             "updateFailed": "فشل التحديث",
             "adminOnly": "فقط المشرفون يمكنهم القيام بهذا الإجراء"
-        }
+        },
+        "pageNotFound": "الصفحة غير موجودة",
+        "backToHome": "العودة للرئيسية"
     },
     "Licenses": {
         "CC-BY-4_0": "CC BY 4.0 (الإسناد)",
@@ -168,7 +170,25 @@
         }
     },
     "Onboarding": {
+        "setupWelcome": "مرحباً بك في SyriaHub!",
+        "title": "أكمل ملفك الشخصي",
+        "subtitle": "أخبرنا قليلاً عن نفسك لتحقيق أقصى استفادة من SyriaHub.",
+        "step1Title": "عنك",
+        "step2Title": "معلومات مهنية",
+        "step3Title": "أنت جاهز!",
+        "step3Description": "ملفك الشخصي جاهز. ابدأ استكشاف المجتمع البحثي!",
+        "nameLabel": "الاسم الكامل",
+        "namePlaceholder": "أدخل اسمك الكامل",
+        "bioLabel": "نبذة تعريفية",
+        "bioPlaceholder": "أخبرنا عن نفسك واهتماماتك البحثية...",
+        "affiliationLabel": "الانتماء",
+        "affiliationPlaceholder": "جامعة، مؤسسة، أو شركة",
+        "locationLabel": "الموقع",
+        "locationPlaceholder": "المدينة، البلد",
+        "websiteLabel": "الموقع الإلكتروني",
         "back": "رجوع",
+        "continue": "متابعة",
+        "finish": "ابدأ الآن",
         "saving": "جارٍ الحفظ...",
         "skipForNow": "تخطي الآن ←",
         "step": "الخطوة {current} من {total}",
@@ -605,10 +625,10 @@
         "clearFilter": "مسح التصفية"
     },
     "Footer": {
-        "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية.",
+        "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية. سيريا هب جزء من شبكة PluraGate للمنصات البحثية.",
         "contribute": "ساهم معنا",
         "quickLinks": "روابط سريعة",
-        "browseFeed": "تصفح المنشورات",
+        "browseFeed": "تصفح الأبحاث",
         "writePost": "اكتب منشوراً",
         "howItWorks": "كيف تعمل SyriaHub",
         "contact": "تواصل معنا",
@@ -639,6 +659,34 @@
         "sustainabilityAIDesc": "الاسترجاع، التحليل، دعم الإشراف، والمساعدة البحثية. أنظمة الذكاء الاصطناعي محدودة وغير استخراجية ولا تسعى لتحقيق أرباح من بيانات المستخدمين.",
         "sustainabilityStatement": "لا تبيع سيريا هب البيانات، ولا تُعطي الأولوية لمقاييس التفاعل، ولا تضع المعرفة خلف حواجز الدفع. جميع قرارات التمويل تسترشد بمبدأ الحفاظ على المنصة كمساحة بحثية عامة.",
         "sustainabilityContact": "للمؤسسات أو الأفراد المهتمين بدعم هذه البنية التحتية، تتوفر مزيد من التفاصيل عند الطلب."
+    },
+    "Contact": {
+        "title": "تواصل مع المشاع البحثي",
+        "subtitle": "تواصل مع القائمين على المنصة أو اقترح تعاوناً.",
+        "contactInfo": "معلومات الاتصال",
+        "emailLabel": "البريد الإلكتروني",
+        "pluragateMember": "شبكة PluraGate · سيريا هب مشروع عضو",
+        "supportLabel": "الدعم الفني",
+        "supportText": "انضم إلى مجتمعنا على <github>GitHub</github> للدعم الفني.",
+        "locationLabel": "الموقع",
+        "digitalOrg": "منظمة رقمية",
+        "globalReach": "نطاق عالمي",
+        "operatingUnder": "تعمل SyriaHub ضمن شبكة PluraGate البحثية.",
+        "privacyNote": "خصوصيتك مهمة بالنسبة لنا. سنستخدم معلوماتك فقط للرد على استفسارك.",
+        "placeholders": {
+            "name": "اسمك",
+            "email": "you@example.com",
+            "subject": "الموضوع أو السياق",
+            "message": "ما الذي تود مناقشته أو اقتراحه؟"
+        },
+        "form": {
+            "name": "الاسم",
+            "email": "البريد الإلكتروني",
+            "subject": "الموضوع",
+            "message": "الرسالة",
+            "send": "إرسال الرسالة",
+            "sending": "جاري الإرسال..."
+        }
     },
     "Resources": {
         "linkedResources": "موارد مرتبطة",
