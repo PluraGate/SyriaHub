@@ -20,7 +20,8 @@ import {
     Sliders,
     Calendar,
     Hash,
-    AlignLeft
+    AlignLeft,
+    X
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import { useTranslations } from 'next-intl'
@@ -64,6 +65,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
     const [showPreview, setShowPreview] = useState(false)
     const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null)
     const [showSettings, setShowSettings] = useState(false)
+    const [showAddQuestion, setShowAddQuestion] = useState(false)
 
     const addQuestion = (type: string) => {
         const newQuestion: Question = {
@@ -77,6 +79,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
         }
         setQuestions([...questions, newQuestion])
         setExpandedQuestion(newQuestion.id)
+        setShowAddQuestion(false) // Close the panel after adding
     }
 
     const updateQuestion = (id: string, updates: Partial<Question>) => {
@@ -199,61 +202,62 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
+            {/* Header - Mobile responsive */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h1 className="text-xl sm:text-2xl font-display font-bold text-text dark:text-dark-text">
                     {existingSurvey ? t('editSurvey') : t('createSurvey')}
                 </h1>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-1 px-1 scrollbar-hide">
                     <button
                         onClick={() => setShowSettings(!showSettings)}
-                        className="btn btn-ghost"
+                        className="btn btn-ghost text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4"
                     >
-                        <Settings className="w-4 h-4 me-2" />
-                        {t('settings')}
+                        <Settings className="w-4 h-4 sm:me-2" />
+                        <span className="hidden sm:inline">{t('settings')}</span>
                     </button>
                     <button
                         onClick={() => setShowPreview(!showPreview)}
-                        className="btn btn-ghost"
+                        className="btn btn-ghost text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4"
                     >
-                        <Eye className="w-4 h-4 me-2" />
-                        {t('preview')}
+                        <Eye className="w-4 h-4 sm:me-2" />
+                        <span className="hidden sm:inline">{t('preview')}</span>
                     </button>
                     <button
                         onClick={() => handleSave(false)}
                         disabled={saving}
-                        className="btn btn-outline"
+                        className="btn btn-outline text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4"
                     >
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin me-2" /> : <Save className="w-4 h-4 me-2" />}
-                        {t('saveDraft')}
+                        {saving ? <Loader2 className="w-4 h-4 animate-spin sm:me-2" /> : <Save className="w-4 h-4 sm:me-2" />}
+                        <span className="hidden sm:inline">{t('saveDraft')}</span>
                     </button>
                     <button
                         onClick={() => handleSave(true)}
                         disabled={saving}
-                        className="btn btn-primary"
+                        className="btn btn-primary text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4"
                     >
-                        <Send className="w-4 h-4 me-2" />
-                        {t('publish')}
+                        <Send className="w-4 h-4 sm:me-2" />
+                        <span className="hidden sm:inline">{t('publish')}</span>
                     </button>
                 </div>
             </div>
 
             {/* Settings Panel */}
             {showSettings && (
-                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 mb-6">
-                    <h3 className="font-semibold text-text dark:text-dark-text mb-4">
+                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 sm:p-6 mb-4 sm:mb-6">
+                    <h3 className="font-semibold text-sm sm:text-base text-text dark:text-dark-text mb-3 sm:mb-4">
                         {t('surveySettings')}
                     </h3>
                     <div className="space-y-4">
-                        <label className="flex items-center gap-3 cursor-pointer">
+                        <label className="flex items-start sm:items-center gap-3 cursor-pointer">
                             <input
                                 type="checkbox"
                                 checked={isAnonymous}
                                 onChange={(e) => setIsAnonymous(e.target.checked)}
-                                className="rounded border-gray-300 text-primary focus:ring-primary"
+                                className="rounded border-gray-300 text-primary focus:ring-primary mt-0.5 sm:mt-0"
                             />
                             <div>
-                                <span className="text-text dark:text-dark-text font-medium">{tPolls('anonymous')}</span>
-                                <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                <span className="text-sm sm:text-base text-text dark:text-dark-text font-medium">{tPolls('anonymous')}</span>
+                                <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">
                                     {t('anonymousDesc')}
                                 </p>
                             </div>
@@ -262,24 +266,25 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                 </div>
             )}
 
-            <div className="grid lg:grid-cols-[1fr_280px] gap-6">
-                {/* Main Form */}
-                <div className="space-y-6">
+            {/* Main Layout - Single column on mobile, two columns on desktop */}
+            <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-[1fr_280px] lg:gap-6">
+                {/* Main Form - Full width on mobile */}
+                <div className="space-y-4">
                     {/* Title & Description */}
-                    <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
+                    <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 sm:p-6">
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder={t('titlePlaceholder')}
-                            className="w-full text-2xl font-display font-bold border-none bg-transparent text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0"
+                            className="w-full text-lg sm:text-2xl font-display font-bold border-none bg-transparent text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0"
                         />
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder={t('descriptionPlaceholder')}
                             rows={2}
-                            className="w-full mt-3 border-none bg-transparent text-text-light dark:text-dark-text-muted placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0 resize-none"
+                            className="w-full mt-2 sm:mt-3 text-sm sm:text-base border-none bg-transparent text-text-light dark:text-dark-text-muted placeholder-text-light dark:placeholder-dark-text-muted focus:outline-none focus:ring-0 resize-none"
                         />
                     </div>
 
@@ -396,22 +401,68 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                         )
                     })}
 
-                    {/* Empty State */}
-                    {questions.length === 0 && (
-                        <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-dark-border">
-                            <List className="w-10 h-10 mx-auto text-gray-300 dark:text-dark-text-muted mb-3" />
-                            <p className="text-text-light dark:text-dark-text-muted mb-2">
+                    {/* Mobile: Add Question Button */}
+                    <div className="lg:hidden">
+                        <button
+                            onClick={() => setShowAddQuestion(!showAddQuestion)}
+                            className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-colors text-primary"
+                        >
+                            {showAddQuestion ? (
+                                <>
+                                    <X className="w-5 h-5" />
+                                    <span className="font-medium">{t('cancel') || 'Cancel'}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className="w-5 h-5" />
+                                    <span className="font-medium">{t('addQuestionTitle')}</span>
+                                </>
+                            )}
+                        </button>
+
+                        {/* Collapsible Question Types Grid */}
+                        {showAddQuestion && (
+                            <div className="mt-3 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 animate-in slide-in-from-top-2 duration-200">
+                                <p className="text-xs text-text-light dark:text-dark-text-muted mb-3">
+                                    {t('selectQuestionType') || 'Select a question type:'}
+                                </p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {QUESTION_TYPES_CONFIG.map((type) => (
+                                        <button
+                                            key={type.id}
+                                            onClick={() => addQuestion(type.id)}
+                                            className="flex items-center gap-2 p-3 text-start rounded-lg border border-gray-200 dark:border-dark-border hover:border-primary hover:bg-primary/5 active:bg-primary/10 transition-colors"
+                                        >
+                                            <type.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                                            <span className="text-sm text-text dark:text-dark-text truncate">
+                                                {t(type.labelKey)}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Empty State - Only show when no questions */}
+                    {questions.length === 0 && !showAddQuestion && (
+                        <div className="text-center py-8 sm:py-12 bg-gray-50 dark:bg-dark-surface/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-dark-border">
+                            <List className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-gray-300 dark:text-dark-text-muted mb-2 sm:mb-3" />
+                            <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mb-1 sm:mb-2">
                                 {t('noQuestions')}
                             </p>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted lg:hidden">
+                                {t('addQuestionsHintMobile') || 'Tap the button above to add questions'}
+                            </p>
+                            <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted hidden lg:block">
                                 {t('addQuestionsHint')}
                             </p>
                         </div>
                     )}
                 </div>
 
-                {/* Question Types Sidebar */}
-                <div className="space-y-4">
+                {/* Question Types Sidebar - Desktop only */}
+                <div className="hidden lg:block space-y-4">
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 sticky top-24">
                         <h3 className="font-semibold text-text dark:text-dark-text mb-4">
                             {t('addQuestionTitle')}

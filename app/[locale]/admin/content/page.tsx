@@ -287,22 +287,22 @@ export default function AdminContentPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-6 md:p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-6xl mx-auto">
                             {/* Header */}
-                            <div className="mb-8">
-                                <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                            <div className="mb-4 sm:mb-8">
+                                <h1 className="text-xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                                     {t('title')}
                                 </h1>
-                                <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-1 sm:mt-2">
                                     {t('subtitle')}
                                 </p>
                             </div>
 
                             {/* Filters */}
-                            <div className="card p-4 mb-6">
-                                <div className="flex flex-col md:flex-row gap-4">
+                            <div className="card p-3 sm:p-4 mb-4 sm:mb-6">
+                                <div className="flex flex-col gap-3 sm:gap-4">
                                     {/* Search */}
                                     <div className="flex-1 relative">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />

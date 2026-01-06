@@ -232,26 +232,26 @@ export default function AdminAppealsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-6xl mx-auto">
                             {/* Header */}
-                            <div className="flex items-center justify-between mb-8">
+                            <div className="mb-4 sm:mb-8">
                                 <div>
-                                    <h1 className="text-3xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
-                                    <p className="text-text-light dark:text-dark-text-muted mt-1">
+                                    <h1 className="text-xl sm:text-3xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
+                                    <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-1">
                                         {t('subtitle')}
                                     </p>
                                 </div>
                             </div>
 
                             {/* Filters */}
-                            <div className="flex flex-wrap gap-2 mb-6">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6 overflow-x-auto">
                                 {filters.map((filter) => (
                                     <button
                                         key={filter.value}
                                         onClick={() => setStatusFilter(filter.value)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === filter.value
+                                        className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${statusFilter === filter.value
                                             ? 'bg-primary text-white'
                                             : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg'
                                             }`}

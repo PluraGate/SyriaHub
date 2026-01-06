@@ -44,14 +44,14 @@ export default async function AdminFeedbackPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-6xl mx-auto">
-                            <div className="mb-8">
-                                <h1 className="text-3xl font-display font-bold text-text dark:text-dark-text">
+                            <div className="mb-4 sm:mb-8">
+                                <h1 className="text-xl sm:text-3xl font-display font-bold text-text dark:text-dark-text">
                                     {t('adminTitle')}
                                 </h1>
-                                <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-1 sm:mt-2">
                                     {t('adminDescription')}
                                 </p>
                             </div>

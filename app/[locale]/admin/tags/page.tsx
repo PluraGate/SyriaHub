@@ -186,19 +186,19 @@ export default function AdminTagsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-6 md:p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-4xl mx-auto">
-                            <div className="flex items-center justify-between mb-8">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-8">
                                 <div>
-                                    <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                                    <h1 className="text-xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                                         {t('title')}
                                     </h1>
-                                    <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                    <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-1 sm:mt-2">
                                         {t('subtitle')}
                                     </p>
                                 </div>
-                                <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-4 py-2 rounded-lg font-medium">
+                                <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm sm:text-base self-start sm:self-auto">
                                     {t('pendingCount', { count: unverifiedTags.length })}
                                 </div>
                             </div>
@@ -216,32 +216,32 @@ export default function AdminTagsPage() {
                                 ) : (
                                     <div className="divide-y divide-gray-100 dark:divide-dark-border">
                                         {unverifiedTags.map((item) => (
-                                            <div key={item.tag} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="bg-gray-100 dark:bg-dark-border p-2 rounded-lg">
-                                                        <TagIcon className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                                            <div key={item.tag} className="p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
+                                                <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                                                    <div className="bg-gray-100 dark:bg-dark-border p-2 rounded-lg flex-shrink-0">
+                                                        <TagIcon className="w-4 h-4 sm:w-5 sm:h-5 text-text-light dark:text-dark-text-muted" />
                                                     </div>
-                                                    <div>
-                                                        <h3 className="font-medium text-text dark:text-dark-text">{item.tag}</h3>
-                                                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="font-medium text-sm sm:text-base text-text dark:text-dark-text">{item.tag}</h3>
+                                                        <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">
                                                             {t('usedIn', { count: item.usage_count })}
                                                         </p>
                                                     </div>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => handleDeclineClick(item.tag)}
-                                                        className="text-text-light dark:text-dark-text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                                    >
-                                                        <X className="w-4 h-4 mr-1" />
-                                                        {t('decline')}
-                                                    </Button>
-                                                    <Button size="sm" onClick={() => handleApproveClick(item.tag)}>
-                                                        <Check className="w-4 h-4 mr-1" />
-                                                        {t('approve')}
-                                                    </Button>
+                                                    <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleDeclineClick(item.tag)}
+                                                            className="text-text-light dark:text-dark-text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 sm:p-2 h-auto"
+                                                        >
+                                                            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                            <span className="hidden sm:inline ml-1">{t('decline')}</span>
+                                                        </Button>
+                                                        <Button size="sm" onClick={() => handleApproveClick(item.tag)} className="px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm">
+                                                            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                            <span className="hidden sm:inline ml-1">{t('approve')}</span>
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

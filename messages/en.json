@@ -2647,7 +2647,10 @@
         "requiredQuestion": "Required question",
         "noQuestions": "No questions yet",
         "addQuestionsHint": "Add questions from the sidebar to start building your survey",
+        "addQuestionsHintMobile": "Tap the button above to add questions",
         "addQuestionTitle": "Add Question",
+        "selectQuestionType": "Select a question type:",
+        "cancel": "Cancel",
         "optionPlaceholder": "Option {number}",
         "questionPlaceholder2": "Question {number}",
         "questionTypes": {
@@ -2929,6 +2932,7 @@
         "open": "Open",
         "empty": {
             "title": "No {type} yet",
+            "all": "saved items",
             "items": "saved items",
             "posts": "posts",
             "events": "events",

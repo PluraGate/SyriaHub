@@ -28,8 +28,8 @@ export default async function GovernancePage() {
             <Navbar user={user} />
             <div className="flex">
                 <AdminSidebar />
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-6 md:p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-6xl mx-auto">
                             <TrustGovernanceDashboard />
                         </div>

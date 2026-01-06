@@ -161,20 +161,20 @@ export function AuditLogs() {
     const totalPages = Math.ceil(totalLogs / pageSize)
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
-                        <History className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg sm:text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
+                        <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         {t('title')}
                     </h2>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                    <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted mt-1">
                         {t('subtitle')}
                     </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={exportLogs} disabled={logs.length === 0}>
-                    <Download className="w-4 h-4 mr-2" />
+                <Button variant="outline" size="sm" onClick={exportLogs} disabled={logs.length === 0} className="self-start sm:self-auto text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                     {t('exportCsv')}
                 </Button>
             </div>
