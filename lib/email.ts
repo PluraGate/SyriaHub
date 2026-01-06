@@ -16,6 +16,13 @@ const EMAIL_CONFIG = {
   replyTo: process.env.SMTP_REPLY_TO || 'admin@pluragate.org',
 }
 
+// Invitation-specific email configuration (uses syriahub.org domain)
+const INVITATION_EMAIL_CONFIG = {
+  fromName: 'SyriaHub',
+  fromEmail: process.env.INVITATION_FROM_EMAIL || 'invitations@syriahub.org',
+  replyTo: process.env.INVITATION_REPLY_TO || 'invitations@syriahub.org',
+}
+
 // Initialize Resend client (if API key is available)
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
@@ -148,6 +155,68 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     // Careful with logging to avoid triggering RangeError if the error object is circular or too large
     // Just log the message and code
     console.error(`❌ Email send error [${error.code || 'UNKNOWN'}]:`, error.message)
+
+    // Log failure to database
+    try {
+      await supabase.from('email_logs').insert({
+        recipient_email: to,
+        subject,
+        status: 'failed',
+        error_message: error.message,
+      })
+    } catch (logError) {
+      console.error('Failed to log email failure to database')
+    }
+
+    return false
+  }
+}
+
+/**
+ * Send invitation email using Resend with invitations@syriahub.org
+ * Requires syriahub.org domain to be verified in Resend dashboard
+ */
+export async function sendInvitationEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
+  const supabase = await createServerClient()
+
+  try {
+    // Use Resend as the primary sender for invitations
+    if (resend) {
+      console.log('📧 Sending invitation email via Resend (from invitations@syriahub.org)...')
+
+      const { data, error } = await resend.emails.send({
+        from: `${INVITATION_EMAIL_CONFIG.fromName} <${INVITATION_EMAIL_CONFIG.fromEmail}>`,
+        to: [to],
+        subject,
+        html,
+        text: text || html.replace(/<[^>]*>/g, ''),
+        replyTo: INVITATION_EMAIL_CONFIG.replyTo,
+      })
+
+      if (error) {
+        console.error('❌ Resend error:', error.message)
+        throw new Error(error.message)
+      }
+
+      console.log('✅ Invitation email sent via Resend:', data?.id)
+
+      // Log to database
+      await supabase.from('email_logs').insert({
+        recipient_email: to,
+        subject,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      })
+
+      return true
+    }
+
+    // Fallback: If Resend is not configured, log error and fail
+    console.error('❌ Resend API key not configured. Cannot send invitation email.')
+    throw new Error('Email service not configured')
+
+  } catch (error: any) {
+    console.error(`❌ Invitation email send error [${error.code || 'UNKNOWN'}]:`, error.message)
 
     // Log failure to database
     try {
