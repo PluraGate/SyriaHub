@@ -400,6 +400,84 @@ export const emailTemplates = {
     }),
   }),
 
+  // SyriaHub Invitation - English (uses syriahub.org branding to match sending domain)
+  syriaHubInviteEN: (inviteUrl: string, recipientName?: string) => ({
+    subject: 'You\'re invited to join SyriaHub',
+    html: wrapSyriaHubInviteLayout({
+      lang: 'en',
+      dir: 'ltr',
+      title: 'You\'re invited to join SyriaHub',
+      bodyHtml: `
+        <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 24px;">
+          ${recipientName ? `Hello ${recipientName},` : 'Hello,'}
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 24px;">
+          You are invited to join <strong>SyriaHub</strong>, a platform for research, documentation, and collaborative knowledge focused on Syria.
+        </p>
+
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+          <p style="font-size: 16px; color: #374151; line-height: 1.6; margin: 0 0 12px;">
+            <strong>With your account you can:</strong>
+          </p>
+          <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 15px; line-height: 1.8;">
+            <li>Access exclusive research and insights on Syria</li>
+            <li>Collaborate with researchers and experts</li>
+            <li>Contribute to the collective knowledge base</li>
+            <li>Participate in academic discussions</li>
+          </ul>
+        </div>
+        
+        <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 32px;">
+          This invitation carries no obligation. It is an opportunity to access the platform, view research data, or participate in discussions if you choose.
+        </p>
+      `,
+      cta: {
+        label: 'Accept Invitation',
+        url: inviteUrl
+      }
+    }),
+  }),
+
+  // SyriaHub Invitation - Arabic (uses syriahub.org branding to match sending domain)
+  syriaHubInviteAR: (inviteUrl: string, recipientName?: string) => ({
+    subject: 'دعوة للانضمام إلى SyriaHub',
+    html: wrapSyriaHubInviteLayout({
+      lang: 'ar',
+      dir: 'rtl',
+      title: 'دعوة للانضمام إلى SyriaHub',
+      bodyHtml: `
+        <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 24px;">
+          ${recipientName ? `مرحباً ${recipientName}،` : 'مرحباً،'}
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 24px;">
+          أنت مدعو للانضمام إلى <strong>SyriaHub</strong>، منصة للبحث والتوثيق والمعرفة التشاركية حول سوريا.
+        </p>
+
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+          <p style="font-size: 16px; color: #374151; line-height: 2; margin: 0 0 12px;">
+            <strong>مع حسابك يمكنك:</strong>
+          </p>
+          <ul style="margin: 0; padding-right: 20px; color: #374151; font-size: 15px; line-height: 2;">
+            <li>الوصول إلى أبحاث ورؤى حصرية حول سوريا</li>
+            <li>التعاون مع الباحثين والخبراء</li>
+            <li>المساهمة في قاعدة المعرفة الجماعية</li>
+            <li>المشاركة في النقاشات الأكاديمية</li>
+          </ul>
+        </div>
+        
+        <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 32px;">
+          هذه الدعوة لا تحمل أي التزام. إنها فرصة للوصول إلى المنصة، أو الاطلاع على البيانات البحثية، أو المشاركة في النقاشات إذا رغبت في ذلك.
+        </p>
+      `,
+      cta: {
+        label: 'قبول الدعوة',
+        url: inviteUrl
+      }
+    }),
+  }),
+
   contactFormSubmission: (name: string, email: string, subject: string, message: string) => ({
     subject: `[Contact Form] ${subject}`,
     html: wrapEmailLayout(`
@@ -444,48 +522,107 @@ export const emailTemplates = {
 
 /**
  * Modern, premium layout wrapper for emails
+ * Enhanced design with logo, elegant typography, and professional styling
  */
 function wrapEmailLayout(content: string): string {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.org'
+
+  // SVG Logo (inline for better email compatibility)
+  const logoSvg = `<svg width="48" height="48" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="256" cy="256" r="240" fill="url(#grad1)" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+    <path d="M256 120C180.144 120 118 182.144 118 258C118 333.856 180.144 396 256 396C331.856 396 394 333.856 394 258" stroke="white" stroke-width="32" stroke-linecap="round"/>
+    <circle cx="360" cy="180" r="24" fill="#4ade80"/>
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1e7a6e"/>
+        <stop offset="100%" style="stop-color:#0d4d44"/>
+      </linearGradient>
+    </defs>
+  </svg>`
+
   return `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
       <style>
-        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0f172a; }
-        .wrapper { width: 100%; table-layout: fixed; background-color: #f8fafc; padding-bottom: 40px; }
-        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #0f172a; border-radius: 16px; overflow: hidden; margin-top: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
-        .header { background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 40px 20px; text-align: center; }
-        .content { padding: 40px 30px; }
-        .footer { padding: 32px 20px; text-align: center; color: #64748b; font-size: 13px; }
-        .btn { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f1f5f9; padding: 48px 20px; }
+        .pre-header { font-size: 1px; color: #f1f5f9; line-height: 1px; max-height: 0; overflow: hidden; }
+        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #0f172a; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); }
+        .header { background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 48px 40px; text-align: center; position: relative; }
+        .header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #4ade80, #22d3d1, #4ade80); }
+        .logo-container { margin-bottom: 16px; }
+        .content { padding: 48px 40px; background-color: #ffffff; }
+        .footer { padding: 32px 40px; text-align: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-top: 1px solid #e2e8f0; }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0, transparent); margin: 24px 0; }
         @media screen and (max-width: 600px) {
-          .content { padding: 30px 20px !important; }
+          .content { padding: 32px 24px !important; }
+          .header { padding: 32px 24px !important; }
+          .footer { padding: 24px !important; }
         }
       </style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f8fafc;">
-      <div class="wrapper" style="background-color: #f8fafc;">
-        <table class="main" align="center" style="background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+    <body style="margin: 0; padding: 0; background-color: #f1f5f9;">
+      <div class="wrapper" style="background-color: #f1f5f9; padding: 48px 20px;">
+        <!-- Pre-header text (hidden preview text) -->
+        <span class="pre-header" style="display: none !important; visibility: hidden; opacity: 0; height: 0; width: 0;">SyriaHub - Research and Documentation Platform for Syria</span>
+        
+        <table class="main" align="center" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);">
           <tr>
-            <td class="header" style="background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 40px 20px; text-align: center;">
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="color: #ffffff !important; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; text-decoration: none; font-family: 'Segoe UI', sans-serif;">SyriaHub</a>
+            <td class="header" style="background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 48px 40px; text-align: center;">
+              <!-- Logo -->
+              <div style="margin-bottom: 16px;">
+                <img src="${siteUrl}/icons/icon-96x96.png" alt="SyriaHub" width="64" height="64" style="border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);" />
+              </div>
+              <!-- Brand Name -->
+              <a href="${siteUrl}" style="color: #ffffff; font-size: 32px; font-weight: 800; letter-spacing: -0.03em; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: block;">SyriaHub</a>
+              <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 8px 0 0 0; font-weight: 400; letter-spacing: 0.02em;">Research & Documentation Platform</p>
             </td>
           </tr>
           <tr>
-            <td class="content" style="padding: 40px 30px; background-color: #ffffff;">
+            <td class="content" style="padding: 48px 40px; background-color: #ffffff;">
               ${content}
             </td>
           </tr>
+          <tr>
+            <td class="footer" style="padding: 32px 40px; text-align: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-top: 1px solid #e2e8f0;">
+              <!-- Footer Logo -->
+              <div style="margin-bottom: 16px;">
+                <a href="${siteUrl}" style="text-decoration: none;">
+                  <span style="color: #1e7a6e; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">SyriaHub</span>
+                </a>
+              </div>
+              <!-- Social Links -->
+              <div style="margin-bottom: 20px;">
+                <a href="${siteUrl}" style="display: inline-block; margin: 0 8px; color: #64748b; text-decoration: none;">
+                  <img src="${siteUrl}/email-icons/globe.svg" alt="Website" width="20" height="20" style="vertical-align: middle; opacity: 0.6;" />
+                </a>
+                <a href="mailto:admin@syriahub.org" style="display: inline-block; margin: 0 8px; color: #64748b; text-decoration: none;">
+                  <img src="${siteUrl}/email-icons/mail.svg" alt="Email" width="20" height="20" style="vertical-align: middle; opacity: 0.6;" />
+                </a>
+              </div>
+              <!-- Copyright -->
+              <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
+              <!-- Links -->
+              <p style="margin: 0; font-size: 12px;">
+                <a href="${siteUrl}/privacy" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
+                <span style="color: #cbd5e1; margin: 0 8px;">•</span>
+                <a href="${siteUrl}/support" style="color: #94a3b8; text-decoration: none;">Support</a>
+                <span style="color: #cbd5e1; margin: 0 8px;">•</span>
+                <a href="${siteUrl}/about" style="color: #94a3b8; text-decoration: none;">About</a>
+              </p>
+            </td>
+          </tr>
         </table>
-        <div class="footer" style="text-align: center; color: #64748b; font-size: 13px; padding: 32px 20px;">
-          <p style="margin: 0 0 8px 0;">© ${new Date().getFullYear()} SyriaHub. All rights reserved.</p>
-          <p style="margin: 0;">
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/privacy" style="color: #64748b; text-decoration: underline;">Privacy Policy</a> • 
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/support" style="color: #64748b; text-decoration: underline;">Support</a>
-          </p>
-        </div>
+        
+        <!-- Unsubscribe Note -->
+        <p style="text-align: center; color: #94a3b8; font-size: 11px; margin: 24px 0 0 0;">
+          You're receiving this email because you're a member of SyriaHub.
+        </p>
       </div>
     </body>
     </html>
@@ -614,7 +751,7 @@ function wrapPluraGateEmailLayout({ lang, dir, title, bodyHtml, cta }: PluraGate
                 ${isRTL ? 'إذا لم يعمل الزر، انسخ والصق الرابط التالي في متصفحك:' : 'If the button does not work, copy and paste the following link into your browser:'}
               </p>
               <p style="font-size: 12px; color: #1e7a6e; word-break: break-all; text-align: center; background-color: #f3f4f6; padding: 12px; border-radius: 6px; margin-top: 8px;">
-                ${cta.url}
+              ${cta.url}
               </p>
             </td>
           </tr>
@@ -630,3 +767,186 @@ function wrapPluraGateEmailLayout({ lang, dir, title, bodyHtml, cta }: PluraGate
     </html>
   `
 }
+
+interface SyriaHubEmailConfig {
+  lang: 'en' | 'ar'
+  dir: 'ltr' | 'rtl'
+  title: string
+  bodyHtml: string
+  cta: {
+    label: string
+    url: string
+  }
+}
+
+/**
+ * SyriaHub-branded email layout for invitations
+ * Premium design with logo, enhanced styling to match the general email layout
+ */
+function wrapSyriaHubInviteLayout({ lang, dir, title, bodyHtml, cta }: SyriaHubEmailConfig): string {
+  const isRTL = dir === 'rtl'
+  const textAlign = isRTL ? 'right' : 'left'
+  const fontFamily = isRTL
+    ? "'Segoe UI', Tahoma, Arial, sans-serif"
+    : "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.org'
+
+  return `
+    <!DOCTYPE html>
+    <html lang="${lang}" dir="${dir}">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
+      <title>${title}</title>
+      <style>
+        body { 
+          margin: 0; 
+          padding: 0; 
+          font-family: ${fontFamily}; 
+          background-color: #f1f5f9; 
+          color: #1f2937;
+          direction: ${dir};
+          -webkit-font-smoothing: antialiased;
+        }
+        .wrapper { 
+          width: 100%; 
+          table-layout: fixed; 
+          background-color: #f1f5f9; 
+          padding: 48px 20px;
+        }
+        .pre-header {
+          font-size: 1px;
+          color: #f1f5f9;
+          line-height: 1px;
+          max-height: 0;
+          overflow: hidden;
+        }
+        .main { 
+          background-color: #ffffff; 
+          margin: 0 auto; 
+          width: 100%; 
+          max-width: 600px; 
+          border-spacing: 0; 
+          color: #1f2937; 
+          border-radius: 24px; 
+          overflow: hidden;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+        .header { 
+          background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%);
+          padding: 48px 40px; 
+          text-align: center;
+        }
+        .content { 
+          padding: 40px 40px; 
+          text-align: ${textAlign};
+        }
+        .footer { 
+          padding: 32px 40px; 
+          text-align: center; 
+          background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+          border-top: 1px solid #e2e8f0;
+        }
+        @media screen and (max-width: 600px) {
+          .content { padding: 32px 24px !important; }
+          .header { padding: 32px 24px !important; }
+          .footer { padding: 24px !important; }
+        }
+      </style>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f1f5f9;">
+      <div class="wrapper" style="background-color: #f1f5f9; padding: 48px 20px;">
+        <!-- Pre-header text -->
+        <span class="pre-header" style="display: none !important; visibility: hidden; opacity: 0; height: 0; width: 0;">
+          ${isRTL ? 'دعوة للانضمام إلى SyriaHub - منصة البحث والتوثيق' : "You're invited to join SyriaHub - Research & Documentation Platform"}
+        </span>
+        
+        <table class="main" align="center" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);">
+          <tr>
+            <td class="header" style="background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); padding: 48px 40px; text-align: center;">
+              <!-- Logo Icon -->
+              <div style="margin-bottom: 20px;">
+                <img src="${siteUrl}/icons/icon-96x96.png" alt="SyriaHub" width="72" height="72" style="border-radius: 18px; box-shadow: 0 12px 24px rgba(0,0,0,0.25);" />
+              </div>
+              <!-- Brand Name -->
+              <a href="${siteUrl}" style="color: #ffffff; font-size: 36px; font-weight: 800; text-decoration: none; letter-spacing: -0.03em; display: block; font-family: ${fontFamily};">SyriaHub</a>
+              <p style="color: rgba(255,255,255,0.85); font-size: 15px; margin: 12px 0 0 0; font-weight: 400; letter-spacing: 0.02em;">
+                ${isRTL ? 'منصة البحث والتوثيق حول سوريا' : 'Research & Documentation Platform'}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td class="content" style="padding: 40px 40px; text-align: ${textAlign};">
+              ${bodyHtml}
+              
+              <!-- CTA Button - Enhanced with shadow -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 36px auto; text-align: center;">
+                <tr>
+                  <td style="border-radius: 14px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); box-shadow: 0 8px 16px rgba(30, 122, 110, 0.35);" bgcolor="#1e7a6e">
+                    <a href="${cta.url}" target="_blank" style="display: inline-block; padding: 16px 40px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 17px; font-family: ${fontFamily};">${cta.label}</a>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Fallback Link -->
+              <div style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; padding: 20px; margin-top: 32px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 13px; color: #6b7280; text-align: center; margin: 0 0 12px 0;">
+                  ${isRTL ? 'إذا لم يعمل الزر، انسخ والصق الرابط التالي في متصفحك:' : 'If the button does not work, copy and paste this link:'}
+                </p>
+                <p style="font-size: 12px; color: #1e7a6e; word-break: break-all; text-align: center; margin: 0; font-family: monospace;">
+                  ${cta.url}
+                </p>
+              </div>
+              
+              <!-- Expiry Notice -->
+              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 24px 0 0 0;">
+                ${isRTL ? 'ستنتهي صلاحية هذه الدعوة خلال 7 أيام.' : 'This invitation will expire in 7 days.'}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td class="footer" style="padding: 32px 40px; text-align: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-top: 1px solid #e2e8f0;">
+              <!-- Footer Logo -->
+              <div style="margin-bottom: 16px;">
+                <a href="${siteUrl}" style="text-decoration: none;">
+                  <span style="color: #1e7a6e; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">SyriaHub</span>
+                </a>
+              </div>
+              <!-- Social Links -->
+              <div style="margin-bottom: 20px;">
+                <a href="${siteUrl}" style="display: inline-block; margin: 0 8px; color: #64748b; text-decoration: none;">
+                  <img src="${siteUrl}/email-icons/globe.svg" alt="Website" width="20" height="20" style="vertical-align: middle; opacity: 0.6;" />
+                </a>
+                <a href="mailto:admin@syriahub.org" style="display: inline-block; margin: 0 8px; color: #64748b; text-decoration: none;">
+                  <img src="${siteUrl}/email-icons/mail.svg" alt="Email" width="20" height="20" style="vertical-align: middle; opacity: 0.6;" />
+                </a>
+              </div>
+              <!-- Copyright -->
+              <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">© ${new Date().getFullYear()} SyriaHub</p>
+              <!-- Tagline -->
+              <p style="margin: 0 0 12px 0; color: #9ca3af; font-size: 12px;">
+                ${isRTL ? 'منصة البحث والتوثيق حول سوريا' : 'Research and documentation platform for Syria'}
+              </p>
+              <!-- Links -->
+              <p style="margin: 0; font-size: 11px;">
+                <a href="${siteUrl}/privacy" style="color: #94a3b8; text-decoration: none;">${isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}</a>
+                <span style="color: #cbd5e1; margin: 0 8px;">•</span>
+                <a href="${siteUrl}/about" style="color: #94a3b8; text-decoration: none;">${isRTL ? 'حول' : 'About'}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Note -->
+        <p style="text-align: center; color: #94a3b8; font-size: 11px; margin: 24px 0 0 0;">
+          ${isRTL ? 'تلقيت هذه الرسالة لأنك مدعو للانضمام إلى SyriaHub.' : "You're receiving this because you've been invited to join SyriaHub."}
+        </p>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+
