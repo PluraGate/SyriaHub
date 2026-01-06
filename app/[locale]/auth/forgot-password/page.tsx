@@ -19,7 +19,7 @@ export default async function ForgotPasswordPage({
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     async function handleResetRequest(formData: FormData) {

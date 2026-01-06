@@ -4,6 +4,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {
     Search,
     TrendingUp,
     AlertCircle,
@@ -98,16 +105,20 @@ export function SearchAnalytics() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <select
-                        value={days}
-                        onChange={(e) => setDays(Number(e.target.value))}
-                        className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm"
+                    <Select
+                        value={days.toString()}
+                        onValueChange={(value) => setDays(Number(value))}
                     >
-                        <option value={7}>{t('last7Days')}</option>
-                        <option value={14}>{t('last14Days')}</option>
-                        <option value={30}>{t('last30Days')}</option>
-                        <option value={90}>{t('last90Days')}</option>
-                    </select>
+                        <SelectTrigger className="w-[160px] bg-white dark:bg-dark-surface">
+                            <SelectValue placeholder={t('last7Days')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="7">{t('last7Days')}</SelectItem>
+                            <SelectItem value="14">{t('last14Days')}</SelectItem>
+                            <SelectItem value="30">{t('last30Days')}</SelectItem>
+                            <SelectItem value="90">{t('last90Days')}</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <Button variant="outline" size="sm" onClick={fetchAnalytics} disabled={loading}>
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : tCommon('refresh')}
                     </Button>

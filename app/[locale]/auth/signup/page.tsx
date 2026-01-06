@@ -24,7 +24,7 @@ export default async function SignupPage({
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    redirect('/feed')
+    redirect('/insights')
   }
 
   // Pre-validate invite code if provided in URL
@@ -118,7 +118,7 @@ export default async function SignupPage({
     }
 
     if (data.session) {
-      redirect(`/${locale}/feed`)
+      redirect(`/${locale}/insights`)
     }
 
     redirect(`/${locale}/auth/signup?success=${encodeURIComponent('check-email')}`)

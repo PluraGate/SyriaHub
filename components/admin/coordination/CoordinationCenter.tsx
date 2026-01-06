@@ -22,6 +22,13 @@ import {
     Clock
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { format, formatDistanceToNow } from 'date-fns'
 import { ThreadView } from './ThreadView'
 import { NewThreadDialog } from './NewThreadDialog'
@@ -204,44 +211,56 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
             <div className="flex flex-wrap items-center gap-3 p-4 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
                 <Filter className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
 
-                <select
-                    value={objectTypeFilter || ''}
-                    onChange={(e) => setObjectTypeFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
+                <Select
+                    value={objectTypeFilter || 'all'}
+                    onValueChange={(value) => setObjectTypeFilter(value === 'all' ? null : value)}
                 >
-                    <option value="">{t('allTypes')}</option>
-                    <option value="post">{t('types.post')}</option>
-                    <option value="user">{t('types.user')}</option>
-                    <option value="comment">{t('types.comment')}</option>
-                    <option value="report">{t('types.report')}</option>
-                    <option value="appeal">{t('types.appeal')}</option>
-                    <option value="event">{t('types.event')}</option>
-                    <option value="resource">{t('types.resource')}</option>
-                </select>
+                    <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                        <SelectValue placeholder={t('allTypes')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('allTypes')}</SelectItem>
+                        <SelectItem value="post">{t('types.post')}</SelectItem>
+                        <SelectItem value="user">{t('types.user')}</SelectItem>
+                        <SelectItem value="comment">{t('types.comment')}</SelectItem>
+                        <SelectItem value="report">{t('types.report')}</SelectItem>
+                        <SelectItem value="appeal">{t('types.appeal')}</SelectItem>
+                        <SelectItem value="event">{t('types.event')}</SelectItem>
+                        <SelectItem value="resource">{t('types.resource')}</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    value={stateFilter || ''}
-                    onChange={(e) => setStateFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
+                <Select
+                    value={stateFilter || 'all'}
+                    onValueChange={(value) => setStateFilter(value === 'all' ? null : value)}
                 >
-                    <option value="">{t('allStates')}</option>
-                    <option value="ACTIVE">{t('active')}</option>
-                    <option value="UNDER_REVIEW">{t('underReview')}</option>
-                    <option value="CONTESTED">{t('contested')}</option>
-                    <option value="REVOKED">{t('revoked')}</option>
-                </select>
+                    <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                        <SelectValue placeholder={t('allStates')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('allStates')}</SelectItem>
+                        <SelectItem value="ACTIVE">{t('active')}</SelectItem>
+                        <SelectItem value="UNDER_REVIEW">{t('underReview')}</SelectItem>
+                        <SelectItem value="CONTESTED">{t('contested')}</SelectItem>
+                        <SelectItem value="REVOKED">{t('revoked')}</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    value={priorityFilter || ''}
-                    onChange={(e) => setPriorityFilter(e.target.value || null)}
-                    className="px-3 py-1.5 text-sm border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text outline-none focus:ring-2 focus:ring-primary/20"
+                <Select
+                    value={priorityFilter || 'all'}
+                    onValueChange={(value) => setPriorityFilter(value === 'all' ? null : value)}
                 >
-                    <option value="">{t('allPriorities')}</option>
-                    <option value="low">{t('low')}</option>
-                    <option value="normal">{t('normal')}</option>
-                    <option value="high">{t('high')}</option>
-                    <option value="urgent">{t('urgent')}</option>
-                </select>
+                    <SelectTrigger className="w-[130px] bg-white dark:bg-dark-surface">
+                        <SelectValue placeholder={t('allPriorities')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('allPriorities')}</SelectItem>
+                        <SelectItem value="low">{t('low')}</SelectItem>
+                        <SelectItem value="normal">{t('normal')}</SelectItem>
+                        <SelectItem value="high">{t('high')}</SelectItem>
+                        <SelectItem value="urgent">{t('urgent')}</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <label className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted cursor-pointer">
                     <input

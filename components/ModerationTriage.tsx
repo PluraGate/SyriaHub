@@ -268,7 +268,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as SortOption)}
-                            className="appearance-none pl-3 pr-8 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm text-text dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="select-input appearance-none pr-8 text-sm"
                         >
                             <option value="severity">{t('sortBy.severity')}</option>
                             <option value="time">{t('sortBy.time')}</option>

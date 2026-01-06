@@ -24,6 +24,13 @@ import {
     AlertTriangle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useToast } from '@/components/ui/toast'
 import { RolePromotionDialog } from './RolePromotionDialog'
 import { format } from 'date-fns'
@@ -233,42 +240,44 @@ export function UserManagement() {
 
                 <div className="flex items-center gap-2">
                     {/* Role Filter */}
-                    <div className="relative">
-                        <select
-                            value={roleFilter || ''}
-                            onChange={(e) => {
-                                setRoleFilter(e.target.value || null)
-                                setPage(1)
-                            }}
-                            className="appearance-none pl-3 pr-8 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text text-sm focus:ring-2 focus:ring-primary/20"
-                        >
-                            <option value="">{t('allRoles')}</option>
-                            <option value="researcher">{t('researchers')}</option>
-                            <option value="moderator">{t('moderators')}</option>
-                            <option value="admin">{t('admins')}</option>
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
-                    </div>
+                    <Select
+                        value={roleFilter || 'all'}
+                        onValueChange={(value) => {
+                            setRoleFilter(value === 'all' ? null : value)
+                            setPage(1)
+                        }}
+                    >
+                        <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                            <SelectValue placeholder={t('allRoles')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allRoles')}</SelectItem>
+                            <SelectItem value="researcher">{t('researchers')}</SelectItem>
+                            <SelectItem value="moderator">{t('moderators')}</SelectItem>
+                            <SelectItem value="admin">{t('admins')}</SelectItem>
+                        </SelectContent>
+                    </Select>
 
                     {/* Sort */}
-                    <div className="relative">
-                        <select
-                            value={`${sortBy}-${sortOrder}`}
-                            onChange={(e) => {
-                                const [by, order] = e.target.value.split('-')
-                                setSortBy(by)
-                                setSortOrder(order)
-                                setPage(1)
-                            }}
-                            className="appearance-none pl-3 pr-8 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text text-sm focus:ring-2 focus:ring-primary/20"
-                        >
-                            <option value="created_at-desc">{t('sort.newest')}</option>
-                            <option value="created_at-asc">{t('sort.oldest')}</option>
-                            <option value="name-asc">{t('sort.nameAZ')}</option>
-                            <option value="name-desc">{t('sort.nameZA')}</option>
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
-                    </div>
+                    <Select
+                        value={`${sortBy}-${sortOrder}`}
+                        onValueChange={(value) => {
+                            const [by, order] = value.split('-')
+                            setSortBy(by)
+                            setSortOrder(order)
+                            setPage(1)
+                        }}
+                    >
+                        <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="created_at-desc">{t('sort.newest')}</SelectItem>
+                            <SelectItem value="created_at-asc">{t('sort.oldest')}</SelectItem>
+                            <SelectItem value="name-asc">{t('sort.nameAZ')}</SelectItem>
+                            <SelectItem value="name-desc">{t('sort.nameZA')}</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 

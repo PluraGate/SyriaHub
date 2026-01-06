@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/toast'
@@ -10,8 +11,17 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Loader2, Calendar as CalendarIcon } from 'lucide-react'
+import { Loader2, Calendar as CalendarIcon, MapPin, Clock, ExternalLink, Image as ImageIcon } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
+import { useTranslations } from 'next-intl'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { format } from 'date-fns'
 
 export default function CreateEventPage() {
     const [title, setTitle] = useState('')
@@ -22,6 +32,11 @@ export default function CreateEventPage() {
     const [link, setLink] = useState('')
     const [coverImage, setCoverImage] = useState('')
     const [loading, setLoading] = useState(false)
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+    const t = useTranslations('Events.create')
+    const tCommon = useTranslations('Common')
+    const tEvents = useTranslations('Events')
 
     const supabase = createClient()
     const router = useRouter()
@@ -35,12 +50,16 @@ export default function CreateEventPage() {
             const { data: { user } } = await supabase.auth.getUser()
 
             if (!user) {
-                showToast('Please sign in to create an event.', 'error')
+                showToast(t('signInRequired'), 'error')
                 router.push('/login')
                 return
             }
 
-            const status = action === 'publish' ? 'published' : 'draft'
+            if (action === 'preview') {
+                setIsPreviewOpen(true)
+                setLoading(false)
+                return
+            }
 
             const { data, error } = await supabase
                 .from('posts')
@@ -63,21 +82,18 @@ export default function CreateEventPage() {
 
             if (error) throw error
 
-            if (action === 'preview') {
-                router.refresh()
-                router.push(`/events/${data.id}`)
-            } else if (action === 'draft') {
-                showToast('Draft saved successfully.', 'success')
+            if (action === 'draft') {
+                showToast(t('draftSuccess'), 'success')
                 router.refresh()
                 router.push('/events')
             } else {
-                showToast('Your event has been successfully published.', 'success')
+                showToast(t('publishSuccess'), 'success')
                 router.refresh()
                 router.push(`/events/${data.id}`)
             }
         } catch (error: any) {
             console.error('Error creating event:', JSON.stringify(error, null, 2))
-            showToast(error?.message || 'Failed to create event.', 'error')
+            showToast(error?.message || tCommon('error'), 'error')
         } finally {
             setLoading(false)
         }
@@ -89,24 +105,24 @@ export default function CreateEventPage() {
 
             <main className="flex-1 container-custom max-w-3xl py-12">
                 <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-8">
-                    Create Event
+                    {t('title')}
                 </h1>
 
                 <form onSubmit={(e) => handleSave('publish', e)} className="space-y-6 bg-white dark:bg-dark-surface p-8 rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
 
                     <div className="space-y-2">
-                        <Label htmlFor="title">Event Title</Label>
+                        <Label htmlFor="title">{t('eventTitleLabel')}</Label>
                         <Input
                             id="title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="e.g. Weekly Research Sync"
+                            placeholder={t('eventTitlePlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Cover Image</Label>
+                        <Label>{t('coverImageLabel')}</Label>
                         <ImageUpload
                             bucket="post_images"
                             currentImage={coverImage}
@@ -119,7 +135,7 @@ export default function CreateEventPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <Label htmlFor="startTime">Start Time</Label>
+                            <Label htmlFor="startTime">{t('startTimeLabel')}</Label>
                             <Input
                                 id="startTime"
                                 type="datetime-local"
@@ -130,7 +146,7 @@ export default function CreateEventPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="endTime">End Time (Optional)</Label>
+                            <Label htmlFor="endTime">{t('endTimeLabel')}</Label>
                             <Input
                                 id="endTime"
                                 type="datetime-local"
@@ -141,33 +157,33 @@ export default function CreateEventPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="location">Location</Label>
+                        <Label htmlFor="location">{t('locationLabel')}</Label>
                         <Input
                             id="location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            placeholder="e.g. Zoom, Conference Room A, or Online"
+                            placeholder={t('locationPlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="link">Event Link (Optional)</Label>
+                        <Label htmlFor="link">{t('linkLabel')}</Label>
                         <Input
                             id="link"
                             value={link}
                             onChange={(e) => setLink(e.target.value)}
-                            placeholder="e.g. https://zoom.us/j/..."
+                            placeholder={t('linkPlaceholder')}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">{t('descriptionLabel')}</Label>
                         <Textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Describe the event agenda and details..."
+                            placeholder={t('descriptionPlaceholder')}
                             required
                             className="min-h-[150px]"
                         />
@@ -181,7 +197,7 @@ export default function CreateEventPage() {
                             disabled={loading}
                             className="flex-1 sm:flex-none"
                         >
-                            Cancel
+                            {t('cancelButton')}
                         </Button>
                         <Button
                             type="button"
@@ -190,25 +206,99 @@ export default function CreateEventPage() {
                             disabled={loading}
                             className="flex-1 sm:flex-none"
                         >
-                            Save Draft
+                            {t('saveDraftButton')}
                         </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => handleSave('preview')}
-                            disabled={loading}
-                            className="flex-1 sm:flex-none"
-                        >
-                            Preview
-                        </Button>
+
+                        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => handleSave('preview')}
+                                    disabled={loading}
+                                    className="flex-1 sm:flex-none"
+                                >
+                                    {t('previewButton')}
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl bg-white dark:bg-dark-surface border-gray-200 dark:border-dark-border">
+                                <DialogHeader>
+                                    <DialogTitle className="text-xl font-bold text-text dark:text-dark-text">
+                                        {t('previewButton')}
+                                    </DialogTitle>
+                                </DialogHeader>
+
+                                <div className="mt-4 space-y-6">
+                                    {/* Cover Image Preview */}
+                                    {coverImage && (
+                                        <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-gray-100 dark:border-dark-border shadow-sm">
+                                            <Image src={coverImage} alt="Cover Preview" fill className="object-cover" sizes="100vw" />
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h2 className="text-2xl font-bold text-text dark:text-dark-text">
+                                                {title || t('eventTitleLabel')}
+                                            </h2>
+                                            <div className="flex flex-wrap gap-4 mt-3 text-sm text-text-light dark:text-dark-text-muted">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarIcon className="w-4 h-4 text-primary" />
+                                                    <span>{startTime ? format(new Date(startTime), 'PPP') : '---'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-primary" />
+                                                    <span>
+                                                        {startTime ? format(new Date(startTime), 'p') : '--:--'}
+                                                        {endTime && ` - ${format(new Date(endTime), 'p')}`}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4 text-primary" />
+                                                    <span>{location || '---'}</span>
+                                                </div>
+                                                {link && (
+                                                    <div className="flex items-center gap-2 text-primary">
+                                                        <ExternalLink className="w-4 h-4" />
+                                                        <span className="truncate max-w-[200px]">{link}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gray-100 dark:border-dark-border">
+                                            <p className="text-text dark:text-dark-text whitespace-pre-wrap leading-relaxed">
+                                                {description || t('descriptionPlaceholder')}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-dark-border">
+                                        <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
+                                            {tCommon('close')}
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setIsPreviewOpen(false);
+                                                handleSave('publish');
+                                            }}
+                                            className="bg-primary hover:bg-primary-dark text-white"
+                                        >
+                                            {t('publishButton')}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+
                         <Button
                             type="submit"
                             disabled={loading}
-                            size="lg"
-                            className="flex-1 sm:flex-none bg-primary hover:bg-primary-dark text-white"
+                            variant="default"
+                            className="flex-1 sm:flex-none"
                         >
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            {loading ? 'Publishing...' : 'Publish Event'}
+                            {loading ? t('publishing') : t('publishButton')}
                         </Button>
                     </div>
                 </form>

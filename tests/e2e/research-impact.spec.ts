@@ -127,11 +127,11 @@ test.describe('Admin Platform Health Dashboard', () => {
 });
 
 test.describe('Impact Stories Section', () => {
-    test('feed page loads with impact stories section when available', async ({ page }) => {
-        // Feed requires auth - use test bypass or verify redirect
-        await page.goto('/en/feed');
+    test('insights page loads with impact stories section when available', async ({ page }) => {
+        // Insights requires auth - use test bypass or verify redirect
+        await page.goto('/en/insights');
 
-        // Should redirect to login since feed is protected
+        // Should redirect to login since insights is protected
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: 10000 });
 
         // Verify login form is present (auth flow works)

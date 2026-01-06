@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { FeedbackList } from '@/components/feedback'
 import { getTranslations } from 'next-intl/server'
@@ -43,20 +44,23 @@ export default async function AdminFeedbackPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <main className="flex-1 p-8">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="mb-8">
-                            <h1 className="text-3xl font-display font-bold text-text dark:text-dark-text">
-                                {t('adminTitle')}
-                            </h1>
-                            <p className="text-text-light dark:text-dark-text-muted mt-2">
-                                {t('adminDescription')}
-                            </p>
-                        </div>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-8">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-display font-bold text-text dark:text-dark-text">
+                                    {t('adminTitle')}
+                                </h1>
+                                <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                    {t('adminDescription')}
+                                </p>
+                            </div>
 
-                        <FeedbackList isAdmin={true} />
-                    </div>
-                </main>
+                            <FeedbackList isAdmin={true} />
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     )

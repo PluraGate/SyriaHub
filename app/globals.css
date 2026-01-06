@@ -116,6 +116,57 @@
   }
 }
 
+/* Custom select dropdown option colors */
+select option {
+  background-color: white;
+  color: var(--color-text);
+}
+
+select option:checked,
+select option:hover {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.dark select option {
+  background-color: var(--color-dark-surface);
+  color: var(--color-dark-text);
+}
+
+.dark select option:checked,
+.dark select option:hover {
+  background-color: var(--color-primary-light) !important;
+  color: white !important;
+}
+
+/* Reusable select input styling - matches Radix UI Select component */
+.select-input {
+  @apply w-full px-3 py-2 rounded-lg;
+  @apply border border-gray-200 dark:border-dark-border;
+  @apply bg-white dark:bg-dark-surface;
+  @apply text-text dark:text-dark-text;
+  @apply text-sm;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
+  @apply hover:border-gray-300 dark:hover:border-gray-600;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  /* Ensure proper appearance in dark mode */
+  @apply shadow-sm dark:shadow-none;
+}
+
+/* Enhanced option styling for better dark mode consistency */
+.select-input option {
+  @apply bg-white dark:bg-dark-surface;
+  @apply text-text dark:text-dark-text;
+  @apply py-2 px-3;
+}
+
+.select-input option:checked {
+  @apply bg-primary text-white;
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
 @layer components {
 
   /* Container utilities */
@@ -1102,6 +1153,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1116,18 +1168,23 @@
   0% {
     transform: translateX(0);
   }
+
   10% {
     transform: translateX(0);
   }
+
   45% {
     transform: translateX(calc(-100% + 280px));
   }
+
   55% {
     transform: translateX(calc(-100% + 280px));
   }
+
   90% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(0);
   }

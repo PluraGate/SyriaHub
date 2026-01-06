@@ -67,16 +67,16 @@ function isRateLimited(ip: string) {
 
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    
+
     // Generate nonce for CSP
     const nonce = createNonce();
-    
+
     // 0. Coming Soon Mode Gate
     // When SYRIAHUB_MODE=coming-soon, redirect ALL routes to /coming-soon
     // Exception: the coming-soon page itself, static assets, and API routes
     const isComingSoonMode = process.env.SYRIAHUB_MODE === 'coming-soon';
     const isComingSoonPage = pathname.includes('/coming-soon');
-    
+
     if (isComingSoonMode && !isComingSoonPage) {
         // Extract locale from pathname or default to 'ar'
         const localeMatch = pathname.match(/^\/(en|ar)/);
@@ -89,14 +89,14 @@ export async function proxy(request: NextRequest) {
 
     // 2. Update session and get user
     const finalResponse = await updateSession(request, response);
-    
+
     // 3. Protected routes check
     // SECURITY: Only allow test bypass in development environment
     const isTestBypass = process.env.NODE_ENV === 'development' && request.headers.get('x-test-bypass') === 'true';
 
     const PROTECTED_ROUTES = [
         '/editor',
-        '/feed',
+        '/insights',
         '/research-lab',
         '/settings',
         '/notifications',
@@ -161,7 +161,7 @@ export async function proxy(request: NextRequest) {
     finalResponse.headers.set('x-middleware-override-headers', Array.from(requestHeaderList).join(','));
     finalResponse.headers.set('x-middleware-request-x-nonce', nonce);
     finalResponse.headers.set('x-middleware-request-content-security-policy', csp);
-    
+
     const securityHeaders = {
         'Content-Security-Policy': csp,
         'X-Frame-Options': 'DENY',
