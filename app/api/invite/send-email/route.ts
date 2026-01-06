@@ -72,11 +72,11 @@ async function handlePost(request: NextRequest) {
         const encodedEmail = encodeURIComponent(recipientEmail.trim())
         const inviteUrl = `${siteUrl}/auth/signup?code=${code.toUpperCase()}&email=${encodedEmail}`
 
-        // Get the appropriate template based on language
+        // Get the appropriate template based on language (uses SyriaHub branding to match sending domain)
         const lang = language === 'ar' ? 'ar' : 'en'
         const template = lang === 'ar'
-            ? emailTemplates.pluraGateInviteAR(inviteUrl, recipientName)
-            : emailTemplates.pluraGateInviteEN(inviteUrl, recipientName)
+            ? emailTemplates.syriaHubInviteAR(inviteUrl, recipientName)
+            : emailTemplates.syriaHubInviteEN(inviteUrl, recipientName)
 
         // Send the email using dedicated invitation sender (invitations@syriahub.org)
         const success = await sendInvitationEmail({
