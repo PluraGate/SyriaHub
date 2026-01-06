@@ -231,7 +231,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                     {/* Title - show when expanded */}
                     <h2 className={cn(
                         "font-display font-semibold text-primary dark:text-dark-text text-sm truncate",
-                        !mobileOpen && "hidden",
+                        !mobileOpen && "hidden lg:block",
                         isCollapsedDesktop && "lg:hidden"
                     )}>
                         {panelTitle}
@@ -288,9 +288,10 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                             className={cn(
                                 'flex items-center gap-3 rounded-lg transition-colors',
                                 // Mobile: centered icons when collapsed, normal padding when expanded
-                                mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center',
+                                mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center lg:justify-start',
                                 // Desktop: normal padding
-                                'lg:px-3 lg:py-2.5 lg:justify-start',
+                                'lg:px-3 lg:py-2.5',
+                                isCollapsedDesktop && 'lg:justify-center',
                                 active
                                     ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-dark-text font-medium'
                                     : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border hover:text-text dark:hover:text-dark-text'
@@ -299,8 +300,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                         >
                             <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-dark-text')} />
                             <span className={cn(
-                                // Mobile: hide when collapsed
-                                !mobileOpen && "hidden",
+                                // Mobile: hide when collapsed, show on desktop
+                                !mobileOpen && "hidden lg:inline",
                                 // Desktop: hide when collapsed
                                 isCollapsedDesktop && "lg:hidden",
                                 // Truncate long labels
@@ -314,7 +315,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
             {/* Footer */}
             <div className="p-1 lg:p-4 border-t border-gray-100 dark:border-dark-border">
                 <Link
-                    href="/feed"
+                    href="/insights"
                     onClick={() => setMobileOpen(false)}
                     className={cn(
                         'flex items-center gap-3 rounded-lg text-sm',
@@ -326,7 +327,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                 >
                     <ChevronLeft className="w-4 h-4 flex-shrink-0" />
                     <span className={cn(
-                        !mobileOpen && "hidden",
+                        !mobileOpen && "hidden lg:inline",
                         isCollapsedDesktop && "lg:hidden"
                     )}>{t('backToSite')}</span>
                 </Link>
