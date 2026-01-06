@@ -16,10 +16,10 @@
             "purpose": "any"
         },
         {
-            "src": "/icons/icon-512x512_Dark_PWA.png",
+            "src": "/icons/icon-512x512_Dark.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
             "src": "/icons/icon-192x192_Dark.png",

@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { verifyTurnstileToken } from '@/lib/turnstile'
 import { AlertCircle, BookOpen, Users, Sparkles } from 'lucide-react'
+import Image from 'next/image'
 import { logAuthEvent } from '@/lib/auditLog'
 
 export default async function LoginPage({
@@ -71,9 +72,13 @@ export default async function LoginPage({
 
           <div className="relative z-10 flex flex-col justify-center px-16 py-12">
             <Link href="/" className="flex items-center gap-3 mb-12">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">S</span>
-              </div>
+              <Image
+                src="/icons/icon-192x192.png"
+                alt="SyriaHub Logo"
+                width={48}
+                height={48}
+                className="w-12 h-12 rounded-xl"
+              />
               <span className="font-bold text-2xl text-white">SyriaHub</span>
             </Link>
 
@@ -122,9 +127,13 @@ export default async function LoginPage({
             {/* Mobile Logo */}
             <div className="text-center mb-8 lg:hidden">
               <Link href="/" className="inline-flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">S</span>
-                </div>
+                <Image
+                  src="/icons/icon-192x192.png"
+                  alt="SyriaHub Logo"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-xl"
+                />
                 <span className="font-bold text-2xl text-text dark:text-dark-text">SyriaHub</span>
               </Link>
             </div>
