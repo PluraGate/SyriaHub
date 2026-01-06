@@ -140,14 +140,14 @@ export function InviteManager() {
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 dark:border-dark-border">
-                <div className="flex items-center justify-between mb-4">
+            <div className="p-3 sm:p-4 border-b border-gray-100 dark:border-dark-border">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <div className="flex items-center gap-2">
-                        <Ticket className="w-5 h-5 text-primary" />
-                        <h3 className="font-semibold text-text dark:text-dark-text">{t('yourInvites')}</h3>
+                        <Ticket className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <h3 className="font-semibold text-sm sm:text-base text-text dark:text-dark-text">{t('yourInvites')}</h3>
                     </div>
                     {stats && (
-                        <span className="text-sm text-text-muted dark:text-dark-text-muted">
+                        <span className="text-xs sm:text-sm text-text-muted dark:text-dark-text-muted">
                             {t('peopleInvited', { count: stats.people_invited })}
                         </span>
                     )}
@@ -158,17 +158,17 @@ export function InviteManager() {
                     <button
                         onClick={() => setActiveTab('researcher')}
                         className={cn(
-                            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all",
+                            "flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all",
                             activeTab === 'researcher'
                                 ? "bg-primary text-white"
                                 : "bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border"
                         )}
                     >
-                        <GraduationCap className="w-4 h-4" />
+                        <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{t('researchers')}</span>
                         {stats && (
                             <span className={cn(
-                                "px-1.5 py-0.5 rounded text-xs font-bold",
+                                "px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold",
                                 activeTab === 'researcher'
                                     ? "bg-white/20"
                                     : "bg-gray-200 dark:bg-dark-border"
@@ -180,17 +180,17 @@ export function InviteManager() {
                     <button
                         onClick={() => setActiveTab('member')}
                         className={cn(
-                            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all",
+                            "flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all",
                             activeTab === 'member'
                                 ? "bg-primary text-white"
                                 : "bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border"
                         )}
                     >
-                        <User className="w-4 h-4" />
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{t('members')}</span>
                         {stats && (
                             <span className={cn(
-                                "px-1.5 py-0.5 rounded text-xs font-bold",
+                                "px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold",
                                 activeTab === 'member'
                                     ? "bg-white/20"
                                     : "bg-gray-200 dark:bg-dark-border"
@@ -204,28 +204,29 @@ export function InviteManager() {
 
             {/* Stats for Current Tab */}
             {currentStats && (
-                <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-dark-bg">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-dark-bg">
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">{currentStats.remaining}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('remaining')}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-primary">{currentStats.remaining}</p>
+                        <p className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted">{t('remaining')}</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.active}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('active')}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-text dark:text-dark-text">{currentStats.active}</p>
+                        <p className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted">{t('active')}</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-text dark:text-dark-text">{currentStats.used}</p>
-                        <p className="text-xs text-text-light dark:text-dark-text-muted">{t('used')}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-text dark:text-dark-text">{currentStats.used}</p>
+                        <p className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted">{t('used')}</p>
                     </div>
                 </div>
             )}
 
             {/* Create Button */}
-            <div className="p-4 border-b border-gray-100 dark:border-dark-border">
+            <div className="p-3 sm:p-4 border-b border-gray-100 dark:border-dark-border">
                 <Button
                     onClick={() => createInvite(activeTab)}
                     disabled={creating || (currentStats !== undefined && currentStats.remaining <= 0)}
-                    className="w-full gap-2"
+                    className="w-full gap-2 text-sm sm:text-base"
+                    size="sm"
                 >
                     {creating ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -237,14 +238,14 @@ export function InviteManager() {
             </div>
 
             {/* Invite List */}
-            <div className="divide-y divide-gray-100 dark:divide-dark-border max-h-80 overflow-y-auto">
+            <div className="divide-y divide-gray-100 dark:divide-dark-border max-h-64 sm:max-h-80 overflow-y-auto">
                 {filteredInvites.length === 0 ? (
-                    <div className="p-8 text-center">
-                        <Users className="w-8 h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
-                        <p className="text-text-light dark:text-dark-text-muted">
+                    <div className="p-6 sm:p-8 text-center">
+                        <Users className="w-6 h-6 sm:w-8 sm:h-8 text-text-light dark:text-dark-text-muted mx-auto mb-2" />
+                        <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted">
                             {activeTab === 'researcher' ? t('noResearcherInvites') : t('noMemberInvites')}
                         </p>
-                        <p className="text-sm text-text-light/70 dark:text-dark-text-muted/70 mt-1">
+                        <p className="text-xs sm:text-sm text-text-light/70 dark:text-dark-text-muted/70 mt-1">
                             {activeTab === 'researcher' ? t('createInviteForResearchers') : t('createInviteForMembers')}
                         </p>
                     </div>
@@ -252,87 +253,92 @@ export function InviteManager() {
                     filteredInvites.map((invite) => (
                         <div
                             key={invite.id}
-                            className={`p-4 flex items-center justify-between ${!invite.is_active ? 'opacity-50' : ''}`}
+                            className={`p-3 sm:p-4 ${!invite.is_active ? 'opacity-50' : ''}`}
                         >
-                            <div className="flex items-center gap-3">
-                                <div className={cn(
-                                    "w-10 h-10 rounded-lg flex items-center justify-center",
-                                    invite.is_active
-                                        ? "bg-primary/10 text-primary"
-                                        : "bg-gray-100 dark:bg-dark-border text-text-light"
-                                )}>
-                                    {invite.target_role === 'researcher' ? (
-                                        <GraduationCap className="w-5 h-5" />
-                                    ) : (
-                                        <User className="w-5 h-5" />
-                                    )}
-                                </div>
-                                <div>
-                                    <p className="font-mono font-medium text-text dark:text-dark-text tracking-wider">
-                                        {invite.code}
-                                    </p>
-                                    <p className="text-xs text-text-light dark:text-dark-text-muted flex items-center gap-2">
-                                        <Clock className="w-3 h-3" />
-                                        {new Date(invite.created_at).toLocaleDateString()}
-                                        {invite.current_uses > 0 && (
-                                            <span className="text-green-600">• {t('used')}</span>
+                            <div className="flex items-start sm:items-center justify-between gap-3 flex-col sm:flex-row">
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className={cn(
+                                        "w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                                        invite.is_active
+                                            ? "bg-primary/10 text-primary"
+                                            : "bg-gray-100 dark:bg-dark-border text-text-light"
+                                    )}>
+                                        {invite.target_role === 'researcher' ? (
+                                            <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        ) : (
+                                            <User className="w-4 h-4 sm:w-5 sm:h-5" />
                                         )}
-                                        {!invite.is_active && (
-                                            <span className="text-red-500">• {t('expired')}</span>
-                                        )}
-                                    </p>
+                                    </div>
+                                    <div>
+                                        <p className="font-mono font-medium text-sm sm:text-base text-text dark:text-dark-text tracking-wider">
+                                            {invite.code}
+                                        </p>
+                                        <p className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted flex items-center gap-1 sm:gap-2 flex-wrap">
+                                            <span className="flex items-center gap-1">
+                                                <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                                {new Date(invite.created_at).toLocaleDateString()}
+                                            </span>
+                                            {invite.current_uses > 0 && (
+                                                <span className="text-green-600">• {t('used')}</span>
+                                            )}
+                                            {!invite.is_active && (
+                                                <span className="text-red-500">• {t('expired')}</span>
+                                            )}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {invite.is_active && invite.current_uses < invite.max_uses && (
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => copyCode(invite.code, invite.id)}
-                                        className="gap-1.5"
-                                    >
-                                        {copiedId === invite.id ? (
-                                            <Check className="w-4 h-4 text-green-500" />
-                                        ) : (
-                                            <Copy className="w-4 h-4" />
-                                        )}
-                                        {t('code')}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => copyInviteLink(invite.code, `${invite.id}-link`)}
-                                        className="gap-1.5"
-                                    >
-                                        {copiedId === `${invite.id}-link` ? (
-                                            <Check className="w-4 h-4 text-green-500" />
-                                        ) : (
-                                            <Send className="w-4 h-4" />
-                                        )}
-                                        {t('share')}
-                                    </Button>
-                                    {['admin', 'moderator'].includes(userRole) && (
+                                {invite.is_active && invite.current_uses < invite.max_uses && (
+                                    <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-end">
                                         <Button
-                                            variant="default"
+                                            variant="ghost"
                                             size="sm"
-                                            onClick={() => setEmailDialogCode(invite.code)}
-                                            className="gap-1.5"
+                                            onClick={() => copyCode(invite.code, invite.id)}
+                                            className="gap-1 sm:gap-1.5 px-2 sm:px-3 h-8 text-xs sm:text-sm"
                                         >
-                                            <Mail className="w-4 h-4" />
-                                            {t('sendEmail')}
+                                            {copiedId === invite.id ? (
+                                                <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
+                                            ) : (
+                                                <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                            )}
+                                            {t('code')}
                                         </Button>
-                                    )}
-                                </div>
-                            )}
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => copyInviteLink(invite.code, `${invite.id}-link`)}
+                                            className="gap-1 sm:gap-1.5 px-2 sm:px-3 h-8 text-xs sm:text-sm"
+                                        >
+                                            {copiedId === `${invite.id}-link` ? (
+                                                <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
+                                            ) : (
+                                                <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                            )}
+                                            {t('share')}
+                                        </Button>
+                                        {['admin', 'moderator'].includes(userRole) && (
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                onClick={() => setEmailDialogCode(invite.code)}
+                                                className="gap-1 sm:gap-1.5 px-2 sm:px-3 h-8 text-xs sm:text-sm"
+                                            >
+                                                <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <span className="hidden sm:inline">{t('sendEmail')}</span>
+                                                <span className="sm:hidden">Email</span>
+                                            </Button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ))
                 )}
             </div>
 
             {/* Footer hint */}
-            <div className="p-4 bg-gray-50 dark:bg-dark-bg border-t border-gray-100 dark:border-dark-border">
-                <p className="text-xs text-text-light dark:text-dark-text-muted text-center">
+            <div className="p-3 sm:p-4 bg-gray-50 dark:bg-dark-bg border-t border-gray-100 dark:border-dark-border">
+                <p className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted text-center">
                     {t('expiresAfter')}
                 </p>
             </div>
