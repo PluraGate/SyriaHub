@@ -213,17 +213,17 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                 )}
 
                 {/* Meta info row */}
-                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 dark:text-gray-400 mt-4 h-5" suppressHydrationWarning>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-500 dark:text-gray-400 mt-4" suppressHydrationWarning>
                     {profile.affiliation && (
                         <div className="flex items-center gap-1.5">
-                            <Building2 className="w-4 h-4" />
-                            <span>{profile.affiliation}</span>
+                            <Building2 className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate">{profile.affiliation}</span>
                         </div>
                     )}
 
                     {profile.location && (
                         <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4" />
+                            <MapPin className="w-4 h-4 flex-shrink-0" />
                             <span>{profile.location}</span>
                         </div>
                     )}
@@ -234,13 +234,13 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 hover:text-primary transition-colors"
                         >
-                            <LinkIcon className="w-4 h-4" />
+                            <LinkIcon className="w-4 h-4 flex-shrink-0" />
                             <span>{t('website')}</span>
                         </a>
                     )}
                     <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4" />
-                        <span suppressHydrationWarning>
+                        <Calendar className="w-4 h-4 flex-shrink-0" />
+                        <span className="whitespace-nowrap" suppressHydrationWarning>
                             {t('joined', { date: mounted ? format(new Date(profile.created_at), 'MMMM yyyy', { locale: dateLocale }) : '...' })}
                         </span>
                     </div>
@@ -248,7 +248,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
 
                 {/* Research Interests */}
                 {profile.research_interests && profile.research_interests.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="flex flex-wrap gap-2 mt-3">
                         {profile.research_interests.map((interest: string) => (
                             <span
                                 key={interest}

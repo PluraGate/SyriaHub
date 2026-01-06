@@ -146,26 +146,28 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
     return (
         <div>
             {/* Header with filters and sort */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                {/* Type Filters */}
-                <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg">
-                    {filterButtons.map(({ type, icon: Icon, label, color }) => (
-                        <button
-                            key={type}
-                            onClick={() => setActiveFilter(type)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${getColorClasses(color, activeFilter === type)}`}
-                        >
-                            <Icon className="w-4 h-4" />
-                            {label}
-                            <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeFilter === type ? 'bg-white/50' : 'bg-gray-200 dark:bg-dark-bg'}`}>
-                                {counts[type]}
-                            </span>
-                        </button>
-                    ))}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
+                {/* Type Filters - Horizontal scroll on mobile */}
+                <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
+                    <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg w-max sm:w-auto">
+                        {filterButtons.map(({ type, icon: Icon, label, color }) => (
+                            <button
+                                key={type}
+                                onClick={() => setActiveFilter(type)}
+                                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${getColorClasses(color, activeFilter === type)}`}
+                            >
+                                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                <span className="hidden xs:inline">{label}</span>
+                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeFilter === type ? 'bg-white/50' : 'bg-gray-200 dark:bg-dark-bg'}`}>
+                                    {counts[type]}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Sort dropdown */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-sm text-gray-500 dark:text-gray-400">{t('sort')}:</span>
                     <select
                         value={sortOrder}

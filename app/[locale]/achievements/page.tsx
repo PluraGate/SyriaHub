@@ -183,27 +183,29 @@ export default function AchievementsPage() {
 
             <main className="flex-1 container-custom py-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-text dark:text-dark-text flex items-center gap-3">
-                            <Trophy className="w-8 h-8 text-primary" />
-                            {t('pageTitle')}
-                        </h1>
-                        <p className="text-text-light dark:text-dark-text-muted mt-1">
-                            {t('pageSubtitle')}
-                        </p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div className="flex items-start gap-3">
+                        <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0 mt-1" />
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text">
+                                {t('pageTitle')}
+                            </h1>
+                            <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-0.5">
+                                {t('pageSubtitle')}
+                            </p>
+                        </div>
                     </div>
                     <button
                         onClick={checkForNewAchievements}
                         disabled={checking}
-                        className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto flex-shrink-0"
                     >
                         {checking ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
                         ) : (
-                            <Zap className="w-4 h-4" />
+                            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         )}
-                        {t('checkForNew')}
+                        <span className="whitespace-nowrap">{t('checkForNew')}</span>
                     </button>
                 </div>
 

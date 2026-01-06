@@ -50,18 +50,78 @@ export default async function AdminReportsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-6 md:p-8">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-6xl mx-auto">
-                            <div className="flex items-center gap-3 mb-8">
-                                <AlertTriangle className="w-8 h-8 text-red-500" />
-                                <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-8">
+                                <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 flex-shrink-0" />
+                                <h1 className="text-xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                                     {t('title')}
                                 </h1>
                             </div>
 
                             <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
-                                <div className="overflow-x-auto">
+                                {/* Mobile Card View */}
+                                <div className="md:hidden divide-y divide-gray-200 dark:divide-dark-border">
+                                    {reports && reports.length > 0 ? (
+                                        reports.map((report) => (
+                                            <div key={report.id} className="p-3 space-y-2">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize
+                                                            ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200' : ''}
+                                                            ${report.status === 'resolved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ''}
+                                                            ${report.status === 'dismissed' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' : ''}
+                                                        `}>
+                                                            {report.status}
+                                                        </span>
+                                                        <span className="text-xs text-text-light dark:text-dark-text-muted">
+                                                            {report.post_id ? tCommon('post') : tCommon('comment')}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                                        {report.status === 'pending' && (
+                                                            <>
+                                                                <form action={`/api/reports/${report.id}/dismiss`} method="POST">
+                                                                    <button title={tCommon('dismiss')} className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                                                                        <XCircle className="w-4 h-4" />
+                                                                    </button>
+                                                                </form>
+                                                                <form action={`/api/reports/${report.id}/resolve`} method="POST">
+                                                                    <button title={tCommon('resolve')} className="p-1.5 text-green-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                                                                        <CheckCircle className="w-4 h-4" />
+                                                                    </button>
+                                                                </form>
+                                                            </>
+                                                        )}
+                                                        <form action={`/api/reports/${report.id}/delete`} method="POST">
+                                                            <button title={tCommon('deleteContent')} className="p-1.5 text-red-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm font-medium text-text dark:text-dark-text">
+                                                    {report.reason}
+                                                </p>
+                                                <p className="text-xs text-text-light dark:text-dark-text-muted line-clamp-2">
+                                                    {report.post?.title || report.comment?.content || tCommon('contentDeleted')}
+                                                </p>
+                                                <div className="flex items-center gap-3 text-xs text-text-light dark:text-dark-text-muted">
+                                                    <span>{report.reporter?.name || tCommon('unknown')}</span>
+                                                    <span>{format(new Date(report.created_at), 'MMM d, yyyy')}</span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="px-4 py-12 text-center text-text-light dark:text-dark-text-muted">
+                                            {t('noReports')}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Desktop Table View */}
+                                <div className="hidden md:block overflow-x-auto">
                                     <table className="w-full text-start text-sm">
                                         <thead className="bg-gray-50 dark:bg-dark-border/50 border-b border-gray-200 dark:border-dark-border">
                                             <tr>

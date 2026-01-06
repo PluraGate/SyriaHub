@@ -224,21 +224,21 @@ export function UserManagement() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header & Filters */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between">
-                <div className="relative flex-1 max-w-md">
+            <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="relative w-full">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light dark:text-dark-text-muted" />
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={t('searchPlaceholder')}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-sm text-text dark:text-dark-text focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto">
                     {/* Role Filter */}
                     <Select
                         value={roleFilter || 'all'}
@@ -247,7 +247,7 @@ export function UserManagement() {
                             setPage(1)
                         }}
                     >
-                        <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                        <SelectTrigger className="w-[120px] sm:w-[140px] bg-white dark:bg-dark-surface text-xs sm:text-sm flex-shrink-0">
                             <SelectValue placeholder={t('allRoles')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -268,7 +268,7 @@ export function UserManagement() {
                             setPage(1)
                         }}
                     >
-                        <SelectTrigger className="w-[140px] bg-white dark:bg-dark-surface">
+                        <SelectTrigger className="w-[120px] sm:w-[140px] bg-white dark:bg-dark-surface text-xs sm:text-sm flex-shrink-0">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -286,7 +286,7 @@ export function UserManagement() {
                 {t('showing', { count: users.length, total: totalUsers })}
             </div>
 
-            {/* Users Table */}
+            {/* Users List */}
             <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center h-64">
@@ -298,150 +298,245 @@ export function UserManagement() {
                         <p>{t('noUsers')}</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-gray-50 dark:bg-dark-border/50 border-b border-gray-200 dark:border-dark-border">
-                                <tr>
-                                    <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('user')}
-                                    </th>
-                                    <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('role')}
-                                    </th>
-                                    <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('joined')}
-                                    </th>
-                                    <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('activity.label')}
-                                    </th>
-                                    <th className="px-4 py-3 text-end text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
-                                        {t('actions')}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
-                                {users.map((user) => (
-                                    <tr
-                                        key={user.id}
-                                        className="hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors"
-                                    >
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center overflow-hidden">
-                                                    {user.avatar_url ? (
-                                                        <Image
-                                                            src={user.avatar_url}
-                                                            alt=""
-                                                            width={40}
-                                                            height={40}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <Users className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium text-text dark:text-dark-text">
-                                                        {user.name || tCommon('unknown')}
-                                                    </p>
-                                                    <p className="text-sm text-text-light dark:text-dark-text-muted flex items-center gap-1">
-                                                        <Mail className="w-3 h-3" />
-                                                        {user.email}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            {getRoleBadge(user.role, user.is_verified_author, !!user.suspended_at)}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-text-light dark:text-dark-text-muted">
-                                            <div className="flex items-center gap-1">
-                                                <Calendar className="w-3.5 h-3.5" />
-                                                {format(new Date(user.created_at), 'MMM d, yyyy')}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
-                                                <span className="flex items-center gap-1" title={t('activity.posts')}>
-                                                    <FileText className="w-3.5 h-3.5" />
-                                                    {user.post_count}
-                                                </span>
-                                                <span className="flex items-center gap-1" title={t('activity.comments')}>
-                                                    <MessageSquare className="w-3.5 h-3.5" />
-                                                    {user.comment_count}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <div className="relative inline-block">
-                                                <button
-                                                    onClick={() => setShowActionMenu(showActionMenu === user.id ? null : user.id)}
-                                                    disabled={processingUserId === user.id}
-                                                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors disabled:opacity-50"
-                                                >
-                                                    {processingUserId === user.id ? (
-                                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                                    ) : (
-                                                        <MoreHorizontal className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
-                                                    )}
-                                                </button>
-
-                                                {showActionMenu === user.id && (
-                                                    <>
-                                                        <div
-                                                            className="fixed inset-0 z-10"
-                                                            onClick={() => setShowActionMenu(null)}
-                                                        />
-                                                        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-20 py-1">
-                                                            {/* Only show Change Role to admins */}
-                                                            {currentUserRole === 'admin' && (
-                                                                <button
-                                                                    onClick={() => handleRoleChange(user)}
-                                                                    className="w-full px-4 py-2 text-left text-sm text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border flex items-center gap-2"
-                                                                >
-                                                                    <Shield className="w-4 h-4" />
-                                                                    {t('changeRole')}
-                                                                </button>
-                                                            )}
-                                                            {/* Moderators cannot suspend admins */}
-                                                            {!(currentUserRole === 'moderator' && user.role === 'admin') && (
-                                                                <button
-                                                                    onClick={() => handleSuspend(user)}
-                                                                    className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${user.suspended_at
-                                                                        ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
-                                                                        : 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                                                        }`}
-                                                                >
-                                                                    {user.suspended_at ? (
-                                                                        <>
-                                                                            <CheckCircle className="w-4 h-4" />
-                                                                            {t('unsuspend')}
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <Ban className="w-4 h-4" />
-                                                                            {t('suspend')}
-                                                                        </>
-                                                                    )}
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </>
+                    <>
+                        {/* Mobile Card View */}
+                        <div className="md:hidden divide-y divide-gray-100 dark:divide-dark-border">
+                            {users.map((user) => (
+                                <div key={user.id} className="p-3 space-y-2">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                {user.avatar_url ? (
+                                                    <Image
+                                                        src={user.avatar_url}
+                                                        alt=""
+                                                        width={36}
+                                                        height={36}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <Users className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
                                                 )}
                                             </div>
-                                        </td>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="font-medium text-sm text-text dark:text-dark-text truncate">
+                                                    {user.name || tCommon('unknown')}
+                                                </p>
+                                                <p className="text-xs text-text-light dark:text-dark-text-muted truncate">
+                                                    {user.email}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="relative flex-shrink-0">
+                                            <button
+                                                onClick={() => setShowActionMenu(showActionMenu === user.id ? null : user.id)}
+                                                disabled={processingUserId === user.id}
+                                                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors disabled:opacity-50"
+                                            >
+                                                {processingUserId === user.id ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    <MoreHorizontal className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                                                )}
+                                            </button>
+                                            {showActionMenu === user.id && (
+                                                <>
+                                                    <div className="fixed inset-0 z-10" onClick={() => setShowActionMenu(null)} />
+                                                    <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-20 py-1">
+                                                        {currentUserRole === 'admin' && (
+                                                            <button
+                                                                onClick={() => handleRoleChange(user)}
+                                                                className="w-full px-3 py-2 text-left text-sm text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border flex items-center gap-2"
+                                                            >
+                                                                <Shield className="w-4 h-4" />
+                                                                {t('changeRole')}
+                                                            </button>
+                                                        )}
+                                                        {!(currentUserRole === 'moderator' && user.role === 'admin') && (
+                                                            <button
+                                                                onClick={() => handleSuspend(user)}
+                                                                className={`w-full px-3 py-2 text-left text-sm flex items-center gap-2 ${user.suspended_at
+                                                                    ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+                                                                    : 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                                                    }`}
+                                                            >
+                                                                {user.suspended_at ? (
+                                                                    <><CheckCircle className="w-4 h-4" />{t('unsuspend')}</>
+                                                                ) : (
+                                                                    <><Ban className="w-4 h-4" />{t('suspend')}</>
+                                                                )}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                                        {getRoleBadge(user.role, user.is_verified_author, !!user.suspended_at)}
+                                        <span className="flex items-center gap-1 text-text-light dark:text-dark-text-muted">
+                                            <Calendar className="w-3 h-3" />
+                                            {format(new Date(user.created_at), 'MMM d, yyyy')}
+                                        </span>
+                                        <span className="flex items-center gap-1 text-text-light dark:text-dark-text-muted">
+                                            <FileText className="w-3 h-3" />
+                                            {user.post_count}
+                                        </span>
+                                        <span className="flex items-center gap-1 text-text-light dark:text-dark-text-muted">
+                                            <MessageSquare className="w-3 h-3" />
+                                            {user.comment_count}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 dark:bg-dark-border/50 border-b border-gray-200 dark:border-dark-border">
+                                    <tr>
+                                        <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
+                                            {t('user')}
+                                        </th>
+                                        <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
+                                            {t('role')}
+                                        </th>
+                                        <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
+                                            {t('joined')}
+                                        </th>
+                                        <th className="px-4 py-3 text-start text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
+                                            {t('activity.label')}
+                                        </th>
+                                        <th className="px-4 py-3 text-end text-xs font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wider">
+                                            {t('actions')}
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
+                                    {users.map((user) => (
+                                        <tr
+                                            key={user.id}
+                                            className="hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors"
+                                        >
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center overflow-hidden">
+                                                        {user.avatar_url ? (
+                                                            <Image
+                                                                src={user.avatar_url}
+                                                                alt=""
+                                                                width={40}
+                                                                height={40}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <Users className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium text-text dark:text-dark-text">
+                                                            {user.name || tCommon('unknown')}
+                                                        </p>
+                                                        <p className="text-sm text-text-light dark:text-dark-text-muted flex items-center gap-1">
+                                                            <Mail className="w-3 h-3" />
+                                                            {user.email}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {getRoleBadge(user.role, user.is_verified_author, !!user.suspended_at)}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-text-light dark:text-dark-text-muted">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar className="w-3.5 h-3.5" />
+                                                    {format(new Date(user.created_at), 'MMM d, yyyy')}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-4 text-sm text-text-light dark:text-dark-text-muted">
+                                                    <span className="flex items-center gap-1" title={t('activity.posts')}>
+                                                        <FileText className="w-3.5 h-3.5" />
+                                                        {user.post_count}
+                                                    </span>
+                                                    <span className="flex items-center gap-1" title={t('activity.comments')}>
+                                                        <MessageSquare className="w-3.5 h-3.5" />
+                                                        {user.comment_count}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <div className="relative inline-block">
+                                                    <button
+                                                        onClick={() => setShowActionMenu(showActionMenu === user.id ? null : user.id)}
+                                                        disabled={processingUserId === user.id}
+                                                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors disabled:opacity-50"
+                                                    >
+                                                        {processingUserId === user.id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <MoreHorizontal className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                                                        )}
+                                                    </button>
+
+                                                    {showActionMenu === user.id && (
+                                                        <>
+                                                            <div
+                                                                className="fixed inset-0 z-10"
+                                                                onClick={() => setShowActionMenu(null)}
+                                                            />
+                                                            <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-20 py-1">
+                                                                {/* Only show Change Role to admins */}
+                                                                {currentUserRole === 'admin' && (
+                                                                    <button
+                                                                        onClick={() => handleRoleChange(user)}
+                                                                        className="w-full px-4 py-2 text-left text-sm text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border flex items-center gap-2"
+                                                                    >
+                                                                        <Shield className="w-4 h-4" />
+                                                                        {t('changeRole')}
+                                                                    </button>
+                                                                )}
+                                                                {/* Moderators cannot suspend admins */}
+                                                                {!(currentUserRole === 'moderator' && user.role === 'admin') && (
+                                                                    <button
+                                                                        onClick={() => handleSuspend(user)}
+                                                                        className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${user.suspended_at
+                                                                            ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+                                                                            : 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                                                            }`}
+                                                                    >
+                                                                        {user.suspended_at ? (
+                                                                            <>
+                                                                                <CheckCircle className="w-4 h-4" />
+                                                                                {t('unsuspend')}
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <Ban className="w-4 h-4" />
+                                                                                {t('suspend')}
+                                                                            </>
+                                                                        )}
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between">
-                    <p className="text-sm text-text-light dark:text-dark-text-muted">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">
                         {tCommon('pagination', { current: page, total: totalPages })}
                     </p>
                     <div className="flex items-center gap-2">
@@ -450,17 +545,19 @@ export function UserManagement() {
                             size="sm"
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1 || loading}
+                            className="text-xs sm:text-sm px-2 sm:px-3"
                         >
                             <ChevronLeft className="w-4 h-4" />
-                            {tCommon('previous')}
+                            <span className="hidden sm:inline">{tCommon('previous')}</span>
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages || loading}
+                            className="text-xs sm:text-sm px-2 sm:px-3"
                         >
-                            {tCommon('next')}
+                            <span className="hidden sm:inline">{tCommon('next')}</span>
                             <ChevronRight className="w-4 h-4" />
                         </Button>
                     </div>
