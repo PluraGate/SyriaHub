@@ -58,8 +58,8 @@ vi.mock('@/components/TrendingPosts', () => ({
   TrendingPosts: () => <div data-testid="trending-posts">Trending</div>,
 }))
 
-vi.mock('@/components/ActivityFeed', () => ({
-  ActivityFeedCompact: () => <div data-testid="activity-feed">Activity</div>,
+vi.mock('@/components/ActivityInsights', () => ({
+  ActivityInsightsCompact: () => <div data-testid="activity-insights">Activity</div>,
 }))
 
 vi.mock('@/components/RelatedAuthors', () => ({
@@ -278,13 +278,13 @@ describe('HomeContentFilter Component', () => {
       render(<HomeContentFilter {...defaultProps} />)
 
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
-      
+
       // Apply filter
       await user.type(filterInput, 'refugees')
 
       // Clear filter
       await user.clear(filterInput)
-      
+
       // Filter should be empty
       await waitFor(() => {
         expect(filterInput).toHaveValue('')

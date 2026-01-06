@@ -144,15 +144,15 @@ export function ResearchLabNav({ className }: ResearchLabNavProps) {
             {/* Back to Site */}
             <div className="p-2 xl:p-4 border-t border-gray-100 dark:border-dark-border">
                 <Link
-                    href="/feed"
+                    href="/insights"
                     className={cn(
                         'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm',
                         'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
                     )}
-                    title={t('nav.backToFeed')}
+                    title={t('nav.backToInsights')}
                 >
                     <ChevronLeft className="w-4 h-4 shrink-0" />
-                    <span className="hidden xl:inline">{t('nav.backToFeed')}</span>
+                    <span className="hidden xl:inline">{t('nav.backToInsights')}</span>
                 </Link>
             </div>
         </aside>

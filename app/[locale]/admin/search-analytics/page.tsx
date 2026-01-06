@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { SearchAnalytics } from '@/components/admin/SearchAnalytics'
 import { createClient } from '@/lib/supabase/server'
@@ -37,9 +38,12 @@ export default async function SearchAnalyticsPage() {
             <div className="flex pt-16">
                 <AdminSidebar />
 
-                <main className="flex-1 p-6">
-                    <SearchAnalytics />
-                </main>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6">
+                        <SearchAnalytics />
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     )

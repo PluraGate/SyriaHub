@@ -11,7 +11,7 @@ import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { FeedCardSkeletonCompact } from '@/components/ui/skeleton'
+import { InsightCardSkeletonCompact } from '@/components/ui/skeleton'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +26,11 @@ import { useDefaultCover } from '@/lib/coverImages'
 
 
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
-type FeedTab = 'all' | 'following'
+type InsightTab = 'all' | 'following'
 
 import { usePreferences } from '@/contexts/PreferencesContext'
 
-export default function FeedPage() {
+export default function InsightsPage() {
   const { preferences } = usePreferences()
   const [user, setUser] = useState<User | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
@@ -38,10 +38,10 @@ export default function FeedPage() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'article' | 'question'>('all')
   const [sortBy, setSortBy] = useState<SortOption>('new')
-  const [feedTab, setFeedTab] = useState<FeedTab>('all')
+  const [insightTab, setInsightTab] = useState<InsightTab>('all')
   const [followingIds, setFollowingIds] = useState<string[]>([])
   const supabase = createClient()
-  const t = useTranslations('Feed')
+  const t = useTranslations('Insights')
 
   // Get theme-aware hero cover image
   const heroCover = useDefaultCover('large')
@@ -97,7 +97,7 @@ export default function FeedPage() {
         }
 
         // Following filter
-        if (feedTab === 'following' && followingIds.length > 0) {
+        if (insightTab === 'following' && followingIds.length > 0) {
           query = query.in('author_id', followingIds)
         }
 
@@ -158,7 +158,7 @@ export default function FeedPage() {
     }
 
     loadPosts()
-  }, [supabase, filter, sortBy, feedTab, followingIds, preferences.display.posts_per_page])
+  }, [supabase, filter, sortBy, insightTab, followingIds, preferences.display.posts_per_page])
 
   const filteredPosts = selectedTag
     ? posts.filter(post => post.tags?.includes(selectedTag))
@@ -197,11 +197,11 @@ export default function FeedPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-text-light dark:text-dark-text-muted">
-                    {t('liveFeed')}
+                    {t('liveInsights')}
                   </span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold text-text dark:text-dark-text tracking-tight">
-                  {t('yourFeed')}
+                  {t('yourInsights')}
                 </h1>
                 <p className="mt-2 text-lg text-text-light dark:text-dark-text-muted">
                   {t('discoverResearch')}
@@ -222,14 +222,14 @@ export default function FeedPage() {
         </div>
 
         <div className="container-custom max-w-7xl py-8">
-          {/* Feed Tabs + Sort */}
+          {/* Insights Tabs + Sort */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             {/* All / Following Tabs */}
             {user && (
               <div className="flex gap-1 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl">
                 <button
-                  onClick={() => setFeedTab('all')}
-                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'all'
+                  onClick={() => setInsightTab('all')}
+                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${insightTab === 'all'
                     ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
                     : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                     }`}
@@ -238,8 +238,8 @@ export default function FeedPage() {
                   {t('allPosts')}
                 </button>
                 <button
-                  onClick={() => setFeedTab('following')}
-                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${feedTab === 'following'
+                  onClick={() => setInsightTab('following')}
+                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${insightTab === 'following'
                     ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
                     : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                     }`}
@@ -325,27 +325,27 @@ export default function FeedPage() {
           {loading ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <FeedCardSkeletonCompact key={i} />
+                <InsightCardSkeletonCompact key={i} />
               ))}
             </div>
           ) : filteredPosts.length === 0 ? (
             <EmptyState
-              variant={feedTab === 'following' && followingIds.length === 0 ? 'no-followers' : 'no-posts'}
+              variant={insightTab === 'following' && followingIds.length === 0 ? 'no-followers' : 'no-posts'}
               title={
-                feedTab === 'following' && followingIds.length === 0
-                  ? 'No one to follow yet'
+                insightTab === 'following' && followingIds.length === 0
+                  ? t('noFollowersTitle')
                   : selectedTag
-                    ? `No posts found for "${selectedTag}"`
-                    : 'No posts yet'
+                    ? t('noPostsTaggedTitle', { tag: selectedTag })
+                    : t('noPostsTitle')
               }
               description={
-                feedTab === 'following' && followingIds.length === 0
-                  ? 'Follow researchers to see their posts in your feed. Explore the community to find interesting people!'
+                insightTab === 'following' && followingIds.length === 0
+                  ? t('noFollowersDesc')
                   : selectedTag
-                    ? 'Try a different topic or clear the filter to see more content.'
-                    : 'Be the first to share your research with the community!'
+                    ? t('noPostsTaggedDesc')
+                    : t('noPostsDesc')
               }
-              actionLabel={user ? 'Create Post' : undefined}
+              actionLabel={user ? t('actionLabel') : undefined}
               actionHref={user ? '/editor' : undefined}
             />
           ) : (

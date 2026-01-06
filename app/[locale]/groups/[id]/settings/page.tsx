@@ -242,7 +242,7 @@ export default function GroupSettingsPage(props: GroupSettingsPageProps) {
                                     <select
                                         value={group.visibility}
                                         onChange={(e) => setGroup({ ...group, visibility: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text"
+                                        className="select-input"
                                     >
                                         <option value="private">Private (Invite Only)</option>
                                         <option value="restricted">Restricted (Request to Join)</option>

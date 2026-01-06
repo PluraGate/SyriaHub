@@ -65,7 +65,7 @@ SyriaHub supports several content types:
 
 ### Answering Questions
 
-1. Find a question in the Feed or Explore page
+1. Find a question in Insights or the Explore page
 2. Scroll to the answer section
 3. Write your response with citations if applicable
 4. Submit your answer

@@ -253,7 +253,7 @@ export const emailTemplates = {
       </div>
 
       <p style="text-align: center; margin-top: 32px;">
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/feed" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">Explore the Feed</a>
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/insights" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #1e7a6e 0%, #0d4d44 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">Explore Insights</a>
       </p>
     `),
   }),
@@ -457,18 +457,18 @@ export const emailTemplates = {
 
         <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
           <p style="font-size: 16px; color: #374151; line-height: 2; margin: 0 0 12px;">
-            <strong>مع حسابك يمكنك:</strong>
+            <strong>من خلال حسابك يمكنك:</strong>
           </p>
           <ul style="margin: 0; padding-right: 20px; color: #374151; font-size: 15px; line-height: 2;">
-            <li>الوصول إلى أبحاث ورؤى حصرية حول سوريا</li>
+            <li>الوصول إلى أبحاث ورؤى متعلقة بسوريا</li>
             <li>التعاون مع الباحثين والخبراء</li>
             <li>المساهمة في قاعدة المعرفة الجماعية</li>
-            <li>المشاركة في النقاشات الأكاديمية</li>
+            <li>المشاركة في الحوارات المعرفية</li>
           </ul>
         </div>
         
         <p style="font-size: 16px; color: #374151; line-height: 2; margin-bottom: 32px;">
-          هذه الدعوة لا تحمل أي التزام. إنها فرصة للوصول إلى المنصة، أو الاطلاع على البيانات البحثية، أو المشاركة في النقاشات إذا رغبت في ذلك.
+          هذه الدعوة لا تحمل أي التزام. إنها فرصة للوصول إلى المنصة، أو الاطلاع على البيانات البحثية، أو المشاركة في الحوارات إذا رغبت في ذلك.
         </p>
       `,
       cta: {

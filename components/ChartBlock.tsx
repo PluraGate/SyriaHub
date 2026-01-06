@@ -88,9 +88,9 @@ export function ChartBlock({
 
     // Filter to only show dataset resources
     const datasetResources = linkedResources.filter(
-        r => r.metadata?.resource_type === 'dataset' || 
-             r.metadata?.mime_type?.includes('json') ||
-             r.metadata?.mime_type?.includes('csv')
+        r => r.metadata?.resource_type === 'dataset' ||
+            r.metadata?.mime_type?.includes('json') ||
+            r.metadata?.mime_type?.includes('csv')
     )
 
     const CHART_TYPES: { id: ChartType; label: string; icon: typeof BarChart3 }[] = [
@@ -121,7 +121,7 @@ export function ChartBlock({
             // Try parsing as JSON first
             if (resource.metadata.mime_type?.includes('json') || resource.metadata.url?.endsWith('.json')) {
                 const json = JSON.parse(text)
-                
+
                 // Handle different JSON structures
                 if (json.results && Array.isArray(json.results)) {
                     // Poll/Survey export format
@@ -140,7 +140,7 @@ export function ChartBlock({
                         const keys = Object.keys(item)
                         const nameKey = config.nameKey || keys.find(k => typeof item[k] === 'string') || 'name'
                         const valueKey = config.dataKey || keys.find(k => typeof item[k] === 'number') || 'value'
-                        
+
                         return {
                             name: String(item[nameKey] || `Item ${index + 1}`),
                             value: Number(item[valueKey]) || 0,
@@ -302,7 +302,7 @@ export function ChartBlock({
                                         </p>
                                         <p className="text-xs text-text-light dark:text-dark-text-muted">
                                             {resource.metadata?.source_type === 'poll' ? 'Poll Results' :
-                                             resource.metadata?.source_type === 'survey' ? 'Survey Results' : 'Dataset'}
+                                                resource.metadata?.source_type === 'survey' ? 'Survey Results' : 'Dataset'}
                                         </p>
                                     </div>
                                 </button>
@@ -333,7 +333,7 @@ export function ChartBlock({
                         {config.title || config.resourceTitle}
                     </span>
                 </div>
-                
+
                 {isEditing && (
                     <div className="flex items-center gap-1">
                         <button
@@ -374,11 +374,10 @@ export function ChartBlock({
                                     <button
                                         key={type.id}
                                         onClick={() => onChange({ ...config, chartType: type.id })}
-                                        className={`p-2 rounded-lg transition-colors ${
-                                            config.chartType === type.id
+                                        className={`p-2 rounded-lg transition-colors ${config.chartType === type.id
                                                 ? 'bg-primary text-white'
                                                 : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text-light hover:border-primary'
-                                        }`}
+                                            }`}
                                         title={type.label}
                                     >
                                         <type.icon className="w-4 h-4" />
@@ -396,7 +395,7 @@ export function ChartBlock({
                                     <select
                                         value={config.nameKey || ''}
                                         onChange={(e) => onChange({ ...config, nameKey: e.target.value })}
-                                        className="input input-sm"
+                                        className="select-input"
                                     >
                                         <option value="">Auto</option>
                                         {availableKeys.map(key => (
@@ -411,7 +410,7 @@ export function ChartBlock({
                                     <select
                                         value={config.dataKey || ''}
                                         onChange={(e) => onChange({ ...config, dataKey: e.target.value })}
-                                        className="input input-sm"
+                                        className="select-input"
                                     >
                                         <option value="">Auto</option>
                                         {availableKeys.map(key => (

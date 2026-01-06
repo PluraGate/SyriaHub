@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, Check, AlertCircle, PenTool } from 'lucide-react'
+import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, Check, AlertCircle, PenTool, Search } from 'lucide-react'
 import { generateShortTitle, sanitizeForSlug, generateResourceSlug } from '@/lib/utils/slug-generator'
 
 const RESOURCE_TYPES = [
@@ -57,6 +57,7 @@ export default function UploadResourcePage() {
     const [uploading, setUploading] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [isSuggesting, setIsSuggesting] = useState(false)
+    const [tagSearch, setTagSearch] = useState('')
 
     const supabase = createClient()
     const router = useRouter()
@@ -202,13 +203,29 @@ export default function UploadResourcePage() {
         }
     }
 
-    // Group tags by discipline
-    const tagsByDiscipline = availableTags.reduce<Record<string, Tag[]>>((acc, tag) => {
-        const discipline = tag.discipline || 'Other'
-        if (!acc[discipline]) acc[discipline] = []
-        acc[discipline].push(tag)
-        return acc
-    }, {})
+    // Group tags by discipline, filtered by search query
+    const tagsByDiscipline = useMemo(() => {
+        const query = tagSearch.toLowerCase().trim()
+        return availableTags.reduce<Record<string, Tag[]>>((acc, tag) => {
+            if (query && !tag.label.toLowerCase().includes(query)) return acc
+
+            const discipline = tag.discipline || 'Other'
+            if (!acc[discipline]) acc[discipline] = []
+            acc[discipline].push(tag)
+            return acc
+        }, {})
+    }, [availableTags, tagSearch])
+
+    const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && tagSearch.trim()) {
+            e.preventDefault()
+            const newTag = tagSearch.trim()
+            if (!selectedTags.includes(newTag)) {
+                setSelectedTags(prev => [...prev, newTag])
+            }
+            setTagSearch('')
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -440,9 +457,9 @@ export default function UploadResourcePage() {
                                 onChange={handleShortTitleChange}
                                 placeholder={tSlug('shortTitlePlaceholder')}
                                 maxLength={50}
-                                className="font-mono text-sm pr-16"
+                                className="font-mono text-sm pe-16"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-light dark:text-dark-text-muted">
+                            <span className="absolute end-3 top-1/2 -translate-y-1/2 text-xs text-text-light dark:text-dark-text-muted">
                                 {shortTitle.length}/50
                             </span>
                         </div>
@@ -502,7 +519,7 @@ export default function UploadResourcePage() {
                                             type="button"
                                             onClick={() => toggleTag(tagLabel)}
                                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                                            style={{ borderLeft: `3px solid ${tag?.color || '#10b981'}` }}
+                                            style={{ borderInlineStart: `3px solid ${tag?.color || '#10b981'}` }}
                                         >
                                             {tagLabel}
                                             <X className="w-3 h-3 opacity-70" />
@@ -512,31 +529,53 @@ export default function UploadResourcePage() {
                             </div>
                         )}
 
-                        {/* Available Tags by Discipline */}
-                        <div className="space-y-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-dark-border rounded-lg p-4 bg-gray-50 dark:bg-dark-bg">
-                            {Object.entries(tagsByDiscipline).map(([discipline, tags]) => (
-                                <div key={discipline}>
-                                    <p className="text-xs font-medium text-text-light dark:text-dark-text-muted mb-2 uppercase tracking-wide">
-                                        {discipline}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {tags.map(tag => (
-                                            <button
-                                                key={tag.id}
-                                                type="button"
-                                                onClick={() => toggleTag(tag.label)}
-                                                className={`px-3 py-1 rounded-full text-sm transition-colors ${selectedTags.includes(tag.label)
-                                                    ? 'bg-primary text-white'
-                                                    : 'bg-gray-200 dark:bg-gray-700 text-text dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                                    }`}
-                                                style={!selectedTags.includes(tag.label) ? { borderLeft: `3px solid ${tag.color}` } : {}}
-                                            >
-                                                {tag.label}
-                                            </button>
-                                        ))}
+                        {/* Tag Search and Available Tags */}
+                        <div className="space-y-3">
+                            <div className="relative">
+                                <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light opacity-50" />
+                                <Input
+                                    value={tagSearch}
+                                    onChange={(e) => setTagSearch(e.target.value)}
+                                    onKeyDown={handleTagKeyDown}
+                                    placeholder={t('searchTagsPlaceholder')}
+                                    className="ps-10 pe-10"
+                                />
+                                {tagSearch && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setTagSearch('')}
+                                        className="absolute end-3 top-1/2 -translate-y-1/2"
+                                    >
+                                        <X className="w-4 h-4 text-text-light hover:text-primary transition-colors" />
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="space-y-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-dark-border rounded-lg p-4 bg-gray-50 dark:bg-dark-bg">
+                                {Object.entries(tagsByDiscipline).map(([discipline, tags]) => (
+                                    <div key={discipline}>
+                                        <p className="text-xs font-medium text-text-light dark:text-dark-text-muted mb-2 uppercase tracking-wide">
+                                            {discipline}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {tags.map(tag => (
+                                                <button
+                                                    key={tag.id}
+                                                    type="button"
+                                                    onClick={() => toggleTag(tag.label)}
+                                                    className={`px-3 py-1 rounded-full text-sm transition-colors ${selectedTags.includes(tag.label)
+                                                        ? 'bg-primary text-white'
+                                                        : 'bg-gray-200 dark:bg-gray-700 text-text dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                        }`}
+                                                    style={!selectedTags.includes(tag.label) ? { borderInlineStart: `3px solid ${tag.color}` } : {}}
+                                                >
+                                                    {tag.label}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -546,7 +585,7 @@ export default function UploadResourcePage() {
                             id="license"
                             value={license}
                             onChange={(e) => setLicense(e.target.value)}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 py-2 text-sm text-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            className="select-input"
                         >
                             {LICENSES.map(l => (
                                 <option key={l.value} value={l.value}>

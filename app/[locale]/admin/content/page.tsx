@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +15,13 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import {
     Loader2,
@@ -279,198 +287,206 @@ export default function AdminContentPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <main className="flex-1 p-6 md:p-8">
-                    <div className="max-w-6xl mx-auto">
-                        {/* Header */}
-                        <div className="mb-8">
-                            <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
-                                {t('title')}
-                            </h1>
-                            <p className="text-text-light dark:text-dark-text-muted mt-2">
-                                {t('subtitle')}
-                            </p>
-                        </div>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6 md:p-8">
+                        <div className="max-w-6xl mx-auto">
+                            {/* Header */}
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                                    {t('title')}
+                                </h1>
+                                <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                    {t('subtitle')}
+                                </p>
+                            </div>
 
-                        {/* Filters */}
-                        <div className="card p-4 mb-6">
-                            <div className="flex flex-col md:flex-row gap-4">
-                                {/* Search */}
-                                <div className="flex-1 relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
-                                    <Input
-                                        placeholder={t('searchPlaceholder')}
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                        className="pl-9"
-                                    />
-                                </div>
+                            {/* Filters */}
+                            <div className="card p-4 mb-6">
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    {/* Search */}
+                                    <div className="flex-1 relative">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
+                                        <Input
+                                            placeholder={t('searchPlaceholder')}
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                            className="pl-9"
+                                        />
+                                    </div>
 
-                                {/* Status Filter */}
-                                <div className="flex items-center gap-2">
-                                    <Filter className="w-4 h-4 text-text-light" />
-                                    <select
-                                        value={statusFilter}
-                                        onChange={(e) => { setStatusFilter(e.target.value as StatusFilter); setPage(1) }}
-                                        className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text text-sm"
-                                    >
-                                        <option value="all">{t('allStatus')}</option>
-                                        <option value="pending">{t('pending')}</option>
-                                        <option value="approved">{t('approved')}</option>
-                                        <option value="rejected">{t('rejected')}</option>
-                                    </select>
-                                </div>
+                                    {/* Status Filter */}
+                                    <div className="flex items-center gap-2">
+                                        <Filter className="w-4 h-4 text-text-light" />
+                                        <Select
+                                            value={statusFilter}
+                                            onValueChange={(value) => { setStatusFilter(value as StatusFilter); setPage(1) }}
+                                        >
+                                            <SelectTrigger className="w-[130px] bg-white dark:bg-dark-surface">
+                                                <SelectValue placeholder={t('allStatus')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">{t('allStatus')}</SelectItem>
+                                                <SelectItem value="pending">{t('pending')}</SelectItem>
+                                                <SelectItem value="approved">{t('approved')}</SelectItem>
+                                                <SelectItem value="rejected">{t('rejected')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
-                                {/* Type Filter */}
-                                <div>
-                                    <select
+                                    {/* Type Filter */}
+                                    <Select
                                         value={typeFilter}
-                                        onChange={(e) => { setTypeFilter(e.target.value as ContentTypeFilter); setPage(1) }}
-                                        className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text text-sm"
+                                        onValueChange={(value) => { setTypeFilter(value as ContentTypeFilter); setPage(1) }}
                                     >
-                                        <option value="all">{t('allTypes')}</option>
-                                        <option value="article">{t('articles')}</option>
-                                        <option value="question">{t('questions')}</option>
-                                        <option value="discussion">{t('discussions')}</option>
-                                        <option value="resource">{t('resources')}</option>
-                                        <option value="event">{t('events')}</option>
-                                    </select>
+                                        <SelectTrigger className="w-[130px] bg-white dark:bg-dark-surface">
+                                            <SelectValue placeholder={t('allTypes')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">{t('allTypes')}</SelectItem>
+                                            <SelectItem value="article">{t('articles')}</SelectItem>
+                                            <SelectItem value="question">{t('questions')}</SelectItem>
+                                            <SelectItem value="discussion">{t('discussions')}</SelectItem>
+                                            <SelectItem value="resource">{t('resources')}</SelectItem>
+                                            <SelectItem value="event">{t('events')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
 
+                                    <Button onClick={handleSearch}>
+                                        {t('search')}
+                                    </Button>
                                 </div>
+                            </div>
 
-                                <Button onClick={handleSearch}>
-                                    {t('search')}
-                                </Button>
+                            {/* Content Table */}
+                            <div className="card overflow-hidden">
+                                {loading ? (
+                                    <div className="p-12 flex justify-center">
+                                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    </div>
+                                ) : posts.length === 0 ? (
+                                    <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
+                                        <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                                        <p>{t('noContent')}</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <table className="w-full text-start">
+                                            <thead>
+                                                <tr className="border-b border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-border/50">
+                                                    <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableTitle')}</th>
+                                                    <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableAuthor')}</th>
+                                                    <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableType')}</th>
+                                                    <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableStatus')}</th>
+                                                    <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableDate')}</th>
+                                                    <th className="text-end p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableActions')}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
+                                                {posts.map((post) => (
+                                                    <tr key={post.id} className="hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
+                                                        <td className="p-4">
+                                                            <Link
+                                                                href={`/post/${post.id}`}
+                                                                className="font-medium text-text dark:text-dark-text hover:text-primary dark:hover:text-primary-light transition-colors line-clamp-1 text-start"
+                                                            >
+                                                                {post.title}
+                                                            </Link>
+                                                        </td>
+                                                        <td className="p-4 text-start">
+                                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                                {post.author?.name || 'Unknown'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4 text-start">
+                                                            {getTypeBadge(post.content_type)}
+                                                        </td>
+                                                        <td className="p-4 text-start">
+                                                            {getStatusBadge(post.approval_status)}
+                                                        </td>
+                                                        <td className="p-4 text-start">
+                                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                                {format(new Date(post.created_at), 'MMM d, yyyy')}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex items-center justify-end gap-2">
+                                                                <Link href={`/post/${post.id}`}>
+                                                                    <Button variant="ghost" size="sm" title={t('view')}>
+                                                                        <Eye className="w-4 h-4" />
+                                                                    </Button>
+                                                                </Link>
+                                                                {post.approval_status !== 'approved' && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => handleApprove(post.id)}
+                                                                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                                        title={t('approve')}
+                                                                    >
+                                                                        <CheckCircle className="w-4 h-4" />
+                                                                    </Button>
+                                                                )}
+                                                                {post.approval_status !== 'rejected' && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => handleRejectClick(post)}
+                                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                                        title={t('reject')}
+                                                                    >
+                                                                        <XCircle className="w-4 h-4" />
+                                                                    </Button>
+                                                                )}
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => handleDeleteClick(post)}
+                                                                    className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                                    title={t('delete')}
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+
+                                        {/* Pagination */}
+                                        {totalPages > 1 && (
+                                            <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-dark-border">
+                                                <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                    {t('page', { page, totalPages })}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                                                        disabled={page === 1}
+                                                    >
+                                                        <ChevronLeft className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                                        disabled={page === totalPages}
+                                                    >
+                                                        <ChevronRight className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
-
-                        {/* Content Table */}
-                        <div className="card overflow-hidden">
-                            {loading ? (
-                                <div className="p-12 flex justify-center">
-                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                </div>
-                            ) : posts.length === 0 ? (
-                                <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
-                                    <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p>{t('noContent')}</p>
-                                </div>
-                            ) : (
-                                <>
-                                    <table className="w-full text-start">
-                                        <thead>
-                                            <tr className="border-b border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-border/50">
-                                                <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableTitle')}</th>
-                                                <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableAuthor')}</th>
-                                                <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableType')}</th>
-                                                <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableStatus')}</th>
-                                                <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableDate')}</th>
-                                                <th className="text-end p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableActions')}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
-                                            {posts.map((post) => (
-                                                <tr key={post.id} className="hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
-                                                    <td className="p-4">
-                                                        <Link
-                                                            href={`/post/${post.id}`}
-                                                            className="font-medium text-text dark:text-dark-text hover:text-primary dark:hover:text-primary-light transition-colors line-clamp-1 text-start"
-                                                        >
-                                                            {post.title}
-                                                        </Link>
-                                                    </td>
-                                                    <td className="p-4 text-start">
-                                                        <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                            {post.author?.name || 'Unknown'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4 text-start">
-                                                        {getTypeBadge(post.content_type)}
-                                                    </td>
-                                                    <td className="p-4 text-start">
-                                                        {getStatusBadge(post.approval_status)}
-                                                    </td>
-                                                    <td className="p-4 text-start">
-                                                        <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                            {format(new Date(post.created_at), 'MMM d, yyyy')}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">
-                                                        <div className="flex items-center justify-end gap-2">
-                                                            <Link href={`/post/${post.id}`}>
-                                                                <Button variant="ghost" size="sm" title={t('view')}>
-                                                                    <Eye className="w-4 h-4" />
-                                                                </Button>
-                                                            </Link>
-                                                            {post.approval_status !== 'approved' && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => handleApprove(post.id)}
-                                                                    className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                                                                    title={t('approve')}
-                                                                >
-                                                                    <CheckCircle className="w-4 h-4" />
-                                                                </Button>
-                                                            )}
-                                                            {post.approval_status !== 'rejected' && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => handleRejectClick(post)}
-                                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                                    title={t('reject')}
-                                                                >
-                                                                    <XCircle className="w-4 h-4" />
-                                                                </Button>
-                                                            )}
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleDeleteClick(post)}
-                                                                className="text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                                                title={t('delete')}
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-
-                                    {/* Pagination */}
-                                    {totalPages > 1 && (
-                                        <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-dark-border">
-                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                {t('page', { page, totalPages })}
-                                            </span>
-                                            <div className="flex items-center gap-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                                                    disabled={page === 1}
-                                                >
-                                                    <ChevronLeft className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                                    disabled={page === totalPages}
-                                                >
-                                                    <ChevronRight className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </main>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             {/* Rejection Dialog */}

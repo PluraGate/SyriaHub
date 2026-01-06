@@ -9,7 +9,7 @@ import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
 import { TrendingPosts } from '@/components/TrendingPosts'
-import { ActivityFeedCompact } from '@/components/ActivityFeed'
+import { ActivityInsightsCompact } from '@/components/ActivityInsights'
 import { RelatedAuthors } from '@/components/RelatedAuthors'
 import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
 
@@ -58,7 +58,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
   // Filter posts based on query (searches title, content, excerpt, tags, and author name)
   const filterPosts = useCallback((posts: Post[]) => {
     if (!filterQuery.trim()) return posts
-    
+
     const query = normalizeText(filterQuery)
     return posts.filter(post => {
       const title = normalizeText(post.title || '')
@@ -66,7 +66,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
       const excerpt = normalizeText(post.excerpt || '')
       const tags = normalizeText(post.tags?.join(' ') || '')
       const authorName = normalizeText(post.author?.name || '')
-      
+
       return (
         title.includes(query) ||
         content.includes(query) ||
@@ -146,7 +146,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
               )}
             </h2>
             <Link
-              href="/feed"
+              href="/insights"
               className="text-primary dark:text-secondary hover:text-primary-dark dark:hover:text-secondary-light font-medium flex items-center gap-2 transition-colors"
             >
               {t('viewAll')}
@@ -236,7 +236,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
 
           {/* Recent Activity */}
           <div>
-            <ActivityFeedCompact limit={5} />
+            <ActivityInsightsCompact limit={5} />
           </div>
 
           {/* Related Researchers */}

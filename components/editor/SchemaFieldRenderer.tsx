@@ -140,7 +140,7 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
                 <select
                     value={value || ''}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="select-input"
                 >
                     <option value="">Select an option...</option>
                     {selectOptions.map((opt: any) => {

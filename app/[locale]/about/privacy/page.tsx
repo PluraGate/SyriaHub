@@ -145,7 +145,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
                             </h4>
                             <p className="text-xs text-text-muted dark:text-dark-text-muted m-0">
                                 {isArabic
-                                    ? 'التحقق من Turnstile للحماية من الروبوتات على النماذج العامة'
+                                    ? 'التحقق عبر Turnstile للحماية من الروبوتات على النماذج العامة'
                                     : 'Turnstile verification for bot protection on public forms'
                                 }
                             </p>

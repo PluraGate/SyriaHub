@@ -142,12 +142,12 @@ export function FeedbackDialog({ isOpen, onClose, onTicketCreated, defaultPageUr
                                             type="button"
                                             onClick={() => setCategory(cat.id)}
                                             className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${isSelected
-                                                ? 'border-primary bg-primary/10'
-                                                : 'border-gray-200 dark:border-dark-border hover:border-primary/50'
+                                                ? 'border-primary bg-primary text-white'
+                                                : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text-muted hover:border-primary/50'
                                                 }`}
                                         >
-                                            <Icon className={`w-6 h-6 ${isSelected ? 'text-primary' : cat.colorClass}`} />
-                                            <span className={`text-xs font-medium ${isSelected ? 'text-primary' : 'text-text-light dark:text-dark-text-muted'}`}>
+                                            <Icon className={`w-6 h-6 ${isSelected ? 'text-white' : cat.colorClass}`} />
+                                            <span className="text-xs font-medium">
                                                 {t(`categories.${cat.id}`)}
                                             </span>
                                         </button>

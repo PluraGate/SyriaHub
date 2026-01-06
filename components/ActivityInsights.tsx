@@ -181,7 +181,7 @@ function ActivityItemComponent({ activity, t, formatDate }: { activity: Activity
     )
 }
 
-export function ActivityFeed({ limit = 10 }: { limit?: number }) {
+export function ActivityInsights({ limit = 10 }: { limit?: number }) {
     const t = useTranslations('Homepage')
     const { formatDate } = useDateFormatter()
     const [activities, setActivities] = useState<ActivityItem[]>([])
@@ -325,9 +325,9 @@ export function ActivityFeed({ limit = 10 }: { limit?: number }) {
 }
 
 /**
- * Compact activity feed for sidebar or cards
+ * Compact activity insights for sidebar or cards
  */
-export function ActivityFeedCompact({ limit = 5 }: { limit?: number }) {
+export function ActivityInsightsCompact({ limit = 5 }: { limit?: number }) {
     const t = useTranslations('Homepage')
     return (
         <div className="card p-0 overflow-hidden">
@@ -336,7 +336,7 @@ export function ActivityFeedCompact({ limit = 5 }: { limit?: number }) {
                     {t('recentActivity')}
                 </h3>
             </div>
-            <ActivityFeed limit={limit} />
+            <ActivityInsights limit={limit} />
         </div>
     )
 }

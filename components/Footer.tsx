@@ -73,10 +73,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/feed"
+                  href="/insights"
                   className="text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors focus-ring rounded px-1 -ms-1"
                 >
-                  {t('browseFeed')}
+                  {t('browseInsights')}
                 </Link>
               </li>
               <li>
@@ -206,7 +206,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 text-text-muted/40 dark:text-dark-text-muted/30 hover:text-[#FFA500] transition-colors focus-ring rounded-lg"
-              aria-label="RSS Feed"
+              aria-label="RSS Insights"
             >
               <Rss className="w-5 h-5" />
             </a>

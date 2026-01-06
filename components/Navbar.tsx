@@ -164,7 +164,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
           <div className="hidden md:flex items-end gap-2 lg:gap-4 flex-1 justify-end">
             {/* Nav links - only visible at lg+ to preserve space for action items */}
             <div className="hidden lg:flex items-center gap-0.5 xl:gap-1">
-              <NavLink href="/feed">{t('feed')}</NavLink>
+              <NavLink href="/insights">{t('insights')}</NavLink>
               <NavLink href="/explore">{t('explore')}</NavLink>
               <NavLink href="/resources">{t('resources')}</NavLink>
               <NavLink href="/events">{t('events')}</NavLink>
@@ -314,13 +314,13 @@ export function Navbar({ user: userProp }: NavbarProps) {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-1 border-t border-gray-200 dark:border-dark-border animate-in slide-in-from-top-2 duration-200">
-            {/* Content: Feed */}
+            {/* Content: Insights */}
             <Link
-              href="/feed"
+              href="/insights"
               className="block px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              {t('feed')}
+              {t('insights')}
             </Link>
 
             {/* Thinking Tools: Explore + Research Lab - subtle visual grouping */}

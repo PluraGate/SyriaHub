@@ -177,7 +177,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                         <select
                             value={actionType}
                             onChange={(e) => setActionType(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                            className="select-input"
                         >
                             {actionTypes
                                 .filter(a => isAdmin || !a.adminOnly)
@@ -198,7 +198,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                         <select
                             value={newState}
                             onChange={(e) => setNewState(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                            className="select-input"
                         >
                             {stateOptions.map(state => (
                                 <option
@@ -222,7 +222,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                 <select
                                     value={decisionConfidence}
                                     onChange={(e) => setDecisionConfidence(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                    className="select-input"
                                 >
                                     {confidenceLevels.map(level => (
                                         <option key={level.value} value={level.value}>

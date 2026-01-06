@@ -275,11 +275,11 @@ export default async function PostPage(props: PostPageProps) {
           <div className="container-custom max-w-5xl py-6">
             {/* Back Link */}
             <Link
-              href="/feed"
+              href="/insights"
               className="inline-flex items-center gap-2 text-sm transition-colors mb-4 md:mb-8 text-white/80 hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
-              {t('backToFeed')}
+              {t('backToInsights')}
             </Link>
 
             {/* Content Type Badge */}

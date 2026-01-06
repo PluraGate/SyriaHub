@@ -5,7 +5,7 @@ import { type NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') || '/feed'
+  const next = requestUrl.searchParams.get('next') || '/insights'
 
   if (code) {
     const supabase = await createClient()
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
   // URL to redirect to after sign in process completes
   // Sanitize 'next' to prevent open redirects (only allow internal relative paths)
-  let safeNext = '/feed'
+  let safeNext = '/insights'
   if (next && next.startsWith('/') && !next.startsWith('//')) {
     safeNext = next
   }

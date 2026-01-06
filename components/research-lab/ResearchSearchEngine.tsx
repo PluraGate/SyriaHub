@@ -812,7 +812,7 @@ export function ResearchSearchEngine() {
                                         <select
                                             value={filters.conflict_phase || ''}
                                             onChange={(e) => updateFilter('conflict_phase', e.target.value as ConflictPhase || undefined)}
-                                            className="w-full px-3 py-2.5 rounded-md border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            className="select-input"
                                         >
                                             <option value="">{t('allPhases')}</option>
                                             {CONFLICT_PHASES.map(p => (

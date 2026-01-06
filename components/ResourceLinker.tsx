@@ -283,7 +283,7 @@ export function ResourceLinker({
                         <button
                             type="button"
                             onClick={() => setShowUploadModal(true)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 rounded-lg transition-all"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary dark:text-secondary-light bg-primary/10 dark:bg-secondary-light/10 border border-primary/30 dark:border-secondary-light/30 hover:bg-primary/20 dark:hover:bg-secondary-light/20 hover:border-primary/50 dark:hover:border-secondary-light/50 rounded-lg transition-all"
                         >
                             <Upload className="w-3.5 h-3.5" />
                             {t('uploadNew')}

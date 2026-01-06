@@ -87,7 +87,7 @@ SyriaHub explicitly commits to **not** becoming:
 
 The following features were explicitly considered and rejected:
 
-### Personalized Feeds
+### Personalized Insights
 **Rejected.** Personalization algorithms optimize for engagement, not epistemic quality. They create filter bubbles that narrow rather than expand understanding.
 
 ### Author Rankings

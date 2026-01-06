@@ -27,16 +27,16 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                AUTHENTICATED PAGES (Requires Login)               │
 ├─────────────────────────────────────────────────────────────────┤
-│ /                 → Home/Feed (when logged in)                   │
+│ /                 → Home/Insights (when logged in)            │
 │                     - Global search bar                          │
 │                     - Popular tags cloud                         │
 │                     - Recent posts preview                        │
 │                     - Link to full feed                          │
 │                                                                   │
-│ /feed             → Main Feed                                     │
+│ /insights         → Main Insights                                 │
 │                     - All posts chronologically                  │
 │                     - Tag filtering                              │
-│                     - Post cards grid                            │
+│                     - Insight cards grid                         │
 │                                                                   │
 │ /explore          → Explore Page (Enhanced)                       │
 │                     - Advanced filtering                         │
@@ -93,16 +93,16 @@
 ```
 Landing (/) 
     ↓
-    ├─→ Sign Up (/auth/signup) → Feed (/feed)
-    ├─→ Login (/auth/login) → Feed (/feed)
+    ├─→ Sign Up (/auth/signup) → Insights (/insights)
+    ├─→ Login (/auth/login) → Insights (/insights)
     └─→ Explore (/explore) → Post Detail (/post/[id])
 ```
 
 ### Authenticated User Journey
 ```
-Home (/) [Feed Preview]
+Home (/) [Insights Preview]
     ↓
-    ├─→ Feed (/feed)
+    ├─→ Insights (/insights)
     │       ↓
     │       ├─→ Post Detail (/post/[id])
     │       │       ↓
@@ -189,7 +189,7 @@ App Layout
     ├── Page Content
     │   ├── SearchBar (Home, Explore)
     │   ├── TagsCloud (Home)
-    │   ├── PostCard (Feed, Profile, Explore)
+    │   ├── PostCard (Insights, Profile, Explore)
     │   ├── RelatedPosts (Post Detail)
     │   ├── CitationBacklinks (Post Detail)
     │   └── Skeleton Loaders (Loading states)

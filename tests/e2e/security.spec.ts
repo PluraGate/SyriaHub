@@ -5,8 +5,8 @@ test.describe('Security: Unauthorized Access', () => {
     const PROTECTED_ROUTES = [
         '/en/editor',
         '/ar/editor',
-        '/en/feed',
-        '/ar/feed',
+        '/en/insights',
+        '/ar/insights',
         '/en/research-lab',
         '/ar/research-lab',
         '/en/settings',

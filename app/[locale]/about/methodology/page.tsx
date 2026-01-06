@@ -25,7 +25,7 @@ export default async function MethodologyPage({ params }: { params: Promise<{ lo
             icon: Bot,
             title: isArabic ? 'الفحص الآلي' : 'AI Pre-Screening',
             desc: isArabic
-                ? 'يتم فحص كل محتوى جديد تلقائياً باستخدام OpenAI Moderation API للكشف عن خطاب الكراهية والتحرش والمحتوى الضار.'
+                ? 'يتم فحص كل محتوى جديد تلقائياً باستخدام OpenAI Moderation API للكشف عن خطاب الكراهية والإساءة اللفظية والمحتوى الضار.'
                 : 'Every new submission is automatically scanned using OpenAI Moderation API for hate speech, harassment, and harmful content.'
         },
         {
@@ -110,7 +110,7 @@ export default async function MethodologyPage({ params }: { params: Promise<{ lo
                             </h4>
                             <p className="text-xs text-text-muted dark:text-dark-text-muted m-0">
                                 {isArabic
-                                    ? 'الكراهية، التحرش، العنف، المحتوى الجنسي، البريد العشوائي'
+                                    ? 'الكراهية، الإساءة اللفظية، العنف، المحتوى الجنسي، البريد العشوائي'
                                     : 'Hate, harassment, violence, sexual content, spam'
                                 }
                             </p>

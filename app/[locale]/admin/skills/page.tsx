@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
@@ -329,16 +336,20 @@ export default function AdminSkillsPage() {
                                 </div>
 
                                 {/* Category Filter */}
-                                <select
+                                <Select
                                     value={categoryFilter}
-                                    onChange={(e) => setCategoryFilter(e.target.value)}
-                                    className="h-10 px-3 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                    onValueChange={(value) => setCategoryFilter(value)}
                                 >
-                                    <option value="all">{t('allCategories')}</option>
-                                    {SKILL_CATEGORIES.map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger className="w-[180px] bg-white dark:bg-dark-surface">
+                                        <SelectValue placeholder={t('allCategories')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">{t('allCategories')}</SelectItem>
+                                        {SKILL_CATEGORIES.map(cat => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
                                 {/* Recognized Filter */}
                                 <div className="flex rounded-lg border border-gray-200 dark:border-dark-border overflow-hidden">
@@ -493,16 +504,19 @@ export default function AdminSkillsPage() {
                             <Label htmlFor="skillCategory" className="text-text dark:text-dark-text font-medium">
                                 {t('skillCategory')}
                             </Label>
-                            <select
-                                id="skillCategory"
+                            <Select
                                 value={editCategory}
-                                onChange={(e) => setEditCategory(e.target.value)}
-                                className="w-full h-10 px-3 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                onValueChange={(value) => setEditCategory(value)}
                             >
-                                {SKILL_CATEGORIES.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
+                                <SelectTrigger className="w-full bg-white dark:bg-dark-surface">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {SKILL_CATEGORIES.map(cat => (
+                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div className="flex items-center gap-3">
                             <button
@@ -591,19 +605,21 @@ export default function AdminSkillsPage() {
                             <Label htmlFor="mergeTarget" className="text-text dark:text-dark-text font-medium">
                                 {t('mergeInto')}
                             </Label>
-                            <select
-                                id="mergeTarget"
+                            <Select
                                 value={mergeTargetId}
-                                onChange={(e) => setMergeTargetId(e.target.value)}
-                                className="w-full h-10 px-3 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                onValueChange={(value) => setMergeTargetId(value)}
                             >
-                                <option value="">{t('selectMergeTarget')}</option>
-                                {mergeTargets.map(skill => (
-                                    <option key={skill.id} value={skill.id}>
-                                        {skill.name} ({skill.category})
-                                    </option>
-                                ))}
-                            </select>
+                                <SelectTrigger className="w-full bg-white dark:bg-dark-surface">
+                                    <SelectValue placeholder={t('selectMergeTarget')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {mergeTargets.map(skill => (
+                                        <SelectItem key={skill.id} value={skill.id}>
+                                            {skill.name} ({skill.category})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:gap-0">
