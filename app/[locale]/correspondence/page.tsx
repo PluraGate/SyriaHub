@@ -42,7 +42,7 @@ export default async function CorrespondencePage({ params }: { params: Promise<{
                                 {t('title')}
                             </h1>
                             <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                Formal inquiries and clarification requests
+                                {t('subtitle')}
                             </p>
                         </div>
                     </div>

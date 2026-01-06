@@ -60,13 +60,13 @@
             ]
         },
         {
-            "name": "My Feed",
-            "short_name": "Feed",
-            "description": "View your personalized feed",
-            "url": "/feed",
+            "name": "My Insights",
+            "short_name": "Insights",
+            "description": "View your personalized insights",
+            "url": "/insights",
             "icons": [
                 {
-                    "src": "/icons/feed.png",
+                    "src": "/icons/insights.png",
                     "sizes": "96x96"
                 }
             ]

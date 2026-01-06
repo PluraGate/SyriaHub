@@ -295,25 +295,27 @@ export default function AchievementsPage() {
                                             colors.border
                                         )}
                                     >
-                                        <div className="flex items-start gap-3">
+                                        <div className="flex items-start gap-4">
                                             <div className={cn(
-                                                "p-3 rounded-xl",
+                                                "p-3 rounded-xl shrink-0",
                                                 colors.bg
                                             )}>
                                                 <Icon className={cn("w-6 h-6", colors.text)} />
                                             </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2">
-                                                    <h3 className="font-bold text-text dark:text-dark-text">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between gap-2 mb-1">
+                                                    <h3 className="font-semibold text-lg text-text dark:text-dark-text leading-tight truncate pr-2">
                                                         {achievement.name}
                                                     </h3>
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
                                                 </div>
-                                                <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                                                <p className="text-sm text-text-light dark:text-dark-text-muted mb-3 line-clamp-2">
                                                     {achievement.description}
                                                 </p>
-                                                <div className="flex items-center gap-3 mt-2">
-                                                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className={cn(
+                                                        "text-xs font-medium px-2.5 py-1 rounded-md bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+                                                    )}>
                                                         +{achievement.xp_reward} XP
                                                     </span>
                                                     {achievement.unlocked_at && (
@@ -335,31 +337,31 @@ export default function AchievementsPage() {
                                 return (
                                     <div
                                         key={achievement.id}
-                                        className="p-4 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface opacity-75 hover:opacity-100 transition-opacity"
+                                        className="p-4 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface/50 hover:bg-white dark:hover:bg-dark-surface transition-colors group"
                                     >
-                                        <div className="flex items-start gap-3">
-                                            <div className="p-3 rounded-xl bg-gray-100 dark:bg-dark-border">
-                                                <Icon className="w-6 h-6 text-text-light dark:text-dark-text-muted" />
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 rounded-xl bg-gray-50 dark:bg-dark-bg shrink-0 group-hover:bg-gray-100 dark:group-hover:bg-dark-border transition-colors">
+                                                <Icon className="w-6 h-6 text-text-light dark:text-dark-text-muted group-hover:text-primary transition-colors" />
                                             </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2">
-                                                    <h3 className="font-bold text-text dark:text-dark-text">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between gap-2 mb-1">
+                                                    <h3 className="font-semibold text-lg text-text dark:text-dark-text leading-tight truncate pr-2">
                                                         {achievement.name}
                                                     </h3>
-                                                    <Lock className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                                                    <Lock className="w-4 h-4 text-text-light dark:text-dark-text-muted shrink-0" />
                                                 </div>
-                                                <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                                                <p className="text-sm text-text-light dark:text-dark-text-muted mb-3 line-clamp-2">
                                                     {achievement.description}
                                                 </p>
-                                                <div className="flex items-center gap-3 mt-2">
+                                                <div className="flex items-center gap-2 flex-wrap">
                                                     <span className={cn(
-                                                        "text-xs font-medium px-2 py-0.5 rounded-full capitalize",
+                                                        "text-xs font-medium px-2.5 py-1 rounded-md capitalize",
                                                         colors.bg,
                                                         colors.text
                                                     )}>
                                                         {achievement.category}
                                                     </span>
-                                                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                                                    <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
                                                         +{achievement.xp_reward} XP
                                                     </span>
                                                 </div>

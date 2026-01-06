@@ -12,6 +12,7 @@ import { FeaturedPost } from '@/components/FeaturedPost'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
@@ -42,7 +43,7 @@ function ExplorePageContent() {
   const [allTags, setAllTags] = useState<string[]>([])
   const supabase = createClient()
   const t = useTranslations('Explore')
-  const tFeed = useTranslations('Feed')
+  const tInsights = useTranslations('Insights')
   const tCategories = useTranslations('Categories')
 
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
@@ -124,7 +125,7 @@ function ExplorePageContent() {
           setRecommendedGroups(groupsWithCounts)
         }
 
-        // Fetch Main Feed Posts (Exclude events)
+        // Fetch Main Insights Posts (Exclude events)
         let query = supabase
           .from('posts')
           .select(`
@@ -134,8 +135,17 @@ function ExplorePageContent() {
           .eq('status', 'published') // Only show published posts
           .neq('content_type', 'event') // Exclude events
           .neq('approval_status', 'rejected') // Hide rejected posts
-          .order('created_at', { ascending: false })
-          .limit(preferences.display.posts_per_page)
+
+        // Apply sorting
+        if (sortBy === 'trending') {
+          query = query.order('vote_count', { ascending: false })
+        } else if (sortBy === 'cited') {
+          query = query.order('citation_count', { ascending: false })
+        } else {
+          query = query.order('created_at', { ascending: false })
+        }
+
+        query = query.limit(preferences.display.posts_per_page)
 
         if (selectedTag) {
           query = query.contains('tags', [selectedTag])
@@ -185,7 +195,7 @@ function ExplorePageContent() {
     }
 
     loadContent()
-  }, [selectedTag, supabase, preferences.display.posts_per_page])
+  }, [selectedTag, sortBy, supabase, preferences.display.posts_per_page])
 
   const disciplines = [
     'Computer Science', 'Mathematics', 'Physics', 'Biology',
@@ -242,7 +252,7 @@ function ExplorePageContent() {
                   : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                   }`}
               >
-                {tFeed('allTopics')}
+                {tInsights('allTopics')}
               </button>
               {disciplines.map((discipline) => (
                 <button
@@ -403,17 +413,20 @@ function ExplorePageContent() {
                       </div>
 
                       {/* Sort */}
-                      <div className="relative">
-                        <select
+                      <div className="w-full sm:w-48">
+                        <Select
                           value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value as SortOption)}
-                          className="appearance-none pl-4 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text cursor-pointer"
+                          onValueChange={(val) => setSortBy(val as SortOption)}
                         >
-                          <option value="recent">{t('mostRecent')}</option>
-                          <option value="trending">{t('trending')}</option>
-                          <option value="cited">{t('mostCited')}</option>
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light pointer-events-none" />
+                          <SelectTrigger className="rounded-xl border border-gray-200 dark:border-dark-border bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md text-text dark:text-dark-text hover:border-primary transition-all shadow-sm">
+                            <SelectValue placeholder={t('mostRecent')} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border border-gray-100 dark:border-dark-border rounded-xl shadow-xl">
+                            <SelectItem value="recent" className="rounded-lg">{t('mostRecent')}</SelectItem>
+                            <SelectItem value="trending" className="rounded-lg">{t('trending')}</SelectItem>
+                            <SelectItem value="cited" className="rounded-lg">{t('mostCited')}</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 

@@ -96,7 +96,7 @@
         "helpText": "Choose how others can use your work."
     },
     "Navigation": {
-        "feed": "Feed",
+        "insights": "Insights",
         "explore": "Explore",
         "groups": "Groups",
         "profile": "Profile",
@@ -253,8 +253,8 @@
         "completed": "completed",
         "browse": {
             "title": "Browse Research",
-            "description": "Explore the feed to discover what others are researching",
-            "action": "Go to Feed"
+            "description": "Explore insights to discover what others are researching",
+            "action": "Go to Insights"
         },
         "comment": {
             "title": "Join a Discussion",
@@ -282,10 +282,10 @@
         "supportTitle": "Technical Support",
         "supportDesc": "Contact the development team"
     },
-    "Feed": {
-        "title": "Feed",
-        "liveFeed": "Live Feed",
-        "yourFeed": "Your Feed",
+    "Insights": {
+        "title": "Insights",
+        "liveInsights": "Live",
+        "yourInsights": "Insights",
         "discoverResearch": "Discover the latest research and insights from the community",
         "writePost": "Write a Post",
         "noResults": "No posts found",
@@ -307,7 +307,14 @@
         "sortHot": "Most Discussed",
         "sortTopWeek": "Top This Week",
         "sortTopMonth": "Top This Month",
-        "sortTopAll": "Top All Time"
+        "sortTopAll": "Top All Time",
+        "noFollowersTitle": "No one to follow yet",
+        "noFollowersDesc": "Follow researchers to see their posts in your insights. Explore the community to find interesting people!",
+        "noPostsTitle": "No insights yet",
+        "noPostsDesc": "Be the first to share your research with the community!",
+        "noPostsTaggedTitle": "No insights found for \"{tag}\"",
+        "noPostsTaggedDesc": "Try a different topic or clear the filter to see more content.",
+        "actionLabel": "Create Post"
     },
     "Post": {
         "edit": "Edit",
@@ -383,7 +390,7 @@
         "signInToAnswer": "Sign in to answer this question.",
         "knowledgeGraph": "Knowledge Graph",
         "relatedResearch": "Related Research",
-        "backToFeed": "Back to Feed",
+        "backToInsights": "Back to Insights",
         "minRead": "{count} min read",
         "remixedFrom": "Remixed from",
         "suggestions": "Suggestions"
@@ -442,7 +449,7 @@
             "orderedList": "Numbered List"
         },
         "page": {
-            "backToFeed": "Back to Feed",
+            "backToInsights": "Back to Insights",
             "editPost": "Edit Post",
             "writeNewPost": "Write New Post",
             "askQuestion": "Ask a Question",
@@ -469,7 +476,7 @@
             "tip2": "Use tags to help discovery",
             "tip3": "Preview before publishing",
             "needInspiration": "Need Inspiration?",
-            "inspirationDesc": "Explore recent research in the feed or discover trending topics.",
+            "inspirationDesc": "Explore recent research in insights or discover trending topics.",
             "browsePosts": "Browse Posts",
             "markdownSupported": "Markdown Supported",
             "markdownHelp": "Markdown is fully supported for your content.",
@@ -537,7 +544,7 @@
             "changeDataset": "Change Dataset"
         },
         "firstTimePrompt": {
-            "title": "Welcome, Contributor",
+            "title": "Welcome to the research editor",
             "description": "This is a research commons. Before publishing, consider:",
             "question1": "What evidence supports this claim?",
             "question2": "What do I not know, or cannot verify?",
@@ -628,7 +635,7 @@
         "description": "A collaborative research commons for Syrian knowledge, context, and memory. SyriaHub is part of the PluraGate network of research platforms.",
         "contribute": "Contribute",
         "quickLinks": "Quick Links",
-        "browseFeed": "Browse Research",
+        "browseInsights": "Browse Research",
         "writePost": "Write a Post",
         "howItWorks": "How SyriaHub Works",
         "contact": "Contact",
@@ -771,6 +778,7 @@
             "descriptionLabel": "Description",
             "descriptionPlaceholder": "Describe what this resource contains...",
             "tagsLabel": "Disciplines & Tags",
+            "searchTagsPlaceholder": "Search or add tags (press Enter)...",
             "tagsHint": "Select the disciplines and topics that apply to this resource",
             "licenseLabel": "License",
             "submitButton": "Upload Resource",
@@ -840,7 +848,113 @@
         "beFirstToRsvp": "Be the first to RSVP!",
         "eventCancelled": "This event has been cancelled",
         "eventPostponed": "This event has been postponed",
-        "ended": "Ended"
+        "ended": "Ended",
+        "create": {
+            "title": "Create Event",
+            "eventTitleLabel": "Event Title",
+            "eventTitlePlaceholder": "e.g. Weekly Research Sync",
+            "coverImageLabel": "Cover Image",
+            "startTimeLabel": "Start Time",
+            "endTimeLabel": "End Time (Optional)",
+            "locationLabel": "Location",
+            "locationPlaceholder": "e.g. Zoom, Conference Room A, or Online",
+            "linkLabel": "Event Link (Optional)",
+            "linkPlaceholder": "e.g. https://zoom.us/j/...",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Describe the event agenda and details...",
+            "publishButton": "Publish Event",
+            "saveDraftButton": "Save Draft",
+            "previewButton": "Preview",
+            "cancelButton": "Cancel",
+            "publishing": "Publishing...",
+            "publishSuccess": "Your event has been successfully published.",
+            "draftSuccess": "Draft saved successfully.",
+            "signInRequired": "Please sign in to create an event."
+        }
+    },
+    "ResearchGaps": {
+        "title": "Research Gap Marketplace",
+        "heading": "What Don't We Know?",
+        "subtitle": "Identify gaps in our collective knowledge about Syria. Claim research areas, collaborate with others, and help address the most pressing unknowns.",
+        "searchPlaceholder": "Search research gaps...",
+        "identifyGap": "Identify a Gap",
+        "filters": "Filters",
+        "allStatuses": "All Statuses",
+        "allPriorities": "All Priorities",
+        "allTypes": "All Types",
+        "strategic": "Strategic",
+        "gapsFound": "{count} gap found",
+        "gapsFoundPlural": "{count} gaps found",
+        "statuses": {
+            "identified": "Identified",
+            "investigating": "In Progress",
+            "addressed": "Addressed",
+            "closed": "Closed"
+        },
+        "priorities": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "types": {
+            "topical": "Topical Gap",
+            "data": "Data Gap",
+            "methodological": "Methodological",
+            "population": "Population Gap",
+            "outdated": "Outdated Research"
+        },
+        "typeDescriptions": {
+            "topical": "Topical Gap - Missing coverage of a topic",
+            "data": "Data Gap - Missing datasets or quality issues",
+            "methodological": "Methodological Dispute - Debates about research methods",
+            "population": "Population Gap - Under-represented groups",
+            "outdated": "Outdated Research - Existing research needs updating"
+        },
+        "successStories": {
+            "title": "Gaps That Led to Research",
+            "description": "These knowledge gaps have been addressed through community research contributions.",
+            "viewResearch": "View research"
+        },
+        "form": {
+            "title": "Identify a Research Gap",
+            "titleLabel": "Title",
+            "titlePlaceholder": "e.g., Lack of data on water access in Idlib (2020-2023)",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Describe what we don't know and why it matters...",
+            "disciplineLabel": "Discipline",
+            "disciplinePlaceholder": "e.g., Public Health",
+            "priorityLabel": "Priority",
+            "gapTypeLabel": "Gap Type",
+            "geographicLabel": "Geographic Context",
+            "geographicPlaceholder": "e.g., Aleppo, Idlib",
+            "strategicCheckbox": "Mark as Strategic Priority",
+            "strategicNote": "Strategic gaps are highlighted for community attention",
+            "cancel": "Cancel",
+            "submit": "Submit"
+        },
+        "empty": {
+            "title": "No research gaps found",
+            "description": "Be the first to identify a gap in our collective knowledge."
+        },
+        "card": {
+            "priorityLabel": "{priority} Priority",
+            "claimButton": "Claim this gap",
+            "investigating": "Being investigated by {name}",
+            "viewAddressing": "View the addressing research"
+        },
+        "messages": {
+            "loadFailed": "Failed to load research gaps",
+            "signInToUpvote": "Sign in to upvote",
+            "voteFailed": "Failed to update vote",
+            "signInToClaim": "Sign in to claim a research gap",
+            "claimSuccess": "You have claimed this research gap!",
+            "claimFailed": "Failed to claim research gap",
+            "signInToSubmit": "Sign in to submit a research gap",
+            "titleRequired": "Please provide a title",
+            "submitSuccess": "Research gap submitted successfully!",
+            "submitFailed": "Failed to submit research gap"
+        }
     },
     "Groups": {
         "title": "Groups",
@@ -1020,6 +1134,27 @@
         "newPassword": "New Password",
         "confirmNewPassword": "Confirm New Password",
         "twoFactor": "Two-Factor Authentication",
+        "twoFactorSetup": {
+            "title": "Two-Factor Authentication",
+            "description": "Add an extra layer of security to your account by requiring a code from your authenticator app when you sign in.",
+            "enabled": "Two-Factor Authentication Enabled",
+            "enabledDesc": "Your account is protected with an authenticator app.",
+            "enable": "Enable 2FA",
+            "disable": "Disable 2FA",
+            "setupTitle": "Set up Authenticator App",
+            "step1": "1. Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)",
+            "manualEntry": "Or enter this code manually:",
+            "step2": "2. Enter the 6-digit code from your app to verify:",
+            "verify": "Verify",
+            "warning": "Save your secret key in a safe place. If you lose access to your authenticator app, you'll need this to recover your account.",
+            "failedToStart": "Failed to start 2FA enrollment",
+            "enterCode": "Please enter a 6-digit code",
+            "codeVerified": "Two-factor authentication enabled!",
+            "verifyFailed": "Failed to verify code",
+            "disabled": "Two-factor authentication disabled",
+            "disableFailed": "Failed to disable 2FA",
+            "authenticatorApp": "Authenticator App"
+        },
         "sessions": "Active Sessions",
         "theme": {
             "title": "Theme",
@@ -1133,41 +1268,16 @@
         "resetToDefaults": "Reset to Defaults",
         "confirmReset": "Are you sure you want to reset all settings to defaults?",
         "settingsReset": "Settings reset to defaults",
+        "resetFailed": "Failed to reset settings",
         "saved": "Settings saved",
+        "saveFailed": "Failed to save settings",
         "saveChanges": "Save Changes",
         "confirm": "Confirm",
         "cancel": "Cancel",
+        "securityDescription": "Enhance your account security with additional protection.",
         "feedbackSection": {
             "title": "Feedback"
         }
-    },
-    "Correspondence": {
-        "title": "Research Correspondence",
-        "inbox": "Received",
-        "sent": "Sent",
-        "compose": "Send Correspondence",
-        "requestClarification": "Request Clarification",
-        "regardingPost": "Regarding: {title}",
-        "subject": "Subject",
-        "subjectPlaceholder": "Brief summary of your inquiry (min 10 characters)",
-        "body": "Message",
-        "bodyPlaceholder": "Your detailed question or clarification request (min 50 characters)...",
-        "send": "Send Correspondence",
-        "reply": "Reply",
-        "maxOneReply": "Note: Only one reply is permitted per correspondence",
-        "alreadyReplied": "This correspondence has already been replied to",
-        "rateLimitReached": "Daily correspondence limit reached (max 3)",
-        "tooManyPending": "You have too many correspondence awaiting reply",
-        "deliveryNote": "Your correspondence will be delivered shortly",
-        "empty": "No correspondence yet",
-        "emptyDesc": "Correspondence you receive will appear here",
-        "contextRequired": "Context Required",
-        "charactersRemaining": "{count} characters remaining",
-        "minCharacters": "Minimum {count} characters required",
-        "noAttachments": "Attachments are not supported",
-        "archived": "Archived",
-        "markAsRead": "Mark as read",
-        "archive": "Archive"
     },
     "Analytics": {
         "title": "Research Analytics",
@@ -1644,6 +1754,221 @@
             "requestChanges": "Request Changes",
             "reason": "Reason",
             "notes": "Moderator Notes"
+        },
+        "precedentManagement": {
+            "title": "Precedent Management",
+            "subtitle": "Curate and manage historical case studies for pattern detection.",
+            "addPrecedent": "Add Precedent",
+            "editPrecedent": "Edit Precedent",
+            "newPrecedent": "New Precedent",
+            "basicInfo": "Basic Information",
+            "titleEn": "Title (English)",
+            "titleAr": "Title (Arabic)",
+            "summaryEn": "Summary (English)",
+            "summaryAr": "Summary (Arabic)",
+            "detailedContent": "Detailed Content",
+            "fullAnalysis": "Full Analysis",
+            "keyLessons": "Key Lessons",
+            "addLesson": "Add Lesson",
+            "classification": "Classification",
+            "patternType": "Pattern Type",
+            "governorate": "Governorate",
+            "trustLevel": "Trust Level",
+            "sourceVerification": "Source Verification",
+            "sourceName": "Source Name",
+            "sourceUrl": "Source URL",
+            "publishImmediately": "Publish immediately",
+            "publishHint": "If disabled, this precedent will be saved as a draft.",
+            "cancel": "Cancel",
+            "create": "Create Precedent",
+            "update": "Update Precedent",
+            "searchPlaceholder": "Search precedents...",
+            "allPatterns": "All Patterns",
+            "noResults": "No matching precedents",
+            "noResultsDesc": "Try adjusting your search or filters",
+            "noPosts": "No precedents found",
+            "noPostsDesc": "Create your first precedent to get started",
+            "delete": "Delete",
+            "deleteConfirm": "Are you sure you want to delete this precedent?"
+        },
+        "platformSettings": {
+            "title": "Platform Settings",
+            "subtitle": "Configure platform-wide settings and preferences",
+            "saveChanges": "Save Changes",
+            "saving": "Saving...",
+            "saved": "Saved!",
+            "saveError": "Failed to save settings. Please try again.",
+            "sections": {
+                "general": {
+                    "title": "General Settings",
+                    "description": "Basic platform configuration"
+                },
+                "access": {
+                    "title": "Registration & Access",
+                    "description": "User registration and access controls"
+                },
+                "moderation": {
+                    "title": "Content Moderation",
+                    "description": "Automated moderation settings"
+                },
+                "notifications": {
+                    "title": "Notifications",
+                    "description": "Email and notification preferences"
+                },
+                "content": {
+                    "title": "Content Settings",
+                    "description": "Post types and content rules"
+                },
+                "localization": {
+                    "title": "Localization",
+                    "description": "Language and region settings"
+                }
+            },
+            "general": {
+                "siteName": "Site Name",
+                "siteDescription": "Site Description"
+            },
+            "access": {
+                "registrationEnabled": "Enable Registration",
+                "registrationEnabledDesc": "Allow new users to register on the platform",
+                "requireEmailVerification": "Require Email Verification",
+                "requireEmailVerificationDesc": "Users must verify their email before accessing the platform",
+                "allowAnonymousBrowsing": "Allow Anonymous Browsing",
+                "allowAnonymousBrowsingDesc": "Non-logged-in users can view public content",
+                "inviteOnlyMode": "Invite-Only Mode",
+                "inviteOnlyModeDesc": "Only users with an invitation can register"
+            },
+            "moderation": {
+                "autoModeration": "Auto-Moderation",
+                "autoModerationDesc": "Automatically flag content that violates guidelines",
+                "requirePostApproval": "Require Post Approval",
+                "requirePostApprovalDesc": "All new posts must be approved by a moderator",
+                "autoHideThreshold": "Auto-hide Threshold",
+                "autoHideThresholdDesc": "Number of reports before content is automatically hidden"
+            },
+            "notifications": {
+                "emailNotifications": "Email Notifications",
+                "emailNotificationsDesc": "Send email notifications to users",
+                "digestFrequency": "Digest Frequency",
+                "options": {
+                    "realtime": "Real-time",
+                    "daily": "Daily digest",
+                    "weekly": "Weekly digest",
+                    "never": "Never"
+                }
+            },
+            "content": {
+                "info": "Content type settings are managed in the Schema Registry.",
+                "link": "Go to Schema Registry"
+            },
+            "localization": {
+                "defaultLanguage": "Default Language",
+                "info": "Users can override the default language in their personal preferences.",
+                "languages": {
+                    "en": "English",
+                    "ar": "العربية (Arabic)"
+                }
+            }
+        },
+        "schemaRegistry": {
+            "title": "Schema Registry",
+            "subtitle": "Manage dynamic data models and vocabularies.",
+            "tabs": {
+                "registries": "Registries",
+                "fields": "Fields"
+            },
+            "newRegistry": "New Registry",
+            "newField": "New Field",
+            "noRegistries": "No registries yet. Create your first registry to get started.",
+            "noFields": "No fields yet. Create your first field to get started.",
+            "registry": {
+                "title": "Registry",
+                "create": "Create Registry",
+                "edit": "Edit Registry",
+                "displayName": "Display Name",
+                "key": "Registry Key",
+                "description": "Description",
+                "keyHint": "Unique identifier. Cannot be changed after creation.",
+                "items": "Items",
+                "addItem": "Add Item",
+                "showAll": "Show all",
+                "showLess": "Show less",
+                "noItems": "No items yet",
+                "deleteConfirm": "Are you sure you want to delete this registry? This action cannot be undone.",
+                "deleted": "Registry deleted",
+                "saved": "Registry saved"
+            },
+            "item": {
+                "create": "Create Item",
+                "edit": "Edit Item",
+                "displayName": "Display Name",
+                "key": "Item Key",
+                "sortOrder": "Sort Order",
+                "keyHint": "Unique identifier. Cannot be changed after creation.",
+                "sortOrderHint": "Lower numbers appear first.",
+                "deleteConfirm": "Are you sure you want to delete this item? This action cannot be undone.",
+                "deleted": "Item deleted",
+                "saved": "Item saved"
+            },
+            "field": {
+                "title": "Field",
+                "create": "Create Field",
+                "edit": "Edit Field",
+                "displayName": "Display Name",
+                "key": "Field Key",
+                "type": "Field Type",
+                "description": "Description",
+                "required": "Required field",
+                "appliesTo": "Applies To",
+                "keyHint": "Unique identifier. Cannot be changed after creation.",
+                "deleteConfirm": "Are you sure you want to delete this field? This action cannot be undone.",
+                "deleted": "Field deleted",
+                "saved": "Field saved",
+                "registry": "Registry",
+                "options": "Options",
+                "addOption": "Add Option",
+                "value": "Value (key)",
+                "label": "Label (display)",
+                "errors": {
+                    "registry": "Please select a registry for this field type",
+                    "options": "Please add at least one option for this field type",
+                    "appliesTo": "Please select at least one content type this field applies to"
+                }
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete",
+                "save": "Save",
+                "saving": "Saving...",
+                "cancel": "Cancel",
+                "saveFailed": "Save failed",
+                "deleteFailed": "Delete failed"
+            },
+            "types": {
+                "text": "Text",
+                "number": "Number",
+                "boolean": "Boolean",
+                "date": "Date",
+                "datetime": "Datetime",
+                "url": "URL",
+                "rich_text": "Rich Text",
+                "select": "Select",
+                "multiselect": "Multi-select",
+                "registry_ref": "Registry Reference",
+                "registry_ref_multi": "Registry Multi-ref",
+                "geo_point": "Geo Point",
+                "geo_polygon": "Geo Polygon",
+                "json": "JSON",
+                "file": "File"
+            },
+            "contentTypes": {
+                "article": "Article",
+                "question": "Question",
+                "answer": "Answer",
+                "resource": "Resource",
+                "event": "Event",
+                "trace": "Trace"
+            }
         }
     },
     "UserManagement": {
@@ -1698,7 +2023,7 @@
         "questionAdvisor": "Question Advisor",
         "search": "Research Search",
         "overview": "Overview",
-        "backToFeed": "Back to Feed",
+        "backToInsights": "Back to Insights",
         "createPoll": "Create Poll",
         "createSurvey": "Create Survey",
         "newSurvey": "New Survey",
@@ -1854,7 +2179,7 @@
             "questionAdvisor": "Question Advisor",
             "survey": "Survey",
             "poll": "Poll",
-            "backToFeed": "Back to Feed"
+            "backToInsights": "Back to Insights"
         },
         "statisticsPage": {
             "title": "Statistics Tools",
@@ -1975,122 +2300,6 @@
         "week": "Week",
         "month": "Month",
         "today": "Today"
-    },
-    "ResearchGaps": {
-        "title": "Research Gap Marketplace",
-        "subtitle": "What Don't We Know?",
-        "description": "Identify gaps in our collective knowledge about Syria. Claim research areas, collaborate with others, and help address the most pressing unknowns.",
-        "searchPlaceholder": "Search research gaps...",
-        "identifyGap": "Identify a Gap",
-        "filters": "Filters",
-        "allStatuses": "All Statuses",
-        "allPriorities": "All Priorities",
-        "allTypes": "All Types",
-        "strategicOnly": "Strategic Only",
-        "gapsFound": "{count} gap(s) found",
-        "noGaps": "No research gaps found",
-        "noGapsDesc": "Be the first to identify a gap in our collective knowledge.",
-        "submitGap": "Submit",
-        "cancel": "Cancel",
-        "form": {
-            "title": "Identify a Research Gap",
-            "titleLabel": "Title",
-            "titlePlaceholder": "e.g., Lack of data on water access in Idlib (2020-2023)",
-            "description": "Description",
-            "descriptionPlaceholder": "Describe what we don't know and why it matters...",
-            "discipline": "Discipline",
-            "disciplinePlaceholder": "e.g., Public Health",
-            "priority": "Priority",
-            "gapType": "Gap Type",
-            "gapTypeHelp": "What kind of gap is this?",
-            "spatialContext": "Geographic Context",
-            "spatialPlaceholder": "e.g., Aleppo, Idlib",
-            "markStrategic": "Mark as Strategic Priority",
-            "strategicHelp": "Strategic gaps are highlighted for community attention"
-        },
-        "gapTypes": {
-            "topical": "Topical Gap",
-            "data": "Data Gap",
-            "methodological": "Methodological Dispute",
-            "population": "Under-Represented Population",
-            "outdated": "Outdated Research"
-        },
-        "gapTypeDescriptions": {
-            "topical": "Missing coverage of a topic or area",
-            "data": "Missing datasets or data quality issues",
-            "methodological": "Disputes about research methods or approaches",
-            "population": "Under-represented groups in existing research",
-            "outdated": "Existing research needs updating"
-        },
-        "status": {
-            "identified": "Identified",
-            "investigating": "In Progress",
-            "addressed": "Addressed",
-            "closed": "Closed"
-        },
-        "priority": {
-            "low": "Low",
-            "medium": "Medium",
-            "high": "High",
-            "critical": "Critical"
-        },
-        "actions": {
-            "claim": "Claim this gap",
-            "upvote": "Upvote",
-            "viewResearch": "View the addressing research",
-            "expressInterest": "Express Interest",
-            "suggestReading": "Suggest Related Reading"
-        },
-        "collaboration": {
-            "interestedCount": "{count} interested",
-            "interestedResearchers": "{count} researcher(s) interested in collaborating",
-            "expressInterestTitle": "Express Interest",
-            "expressInterestDesc": "Let others know you're interested in collaborating on this gap",
-            "yourNote": "Your Note (optional)",
-            "yourNotePlaceholder": "e.g., I have access to relevant datasets...",
-            "alreadyInterested": "You've expressed interest",
-            "removeInterest": "Remove Interest",
-            "viewInterested": "View Interested Researchers"
-        },
-        "suggestions": {
-            "relatedReadings": "Related Readings",
-            "noSuggestions": "No related readings yet",
-            "suggestTitle": "Suggest a Related Reading",
-            "suggestDesc": "Help others by sharing relevant resources",
-            "readingTitle": "Title",
-            "readingTitlePlaceholder": "e.g., WHO Report on Syria Water Access",
-            "externalUrl": "External URL",
-            "urlPlaceholder": "https://...",
-            "orLinkPost": "Or link an internal post",
-            "selectPost": "Select a post...",
-            "whyRelevant": "Why is this relevant?",
-            "whyRelevantPlaceholder": "Brief note on how this relates to the gap...",
-            "addSuggestion": "Add Suggestion",
-            "suggestedBy": "Suggested by {name}"
-        },
-        "sources": {
-            "manual": "User Identified",
-            "ai_suggested": "AI Suggested",
-            "failed_query": "From Failed Search"
-        },
-        "strategicBadge": "Strategic",
-        "messages": {
-            "signInToUpvote": "Sign in to upvote",
-            "signInToClaim": "Sign in to claim a research gap",
-            "signInToSubmit": "Sign in to submit a research gap",
-            "signInToInteract": "Sign in to interact with research gaps",
-            "claimed": "You have claimed this research gap!",
-            "submitSuccess": "Research gap submitted successfully!",
-            "provideTitle": "Please provide a title",
-            "interestAdded": "Your interest has been recorded",
-            "interestRemoved": "Your interest has been removed",
-            "suggestionAdded": "Reading suggestion added"
-        },
-        "investigating": "Being investigated by {name}",
-        "help": {
-            "title": "About Research Gaps",
-            "description": "Research gaps represent 'The Absence Model' - acknowledging what we don't know is as important as what we do. Upvote gaps you think are important, claim ones you want to work on, and link your research when you address them."
-        }
     },
     "Errors": {
         "general": "Something went wrong",
@@ -2845,7 +3054,7 @@
         "knowledgeImpactStats": "Knowledge Impact & Statistics",
         "joined": "Joined {date}",
         "website": "Website",
-        "backToFeed": "Back to Feed",
+        "backToInsights": "Back to Insights",
         "skillsEndorsements": "Skills & Endorsements",
         "endorsements": "endorsements",
         "endorsementsCount": "{count} endorsements",
@@ -3396,5 +3605,47 @@
         "postsMinutes": "{posts} posts, {minutes}m",
         "less": "Less",
         "more": "More"
+    },
+    "Correspondence": {
+        "title": "Research Correspondence",
+        "subtitle": "Formal inquiries and clarification requests",
+        "archived": "Archived",
+        "inbox": "Received",
+        "sent": "Sent",
+        "compose": "Send Correspondence",
+        "requestClarification": "Request Clarification",
+        "regardingPost": "Regarding: {title}",
+        "subject": "Subject",
+        "subjectPlaceholder": "Brief summary of your inquiry (min 10 characters)",
+        "body": "Message",
+        "bodyPlaceholder": "Your detailed question or clarification request (min 50 characters)...",
+        "send": "Send Correspondence",
+        "reply": "Reply",
+        "maxOneReply": "Note: Only one reply is permitted per correspondence",
+        "alreadyReplied": "This correspondence has already been replied to",
+        "rateLimitReached": "Daily correspondence limit reached (max 3)",
+        "tooManyPending": "You have too many correspondence awaiting reply",
+        "deliveryNote": "Your correspondence will be delivered shortly",
+        "emptyDesc": "Correspondence you receive will appear here",
+        "contextRequired": "Context Required",
+        "charactersRemaining": "{count} characters remaining",
+        "minCharacters": "Minimum {count} characters required",
+        "noAttachments": "Attachments are not supported",
+        "markAsRead": "Mark as read",
+        "archive": "Archive",
+        "tabs": {
+            "received": "Received",
+            "sent": "Sent"
+        },
+        "filters": {
+            "all": "All",
+            "read": "Read",
+            "unread": "Unread",
+            "archived": "Archived"
+        },
+        "empty": {
+            "noMessages": "No correspondence yet",
+            "description": "Messages you receive will appear here"
+        }
     }
 }

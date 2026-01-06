@@ -32,21 +32,21 @@ export function FirstTimeContributorPrompt({ onDismiss }: FirstTimeContributorPr
             {/* Dismiss button */}
             <button
                 onClick={handleDismiss}
-                className="absolute top-3 right-3 p-1 rounded-lg hover:bg-primary/10 transition-colors"
+                className="absolute top-3 right-3 p-1 rounded-lg hover:bg-primary/10 dark:hover:bg-white/10 transition-colors"
                 aria-label={t('firstTimePrompt.dismiss') || 'Dismiss'}
             >
-                <X className="w-4 h-4 text-primary/60" />
+                <X className="w-4 h-4 text-primary/60 dark:text-white/80" />
             </button>
 
             <div className="flex items-start gap-3 pr-6">
                 {/* Icon */}
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Lightbulb className="w-4 h-4 text-primary" />
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 dark:bg-secondary-light/20 flex items-center justify-center">
+                    <Lightbulb className="w-4 h-4 text-primary dark:text-secondary-light" />
                 </div>
 
                 {/* Content */}
                 <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-primary">
+                    <h4 className="text-sm font-semibold text-primary dark:text-secondary-light">
                         {t('firstTimePrompt.title')}
                     </h4>
                     <p className="text-sm text-text-light dark:text-dark-text-muted">

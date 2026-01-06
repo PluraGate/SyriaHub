@@ -18,6 +18,13 @@ import {
     AlertCircle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { useTranslations } from 'next-intl'
@@ -254,35 +261,43 @@ export function FeedbackList({ isAdmin = false }: FeedbackListProps) {
                         <label className="block text-sm font-medium text-text-light dark:text-dark-text-muted mb-1">
                             {t('filterStatus')}
                         </label>
-                        <select
+                        <Select
                             value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                            onValueChange={(value) => setFilterStatus(value)}
                         >
-                            <option value="">{t('allStatuses')}</option>
-                            <option value="open">{t('status.open')}</option>
-                            <option value="in_progress">{t('status.in_progress')}</option>
-                            <option value="resolved">{t('status.resolved')}</option>
-                            <option value="closed">{t('status.closed')}</option>
-                            <option value="deferred">{t('status.deferred')}</option>
-                        </select>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder={t('allStatuses')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value=" ">{t('allStatuses')}</SelectItem>
+                                <SelectItem value="open">{t('status.open')}</SelectItem>
+                                <SelectItem value="in_progress">{t('status.in_progress')}</SelectItem>
+                                <SelectItem value="resolved">{t('status.resolved')}</SelectItem>
+                                <SelectItem value="closed">{t('status.closed')}</SelectItem>
+                                <SelectItem value="deferred">{t('status.deferred')}</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-text-light dark:text-dark-text-muted mb-1">
                             {t('filterCategory')}
                         </label>
-                        <select
+                        <Select
                             value={filterCategory}
-                            onChange={(e) => setFilterCategory(e.target.value)}
-                            className="px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                            onValueChange={(value) => setFilterCategory(value)}
                         >
-                            <option value="">{t('allCategories')}</option>
-                            <option value="bug">{t('categories.bug')}</option>
-                            <option value="ux">{t('categories.ux')}</option>
-                            <option value="section">{t('categories.section')}</option>
-                            <option value="alternative">{t('categories.alternative')}</option>
-                            <option value="other">{t('categories.other')}</option>
-                        </select>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder={t('allCategories')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value=" ">{t('allCategories')}</SelectItem>
+                                <SelectItem value="bug">{t('categories.bug')}</SelectItem>
+                                <SelectItem value="ux">{t('categories.ux')}</SelectItem>
+                                <SelectItem value="section">{t('categories.section')}</SelectItem>
+                                <SelectItem value="alternative">{t('categories.alternative')}</SelectItem>
+                                <SelectItem value="other">{t('categories.other')}</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             )}
@@ -415,32 +430,40 @@ export function FeedbackList({ isAdmin = false }: FeedbackListProps) {
                                             <label className="block text-sm font-medium text-text-light dark:text-dark-text-muted mb-1">
                                                 {t('status.label')}
                                             </label>
-                                            <select
+                                            <Select
                                                 value={newStatus}
-                                                onChange={(e) => setNewStatus(e.target.value)}
-                                                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                                onValueChange={(value) => setNewStatus(value)}
                                             >
-                                                <option value="open">{t('status.open')}</option>
-                                                <option value="in_progress">{t('status.in_progress')}</option>
-                                                <option value="resolved">{t('status.resolved')}</option>
-                                                <option value="closed">{t('status.closed')}</option>
-                                                <option value="deferred">{t('status.deferred')}</option>
-                                            </select>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder={t(`status.${selectedTicket.status}`)} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="open">{t('status.open')}</SelectItem>
+                                                    <SelectItem value="in_progress">{t('status.in_progress')}</SelectItem>
+                                                    <SelectItem value="resolved">{t('status.resolved')}</SelectItem>
+                                                    <SelectItem value="closed">{t('status.closed')}</SelectItem>
+                                                    <SelectItem value="deferred">{t('status.deferred')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-text-light dark:text-dark-text-muted mb-1">
                                                 {t('priority.label')}
                                             </label>
-                                            <select
+                                            <Select
                                                 value={newPriority}
-                                                onChange={(e) => setNewPriority(e.target.value)}
-                                                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                                onValueChange={(value) => setNewPriority(value)}
                                             >
-                                                <option value="low">{t('priority.low')}</option>
-                                                <option value="medium">{t('priority.medium')}</option>
-                                                <option value="high">{t('priority.high')}</option>
-                                                <option value="critical">{t('priority.critical')}</option>
-                                            </select>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder={t(`priority.${selectedTicket.priority}`)} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="low">{t('priority.low')}</SelectItem>
+                                                    <SelectItem value="medium">{t('priority.medium')}</SelectItem>
+                                                    <SelectItem value="high">{t('priority.high')}</SelectItem>
+                                                    <SelectItem value="critical">{t('priority.critical')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </div>
 

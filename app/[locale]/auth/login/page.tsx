@@ -18,7 +18,7 @@ export default async function LoginPage({
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    redirect('/feed')
+    redirect('/insights')
   }
 
   async function handleLogin(formData: FormData) {
@@ -54,7 +54,7 @@ export default async function LoginPage({
 
     // Log successful login
     await logAuthEvent('login_success', data.user?.id, { email })
-    redirect('/feed')
+    redirect('/insights')
   }
 
   return (
@@ -90,7 +90,7 @@ export default async function LoginPage({
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Your Research Feed</h3>
+                  <h3 className="font-semibold text-white">Your Research Insights</h3>
                   <p className="text-sm text-white/70">See updates from researchers you follow</p>
                 </div>
               </div>

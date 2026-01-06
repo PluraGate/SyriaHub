@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { 
-    Settings, 
-    Globe, 
-    Shield, 
-    Bell, 
-    Users, 
+import {
+    Settings,
+    Globe,
+    Shield,
+    Bell,
+    Users,
     FileText,
     Save,
     AlertTriangle,
@@ -36,22 +36,22 @@ export function PlatformSettingsDashboard() {
         siteName: 'SyriaHub',
         siteDescription: 'A minimalist research platform for collaborative knowledge sharing',
         defaultLocale: 'en',
-        
+
         // Registration & Access
         registrationEnabled: true,
         requireEmailVerification: true,
         allowAnonymousBrowsing: true,
         inviteOnlyMode: false,
-        
+
         // Content Moderation
         autoModeration: true,
         requirePostApproval: false,
         maxReportsBeforeAutoHide: 3,
-        
+
         // Notifications
         emailNotifications: true,
         digestFrequency: 'daily',
-        
+
         // Security
         sessionTimeout: 7, // days
         maxLoginAttempts: 5,
@@ -59,18 +59,18 @@ export function PlatformSettingsDashboard() {
     })
 
     const sections: SettingsSection[] = [
-        { id: 'general', icon: Settings, title: 'General Settings', description: 'Basic platform configuration' },
-        { id: 'access', icon: Users, title: 'Registration & Access', description: 'User registration and access controls' },
-        { id: 'moderation', icon: Shield, title: 'Content Moderation', description: 'Automated moderation settings' },
-        { id: 'notifications', icon: Bell, title: 'Notifications', description: 'Email and notification preferences' },
-        { id: 'content', icon: FileText, title: 'Content Settings', description: 'Post types and content rules' },
-        { id: 'localization', icon: Globe, title: 'Localization', description: 'Language and region settings' },
+        { id: 'general', icon: Settings, title: t('platformSettings.sections.general.title'), description: t('platformSettings.sections.general.description') },
+        { id: 'access', icon: Users, title: t('platformSettings.sections.access.title'), description: t('platformSettings.sections.access.description') },
+        { id: 'moderation', icon: Shield, title: t('platformSettings.sections.moderation.title'), description: t('platformSettings.sections.moderation.description') },
+        { id: 'notifications', icon: Bell, title: t('platformSettings.sections.notifications.title'), description: t('platformSettings.sections.notifications.description') },
+        { id: 'content', icon: FileText, title: t('platformSettings.sections.content.title'), description: t('platformSettings.sections.content.description') },
+        { id: 'localization', icon: Globe, title: t('platformSettings.sections.localization.title'), description: t('platformSettings.sections.localization.description') },
     ]
 
     const handleSave = async () => {
         setIsSaving(true)
         setSaveStatus('idle')
-        
+
         try {
             // Simulate API call - In production, this would save to database
             await new Promise(resolve => setTimeout(resolve, 1000))
@@ -93,10 +93,10 @@ export function PlatformSettingsDashboard() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
-                        {t('settings')}
+                        {t('platformSettings.title')}
                     </h1>
                     <p className="text-text-light dark:text-dark-text-muted mt-1">
-                        Configure platform-wide settings and preferences
+                        {t('platformSettings.subtitle')}
                     </p>
                 </div>
                 <button
@@ -115,7 +115,7 @@ export function PlatformSettingsDashboard() {
                     ) : (
                         <Save className="w-4 h-4" />
                     )}
-                    {isSaving ? 'Saving...' : saveStatus === 'success' ? 'Saved!' : 'Save Changes'}
+                    {isSaving ? t('platformSettings.saving') : saveStatus === 'success' ? t('platformSettings.saved') : t('platformSettings.saveChanges')}
                 </button>
             </div>
 
@@ -123,7 +123,7 @@ export function PlatformSettingsDashboard() {
             {saveStatus === 'error' && (
                 <div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
                     <AlertTriangle className="w-5 h-5" />
-                    <span>Failed to save settings. Please try again.</span>
+                    <span>{t('platformSettings.saveError')}</span>
                 </div>
             )}
 
@@ -138,7 +138,7 @@ export function PlatformSettingsDashboard() {
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
                                 className={cn(
-                                    'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors',
+                                    'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-start transition-colors',
                                     isActive
                                         ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-white'
                                         : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
@@ -158,12 +158,12 @@ export function PlatformSettingsDashboard() {
                 <div className="flex-1 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
                     {activeSection === 'general' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">General Settings</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.general.title')}</h2>
+
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Site Name
+                                        {t('platformSettings.general.siteName')}
                                     </label>
                                     <input
                                         type="text"
@@ -172,10 +172,10 @@ export function PlatformSettingsDashboard() {
                                         className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                                     />
                                 </div>
-                                
+
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Site Description
+                                        {t('platformSettings.general.siteDescription')}
                                     </label>
                                     <textarea
                                         value={settings.siteDescription}
@@ -190,33 +190,33 @@ export function PlatformSettingsDashboard() {
 
                     {activeSection === 'access' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">Registration & Access</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.access.title')}</h2>
+
                             <div className="space-y-4">
                                 <ToggleSetting
-                                    label="Enable Registration"
-                                    description="Allow new users to register on the platform"
+                                    label={t('platformSettings.access.registrationEnabled')}
+                                    description={t('platformSettings.access.registrationEnabledDesc')}
                                     checked={settings.registrationEnabled}
                                     onChange={(val) => updateSetting('registrationEnabled', val)}
                                 />
-                                
+
                                 <ToggleSetting
-                                    label="Require Email Verification"
-                                    description="Users must verify their email before accessing the platform"
+                                    label={t('platformSettings.access.requireEmailVerification')}
+                                    description={t('platformSettings.access.requireEmailVerificationDesc')}
                                     checked={settings.requireEmailVerification}
                                     onChange={(val) => updateSetting('requireEmailVerification', val)}
                                 />
-                                
+
                                 <ToggleSetting
-                                    label="Allow Anonymous Browsing"
-                                    description="Non-logged-in users can view public content"
+                                    label={t('platformSettings.access.allowAnonymousBrowsing')}
+                                    description={t('platformSettings.access.allowAnonymousBrowsingDesc')}
                                     checked={settings.allowAnonymousBrowsing}
                                     onChange={(val) => updateSetting('allowAnonymousBrowsing', val)}
                                 />
-                                
+
                                 <ToggleSetting
-                                    label="Invite-Only Mode"
-                                    description="Only users with an invitation can register"
+                                    label={t('platformSettings.access.inviteOnlyMode')}
+                                    description={t('platformSettings.access.inviteOnlyModeDesc')}
                                     checked={settings.inviteOnlyMode}
                                     onChange={(val) => updateSetting('inviteOnlyMode', val)}
                                 />
@@ -226,29 +226,29 @@ export function PlatformSettingsDashboard() {
 
                     {activeSection === 'moderation' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">Content Moderation</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.moderation.title')}</h2>
+
                             <div className="space-y-4">
                                 <ToggleSetting
-                                    label="Auto-Moderation"
-                                    description="Automatically flag content that violates guidelines"
+                                    label={t('platformSettings.moderation.autoModeration')}
+                                    description={t('platformSettings.moderation.autoModerationDesc')}
                                     checked={settings.autoModeration}
                                     onChange={(val) => updateSetting('autoModeration', val)}
                                 />
-                                
+
                                 <ToggleSetting
-                                    label="Require Post Approval"
-                                    description="All new posts must be approved by a moderator"
+                                    label={t('platformSettings.moderation.requirePostApproval')}
+                                    description={t('platformSettings.moderation.requirePostApprovalDesc')}
                                     checked={settings.requirePostApproval}
                                     onChange={(val) => updateSetting('requirePostApproval', val)}
                                 />
-                                
+
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Auto-hide Threshold
+                                        {t('platformSettings.moderation.autoHideThreshold')}
                                     </label>
                                     <p className="text-sm text-text-light dark:text-dark-text-muted mb-2">
-                                        Number of reports before content is automatically hidden
+                                        {t('platformSettings.moderation.autoHideThresholdDesc')}
                                     </p>
                                     <input
                                         type="number"
@@ -265,29 +265,29 @@ export function PlatformSettingsDashboard() {
 
                     {activeSection === 'notifications' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">Notifications</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.notifications.title')}</h2>
+
                             <div className="space-y-4">
                                 <ToggleSetting
-                                    label="Email Notifications"
-                                    description="Send email notifications to users"
+                                    label={t('platformSettings.notifications.emailNotifications')}
+                                    description={t('platformSettings.notifications.emailNotificationsDesc')}
                                     checked={settings.emailNotifications}
                                     onChange={(val) => updateSetting('emailNotifications', val)}
                                 />
-                                
+
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Digest Frequency
+                                        {t('platformSettings.notifications.digestFrequency')}
                                     </label>
                                     <select
                                         value={settings.digestFrequency}
                                         onChange={(e) => updateSetting('digestFrequency', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        className="select-input"
                                     >
-                                        <option value="realtime">Real-time</option>
-                                        <option value="daily">Daily digest</option>
-                                        <option value="weekly">Weekly digest</option>
-                                        <option value="never">Never</option>
+                                        <option value="realtime">{t('platformSettings.notifications.options.realtime')}</option>
+                                        <option value="daily">{t('platformSettings.notifications.options.daily')}</option>
+                                        <option value="weekly">{t('platformSettings.notifications.options.weekly')}</option>
+                                        <option value="never">{t('platformSettings.notifications.options.never')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -296,13 +296,13 @@ export function PlatformSettingsDashboard() {
 
                     {activeSection === 'content' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">Content Settings</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.content.title')}</h2>
+
                             <div className="p-4 rounded-lg bg-gray-50 dark:bg-dark-bg border border-gray-200 dark:border-dark-border">
                                 <p className="text-text-light dark:text-dark-text-muted">
-                                    Content type settings are managed in the Schema Registry. 
+                                    {t('platformSettings.content.info')}
                                     <Link href="/admin/schema" className="text-primary hover:underline ml-1">
-                                        Go to Schema Registry →
+                                        {t('platformSettings.content.link')} →
                                     </Link>
                                 </p>
                             </div>
@@ -311,26 +311,26 @@ export function PlatformSettingsDashboard() {
 
                     {activeSection === 'localization' && (
                         <div className="space-y-6">
-                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">Localization</h2>
-                            
+                            <h2 className="text-lg font-semibold text-primary dark:text-dark-text">{t('platformSettings.sections.localization.title')}</h2>
+
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
-                                        Default Language
+                                        {t('platformSettings.localization.defaultLanguage')}
                                     </label>
                                     <select
                                         value={settings.defaultLocale}
                                         onChange={(e) => updateSetting('defaultLocale', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        className="select-input"
                                     >
-                                        <option value="en">English</option>
-                                        <option value="ar">العربية (Arabic)</option>
+                                        <option value="en">{t('platformSettings.localization.languages.en')}</option>
+                                        <option value="ar">{t('platformSettings.localization.languages.ar')}</option>
                                     </select>
                                 </div>
-                                
+
                                 <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                                     <p className="text-sm text-blue-700 dark:text-blue-300">
-                                        Users can override the default language in their personal preferences.
+                                        {t('platformSettings.localization.info')}
                                     </p>
                                 </div>
                             </div>
@@ -343,16 +343,16 @@ export function PlatformSettingsDashboard() {
 }
 
 // Toggle Setting Component
-function ToggleSetting({ 
-    label, 
-    description, 
-    checked, 
-    onChange 
-}: { 
+function ToggleSetting({
+    label,
+    description,
+    checked,
+    onChange
+}: {
     label: string
     description: string
     checked: boolean
-    onChange: (value: boolean) => void 
+    onChange: (value: boolean) => void
 }) {
     return (
         <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-border last:border-0">

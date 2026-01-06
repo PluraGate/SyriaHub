@@ -9,8 +9,8 @@ This document outlines the complete implementation of the logical structure for 
 **For Authenticated Users:**
 - **Search Bar**: Global search with filters (title, tag, author)
 - **Tags Cloud**: Interactive tag cloud showing popular topics with scaled sizing
-- **Recent Posts Feed**: Preview of the 6 most recent research posts
-- **Quick Access**: Direct links to view all posts and create new content
+- **Recent Posts Insights**: Preview of the 6 most recent research posts
+- **Quick Access**: Direct links to view all insights and create new content
 
 **For Non-Authenticated Users:**
 - Hero section with call-to-action
@@ -180,7 +180,7 @@ This document outlines the complete implementation of the logical structure for 
 ## File Structure
 ```
 app/
-├── page.tsx (Enhanced home with feed/search/tags)
+├── page.tsx (Enhanced home with insights/search/tags)
 ├── explore/page.tsx (New - Filter by tag/discipline)
 ├── editor/page.tsx (Enhanced with preview & toast)
 ├── post/[id]/page.tsx (Enhanced with related posts & citations)

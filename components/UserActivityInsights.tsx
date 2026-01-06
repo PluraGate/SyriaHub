@@ -7,14 +7,14 @@ import { EventCard } from '@/components/EventCard'
 import { FileText, Users, BookOpen, Calendar, FolderOpen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
-interface UserActivityFeedProps {
+interface UserActivityInsightsProps {
     posts: any[]
     groups: any[]
 }
 
 type TabType = 'posts' | 'resources' | 'events' | 'groups'
 
-export function UserActivityFeed({ posts, groups }: UserActivityFeedProps) {
+export function UserActivityInsights({ posts, groups }: UserActivityInsightsProps) {
     const t = useTranslations('Gamification')
     const tNav = useTranslations('Navigation')
     const tLabels = useTranslations('ProfileLabels')

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 import { Button } from '@/components/ui/button'
 import {
@@ -231,116 +232,119 @@ export default function AdminAppealsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <main className="flex-1 p-8">
-                    <div className="max-w-6xl mx-auto">
-                        {/* Header */}
-                        <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <h1 className="text-3xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
-                                <p className="text-text-light dark:text-dark-text-muted mt-1">
-                                    {t('subtitle')}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Filters */}
-                        <div className="flex flex-wrap gap-2 mb-6">
-                            {filters.map((filter) => (
-                                <button
-                                    key={filter.value}
-                                    onClick={() => setStatusFilter(filter.value)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === filter.value
-                                        ? 'bg-primary text-white'
-                                        : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg'
-                                        }`}
-                                >
-                                    {filter.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Appeals List */}
-                        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
-                            {loading ? (
-                                <div className="flex items-center justify-center py-20">
-                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                </div>
-                            ) : appeals.length === 0 ? (
-                                <div className="text-center py-16">
-                                    <MessageSquare className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
-                                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
-                                        {t('noAppeals', { status: statusFilter !== 'all' ? statusFilter : '' })}
-                                    </h3>
-                                    <p className="text-text-light dark:text-dark-text-muted">
-                                        {statusFilter === 'pending'
-                                            ? t('noAppealsSubPending')
-                                            : t('noAppealsSubFilter')}
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-8">
+                        <div className="max-w-6xl mx-auto">
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h1 className="text-3xl font-bold text-text dark:text-dark-text">{t('title')}</h1>
+                                    <p className="text-text-light dark:text-dark-text-muted mt-1">
+                                        {t('subtitle')}
                                     </p>
                                 </div>
-                            ) : (
-                                <div className="divide-y divide-gray-100 dark:divide-dark-border">
-                                    {appeals.map((appeal) => (
-                                        <div key={appeal.id} className="p-6 hover:bg-gray-50 dark:hover:bg-dark-bg/50 transition-colors">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        {getStatusBadge(appeal.status)}
-                                                        <span className="text-sm text-text-light dark:text-dark-text-muted">
-                                                            {formatDistanceToNow(new Date(appeal.created_at), { addSuffix: true })}
-                                                        </span>
+                            </div>
+
+                            {/* Filters */}
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {filters.map((filter) => (
+                                    <button
+                                        key={filter.value}
+                                        onClick={() => setStatusFilter(filter.value)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === filter.value
+                                            ? 'bg-primary text-white'
+                                            : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                            }`}
+                                    >
+                                        {filter.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Appeals List */}
+                            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">
+                                {loading ? (
+                                    <div className="flex items-center justify-center py-20">
+                                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    </div>
+                                ) : appeals.length === 0 ? (
+                                    <div className="text-center py-16">
+                                        <MessageSquare className="w-12 h-12 mx-auto mb-4 text-text-light dark:text-dark-text-muted" />
+                                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
+                                            {t('noAppeals', { status: statusFilter !== 'all' ? statusFilter : '' })}
+                                        </h3>
+                                        <p className="text-text-light dark:text-dark-text-muted">
+                                            {statusFilter === 'pending'
+                                                ? t('noAppealsSubPending')
+                                                : t('noAppealsSubFilter')}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-gray-100 dark:divide-dark-border">
+                                        {appeals.map((appeal) => (
+                                            <div key={appeal.id} className="p-6 hover:bg-gray-50 dark:hover:bg-dark-bg/50 transition-colors">
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            {getStatusBadge(appeal.status)}
+                                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                                {formatDistanceToNow(new Date(appeal.created_at), { addSuffix: true })}
+                                                            </span>
+                                                        </div>
+
+                                                        <h3 className="font-semibold text-text dark:text-dark-text mb-1">
+                                                            {t('titleFor', { title: appeal.post?.title || tCommon('unknown') })}
+                                                        </h3>
+
+                                                        <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
+                                                            {t('by', { name: appeal.user?.name || appeal.user?.email || tCommon('unknown') })}
+                                                        </p>
+
+                                                        <div className="bg-gray-50 dark:bg-dark-bg rounded-lg p-3 mb-3">
+                                                            <p className="text-sm text-text dark:text-dark-text">
+                                                                <strong>{t('appealReason')}</strong> {appeal.dispute_reason}
+                                                            </p>
+                                                        </div>
+
+                                                        {appeal.post?.rejection_reason && (
+                                                            <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                                                <strong>{t('originalRejection')}</strong> {appeal.post.rejection_reason}
+                                                            </p>
+                                                        )}
+
+                                                        {appeal.admin_response && (
+                                                            <p className="text-sm text-text-light dark:text-dark-text-muted mt-2">
+                                                                <strong>{t('adminResponse')}</strong> {appeal.admin_response}
+                                                            </p>
+                                                        )}
                                                     </div>
 
-                                                    <h3 className="font-semibold text-text dark:text-dark-text mb-1">
-                                                        {t('titleFor', { title: appeal.post?.title || tCommon('unknown') })}
-                                                    </h3>
-
-                                                    <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
-                                                        {t('by', { name: appeal.user?.name || appeal.user?.email || tCommon('unknown') })}
-                                                    </p>
-
-                                                    <div className="bg-gray-50 dark:bg-dark-bg rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-text dark:text-dark-text">
-                                                            <strong>{t('appealReason')}</strong> {appeal.dispute_reason}
-                                                        </p>
+                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                        <Link href={`/post/${appeal.post_id}`} target="_blank" rel="noopener noreferrer">
+                                                            <Button variant="outline" size="sm" className="gap-1.5">
+                                                                <Eye className="w-4 h-4" />
+                                                                {t('viewPost')}
+                                                            </Button>
+                                                        </Link>
+                                                        {appeal.status === 'pending' && (
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => handleReviewClick(appeal)}
+                                                            >
+                                                                {t('review')}
+                                                            </Button>
+                                                        )}
                                                     </div>
-
-                                                    {appeal.post?.rejection_reason && (
-                                                        <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                                            <strong>{t('originalRejection')}</strong> {appeal.post.rejection_reason}
-                                                        </p>
-                                                    )}
-
-                                                    {appeal.admin_response && (
-                                                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-2">
-                                                            <strong>{t('adminResponse')}</strong> {appeal.admin_response}
-                                                        </p>
-                                                    )}
-                                                </div>
-
-                                                <div className="flex items-center gap-2 flex-shrink-0">
-                                                    <Link href={`/post/${appeal.post_id}`} target="_blank" rel="noopener noreferrer">
-                                                        <Button variant="outline" size="sm" className="gap-1.5">
-                                                            <Eye className="w-4 h-4" />
-                                                            {t('viewPost')}
-                                                        </Button>
-                                                    </Link>
-                                                    {appeal.status === 'pending' && (
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={() => handleReviewClick(appeal)}
-                                                        >
-                                                            {t('review')}
-                                                        </Button>
-                                                    )}
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             {/* Review Dialog */}
