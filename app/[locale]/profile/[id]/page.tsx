@@ -7,7 +7,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { ProfileHeader } from '@/components/ProfileHeader'
 import { EndorsementSection } from '@/components/EndorsementSection'
-import { UserActivityFeed } from '@/components/UserActivityFeed'
+import { UserActivityInsights } from '@/components/UserActivityInsights'
 import { ProfileCompletionCard } from '@/components/ProfileCompletionCard'
 import { getTranslations } from 'next-intl/server'
 
@@ -96,10 +96,10 @@ export default async function ProfilePage(props: ProfilePageProps) {
             The user has chosen to keep their profile information private.
           </p>
           <Link
-            href="/feed"
+            href="/insights"
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
-            {t('backToFeed')}
+            {t('backToInsights')}
           </Link>
         </main>
         <Footer />
@@ -180,11 +180,11 @@ export default async function ProfilePage(props: ProfilePageProps) {
       <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
         <div className="container-custom w-full max-w-6xl py-4">
           <Link
-            href="/feed"
+            href="/insights"
             className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            {t('backToFeed')}
+            {t('backToInsights')}
           </Link>
         </div>
       </div>
@@ -221,7 +221,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
           </div>
         )}
 
-        <UserActivityFeed
+        <UserActivityInsights
           posts={posts || []}
           groups={groups}
         />

@@ -2,6 +2,7 @@ import { SchemaDashboard } from '@/components/admin/schema/SchemaDashboard'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 
 export default async function AdminSchemaPage() {
@@ -27,11 +28,14 @@ export default async function AdminSchemaPage() {
             <Navbar user={user} />
             <div className="flex">
                 <AdminSidebar />
-                <main className="flex-1 p-6 md:p-8">
-                    <div className="max-w-6xl mx-auto">
-                        <SchemaDashboard />
-                    </div>
-                </main>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6 md:p-8">
+                        <div className="max-w-6xl mx-auto">
+                            <SchemaDashboard />
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     )

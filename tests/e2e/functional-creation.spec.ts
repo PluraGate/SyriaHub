@@ -204,7 +204,7 @@ test.describe('Functional Regression: Content Creation', () => {
             // The test verifies the UI flow works, even if the API mock doesn't intercept
             await expect(toastSuccess.or(toastError)).toBeVisible({ timeout: 15000 });
             if (await toastSuccess.isVisible({ timeout: 1000 }).catch(() => false)) {
-                await page.waitForURL(/\/(post|feed|groups)/, { timeout: 30000 });
+                await page.waitForURL(/\/(post|insights|groups)/, { timeout: 30000 });
             }
         } else if (browserName === 'firefox') {
             // Firefox: Just verify toast appeared (which confirms successful mock API call)
@@ -214,7 +214,7 @@ test.describe('Functional Regression: Content Creation', () => {
         } else {
             // Chromium: Most reliable - expect full success
             await expect(toastSuccess).toBeVisible({ timeout: 15000 });
-            await page.waitForURL(/\/(post|feed|groups)/, { timeout: 30000 });
+            await page.waitForURL(/\/(post|insights|groups)/, { timeout: 30000 });
         }
     });
 
@@ -259,12 +259,12 @@ test.describe('Functional Regression: Content Creation', () => {
             await expect(toastSuccess.or(toastError)).toBeVisible({ timeout: 15000 });
             // If we got success, wait for redirect; otherwise, just verify the toast appeared
             if (await toastSuccess.isVisible({ timeout: 1000 }).catch(() => false)) {
-                await expect(page).toHaveURL(/\/(feed|ar|en)/, { timeout: 15000 });
+                await expect(page).toHaveURL(/\/(insights|ar|en)/, { timeout: 15000 });
             }
         } else {
             // For Chromium/Firefox, mocking should work reliably
             await expect(toastSuccess).toBeVisible({ timeout: 10000 });
-            await expect(page).toHaveURL(/\/(feed|ar|en)/, { timeout: 15000 });
+            await expect(page).toHaveURL(/\/(insights|ar|en)/, { timeout: 15000 });
         }
     });
 

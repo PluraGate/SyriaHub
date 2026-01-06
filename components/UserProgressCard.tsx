@@ -107,7 +107,7 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
                             />
                         </div>
                         <p className="text-xs text-text-light dark:text-dark-text-muted text-right">
-                            {progress.xp_to_next_level.toLocaleString()} XP to Level {progress.next_level.level}
+                            {(progress.xp_to_next_level || 0).toLocaleString()} XP to Level {progress.next_level?.level}
                         </p>
                     </div>
                 )}
@@ -163,7 +163,7 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
                                 {progress.xp_points.toLocaleString()} XP
                             </span>
                             <span className="text-text-light dark:text-dark-text-muted">
-                                {progress.next_level.xp_required.toLocaleString()} XP
+                                {progress.next_level?.xp_required?.toLocaleString() || 'Max'} XP
                             </span>
                         </div>
                         <div className="h-3 bg-gray-200 dark:bg-dark-border rounded-full overflow-hidden">
@@ -179,7 +179,7 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
                             />
                         </div>
                         <p className="text-xs text-center text-text-light dark:text-dark-text-muted">
-                            {progress.xp_to_next_level.toLocaleString()} XP until {progress.next_level.name}
+                            {(progress.xp_to_next_level || 0).toLocaleString()} XP until {progress.next_level?.name}
                         </p>
                     </div>
                 )}

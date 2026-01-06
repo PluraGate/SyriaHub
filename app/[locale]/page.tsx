@@ -72,7 +72,7 @@ export default async function Home({
             {/* First Contribution Path - shows after onboarding */}
             <FirstContributionPrompt />
 
-            {/* Feed Section for Logged-in Users */}
+            {/* Insights Section for Logged-in Users */}
             <section className="section pt-20 md:pt-24">
               <div className="container-custom max-w-7xl">
                 {/* Social Proof Banner */}

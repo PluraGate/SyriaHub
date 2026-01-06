@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 import { PlatformSettingsDashboard } from '@/components/admin/settings/PlatformSettingsDashboard'
 
@@ -28,11 +29,14 @@ export default async function PlatformSettingsPage() {
             <Navbar user={user} />
             <div className="flex">
                 <AdminSidebar />
-                <main className="flex-1 p-6 md:p-8">
-                    <div className="max-w-4xl mx-auto">
-                        <PlatformSettingsDashboard />
-                    </div>
-                </main>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6 md:p-8">
+                        <div className="max-w-4xl mx-auto">
+                            <PlatformSettingsDashboard />
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     )

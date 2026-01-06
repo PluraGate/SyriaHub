@@ -34,8 +34,8 @@ export function PostCardSkeleton() {
   )
 }
 
-// Enhanced feed card skeleton with image preview area
-export function FeedCardSkeleton() {
+// Enhanced insights card skeleton with image preview area
+export function InsightCardSkeleton() {
   return (
     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden">
       {/* Optional image area */}
@@ -71,8 +71,8 @@ export function FeedCardSkeleton() {
   )
 }
 
-// Compact feed card skeleton (no image)
-export function FeedCardSkeletonCompact() {
+// Compact insights card skeleton (no image)
+export function InsightCardSkeletonCompact() {
   return (
     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border p-5">
       {/* Author row */}

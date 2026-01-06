@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui/toast'
 import { Shield, ShieldCheck, ShieldOff, Loader2, Copy, Check, AlertTriangle } from 'lucide-react'
 import QRCode from 'qrcode'
+import { useTranslations } from 'next-intl'
 
 interface TwoFactorSetupProps {
     userId: string
@@ -31,6 +32,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
 
     const supabase = createClient()
     const { showToast } = useToast()
+    const t = useTranslations('Settings.twoFactorSetup')
 
     // Check if user already has 2FA enrolled
     useEffect(() => {
@@ -66,7 +68,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
         try {
             const { data, error } = await supabase.auth.mfa.enroll({
                 factorType: 'totp',
-                friendlyName: 'Authenticator App'
+                friendlyName: t('authenticatorApp')
             })
 
             if (error) {
@@ -83,7 +85,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                 setFactorId(data.id)
             }
         } catch (err) {
-            showToast('Failed to start 2FA enrollment', 'error')
+            showToast(t('failedToStart'), 'error')
         }
         setEnrolling(false)
     }
@@ -91,7 +93,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
     // Verify the enrollment with a code
     async function verifyEnrollment() {
         if (!factorId || verificationCode.length !== 6) {
-            showToast('Please enter a 6-digit code', 'error')
+            showToast(t('enterCode'), 'error')
             return
         }
 
@@ -112,10 +114,10 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
             setQrCodeUrl(null)
             setSecret(null)
             setVerificationCode('')
-            showToast('Two-factor authentication enabled!', 'success')
+            showToast(t('codeVerified'), 'success')
             onEnrollmentComplete?.()
         } catch (err) {
-            showToast('Failed to verify code', 'error')
+            showToast(t('verifyFailed'), 'error')
         }
         setVerifying(false)
     }
@@ -136,9 +138,9 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
 
             setIsEnrolled(false)
             setFactorId(null)
-            showToast('Two-factor authentication disabled', 'success')
+            showToast(t('disabled'), 'success')
         } catch (err) {
-            showToast('Failed to disable 2FA', 'error')
+            showToast(t('disableFailed'), 'error')
         }
         setUnenrolling(false)
     }
@@ -170,10 +172,10 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                     </div>
                     <div className="flex-1">
                         <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-1">
-                            Two-Factor Authentication Enabled
+                            {t('enabled')}
                         </h3>
                         <p className="text-sm text-text-light dark:text-dark-text-muted mb-4">
-                            Your account is protected with an authenticator app.
+                            {t('enabledDesc')}
                         </p>
                         <Button
                             variant="outline"
@@ -187,7 +189,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                             ) : (
                                 <ShieldOff className="w-4 h-4 mr-2" />
                             )}
-                            Disable 2FA
+                            {t('disable')}
                         </Button>
                     </div>
                 </div>
@@ -200,14 +202,14 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
         return (
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
                 <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">
-                    Set up Authenticator App
+                    {t('setupTitle')}
                 </h3>
 
                 <div className="space-y-6">
                     {/* Step 1: QR Code */}
                     <div>
                         <p className="text-sm text-text-light dark:text-dark-text-muted mb-4">
-                            1. Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                            {t('step1')}
                         </p>
                         <div className="flex justify-center p-4 bg-white rounded-xl">
                             <Image
@@ -224,7 +226,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                     {/* Manual Entry */}
                     <div>
                         <p className="text-sm text-text-light dark:text-dark-text-muted mb-2">
-                            Or enter this code manually:
+                            {t('manualEntry')}
                         </p>
                         <div className="flex items-center gap-2">
                             <code className="flex-1 px-3 py-2 bg-gray-100 dark:bg-dark-bg rounded-lg text-sm font-mono break-all">
@@ -239,7 +241,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                     {/* Step 2: Verify */}
                     <div>
                         <p className="text-sm text-text-light dark:text-dark-text-muted mb-2">
-                            2. Enter the 6-digit code from your app to verify:
+                            {t('step2')}
                         </p>
                         <div className="flex gap-2">
                             <Input
@@ -253,7 +255,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                                 className="text-center text-lg font-mono tracking-widest"
                             />
                             <Button onClick={verifyEnrollment} disabled={verifying || verificationCode.length !== 6}>
-                                {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
+                                {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : t('verify')}
                             </Button>
                         </div>
                     </div>
@@ -262,7 +264,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                     <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
                         <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                         <p className="text-sm text-amber-800 dark:text-amber-300">
-                            Save your secret key in a safe place. If you lose access to your authenticator app, you&apos;ll need this to recover your account.
+                            {t('warning')}
                         </p>
                     </div>
                 </div>
@@ -279,10 +281,10 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                 </div>
                 <div className="flex-1">
                     <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-1">
-                        Two-Factor Authentication
+                        {t('title')}
                     </h3>
                     <p className="text-sm text-text-light dark:text-dark-text-muted mb-4">
-                        Add an extra layer of security to your account by requiring a code from your authenticator app when you sign in.
+                        {t('description')}
                     </p>
                     <Button onClick={startEnrollment} disabled={enrolling}>
                         {enrolling ? (
@@ -290,7 +292,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                         ) : (
                             <Shield className="w-4 h-4 mr-2" />
                         )}
-                        Enable 2FA
+                        {t('enable')}
                     </Button>
                 </div>
             </div>

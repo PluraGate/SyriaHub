@@ -97,24 +97,24 @@ export function CorrespondenceInbox({ locale }: CorrespondenceInboxProps) {
                         className={cn(
                             'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
                             activeTab === 'received'
-                                ? 'border-primary text-primary'
+                                ? 'border-primary text-primary dark:text-white'
                                 : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         )}
                     >
                         <Inbox className="w-4 h-4" />
-                        {t('inbox')}
+                        {t('tabs.received')}
                     </button>
                     <button
                         onClick={() => { setActiveTab('sent'); setPage(1); }}
                         className={cn(
                             'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
                             activeTab === 'sent'
-                                ? 'border-primary text-primary'
+                                ? 'border-primary text-primary dark:text-white'
                                 : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         )}
                     >
                         <SendIcon className="w-4 h-4" />
-                        {t('sent')}
+                        {t('tabs.sent')}
                     </button>
                 </div>
 
@@ -127,10 +127,10 @@ export function CorrespondenceInbox({ locale }: CorrespondenceInboxProps) {
             {activeTab === 'received' && (
                 <div className="flex gap-2">
                     {[
-                        { value: null, label: 'All' },
-                        { value: 'delivered' as const, label: 'Unread' },
-                        { value: 'read' as const, label: 'Read' },
-                        { value: 'archived' as const, label: 'Archived' }
+                        { value: null, label: t('filters.all') },
+                        { value: 'delivered' as const, label: t('filters.unread') },
+                        { value: 'read' as const, label: t('filters.read') },
+                        { value: 'archived' as const, label: t('filters.archived') }
                     ].map(filter => (
                         <button
                             key={filter.value || 'all'}
@@ -159,10 +159,10 @@ export function CorrespondenceInbox({ locale }: CorrespondenceInboxProps) {
                         <Mail className="w-8 h-8 text-text-light dark:text-dark-text-muted" />
                     </div>
                     <h3 className="text-lg font-medium text-text dark:text-dark-text mb-1">
-                        {t('empty')}
+                        {t('empty.noMessages')}
                     </h3>
                     <p className="text-text-light dark:text-dark-text-muted">
-                        {t('emptyDesc')}
+                        {t('empty.description')}
                     </p>
                 </div>
             ) : (

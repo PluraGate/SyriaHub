@@ -170,7 +170,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                     <select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface"
+                        className="select-input text-sm"
                     >
                         <option value="newest">{t('newestFirst')}</option>
                         <option value="oldest">{t('oldestFirst')}</option>

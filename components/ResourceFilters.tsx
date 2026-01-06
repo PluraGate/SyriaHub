@@ -227,7 +227,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                         <select
                             value={filters.license || ''}
                             onChange={(e) => updateFilters({ license: e.target.value || null })}
-                            className="w-full h-10 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 text-sm text-text dark:text-dark-text"
+                            className="select-input"
                         >
                             <option value="">{t('allLicenses')}</option>
                             {LICENSES.map((license) => (
@@ -246,7 +246,7 @@ export function ResourceFilters({ onFiltersChange, className = '' }: ResourceFil
                         <select
                             value={filters.sort}
                             onChange={(e) => updateFilters({ sort: e.target.value })}
-                            className="w-full h-10 rounded-md border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-3 text-sm text-text dark:text-dark-text"
+                            className="select-input"
                         >
                             {SORT_OPTIONS.map((option) => (
                                 <option key={option.value} value={option.value}>

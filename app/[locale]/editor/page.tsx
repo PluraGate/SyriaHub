@@ -321,7 +321,7 @@ export default function EditorPage() {
         if (error) {
           console.error('Failed to fetch post', error)
           showToast('Failed to load post for editing', 'error')
-          router.push('/feed')
+          router.push('/insights')
           return
         }
 
@@ -713,11 +713,11 @@ export default function EditorPage() {
       <header className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
         <div className="container-custom max-w-5xl py-6">
           <Link
-            href="/feed"
+            href="/insights"
             className="inline-flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
-            {t('page.backToFeed')}
+            {t('page.backToInsights')}
           </Link>
 
           <div className="flex items-center gap-4">
@@ -970,7 +970,7 @@ export default function EditorPage() {
                     id="license"
                     value={license}
                     onChange={e => setLicense(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
+                    className="select-input"
                   >
                     <option value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</option>
                     <option value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</option>

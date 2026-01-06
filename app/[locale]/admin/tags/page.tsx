@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 import { Button } from '@/components/ui/button'
 import { Loader2, Check, Tag as TagIcon, X, Palette } from 'lucide-react'
@@ -34,11 +35,11 @@ function detectLanguage(text: string): 'ar' | 'en' | 'mixed' {
     const arabicPattern = /[\u0600-\u06FF\u0750-\u077F]/g
     const arabicMatches = text.match(arabicPattern) || []
     const totalLetters = text.replace(/[\s\d\p{P}]/gu, '').length
-    
+
     if (totalLetters === 0) return 'en'
-    
+
     const arabicRatio = arabicMatches.length / totalLetters
-    
+
     if (arabicRatio > 0.5) return 'ar'
     if (arabicRatio > 0.2) return 'mixed'
     return 'en'
@@ -118,7 +119,7 @@ export default function AdminTagsPage() {
 
         try {
             // If tag is Arabic, store translation as English label; otherwise as Arabic label
-            const insertData = isTagArabic 
+            const insertData = isTagArabic
                 ? {
                     label: newTagTranslation || approvingTag, // Use English translation as main label if provided
                     label_ar: approvingTag, // Original Arabic tag
@@ -185,69 +186,72 @@ export default function AdminTagsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <main className="flex-1 p-6 md:p-8">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
-                                    {t('title')}
-                                </h1>
-                                <p className="text-text-light dark:text-dark-text-muted mt-2">
-                                    {t('subtitle')}
-                                </p>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6 md:p-8">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                                        {t('title')}
+                                    </h1>
+                                    <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                        {t('subtitle')}
+                                    </p>
+                                </div>
+                                <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-4 py-2 rounded-lg font-medium">
+                                    {t('pendingCount', { count: unverifiedTags.length })}
+                                </div>
                             </div>
-                            <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-4 py-2 rounded-lg font-medium">
-                                {t('pendingCount', { count: unverifiedTags.length })}
-                            </div>
-                        </div>
 
-                        <div className="card overflow-hidden">
-                            {loading ? (
-                                <div className="p-12 flex justify-center">
-                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                </div>
-                            ) : unverifiedTags.length === 0 ? (
-                                <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
-                                    <Check className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p>{t('noPending')}</p>
-                                </div>
-                            ) : (
-                                <div className="divide-y divide-gray-100 dark:divide-dark-border">
-                                    {unverifiedTags.map((item) => (
-                                        <div key={item.tag} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
-                                            <div className="flex items-center gap-4">
-                                                <div className="bg-gray-100 dark:bg-dark-border p-2 rounded-lg">
-                                                    <TagIcon className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                            <div className="card overflow-hidden">
+                                {loading ? (
+                                    <div className="p-12 flex justify-center">
+                                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    </div>
+                                ) : unverifiedTags.length === 0 ? (
+                                    <div className="p-12 text-center text-text-light dark:text-dark-text-muted">
+                                        <Check className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                                        <p>{t('noPending')}</p>
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-gray-100 dark:divide-dark-border">
+                                        {unverifiedTags.map((item) => (
+                                            <div key={item.tag} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-dark-surface transition-colors">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="bg-gray-100 dark:bg-dark-border p-2 rounded-lg">
+                                                        <TagIcon className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-medium text-text dark:text-dark-text">{item.tag}</h3>
+                                                        <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                                            {t('usedIn', { count: item.usage_count })}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <h3 className="font-medium text-text dark:text-dark-text">{item.tag}</h3>
-                                                    <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                                        {t('usedIn', { count: item.usage_count })}
-                                                    </p>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleDeclineClick(item.tag)}
+                                                        className="text-text-light dark:text-dark-text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                    >
+                                                        <X className="w-4 h-4 mr-1" />
+                                                        {t('decline')}
+                                                    </Button>
+                                                    <Button size="sm" onClick={() => handleApproveClick(item.tag)}>
+                                                        <Check className="w-4 h-4 mr-1" />
+                                                        {t('approve')}
+                                                    </Button>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleDeclineClick(item.tag)}
-                                                    className="text-text-light dark:text-dark-text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                                >
-                                                    <X className="w-4 h-4 mr-1" />
-                                                    {t('decline')}
-                                                </Button>
-                                                <Button size="sm" onClick={() => handleApproveClick(item.tag)}>
-                                                    <Check className="w-4 h-4 mr-1" />
-                                                    {t('approve')}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

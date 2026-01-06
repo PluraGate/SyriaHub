@@ -162,7 +162,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 <select
                     value={referralSource}
                     onChange={(e) => setReferralSource(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="select-input"
                 >
                     <option value="">Select an option</option>
                     <option value="colleague">Colleague / Friend</option>

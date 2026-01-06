@@ -230,7 +230,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                     <button
                         onClick={() => setActiveTab('internal')}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'internal'
-                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
+                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary dark:text-secondary-light'
                             : 'text-text-light dark:text-dark-text-muted hover:text-text'
                             }`}
                     >
@@ -240,7 +240,7 @@ export function AddCitationDialog({ citations, onCitationsChange }: AddCitationD
                     <button
                         onClick={() => setActiveTab('external')}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'external'
-                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary'
+                            ? 'bg-white dark:bg-dark-surface shadow-sm text-primary dark:text-secondary-light'
                             : 'text-text-light dark:text-dark-text-muted hover:text-text'
                             }`}
                     >

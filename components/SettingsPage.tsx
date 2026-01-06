@@ -18,6 +18,13 @@ import {
     X,
     Shield
 } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
 import { useToast } from '@/components/ui/toast'
@@ -58,7 +65,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
             setShowResetConfirm(false)
         } catch (error) {
             console.error('[SettingsPage] Error during handleReset:', error)
-            showToast('Failed to reset settings', 'error')
+            showToast(t('resetFailed') || 'Failed to reset settings', 'error')
         }
     }
 
@@ -75,7 +82,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
         { id: 'notifications', label: t('notifications'), icon: Bell },
         { id: 'display', label: t('displaySettings.title'), icon: Eye },
         { id: 'privacy', label: t('privacyTab'), icon: Lock },
-        { id: 'security', label: 'Security', icon: Shield },
+        { id: 'security', label: t('security'), icon: Shield },
         { id: 'editor', label: t('editorSettings.title'), icon: FileEdit },
         { id: 'invites', label: t('invitesSection.title'), icon: Ticket },
         { id: 'feedback', label: t('feedbackSection.title'), icon: MessageSquarePlus },
@@ -230,15 +237,19 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                         {t('notificationSettings.emailDigest')}
                                     </label>
-                                    <select
+                                    <Select
                                         value={preferences.notifications.email_digest}
-                                        onChange={(e) => handleUpdate('notifications', 'email_digest', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                        onValueChange={(value) => handleUpdate('notifications', 'email_digest', value)}
                                     >
-                                        <option value="never">{t('notificationSettings.never')}</option>
-                                        <option value="daily">{t('notificationSettings.daily')}</option>
-                                        <option value="weekly">{t('notificationSettings.weekly')}</option>
-                                    </select>
+                                        <SelectTrigger className="w-full bg-white dark:bg-dark-surface">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="never">{t('notificationSettings.never')}</SelectItem>
+                                            <SelectItem value="daily">{t('notificationSettings.daily')}</SelectItem>
+                                            <SelectItem value="weekly">{t('notificationSettings.weekly')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                         </div>
@@ -268,30 +279,38 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                     {t('displaySettings.postsPerPage')}
                                 </label>
-                                <select
-                                    value={preferences.display.posts_per_page}
-                                    onChange={(e) => handleUpdate('display', 'posts_per_page', parseInt(e.target.value))}
-                                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                <Select
+                                    value={preferences.display.posts_per_page.toString()}
+                                    onValueChange={(value) => handleUpdate('display', 'posts_per_page', parseInt(value))}
                                 >
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                    <option value="50">50</option>
-                                </select>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={preferences.display.posts_per_page.toString()} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="10">10</SelectItem>
+                                        <SelectItem value="20">20</SelectItem>
+                                        <SelectItem value="50">50</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                     {t('displaySettings.defaultSort')}
                                 </label>
-                                <select
+                                <Select
                                     value={preferences.display.default_sort}
-                                    onChange={(e) => handleUpdate('display', 'default_sort', e.target.value)}
-                                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                    onValueChange={(value) => handleUpdate('display', 'default_sort', value)}
                                 >
-                                    <option value="recent">{t('displaySettings.mostRecent')}</option>
-                                    <option value="popular">{t('displaySettings.mostPopular')}</option>
-                                    <option value="trending">{t('displaySettings.trending')}</option>
-                                </select>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t(`displaySettings.${preferences.display.default_sort === 'recent' ? 'mostRecent' : preferences.display.default_sort === 'popular' ? 'mostPopular' : 'trending'}`)} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="recent">{t('displaySettings.mostRecent')}</SelectItem>
+                                        <SelectItem value="popular">{t('displaySettings.mostPopular')}</SelectItem>
+                                        <SelectItem value="trending">{t('displaySettings.trending')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div className="pt-4 border-t border-gray-100 dark:border-dark-border">
@@ -321,8 +340,8 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                                 key={option.value}
                                                 onClick={() => updatePreference('calendar', option.value as 'hijri' | 'gregorian')}
                                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
-                                                    ? 'border-primary bg-primary/10 text-primary dark:text-primary-light'
-                                                    : 'border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                                    ? 'border-primary bg-primary text-white'
+                                                    : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
                                                 <span className="font-medium">{option.label}</span>
@@ -366,10 +385,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {activeSection === 'security' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
-                                Security
+                                {t('security')}
                             </h2>
                             <p className="text-text-light dark:text-dark-text-muted mb-6">
-                                Enhance your account security with additional protection.
+                                {t('securityDescription')}
                             </p>
                             <TwoFactorSetup userId={user.id} />
                         </div>

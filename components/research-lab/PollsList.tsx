@@ -325,9 +325,10 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                             {newOptions.length < 10 && (
                                 <button
                                     onClick={addOption}
-                                    className="mt-2 text-sm text-primary hover:underline"
+                                    className="mt-2 text-sm text-secondary dark:text-secondary-light hover:text-secondary-dark dark:hover:text-secondary transition-colors flex items-center gap-1 font-medium"
                                 >
-                                    + {t('addOption')}
+                                    <Plus className="w-3.5 h-3.5" />
+                                    {t('addOption')}
                                 </button>
                             )}
                         </div>
@@ -347,7 +348,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                         <div className="flex justify-end gap-3 pt-2">
                             <button
                                 onClick={() => setIsCreating(false)}
-                                className="btn btn-ghost"
+                                className="btn btn-outline"
                             >
                                 {tCommon('cancel')}
                             </button>
@@ -517,7 +518,7 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
         try {
             const supabase = createClient()
             const { data: { user } } = await supabase.auth.getUser()
-            
+
             if (!user) {
                 showToast('Please log in to save to resources', 'error')
                 return

@@ -35,20 +35,20 @@ async function verifyEventSystem() {
         console.error(`❌ MagazineCard routing logic FAILED. Expected ${expectedUrl}, got ${mockCardUrl}`);
     }
 
-    // 3. Fetch Feed posts to ensure event is NOT there
-    console.log('3. Checking Feed filtering...');
-    const { data: feedPosts } = await supabase
+    // 3. Fetch Insights posts to ensure event is NOT there
+    console.log('3. Checking Insights filtering...');
+    const { data: insightPosts } = await supabase
         .from('posts')
         .select('id, content_type')
         .eq('status', 'published')
         .neq('content_type', 'event')
         .limit(50); // Fetch top 50 to see if our event is there
 
-    const eventInFeed = feedPosts.find(p => p.id === event.id);
-    if (!eventInFeed) {
-        console.log('✅ Event successfully filtered from Main Feed.');
+    const eventInInsights = insightPosts.find(p => p.id === event.id);
+    if (!eventInInsights) {
+        console.log('✅ Event successfully filtered from Main Insights.');
     } else {
-        console.error('❌ Event FOUND in Main Feed. Filter failed.');
+        console.error('❌ Event FOUND in Main Insights. Filter failed.');
     }
 
     console.log('--- Verification Complete ---');

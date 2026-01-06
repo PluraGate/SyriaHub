@@ -226,8 +226,8 @@ export default function ResearcherAnalyticsDashboard() {
                                 key={days}
                                 onClick={() => setDaysBack(days)}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${daysBack === days
-                                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm'
-                                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                                    ? 'bg-white dark:bg-dark-bg text-primary dark:text-white shadow-sm'
+                                    : 'text-text-light dark:text-gray-400 hover:text-text dark:hover:text-dark-text'
                                     }`}
                             >
                                 {t('days', { count: days })}
@@ -241,7 +241,7 @@ export default function ResearcherAnalyticsDashboard() {
                     <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/5 dark:from-primary/10 dark:via-secondary/10 dark:to-primary/10 border border-primary/20">
                         <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center">
                             <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20">
-                                <Lightbulb className="w-8 h-8 text-primary" />
+                                <Lightbulb className="w-8 h-8 text-primary dark:text-secondary" />
                             </div>
                             <div className="flex-1">
                                 <h2 className="text-lg font-semibold text-text dark:text-dark-text mb-1">
@@ -252,15 +252,15 @@ export default function ResearcherAnalyticsDashboard() {
                                 </p>
                                 <ul className="space-y-1.5 text-sm text-text dark:text-dark-text">
                                     <li className="flex items-center gap-2">
-                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-medium">1</span>
+                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary dark:text-secondary text-xs flex items-center justify-center font-medium">1</span>
                                         {t('zeroState.step1')}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-medium">2</span>
+                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary dark:text-secondary text-xs flex items-center justify-center font-medium">2</span>
                                         {t('zeroState.step2')}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-medium">3</span>
+                                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary dark:text-secondary text-xs flex items-center justify-center font-medium">3</span>
                                         {t('zeroState.step3')}
                                     </li>
                                 </ul>

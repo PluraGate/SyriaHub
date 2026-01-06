@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { AdminSidebar, CoordinationCenter } from '@/components/admin'
 
 export default async function AdminCoordinationPage() {
@@ -29,11 +30,14 @@ export default async function AdminCoordinationPage() {
             <Navbar user={user} />
             <div className="flex">
                 <AdminSidebar />
-                <main className="flex-1 p-6 md:p-8">
-                    <div className="max-w-5xl mx-auto">
-                        <CoordinationCenter isAdmin={isAdmin} />
-                    </div>
-                </main>
+                <div className="flex-1 flex flex-col">
+                    <main className="flex-1 p-6 md:p-8">
+                        <div className="max-w-5xl mx-auto">
+                            <CoordinationCenter isAdmin={isAdmin} />
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     )

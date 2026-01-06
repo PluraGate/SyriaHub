@@ -34,6 +34,7 @@ import {
 import { ResearchGap, ResearchGapPriority, ResearchGapStatus, ResearchGapType } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 const statusColors: Record<ResearchGapStatus, string> = {
     identified: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
@@ -72,15 +73,9 @@ const gapTypeLabels: Record<ResearchGapType, string> = {
     outdated: 'Outdated Research'
 }
 
-const gapTypeIcons: Record<ResearchGapType, React.ElementType> = {
-    topical: FileText,
-    data: Database,
-    methodological: FlaskConical,
-    population: Users,
-    outdated: History
-}
-
 export default function ResearchGapsPage() {
+    const t = useTranslations('ResearchGaps')
+    const tCommon = useTranslations('Common')
     const supabase = createClient()
     const router = useRouter()
     const { showToast } = useToast()
@@ -149,11 +144,11 @@ export default function ResearchGapsPage() {
             setGaps(data || [])
         } catch (error) {
             console.error('Error fetching gaps:', error)
-            showToast('Failed to load research gaps', 'error')
+            showToast(t('messages.loadFailed'), 'error')
         } finally {
             setLoading(false)
         }
-    }, [supabase, statusFilter, priorityFilter, gapTypeFilter, strategicOnly, searchQuery, showToast])
+    }, [supabase, statusFilter, priorityFilter, gapTypeFilter, strategicOnly, searchQuery, showToast, t])
 
     // Fetch user upvotes
     useEffect(() => {
@@ -177,7 +172,7 @@ export default function ResearchGapsPage() {
     // Handle upvote
     const handleUpvote = async (gapId: string) => {
         if (!user) {
-            showToast('Sign in to upvote', 'warning')
+            showToast(t('messages.signInToUpvote'), 'warning')
             return
         }
 
@@ -208,14 +203,14 @@ export default function ResearchGapsPage() {
             fetchGaps()
         } catch (error) {
             console.error('Error toggling upvote:', error)
-            showToast('Failed to update vote', 'error')
+            showToast(t('messages.voteFailed'), 'error')
         }
     }
 
     // Handle claim
     const handleClaim = async (gapId: string) => {
         if (!user) {
-            showToast('Sign in to claim a research gap', 'warning')
+            showToast(t('messages.signInToClaim'), 'warning')
             return
         }
 
@@ -229,11 +224,11 @@ export default function ResearchGapsPage() {
                 })
                 .eq('id', gapId)
 
-            showToast('You have claimed this research gap!', 'success')
+            showToast(t('messages.claimSuccess'), 'success')
             fetchGaps()
         } catch (error) {
             console.error('Error claiming gap:', error)
-            showToast('Failed to claim research gap', 'error')
+            showToast(t('messages.claimFailed'), 'error')
         }
     }
 
@@ -242,12 +237,12 @@ export default function ResearchGapsPage() {
         e.preventDefault()
 
         if (!user) {
-            showToast('Sign in to submit a research gap', 'warning')
+            showToast(t('messages.signInToSubmit'), 'warning')
             return
         }
 
         if (!newGapTitle.trim()) {
-            showToast('Please provide a title', 'warning')
+            showToast(t('messages.titleRequired'), 'warning')
             return
         }
 
@@ -270,7 +265,7 @@ export default function ResearchGapsPage() {
 
             if (error) throw error
 
-            showToast('Research gap submitted successfully!', 'success')
+            showToast(t('messages.submitSuccess'), 'success')
             setShowNewGapForm(false)
             setNewGapTitle('')
             setNewGapDescription('')
@@ -282,7 +277,7 @@ export default function ResearchGapsPage() {
             fetchGaps()
         } catch (error) {
             console.error('Error submitting gap:', error)
-            showToast('Failed to submit research gap', 'error')
+            showToast(t('messages.submitFailed'), 'error')
         } finally {
             setSubmitting(false)
         }
@@ -303,15 +298,14 @@ export default function ResearchGapsPage() {
                     <div className="flex items-center gap-3 mb-4">
                         <Target className="w-6 h-6 text-white/80" />
                         <span className="text-sm font-semibold uppercase tracking-wider text-white/80">
-                            Research Gap Marketplace
+                            {t('title')}
                         </span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                        What Don&apos;t We Know?
+                        {t('heading')}
                     </h1>
                     <p className="text-lg text-white/80 max-w-2xl mb-6">
-                        Identify gaps in our collective knowledge about Syria. Claim research areas,
-                        collaborate with others, and help address the most pressing unknowns.
+                        {t('subtitle')}
                     </p>
 
                     {/* Search & Actions */}
@@ -320,7 +314,7 @@ export default function ResearchGapsPage() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                             <input
                                 type="text"
-                                placeholder="Search research gaps..."
+                                placeholder={t('searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/40 focus:outline-none transition-all"
@@ -331,7 +325,7 @@ export default function ResearchGapsPage() {
                             className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-primary font-semibold rounded-xl hover:bg-white/90 transition-all shadow-sm"
                         >
                             <Plus className="w-5 h-5" />
-                            Identify a Gap
+                            {t('identifyGap')}
                         </button>
                     </div>
                 </div>
@@ -342,44 +336,44 @@ export default function ResearchGapsPage() {
                 <div className="flex flex-wrap items-center gap-3 mb-8">
                     <div className="flex items-center gap-2 text-sm text-text-light dark:text-dark-text-muted">
                         <Filter className="w-4 h-4" />
-                        Filters:
+                        {t('filters')}:
                     </div>
 
                     <select
                         value={statusFilter}
                         onChange={e => setStatusFilter(e.target.value as ResearchGapStatus | 'all')}
-                        className="px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text"
+                        className="select-input"
                     >
-                        <option value="all">All Statuses</option>
-                        <option value="identified">Identified</option>
-                        <option value="investigating">In Progress</option>
-                        <option value="addressed">Addressed</option>
-                        <option value="closed">Closed</option>
+                        <option value="all">{t('allStatuses')}</option>
+                        <option value="identified">{t('statuses.identified')}</option>
+                        <option value="investigating">{t('statuses.investigating')}</option>
+                        <option value="addressed">{t('statuses.addressed')}</option>
+                        <option value="closed">{t('statuses.closed')}</option>
                     </select>
 
                     <select
                         value={priorityFilter}
                         onChange={e => setPriorityFilter(e.target.value as ResearchGapPriority | 'all')}
-                        className="px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text"
+                        className="select-input"
                     >
-                        <option value="all">All Priorities</option>
-                        <option value="critical">Critical</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
+                        <option value="all">{t('allPriorities')}</option>
+                        <option value="critical">{t('priorities.critical')}</option>
+                        <option value="high">{t('priorities.high')}</option>
+                        <option value="medium">{t('priorities.medium')}</option>
+                        <option value="low">{t('priorities.low')}</option>
                     </select>
 
                     <select
                         value={gapTypeFilter}
                         onChange={e => setGapTypeFilter(e.target.value as ResearchGapType | 'all')}
-                        className="px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface text-text dark:text-dark-text"
+                        className="select-input"
                     >
-                        <option value="all">All Types</option>
-                        <option value="topical">Topical Gap</option>
-                        <option value="data">Data Gap</option>
-                        <option value="methodological">Methodological</option>
-                        <option value="population">Population Gap</option>
-                        <option value="outdated">Outdated Research</option>
+                        <option value="all">{t('allTypes')}</option>
+                        <option value="topical">{t('types.topical')}</option>
+                        <option value="data">{t('types.data')}</option>
+                        <option value="methodological">{t('types.methodological')}</option>
+                        <option value="population">{t('types.population')}</option>
+                        <option value="outdated">{t('types.outdated')}</option>
                     </select>
 
                     <button
@@ -390,13 +384,13 @@ export default function ResearchGapsPage() {
                             }`}
                     >
                         <Star className={`w-4 h-4 ${strategicOnly ? 'fill-current' : ''}`} />
-                        Strategic
+                        {t('strategic')}
                     </button>
 
                     <div className="flex-1" />
 
                     <div className="text-sm text-text-light dark:text-dark-text-muted">
-                        {gaps.length} gap{gaps.length !== 1 ? 's' : ''} found
+                        {gaps.length === 1 ? t('gapsFound', { count: gaps.length }) : t('gapsFoundPlural', { count: gaps.length })}
                     </div>
                 </div>
 
@@ -406,11 +400,11 @@ export default function ResearchGapsPage() {
                         <div className="flex items-center gap-2 mb-4">
                             <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                             <h3 className="font-semibold text-emerald-800 dark:text-emerald-300">
-                                Gaps That Led to Research
+                                {t('successStories.title')}
                             </h3>
                         </div>
                         <p className="text-sm text-emerald-700 dark:text-emerald-400/80 mb-4">
-                            These knowledge gaps have been addressed through community research contributions.
+                            {t('successStories.description')}
                         </p>
                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                             {gaps
@@ -427,7 +421,7 @@ export default function ResearchGapsPage() {
                                         </h4>
                                         <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
                                             <ArrowRight className="w-3.5 h-3.5" />
-                                            View research
+                                            {t('successStories.viewResearch')}
                                         </div>
                                     </Link>
                                 ))}
@@ -440,18 +434,18 @@ export default function ResearchGapsPage() {
                     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                         <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
                             <h2 className="text-xl font-bold text-text dark:text-dark-text mb-4">
-                                Identify a Research Gap
+                                {t('form.title')}
                             </h2>
                             <form onSubmit={handleSubmitGap} className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        Title *
+                                        {t('form.titleLabel')} *
                                     </label>
                                     <input
                                         type="text"
                                         value={newGapTitle}
                                         onChange={e => setNewGapTitle(e.target.value)}
-                                        placeholder="e.g., Lack of data on water access in Idlib (2020-2023)"
+                                        placeholder={t('form.titlePlaceholder')}
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
                                         required
                                     />
@@ -459,12 +453,12 @@ export default function ResearchGapsPage() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        Description
+                                        {t('form.descriptionLabel')}
                                     </label>
                                     <textarea
                                         value={newGapDescription}
                                         onChange={e => setNewGapDescription(e.target.value)}
-                                        placeholder="Describe what we don't know and why it matters..."
+                                        placeholder={t('form.descriptionPlaceholder')}
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text min-h-[100px] resize-y"
                                     />
                                 </div>
@@ -472,59 +466,59 @@ export default function ResearchGapsPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                            Discipline
+                                            {t('form.disciplineLabel')}
                                         </label>
                                         <input
                                             type="text"
                                             value={newGapDiscipline}
                                             onChange={e => setNewGapDiscipline(e.target.value)}
-                                            placeholder="e.g., Public Health"
+                                            placeholder={t('form.disciplinePlaceholder')}
                                             className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                            Priority
+                                            {t('form.priorityLabel')}
                                         </label>
                                         <select
                                             value={newGapPriority}
                                             onChange={e => setNewGapPriority(e.target.value as ResearchGapPriority)}
-                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
+                                            className="select-input"
                                         >
-                                            <option value="low">Low</option>
-                                            <option value="medium">Medium</option>
-                                            <option value="high">High</option>
-                                            <option value="critical">Critical</option>
+                                            <option value="low">{t('priorities.low')}</option>
+                                            <option value="medium">{t('priorities.medium')}</option>
+                                            <option value="high">{t('priorities.high')}</option>
+                                            <option value="critical">{t('priorities.critical')}</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        Gap Type
+                                        {t('form.gapTypeLabel')}
                                     </label>
                                     <select
                                         value={newGapType}
                                         onChange={e => setNewGapType(e.target.value as ResearchGapType)}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
+                                        className="select-input"
                                     >
-                                        <option value="topical">Topical Gap - Missing coverage of a topic</option>
-                                        <option value="data">Data Gap - Missing datasets or quality issues</option>
-                                        <option value="methodological">Methodological Dispute - Debates about research methods</option>
-                                        <option value="population">Population Gap - Under-represented groups</option>
-                                        <option value="outdated">Outdated Research - Existing research needs updating</option>
+                                        <option value="topical">{t('typeDescriptions.topical')}</option>
+                                        <option value="data">{t('typeDescriptions.data')}</option>
+                                        <option value="methodological">{t('typeDescriptions.methodological')}</option>
+                                        <option value="population">{t('typeDescriptions.population')}</option>
+                                        <option value="outdated">{t('typeDescriptions.outdated')}</option>
                                     </select>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        Geographic Context
+                                        {t('form.geographicLabel')}
                                     </label>
                                     <input
                                         type="text"
                                         value={newGapSpatialContext}
                                         onChange={e => setNewGapSpatialContext(e.target.value)}
-                                        placeholder="e.g., Aleppo, Idlib"
+                                        placeholder={t('form.geographicPlaceholder')}
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
                                     />
                                 </div>
@@ -541,10 +535,10 @@ export default function ResearchGapsPage() {
                                     <label htmlFor="strategic-checkbox" className="flex-1">
                                         <div className="flex items-center gap-2">
                                             <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                                            <span className="font-medium text-amber-800 dark:text-amber-300">Mark as Strategic Priority</span>
+                                            <span className="font-medium text-amber-800 dark:text-amber-300">{t('form.strategicCheckbox')}</span>
                                         </div>
                                         <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                                            Strategic gaps are highlighted for community attention
+                                            {t('form.strategicNote')}
                                         </p>
                                     </label>
                                 </div>
@@ -555,7 +549,7 @@ export default function ResearchGapsPage() {
                                         onClick={() => setShowNewGapForm(false)}
                                         className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg transition-all"
                                     >
-                                        Cancel
+                                        {t('form.cancel')}
                                     </button>
                                     <button
                                         type="submit"
@@ -563,7 +557,7 @@ export default function ResearchGapsPage() {
                                         className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
                                         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                                        Submit
+                                        {t('form.submit')}
                                     </button>
                                 </div>
                             </form>
@@ -580,17 +574,17 @@ export default function ResearchGapsPage() {
                     <div className="text-center py-20">
                         <AlertCircle className="w-12 h-12 mx-auto text-text-light dark:text-dark-text-muted mb-4" />
                         <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
-                            No research gaps found
+                            {t('empty.title')}
                         </h3>
                         <p className="text-text-light dark:text-dark-text-muted mb-6">
-                            Be the first to identify a gap in our collective knowledge.
+                            {t('empty.description')}
                         </p>
                         <button
                             onClick={() => setShowNewGapForm(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all"
                         >
                             <Plus className="w-5 h-5" />
-                            Identify a Gap
+                            {t('identifyGap')}
                         </button>
                     </div>
                 ) : (
@@ -637,7 +631,7 @@ export default function ResearchGapsPage() {
                                                 {statusLabels[gap.status]}
                                             </span>
                                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityColors[gap.priority]}`}>
-                                                {gap.priority.charAt(0).toUpperCase() + gap.priority.slice(1)} Priority
+                                                {t('card.priorityLabel', { priority: t(`priorities.${gap.priority}`) })}
                                             </span>
                                             {gap.discipline && (
                                                 <span className="px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-dark-bg text-xs font-medium text-text-light dark:text-dark-text-muted">
@@ -682,7 +676,7 @@ export default function ResearchGapsPage() {
                                                 className="mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-all"
                                             >
                                                 <Target className="w-4 h-4" />
-                                                Claim this gap
+                                                {t('card.claimButton')}
                                             </button>
                                         )}
 
@@ -698,7 +692,7 @@ export default function ResearchGapsPage() {
                                                 className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
                                             >
                                                 <CheckCircle2 className="w-4 h-4" />
-                                                View the addressing research
+                                                {t('card.viewAddressing')}
                                                 <ArrowRight className="w-4 h-4" />
                                             </Link>
                                         )}

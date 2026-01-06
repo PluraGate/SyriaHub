@@ -96,7 +96,7 @@
         "helpText": "اختر كيف يمكن للآخرين استخدام عملك."
     },
     "Navigation": {
-        "feed": "الرئيسية",
+        "insights": "المستجدات",
         "explore": "استكشاف",
         "groups": "المجموعات",
         "profile": "الملف الشخصي",
@@ -253,11 +253,11 @@
         "completed": "مكتمل",
         "browse": {
             "title": "تصفح الأبحاث",
-            "description": "استكشف الموجز لاكتشاف ما يبحث عنه الآخرون",
-            "action": "اذهب للموجز"
+            "description": "استكشف المستجدات لاكتشاف ما يبحث عنه الآخرون",
+            "action": "اذهب للمستجدات"
         },
         "comment": {
-            "title": "شارك في نقاش",
+            "title": "شارك في حوار",
             "description": "اترك تعليقًا مدروسًا على منشور يثير اهتمامك",
             "action": "ابحث عن منشورات"
         },
@@ -282,10 +282,10 @@
         "supportTitle": "الدعم الفني",
         "supportDesc": "تواصل مع فريق التطوير"
     },
-    "Feed": {
-        "title": "الموجز",
-        "liveFeed": "الموجز المباشر",
-        "yourFeed": "موجزك",
+    "Insights": {
+        "title": "المستجدات",
+        "liveInsights": "مباشر",
+        "yourInsights": "المستجدات",
         "discoverResearch": "اكتشف أحدث الأبحاث والرؤى من المجتمع",
         "writePost": "اكتب منشوراً",
         "noResults": "لا توجد منشورات",
@@ -304,10 +304,17 @@
         "featured": "المميزة",
         "latestResearch": "أحدث الأبحاث",
         "sortNew": "الأحدث",
-        "sortHot": "الأكثر نقاشاً",
+        "sortHot": "الأكثر حواراً",
         "sortTopWeek": "الأعلى هذا الأسبوع",
         "sortTopMonth": "الأعلى هذا الشهر",
-        "sortTopAll": "الأعلى على الإطلاق"
+        "sortTopAll": "الأعلى على الإطلاق",
+        "noFollowersTitle": "لا يوجد أحد لمتابعته بعد",
+        "noFollowersDesc": "تابع الباحثين لرؤية منشوراتهم في مستجداتك. استكشف المجتمع للعثور على أشخاص مثيرين للاهتمام!",
+        "noPostsTitle": "لا توجد مستجدات بعد",
+        "noPostsDesc": "كن أول من يشارك أبحاثه مع المجتمع!",
+        "noPostsTaggedTitle": "لم يتم العثور على مستجدات لـ \"{tag}\"",
+        "noPostsTaggedDesc": "جرب موضوعاً مختلفاً أو امسح التصفية لرؤية المزيد من المحتوى.",
+        "actionLabel": "إنشاء منشور"
     },
     "Post": {
         "edit": "تعديل",
@@ -383,7 +390,7 @@
         "signInToAnswer": "سجل دخولك للإجابة على هذا السؤال.",
         "knowledgeGraph": "مخطط المعرفة",
         "relatedResearch": "الأبحاث ذات الصلة",
-        "backToFeed": "العودة للموجز",
+        "backToInsights": "العودة للمستجدات",
         "minRead": "{count} دقائق للقراءة",
         "remixedFrom": "مطوّر من",
         "suggestions": "اقتراحات"
@@ -442,7 +449,7 @@
             "orderedList": "قائمة مرقمة"
         },
         "page": {
-            "backToFeed": "العودة للموجز",
+            "backToInsights": "العودة للمستجدات",
             "editPost": "تعديل المنشور",
             "writeNewPost": "كتابة منشور جديد",
             "askQuestion": "اطرح سؤالاً",
@@ -469,7 +476,7 @@
             "tip2": "استخدم الوسوم لتسهيل الاكتشاف",
             "tip3": "راجع قبل النشر",
             "needInspiration": "تحتاج إلهاماً؟",
-            "inspirationDesc": "استكشف الأبحاث الحديثة في الموجز أو اكتشف المواضيع الرائجة.",
+            "inspirationDesc": "استكشف الأبحاث الحديثة في المستجدات أو اكتشف المواضيع الرائجة.",
             "browsePosts": "تصفح المنشورات",
             "markdownSupported": "Markdown مدعوم",
             "markdownHelp": "تنسيق Markdown مدعوم بالكامل لمحتواك.",
@@ -509,7 +516,7 @@
             },
             "contentTypeHelp": {
                 "article": "مقالات بحثية معمقة أو تحليلات أو تقارير. مثالية لنشر النتائج مع الاستشهادات.",
-                "question": "أسئلة بحثية تبحث عن إجابات من المجتمع. رائعة للتعهيد الجماعي للمعرفة.",
+                "question": "أسئلة بحثية تبحث عن إجابات من المجتمع. مناسبة للربط الجماعي للمعرفة.",
                 "trace": "آثار الذاكرة الجماعية: صور، تسجيلات صوتية، وثائق، شهادات. شظايا أدلة ليست مقالات كاملة."
             },
             "editWindowTitle": "نافذة التعديل لمدة 24 ساعة",
@@ -537,7 +544,7 @@
             "changeDataset": "تغيير مجموعة البيانات"
         },
         "firstTimePrompt": {
-            "title": "أهلاً بك، أيها المساهم",
+            "title": "أهلاً بك في محرر الأبحاث",
             "description": "هذه مساحة بحثية مشتركة. قبل النشر، فكّر في:",
             "question1": "ما الدليل الذي يدعم هذا الادعاء؟",
             "question2": "ما الذي لا أعرفه أو لا أستطيع التحقق منه؟",
@@ -628,7 +635,7 @@
         "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية. سيريا هب جزء من شبكة PluraGate للمنصات البحثية.",
         "contribute": "ساهم معنا",
         "quickLinks": "روابط سريعة",
-        "browseFeed": "تصفح الأبحاث",
+        "browseInsights": "تصفح الأبحاث",
         "writePost": "اكتب منشوراً",
         "howItWorks": "كيف تعمل SyriaHub",
         "contact": "تواصل معنا",
@@ -641,7 +648,7 @@
         "privacy": "سياسة الخصوصية",
         "spatialTeaser": "أدوات المعرفة المكانية قيد التطوير",
         "licensingNote": "المحتوى مرخص حسب شروط المؤلف.",
-        "researchCommonsStatement": "هذه ليست منصة للنقاش. إنها مساحة بحثية مشتركة.",
+        "researchCommonsStatement": "هذه ليست منصة للجدل. إنها مساحة بحثية مشتركة.",
         "updates": "التحديثات",
         "platformStage": "بيتا",
         "platformVersion": "v0.8.0",
@@ -771,6 +778,7 @@
             "descriptionLabel": "الوصف",
             "descriptionPlaceholder": "صِف محتوى هذا المورد...",
             "tagsLabel": "التخصصات والوسوم",
+            "searchTagsPlaceholder": "ابحث أو أضف وسوماً (اضغط Enter)...",
             "tagsHint": "اختر التخصصات والمواضيع المتعلقة بهذا المورد",
             "licenseLabel": "الترخيص",
             "submitButton": "رفع المورد",
@@ -840,7 +848,113 @@
         "beFirstToRsvp": "كن أول من يحجز!",
         "eventCancelled": "تم إلغاء هذا الحدث",
         "eventPostponed": "تم تأجيل هذا الحدث",
-        "ended": "انتهى"
+        "ended": "انتهى",
+        "create": {
+            "title": "إنشاء فعالية",
+            "eventTitleLabel": "عنوان الفعالية",
+            "eventTitlePlaceholder": "مثال: المزامنة البحثية الأسبوعية",
+            "coverImageLabel": "صورة الغلاف",
+            "startTimeLabel": "وقت البدء",
+            "endTimeLabel": "وقت الانتهاء (اختياري)",
+            "locationLabel": "الموقع",
+            "locationPlaceholder": "مثال: زووم، غرفة الاجتماعات أ، أو عبر الإنترنت",
+            "linkLabel": "رابط الفعالية (اختياري)",
+            "linkPlaceholder": "مثال: https://zoom.us/j/...",
+            "descriptionLabel": "الوصف",
+            "descriptionPlaceholder": "صِف جدول أعمال الفعالية وتفاصيلها...",
+            "publishButton": "نشر الفعالية",
+            "saveDraftButton": "حفظ كمسودة",
+            "previewButton": "معاينة",
+            "cancelButton": "إلغاء",
+            "publishing": "جارٍ النشر...",
+            "publishSuccess": "تم نشر فعاليتك بنجاح.",
+            "draftSuccess": "تم حفظ المسودة بنجاح.",
+            "signInRequired": "يرجى تسجيل الدخول لإنشاء فعالية."
+        }
+    },
+    "ResearchGaps": {
+        "title": "سوق الفجوات البحثية",
+        "heading": "ماذا لا نعرف؟",
+        "subtitle": "حدد الفجوات في معرفتنا الجماعية حول سوريا. اطلب مجالات بحثية، تعاون مع الآخرين، وساعد في معالجة أهم المجهولات.",
+        "searchPlaceholder": "ابحث في الفجوات البحثية...",
+        "identifyGap": "حدد فجوة",
+        "filters": "الفلاتر",
+        "allStatuses": "جميع الحالات",
+        "allPriorities": "جميع الأولويات",
+        "allTypes": "جميع الأنواع",
+        "strategic": "استراتيجي",
+        "gapsFound": "تم العثور على {count} فجوة",
+        "gapsFoundPlural": "تم العثور على {count} فجوة",
+        "statuses": {
+            "identified": "محددة",
+            "investigating": "قيد التحقيق",
+            "addressed": "تمت معالجتها",
+            "closed": "مغلقة"
+        },
+        "priorities": {
+            "low": "منخفضة",
+            "medium": "متوسطة",
+            "high": "عالية",
+            "critical": "حرجة"
+        },
+        "types": {
+            "topical": "فجوة موضوعية",
+            "data": "فجوة بيانات",
+            "methodological": "منهجية",
+            "population": "فجوة سكانية",
+            "outdated": "بحث قديم"
+        },
+        "typeDescriptions": {
+            "topical": "فجوة موضوعية - تغطية مفقودة لموضوع",
+            "data": "فجوة بيانات - مجموعات بيانات مفقودة أو مشاكل في الجودة",
+            "methodological": "نزاع منهجي - نقاشات حول طرق البحث",
+            "population": "فجوة سكانية - مجموعات ممثلة بشكل ناقص",
+            "outdated": "بحث قديم - البحث الحالي يحتاج إلى تحديث"
+        },
+        "successStories": {
+            "title": "فجوات أدت إلى أبحاث",
+            "description": "تمت معالجة هذه الفجوات المعرفية من خلال مساهمات بحثية من المجتمع.",
+            "viewResearch": "عرض البحث"
+        },
+        "form": {
+            "title": "حدد فجوة بحثية",
+            "titleLabel": "العنوان",
+            "titlePlaceholder": "مثال: نقص البيانات حول الوصول إلى المياه في إدلب (2020-2023)",
+            "descriptionLabel": "الوصف",
+            "descriptionPlaceholder": "صِف ما لا نعرفه وما أهميته...",
+            "disciplineLabel": "التخصص",
+            "disciplinePlaceholder": "مثال: الصحة العامة",
+            "priorityLabel": "الأولوية",
+            "gapTypeLabel": "نوع الفجوة",
+            "geographicLabel": "السياق الجغرافي",
+            "geographicPlaceholder": "مثال: حلب، إدلب",
+            "strategicCheckbox": "وضع علامة كأولوية استراتيجية",
+            "strategicNote": "يتم تسليط الضوء على الفجوات الاستراتيجية لاهتمام المجتمع",
+            "cancel": "إلغاء",
+            "submit": "إرسال"
+        },
+        "empty": {
+            "title": "لم يتم العثور على فجوات بحثية",
+            "description": "كن أول من يحدد فجوة في معرفتنا الجماعية."
+        },
+        "card": {
+            "priorityLabel": "أولوية {priority}",
+            "claimButton": "اطلب هذه الفجوة",
+            "investigating": "قيد التحقيق بواسطة {name}",
+            "viewAddressing": "عرض البحث المعالج"
+        },
+        "messages": {
+            "loadFailed": "فشل تحميل الفجوات البحثية",
+            "signInToUpvote": "سجل الدخول للتصويت",
+            "voteFailed": "فشل تحديث التصويت",
+            "signInToClaim": "سجل الدخول لطلب فجوة بحثية",
+            "claimSuccess": "لقد طلبت هذه الفجوة البحثية!",
+            "claimFailed": "فشل طلب الفجوة البحثية",
+            "signInToSubmit": "سجل الدخول لإرسال فجوة بحثية",
+            "titleRequired": "يرجى تقديم عنوان",
+            "submitSuccess": "تم إرسال الفجوة البحثية بنجاح!",
+            "submitFailed": "فشل إرسال الفجوة البحثية"
+        }
     },
     "Groups": {
         "title": "المجموعات",
@@ -856,7 +970,7 @@
         "members": "الأعضاء",
         "memberCount": "{count} عضو",
         "posts": "منشورات المجموعة",
-        "discussions": "النقاشات",
+        "discussions": "الحوارات",
         "files": "الملفات المشتركة",
         "join": "انضمام للمجموعة",
         "leave": "مغادرة المجموعة",
@@ -981,7 +1095,7 @@
     },
     "Comments": {
         "title": "التعليقات",
-        "discussion": "النقاش",
+        "discussion": "الحوار",
         "loadingComments": "جارٍ تحميل التعليقات...",
         "commentsCount": "{count} تعليق",
         "commentsCountPlural": "{count} تعليقات",
@@ -1002,7 +1116,7 @@
         "deleted": "تم حذف هذا التعليق",
         "replyTo": "رد على {name}",
         "cancelReply": "إلغاء الرد",
-        "signInToComment": "سجّل الدخول للمشاركة في النقاش",
+        "signInToComment": "سجّل الدخول للمشاركة في الحوار",
         "anonymous": "مجهول"
     },
     "Settings": {
@@ -1020,6 +1134,27 @@
         "newPassword": "كلمة المرور الجديدة",
         "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
         "twoFactor": "المصادقة الثنائية",
+        "twoFactorSetup": {
+            "title": "المصادقة الثنائية",
+            "description": "أضف طبقة حماية إضافية لحسابك من خلال طلب رمز من تطبيق المصادقة الخاص بك عند تسجيل الدخول.",
+            "enabled": "تم تفعيل المصادقة الثنائية",
+            "enabledDesc": "حسابك محمي باستخدام تطبيق مصادقة.",
+            "enable": "تفعيل المصادقة الثنائية",
+            "disable": "إيقاف المصادقة الثنائية",
+            "setupTitle": "إعداد تطبيق المصادقة",
+            "step1": "1. امسح رمز QR هذا باستخدام تطبيق المصادقة الخاص بك (Google Authenticator، Authy، إلخ.)",
+            "manualEntry": "أو أدخل هذا الرمز يدوياً:",
+            "step2": "2. أدخل الرمز المكون من 6 أرقام من تطبيقك للتحقق:",
+            "verify": "تحقق",
+            "warning": "احفظ مفتاحك السري في مكان آمن. إذا فقدت الوصول إلى تطبيق المصادقة الخاص بك، فستحتاج إلى هذا لاسترداد حسابك.",
+            "failedToStart": "فشل بدء تسجيل المصادقة الثنائية",
+            "enterCode": "يرجى إدخال رمز مكون من 6 أرقام",
+            "codeVerified": "تم تفعيل المصادقة الثنائية بنجاح!",
+            "verifyFailed": "فشل التحقق من الرمز",
+            "disabled": "تم إيقاف المصادقة الثنائية",
+            "disableFailed": "فشل إيقاف المصادقة الثنائية",
+            "authenticatorApp": "تطبيق المصادقة"
+        },
         "sessions": "الجلسات النشطة",
         "theme": {
             "title": "السمة",
@@ -1133,41 +1268,16 @@
         "resetToDefaults": "إعادة الضبط للافتراضي",
         "confirmReset": "هل أنت متأكد من إعادة جميع الإعدادات للافتراضي؟",
         "settingsReset": "تمت إعادة الإعدادات للافتراضي",
+        "resetFailed": "فشل في إعادة ضبط الإعدادات",
         "saved": "تم حفظ الإعدادات",
+        "saveFailed": "فشل في حفظ الإعدادات",
         "saveChanges": "حفظ التغييرات",
         "confirm": "تأكيد",
         "cancel": "إلغاء",
+        "securityDescription": "عزز أمان حسابك بإضافة ميزات حماية إضافية.",
         "feedbackSection": {
             "title": "الملاحظات"
         }
-    },
-    "Correspondence": {
-        "title": "المراسلات البحثية",
-        "inbox": "الوارد",
-        "sent": "المرسل",
-        "compose": "إرسال مراسلة",
-        "requestClarification": "طلب توضيح",
-        "regardingPost": "بخصوص: {title}",
-        "subject": "الموضوع",
-        "subjectPlaceholder": "ملخص موجز لاستفسارك (10 أحرف على الأقل)",
-        "body": "الرسالة",
-        "bodyPlaceholder": "سؤالك التفصيلي أو طلب التوضيح (50 حرف على الأقل)...",
-        "send": "إرسال المراسلة",
-        "reply": "رد",
-        "maxOneReply": "ملاحظة: يُسمح برد واحد فقط لكل مراسلة",
-        "alreadyReplied": "تم الرد على هذه المراسلة بالفعل",
-        "rateLimitReached": "تم الوصول للحد اليومي للمراسلات (الحد الأقصى 3)",
-        "tooManyPending": "لديك عدد كبير من المراسلات قيد انتظار الرد",
-        "deliveryNote": "سيتم تسليم مراسلتك قريباً",
-        "empty": "لا توجد مراسلات بعد",
-        "emptyDesc": "ستظهر المراسلات التي تتلقاها هنا",
-        "contextRequired": "السياق مطلوب",
-        "charactersRemaining": "{count} حرف متبقي",
-        "minCharacters": "الحد الأدنى {count} حرف مطلوب",
-        "noAttachments": "المرفقات غير مدعومة",
-        "archived": "مؤرشف",
-        "markAsRead": "تحديد كمقروء",
-        "archive": "أرشفة"
     },
     "Analytics": {
         "title": "تحليلات البحث",
@@ -1415,7 +1525,7 @@
             "allTypes": "جميع الأنواع",
             "articles": "المقالات",
             "questions": "الأسئلة",
-            "discussions": "النقاشات",
+            "discussions": "الحوارات",
             "resources": "المصادر",
             "events": "الفعاليات",
             "pending": "معلق",
@@ -1611,10 +1721,10 @@
             "contentDistribution": "توزيع المحتوى",
             "articles": "المقالات",
             "questions": "الأسئلة",
-            "discussions": "النقاشات",
+            "discussions": "الحوارات",
             "failedToLoad": "فشل تحميل بيانات التحليلات",
             "newInPeriod": "+{count} في {days} يوم",
-            "moderationQueue": "طابور المراجعة"
+            "moderationQueue": "دور المراجعة"
         },
         "auditLogPage": {
             "title": "سجل التدقيق",
@@ -1644,6 +1754,221 @@
             "requestChanges": "طلب تعديلات",
             "reason": "السبب",
             "notes": "ملاحظات المشرف"
+        },
+        "precedentManagement": {
+            "title": "إدارة السوابق",
+            "subtitle": "تنظيم وإدارة دراسات الحالة التاريخية للكشف عن الأنماط.",
+            "addPrecedent": "إضافة سابقة",
+            "editPrecedent": "تعديل سابقة",
+            "newPrecedent": "سابقة جديدة",
+            "basicInfo": "المعلومات الأساسية",
+            "titleEn": "العنوان (بالإنجليزية)",
+            "titleAr": "العنوان (بالعربية)",
+            "summaryEn": "الملخص (بالإنجليزية)",
+            "summaryAr": "الملخص (بالعربية)",
+            "detailedContent": "المحتوى التفصيلي",
+            "fullAnalysis": "تحليل كامل",
+            "keyLessons": "الدروس المستفادة",
+            "addLesson": "إضافة درس",
+            "classification": "التصنيف",
+            "patternType": "نوع النمط",
+            "governorate": "المحافظة",
+            "trustLevel": "مستوى الثقة",
+            "sourceVerification": "التحقق من المصدر",
+            "sourceName": "اسم المصدر",
+            "sourceUrl": "رابط المصدر",
+            "publishImmediately": "نشر فوري",
+            "publishHint": "إذا تم تعطيله، سيتم حفظ هذه السابقة كمسودة.",
+            "cancel": "إلغاء",
+            "create": "إنشاء سابقة",
+            "update": "تحديث سابقة",
+            "searchPlaceholder": "بحث في السوابق...",
+            "allPatterns": "جميع الأنماط",
+            "noResults": "لا توجد سوابق مطابقة",
+            "noResultsDesc": "حاول تعديل البحث أو الفلاتر",
+            "noPosts": "لم يتم العثور على سوابق",
+            "noPostsDesc": "أنشئ سابقتك الأولى للبدء",
+            "delete": "حذف",
+            "deleteConfirm": "هل أنت متأكد من رغبتك في حذف هذه السابقة؟"
+        },
+        "platformSettings": {
+            "title": "إعدادات المنصة",
+            "subtitle": "تكوين الإعدادات والتفضيلات الشاملة للمنصة",
+            "saveChanges": "حفظ التغييرات",
+            "saving": "جاري الحفظ...",
+            "saved": "تم الحفظ!",
+            "saveError": "فشل حفظ الإعدادات. يرجى المحاولة مرة أخرى.",
+            "sections": {
+                "general": {
+                    "title": "الإعدادات العامة",
+                    "description": "تكوين المنصة الأساسي"
+                },
+                "access": {
+                    "title": "التسجيل والوصول",
+                    "description": "تسجيل المستخدمين وضوابط الوصول"
+                },
+                "moderation": {
+                    "title": "الإشراف على المحتوى",
+                    "description": "إعدادات الإشراف الآلي"
+                },
+                "notifications": {
+                    "title": "الإشعارات",
+                    "description": "تفضيلات البريد الإلكتروني والإشعارات"
+                },
+                "content": {
+                    "title": "إعدادات المحتوى",
+                    "description": "أنواع المنشورات وقواعد المحتوى"
+                },
+                "localization": {
+                    "title": "التعريب",
+                    "description": "إعدادات اللغة والمنطقة"
+                }
+            },
+            "general": {
+                "siteName": "اسم الموقع",
+                "siteDescription": "وصف الموقع"
+            },
+            "access": {
+                "registrationEnabled": "تفعيل التسجيل",
+                "registrationEnabledDesc": "السماح للمستخدمين الجدد بالتسجيل في المنصة",
+                "requireEmailVerification": "طلب التحقق من البريد الإلكتروني",
+                "requireEmailVerificationDesc": "يجب على المستخدمين التحقق من بريدهم الإلكتروني قبل الوصول إلى المنصة",
+                "allowAnonymousBrowsing": "السماح بالتصفح المجهول",
+                "allowAnonymousBrowsingDesc": "يمكن لغير المسجلين عرض المحتوى العام",
+                "inviteOnlyMode": "وضع الدعوة فقط",
+                "inviteOnlyModeDesc": "يمكن التسجيل فقط لمن لديه دعوة"
+            },
+            "moderation": {
+                "autoModeration": "الإشراف الآلي",
+                "autoModerationDesc": "الإبلاغ تلقائياً عن المحتوى الذي ينتهك الإرشادات",
+                "requirePostApproval": "طلب الموافقة على المنشور",
+                "requirePostApprovalDesc": "يجب الموافقة على جميع المنشورات الجديدة من قبل مشرف",
+                "autoHideThreshold": "حد الإخفاء التلقائي",
+                "autoHideThresholdDesc": "عدد البلاغات قبل إخفاء المحتوى تلقائياً"
+            },
+            "notifications": {
+                "emailNotifications": "إشعارات البريد الإلكتروني",
+                "emailNotificationsDesc": "إرسال إشعارات بريد إلكتروني للمستخدمين",
+                "digestFrequency": "تكرار الملخص",
+                "options": {
+                    "realtime": "فوري",
+                    "daily": "ملخص يومي",
+                    "weekly": "ملخص أسبوعي",
+                    "never": "أبداً"
+                }
+            },
+            "content": {
+                "info": "تتم إدارة إعدادات نوع المحتوى في سجل المخططات.",
+                "link": "الذهاب إلى سجل المخططات"
+            },
+            "localization": {
+                "defaultLanguage": "اللون الافتراضي",
+                "info": "يمكن للمستخدمين تجاوز اللغة الافتراضية في تفضيلاتهم الشخصية.",
+                "languages": {
+                    "en": "English",
+                    "ar": "العربية (Arabic)"
+                }
+            }
+        },
+        "schemaRegistry": {
+            "title": "سجل المخططات",
+            "subtitle": "إدارة نماذج البيانات الديناميكية والمفردات.",
+            "tabs": {
+                "registries": "السجلات",
+                "fields": "الحقول"
+            },
+            "newRegistry": "سجل جديد",
+            "newField": "حقل جديد",
+            "noRegistries": "لا توجد سجلات بعد. أنشئ سجلك الأول للبدء.",
+            "noFields": "لا توجد حقول بعد. أنشئ حقلك الأول للبدء.",
+            "registry": {
+                "title": "السجل",
+                "create": "إنشاء سجل",
+                "edit": "تعديل سجل",
+                "displayName": "الاسم المعروض",
+                "key": "مفتاح السجل",
+                "description": "الوصف",
+                "keyHint": "معرف فريد. لا يمكن تغييره بعد الإنشاء.",
+                "items": "العناصر",
+                "addItem": "إضافة عنصر",
+                "showAll": "عرض الكل",
+                "showLess": "عرض أقل",
+                "noItems": "لا توجد عناصر بعد",
+                "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
+                "deleted": "تم حذف السجل",
+                "saved": "تم حفظ السجل"
+            },
+            "item": {
+                "create": "إنشاء عنصر",
+                "edit": "تعديل عنصر",
+                "displayName": "الاسم المعروض",
+                "key": "مفتاح العنصر",
+                "sortOrder": "ترتيب العرض",
+                "keyHint": "معرف فريد. لا يمكن تغييره بعد الإنشاء.",
+                "sortOrderHint": "الأرقام الأقل تظهر أولاً.",
+                "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+                "deleted": "تم حذف العنصر",
+                "saved": "تم حفظ العنصر"
+            },
+            "field": {
+                "title": "الحقل",
+                "create": "إنشاء حقل",
+                "edit": "تعديل حقل",
+                "displayName": "الاسم المعروض",
+                "key": "مفتاح الحقل",
+                "type": "نوع الحقل",
+                "description": "الوصف",
+                "required": "حقل مطلوب",
+                "appliesTo": "ينطبق على",
+                "keyHint": "معرف فريد. لا يمكن تغييره بعد الإنشاء.",
+                "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الحقل؟ لا يمكن التراجع عن هذا الإجراء.",
+                "deleted": "تم حذف الحقل",
+                "saved": "تم حفظ الحقل",
+                "registry": "السجل",
+                "options": "الخيارات",
+                "addOption": "إضافة خيار",
+                "value": "القيمة (المفتاح)",
+                "label": "التسمية (العرض)",
+                "errors": {
+                    "registry": "يرجى اختيار سجل لهذا النوع من الحقول",
+                    "options": "يرجى إضافة خيار واحد على الأقل لهذا النوع من الحقول",
+                    "appliesTo": "يرجى اختيار نوع محتوى واحد على الأقل ينطبق عليه هذا الحقل"
+                }
+            },
+            "actions": {
+                "edit": "تعديل",
+                "delete": "حذف",
+                "save": "حفظ",
+                "saving": "جاري الحفظ...",
+                "cancel": "إلغاء",
+                "saveFailed": "فشل الحفظ",
+                "deleteFailed": "فشل الحذف"
+            },
+            "types": {
+                "text": "نص",
+                "number": "رقم",
+                "boolean": "منطقي (نعم/لا)",
+                "date": "تاريخ",
+                "datetime": "وقت وتاريخ",
+                "url": "رابط",
+                "rich_text": "نص غني",
+                "select": "اختيار",
+                "multiselect": "اختيار متعدد",
+                "registry_ref": "مرجع سجل",
+                "registry_ref_multi": "مرجع سجل متعدد",
+                "geo_point": "نقطة جغرافية",
+                "geo_polygon": "مضلع جغرافي",
+                "json": "JSON",
+                "file": "ملف"
+            },
+            "contentTypes": {
+                "article": "مقال",
+                "question": "سؤال",
+                "answer": "إجابة",
+                "resource": "مصدر",
+                "event": "فعالية",
+                "trace": "تتبع"
+            }
         }
     },
     "UserManagement": {
@@ -1698,7 +2023,7 @@
         "questionAdvisor": "مستشار الأسئلة",
         "search": "محرك البحث العلمي",
         "overview": "نظرة عامة",
-        "backToFeed": "العودة للموجز",
+        "backToInsights": "العودة للمستجدات",
         "createPoll": "إنشاء استطلاع",
         "createSurvey": "إنشاء استبيان",
         "newSurvey": "استبيان جديد",
@@ -1854,7 +2179,7 @@
             "questionAdvisor": "مستشار الأسئلة",
             "survey": "استبيان",
             "poll": "استطلاع",
-            "backToFeed": "العودة للموجز"
+            "backToInsights": "العودة للمستجدات"
         },
         "statisticsPage": {
             "title": "أدوات الإحصاء",
@@ -1969,128 +2294,12 @@
         }
     },
     "Trending": {
-        "title": "النقاشات النشطة",
-        "noTrending": "لا توجد نقاشات نشطة بعد",
-        "viewAll": "عرض جميع النقاشات",
+        "title": "الحوارات النشطة",
+        "noTrending": "لا توجد حوارات نشطة بعد",
+        "viewAll": "عرض جميع الحوارات",
         "week": "أسبوع",
         "month": "شهر",
         "today": "اليوم"
-    },
-    "ResearchGaps": {
-        "title": "سوق الفجوات البحثية",
-        "subtitle": "ما الذي لا نعرفه؟",
-        "description": "حدد الفجوات في معرفتنا الجماعية عن سوريا. اطلب مجالات بحثية، وتعاون مع الآخرين، وساعد في معالجة المجهولات الأكثر إلحاحاً.",
-        "searchPlaceholder": "البحث في الفجوات البحثية...",
-        "identifyGap": "تحديد فجوة",
-        "filters": "الفلاتر",
-        "allStatuses": "جميع الحالات",
-        "allPriorities": "جميع الأولويات",
-        "allTypes": "جميع الأنواع",
-        "strategicOnly": "الاستراتيجية فقط",
-        "gapsFound": "تم العثور على {count} فجوة",
-        "noGaps": "لم يتم العثور على فجوات بحثية",
-        "noGapsDesc": "كن أول من يحدد فجوة في معرفتنا الجماعية.",
-        "submitGap": "إرسال",
-        "cancel": "إلغاء",
-        "form": {
-            "title": "تحديد فجوة بحثية",
-            "titleLabel": "العنوان",
-            "titlePlaceholder": "مثال: نقص البيانات حول الوصول للمياه في إدلب (2020-2023)",
-            "description": "الوصف",
-            "descriptionPlaceholder": "صف ما لا نعرفه ولماذا هو مهم...",
-            "discipline": "التخصص",
-            "disciplinePlaceholder": "مثال: الصحة العامة",
-            "priority": "الأولوية",
-            "gapType": "نوع الفجوة",
-            "gapTypeHelp": "ما نوع هذه الفجوة؟",
-            "spatialContext": "السياق الجغرافي",
-            "spatialPlaceholder": "مثال: حلب، إدلب",
-            "markStrategic": "تحديد كأولوية استراتيجية",
-            "strategicHelp": "الفجوات الاستراتيجية يتم إبرازها لجذب اهتمام المجتمع"
-        },
-        "gapTypes": {
-            "topical": "فجوة موضوعية",
-            "data": "فجوة بيانات",
-            "methodological": "خلاف منهجي",
-            "population": "فئة سكانية ممثلة بشكل ناقص",
-            "outdated": "بحث قديم"
-        },
-        "gapTypeDescriptions": {
-            "topical": "غياب تغطية لموضوع أو منطقة معينة",
-            "data": "نقص مجموعات البيانات أو مشاكل في جودة البيانات",
-            "methodological": "خلافات حول طرق أو مناهج البحث",
-            "population": "مجموعات ممثلة بشكل ناقص في الأبحاث القائمة",
-            "outdated": "الأبحاث الموجودة تحتاج للتحديث"
-        },
-        "status": {
-            "identified": "محددة",
-            "investigating": "قيد البحث",
-            "addressed": "تمت معالجتها",
-            "closed": "مغلقة"
-        },
-        "priority": {
-            "low": "منخفضة",
-            "medium": "متوسطة",
-            "high": "عالية",
-            "critical": "حرجة"
-        },
-        "actions": {
-            "claim": "المطالبة بهذه الفجوة",
-            "upvote": "تصويت إيجابي",
-            "viewResearch": "عرض البحث المعالج",
-            "expressInterest": "إبداء الاهتمام",
-            "suggestReading": "اقتراح قراءة ذات صلة"
-        },
-        "collaboration": {
-            "interestedCount": "{count} مهتم",
-            "interestedResearchers": "{count} باحث مهتم بالتعاون",
-            "expressInterestTitle": "إبداء الاهتمام",
-            "expressInterestDesc": "أعلم الآخرين أنك مهتم بالتعاون في هذه الفجوة",
-            "yourNote": "ملاحظتك (اختياري)",
-            "yourNotePlaceholder": "مثال: لدي وصول لمجموعات بيانات ذات صلة...",
-            "alreadyInterested": "لقد أبديت اهتمامك",
-            "removeInterest": "إزالة الاهتمام",
-            "viewInterested": "عرض الباحثين المهتمين"
-        },
-        "suggestions": {
-            "relatedReadings": "قراءات ذات صلة",
-            "noSuggestions": "لا توجد قراءات ذات صلة بعد",
-            "suggestTitle": "اقتراح قراءة ذات صلة",
-            "suggestDesc": "ساعد الآخرين بمشاركة موارد ذات صلة",
-            "readingTitle": "العنوان",
-            "readingTitlePlaceholder": "مثال: تقرير منظمة الصحة العالمية حول الوصول للمياه في سوريا",
-            "externalUrl": "رابط خارجي",
-            "urlPlaceholder": "https://...",
-            "orLinkPost": "أو ربط منشور داخلي",
-            "selectPost": "اختر منشوراً...",
-            "whyRelevant": "لماذا هذا ذو صلة؟",
-            "whyRelevantPlaceholder": "ملاحظة موجزة عن علاقته بالفجوة...",
-            "addSuggestion": "إضافة اقتراح",
-            "suggestedBy": "اقترحه {name}"
-        },
-        "sources": {
-            "manual": "حددها المستخدم",
-            "ai_suggested": "اقترحها الذكاء الاصطناعي",
-            "failed_query": "من بحث فاشل"
-        },
-        "strategicBadge": "استراتيجية",
-        "messages": {
-            "signInToUpvote": "سجل دخولك للتصويت",
-            "signInToClaim": "سجل دخولك للمطالبة بفجوة بحثية",
-            "signInToSubmit": "سجل دخولك لإرسال فجوة بحثية",
-            "signInToInteract": "سجل دخولك للتفاعل مع الفجوات البحثية",
-            "claimed": "لقد طالبت بهذه الفجوة البحثية!",
-            "submitSuccess": "تم إرسال الفجوة البحثية بنجاح!",
-            "provideTitle": "يرجى تقديم عنوان",
-            "interestAdded": "تم تسجيل اهتمامك",
-            "interestRemoved": "تم إزالة اهتمامك",
-            "suggestionAdded": "تم إضافة اقتراح القراءة"
-        },
-        "investigating": "يتم البحث فيها بواسطة {name}",
-        "help": {
-            "title": "حول الفجوات البحثية",
-            "description": "تمثل الفجوات البحثية 'نموذج الغياب' - الاعتراف بما لا نعرفه مهم بقدر ما نعرفه. صوّت للفجوات التي تعتقد أنها مهمة، وطالب بتلك التي تريد العمل عليها، واربط بحثك عندما تعالجها."
-        }
     },
     "Errors": {
         "general": "حدث خطأ ما",
@@ -2235,7 +2444,7 @@
             },
             "whatAreRoles": {
                 "q": "ما هي أدوار المستخدمين المختلفة؟",
-                "a": "لدينا أربعة أدوار: الأعضاء يمكنهم المشاركة في النقاشات، الباحثون يمكنهم نشر المحتوى، المشرفون يساعدون في الحفاظ على معايير المجتمع، والمديرون يديرون المنصة."
+                "a": "لدينا أربعة أدوار: الأعضاء يمكنهم المشاركة في الحوارات، الباحثون يمكنهم نشر المحتوى، المشرفون يساعدون في الحفاظ على معايير المجتمع، والمديرون يديرون المنصة."
             },
             "howToBecome": {
                 "q": "كيف أصبح باحثاً؟",
@@ -2250,7 +2459,7 @@
     "Roles": {
         "member": {
             "title": "عضو",
-            "description": "الأعضاء هم مشاركون في المجتمع يمكنهم التفاعل في النقاشات وطرح الأسئلة والتعليق على المنشورات والمشاركة في الفعاليات.",
+            "description": "الأعضاء هم مشاركون في المجتمع يمكنهم التفاعل في الحوارات وطرح الأسئلة والتعليق على المنشورات والمشاركة في الفعاليات.",
             "capabilities": [
                 "طرح الأسئلة والإجابة عليها",
                 "التعليق على المنشورات",
@@ -2788,7 +2997,7 @@
     },
     "Explore": {
         "discover": "استكشف",
-        "exploreResearch": "استكشف الأبحاث",
+        "exploreResearch": "الأبحاث",
         "discoverDescription": "اكتشف أبحاثاً رائدة حسب الموضوع أو التخصص أو الباحث",
         "trendingNow": "آخر الأبحاث",
         "hotResearch": "أبحاث هذا الأسبوع",
@@ -2845,7 +3054,7 @@
         "knowledgeImpactStats": "الأثر المعرفي والإحصائيات",
         "joined": "انضم في {date}",
         "website": "الموقع الإلكتروني",
-        "backToFeed": "العودة للموجز",
+        "backToInsights": "العودة للمستجدات",
         "skillsEndorsements": "المهارات والتوصيات",
         "endorsements": "توصيات",
         "endorsementsCount": "{count} توصية",
@@ -3396,5 +3605,47 @@
         "postsMinutes": "{posts} منشور، {minutes} دقيقة",
         "less": "أقل",
         "more": "أكثر"
+    },
+    "Correspondence": {
+        "title": "المراسلات البحثية",
+        "subtitle": "استفسارات رسمية وطلبات توضيح",
+        "inbox": "الوارد",
+        "sent": "المرسل",
+        "compose": "إرسال مراسلة",
+        "requestClarification": "طلب توضيح",
+        "regardingPost": "بخصوص: {title}",
+        "subject": "الموضوع",
+        "subjectPlaceholder": "ملخص موجز لاستفسارك (10 أحرف على الأقل)",
+        "body": "الرسالة",
+        "bodyPlaceholder": "سؤالك التفصيلي أو طلب التوضيح (50 حرف على الأقل)...",
+        "send": "إرسال المراسلة",
+        "reply": "رد",
+        "maxOneReply": "ملاحظة: يُسمح برد واحد فقط لكل مراسلة",
+        "alreadyReplied": "تم الرد على هذه المراسلة بالفعل",
+        "rateLimitReached": "تم الوصول للحد اليومي للمراسلات (الحد الأقصى 3)",
+        "tooManyPending": "لديك عدد كبير من المراسلات قيد انتظار الرد",
+        "deliveryNote": "سيتم تسليم مراسلتك قريباً",
+        "emptyDesc": "ستظهر المراسلات التي تتلقاها هنا",
+        "contextRequired": "السياق مطلوب",
+        "charactersRemaining": "{count} حرف متبقي",
+        "minCharacters": "الحد الأدنى {count} حرف مطلوب",
+        "noAttachments": "المرفقات غير مدعومة",
+        "archived": "مؤرشف",
+        "markAsRead": "تحديد كمقروء",
+        "archive": "أرشفة",
+        "tabs": {
+            "received": "الوارد",
+            "sent": "المُرسل"
+        },
+        "filters": {
+            "all": "الكل",
+            "read": "مقروءة",
+            "unread": "غير مقروءة",
+            "archived": "مؤرشفة"
+        },
+        "empty": {
+            "noMessages": "لا توجد مراسلات بعد",
+            "description": "ستظهر المراسلات التي تتلقاها هنا"
+        }
     }
 }
