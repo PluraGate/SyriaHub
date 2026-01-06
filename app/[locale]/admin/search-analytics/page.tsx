@@ -38,8 +38,8 @@ export default async function SearchAnalyticsPage() {
             <div className="flex pt-16">
                 <AdminSidebar />
 
-                <div className="flex-1 flex flex-col">
-                    <main className="flex-1 p-6">
+                <div className="flex-1 flex flex-col min-w-0">
+                    <main className="flex-1 p-3 sm:p-6">
                         <SearchAnalytics />
                     </main>
                     <Footer />

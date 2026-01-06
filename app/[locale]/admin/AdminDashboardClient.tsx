@@ -164,142 +164,142 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
         <AdminSidebar />
 
         <div className="flex-1 flex flex-col">
-          <main className="flex-1 p-6 md:p-8">
+          <main className="flex-1 p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl mx-auto">
               {/* Header */}
-              <div className="flex items-center gap-3 mb-8">
-                <Shield className="w-8 h-8 text-accent dark:text-accent-light" />
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-accent dark:text-accent-light flex-shrink-0" />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-primary dark:text-dark-text">
                   {t('dashboardPage.title')}
                 </h1>
               </div>
 
               {/* Quick Links */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
                 <Link
                   href="/admin/analytics"
-                  className="card p-5 hover:border-primary/50 transition-colors group"
+                  className="card p-3 sm:p-5 hover:border-primary/50 transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                      <BarChart3 className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <div className="p-2 sm:p-2.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 w-fit">
+                      <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('analytics')}</p>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">{t('dashboardPage.viewStats')}</p>
+                      <p className="font-semibold text-sm sm:text-base text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('analytics')}</p>
+                      <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted hidden sm:block">{t('dashboardPage.viewStats')}</p>
                     </div>
                   </div>
                 </Link>
 
                 <Link
                   href="/admin/users"
-                  className="card p-5 hover:border-primary/50 transition-colors group"
+                  className="card p-3 sm:p-5 hover:border-primary/50 transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
-                      <Users className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <div className="p-2 sm:p-2.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 w-fit">
+                      <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('users')}</p>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.totalUsers} {t('dashboardPage.totalUsers')}</p>
+                      <p className="font-semibold text-sm sm:text-base text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('users')}</p>
+                      <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{stats.totalUsers} {t('dashboardPage.totalUsers')}</p>
                     </div>
                   </div>
                 </Link>
 
                 <Link
                   href="/admin/waitlist"
-                  className="card p-5 hover:border-primary/50 transition-colors group"
+                  className="card p-3 sm:p-5 hover:border-primary/50 transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                      <UserPlus className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <div className="p-2 sm:p-2.5 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 w-fit">
+                      <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('waitlist')}</p>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">{stats.pendingWaitlist} {t('dashboardPage.pending')}</p>
+                      <p className="font-semibold text-sm sm:text-base text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('waitlist')}</p>
+                      <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{stats.pendingWaitlist} {t('dashboardPage.pending')}</p>
                     </div>
                   </div>
                 </Link>
 
                 <Link
                   href="/admin/audit"
-                  className="card p-5 hover:border-primary/50 transition-colors group"
+                  className="card p-3 sm:p-5 hover:border-primary/50 transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
-                      <History className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <div className="p-2 sm:p-2.5 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 w-fit">
+                      <History className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('auditLog')}</p>
-                      <p className="text-sm text-text-light dark:text-dark-text-muted">{t('dashboardPage.viewChanges')}</p>
+                      <p className="font-semibold text-sm sm:text-base text-text dark:text-dark-text group-hover:text-primary transition-colors">{t('auditLog')}</p>
+                      <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted hidden sm:block">{t('dashboardPage.viewChanges')}</p>
                     </div>
                   </div>
                 </Link>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid gap-6 md:grid-cols-4 mb-8">
-                <div className="card p-6">
+              <div className="grid gap-3 sm:gap-6 grid-cols-2 md:grid-cols-4 mb-6 sm:mb-8">
+                <div className="card p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <Users className="w-8 h-8 text-primary dark:text-primary-light" />
-                    <span className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                    <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary dark:text-primary-light" />
+                    <span className="text-2xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                       {stats.totalUsers}
                     </span>
                   </div>
-                  <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalUsers')}</p>
+                  <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalUsers')}</p>
                 </div>
 
-                <div className="card p-6">
+                <div className="card p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <FileText className="w-8 h-8 text-accent dark:text-accent-light" />
-                    <span className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                    <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-accent dark:text-accent-light" />
+                    <span className="text-2xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                       {stats.totalPosts}
                     </span>
                   </div>
-                  <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalPosts')}</p>
+                  <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{t('stats.totalPosts')}</p>
                 </div>
 
                 <div
-                  className="card p-6 border-yellow-200 dark:border-yellow-800 cursor-pointer hover:bg-yellow-50/50 dark:hover:bg-yellow-900/10 transition-colors"
+                  className="card p-4 sm:p-6 border-yellow-200 dark:border-yellow-800 cursor-pointer hover:bg-yellow-50/50 dark:hover:bg-yellow-900/10 transition-colors"
                   onClick={() => setActiveTab('reports')}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <AlertTriangle className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
-                    <span className="text-3xl font-display font-bold text-yellow-600 dark:text-yellow-400">
+                    <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600 dark:text-yellow-400" />
+                    <span className="text-2xl sm:text-3xl font-display font-bold text-yellow-600 dark:text-yellow-400">
                       {stats.pendingReports}
                     </span>
                   </div>
-                  <p className="text-sm text-text-light dark:text-dark-text-muted">{t('stats.pendingReports')}</p>
+                  <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{t('stats.pendingReports')}</p>
                 </div>
 
                 <div
-                  className="card p-6 border-orange-200 dark:border-orange-800 cursor-pointer hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-colors"
+                  className="card p-4 sm:p-6 border-orange-200 dark:border-orange-800 cursor-pointer hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-colors"
                   onClick={() => setActiveTab('appeals')}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <Scale className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                    <span className="text-3xl font-display font-bold text-orange-600 dark:text-orange-400">
+                    <Scale className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600 dark:text-orange-400" />
+                    <span className="text-2xl sm:text-3xl font-display font-bold text-orange-600 dark:text-orange-400">
                       {stats.pendingAppeals}
                     </span>
                   </div>
-                  <p className="text-sm text-text-light dark:text-dark-text-muted">{t('appeals')}</p>
+                  <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{t('appeals')}</p>
                 </div>
               </div>
 
               {/* Tabs */}
-              <div className="flex gap-2 border-b border-gray-200 dark:border-dark-border mb-6">
+              <div className="flex gap-1 sm:gap-2 border-b border-gray-200 dark:border-dark-border mb-4 sm:mb-6 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('reports')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'reports'
+                  className={`px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'reports'
                     ? 'border-primary text-primary dark:text-primary-light'
                     : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
-                  <span className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" />
+                  <span className="flex items-center gap-1.5 sm:gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     {t('reports')}
                     {stats.pendingReports > 0 && (
-                      <span className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs">
+                      <span className="px-1.5 sm:px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs">
                         {stats.pendingReports}
                       </span>
                     )}
@@ -307,16 +307,16 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
                 </button>
                 <button
                   onClick={() => setActiveTab('appeals')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'appeals'
+                  className={`px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'appeals'
                     ? 'border-primary text-primary dark:text-primary-light'
                     : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                     }`}
                 >
-                  <span className="flex items-center gap-2">
-                    <Scale className="w-4 h-4" />
+                  <span className="flex items-center gap-1.5 sm:gap-2">
+                    <Scale className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     {t('appeals')}
                     {stats.pendingAppeals > 0 && (
-                      <span className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs">
+                      <span className="px-1.5 sm:px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs">
                         {stats.pendingAppeals}
                       </span>
                     )}
@@ -326,8 +326,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
 
               {/* Tab Content */}
               {activeTab === 'reports' && (
-                <div className="card p-6">
-                  <h2 className="text-2xl font-display font-semibold text-primary dark:text-dark-text mb-6">
+                <div className="card p-4 sm:p-6">
+                  <h2 className="text-xl sm:text-2xl font-display font-semibold text-primary dark:text-dark-text mb-4 sm:mb-6">
                     {t('dashboardPage.moderationQueue')}
                   </h2>
                   <ModerationTriage onReportAction={() => loadData()} />

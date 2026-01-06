@@ -304,34 +304,34 @@ export default function AdminSkillsPage() {
             <div className="flex">
                 <AdminSidebar />
 
-                <main className="flex-1 p-6 md:p-8">
+                <main className="flex-1 p-3 sm:p-6 md:p-8 min-w-0">
                     <div className="max-w-6xl mx-auto">
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-8">
                             <div>
-                                <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text">
+                                <h1 className="text-xl sm:text-3xl font-display font-bold text-primary dark:text-dark-text">
                                     {t('title')}
                                 </h1>
-                                <p className="text-text-light dark:text-dark-text-muted mt-2">
+                                <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-1 sm:mt-2">
                                     {t('subtitle')}
                                 </p>
                             </div>
-                            <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-4 py-2 rounded-lg font-medium">
+                            <div className="bg-primary/10 dark:bg-primary-light/10 text-primary dark:text-primary-light px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm sm:text-base self-start sm:self-auto">
                                 {t('totalSkills', { count: skills.length })}
                             </div>
                         </div>
 
                         {/* Filters */}
-                        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4 mb-6">
-                            <div className="flex flex-wrap gap-4">
+                        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-3 sm:p-4 mb-4 sm:mb-6">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                 {/* Search */}
-                                <div className="flex-1 min-w-[200px] relative">
+                                <div className="flex-1 min-w-0 relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <Input
                                         placeholder={t('searchPlaceholder')}
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-10 bg-white dark:bg-dark-bg"
+                                        className="pl-10 bg-white dark:bg-dark-bg text-sm"
                                     />
                                 </div>
 
@@ -340,7 +340,7 @@ export default function AdminSkillsPage() {
                                     value={categoryFilter}
                                     onValueChange={(value) => setCategoryFilter(value)}
                                 >
-                                    <SelectTrigger className="w-[180px] bg-white dark:bg-dark-surface">
+                                    <SelectTrigger className="w-full sm:w-[180px] bg-white dark:bg-dark-surface text-sm">
                                         <SelectValue placeholder={t('allCategories')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -352,11 +352,11 @@ export default function AdminSkillsPage() {
                                 </Select>
 
                                 {/* Recognized Filter */}
-                                <div className="flex rounded-lg border border-gray-200 dark:border-dark-border overflow-hidden">
+                                <div className="flex rounded-lg border border-gray-200 dark:border-dark-border overflow-hidden w-full sm:w-auto">
                                     <button
                                         onClick={() => setRecognizedFilter('all')}
                                         className={cn(
-                                            "px-3 py-2 text-sm transition-colors",
+                                            "flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm transition-colors",
                                             recognizedFilter === 'all'
                                                 ? "bg-primary text-white"
                                                 : "bg-white dark:bg-dark-bg text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border"
@@ -367,7 +367,7 @@ export default function AdminSkillsPage() {
                                     <button
                                         onClick={() => setRecognizedFilter('recognized')}
                                         className={cn(
-                                            "px-3 py-2 text-sm transition-colors border-x border-gray-200 dark:border-dark-border",
+                                            "flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm transition-colors border-x border-gray-200 dark:border-dark-border",
                                             recognizedFilter === 'recognized'
                                                 ? "bg-primary text-white"
                                                 : "bg-white dark:bg-dark-bg text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border"
@@ -378,7 +378,7 @@ export default function AdminSkillsPage() {
                                     <button
                                         onClick={() => setRecognizedFilter('user')}
                                         className={cn(
-                                            "px-3 py-2 text-sm transition-colors",
+                                            "flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm transition-colors",
                                             recognizedFilter === 'user'
                                                 ? "bg-primary text-white"
                                                 : "bg-white dark:bg-dark-bg text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border"
@@ -404,71 +404,71 @@ export default function AdminSkillsPage() {
                             ) : (
                                 <div className="divide-y divide-gray-100 dark:divide-dark-border">
                                     {filteredSkills.map((skill) => (
-                                        <div key={skill.id} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-dark-border/50 transition-colors">
-                                            <div className="flex items-center gap-4 flex-1">
+                                        <div key={skill.id} className="p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-dark-border/50 transition-colors">
+                                            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
                                                 <div className={cn(
-                                                    "p-2 rounded-lg",
+                                                    "p-2 rounded-lg flex-shrink-0",
                                                     skill.is_recognized ? "bg-primary/10" : "bg-gray-100 dark:bg-dark-border"
                                                 )}>
                                                     <Award className={cn(
-                                                        "w-5 h-5",
+                                                        "w-4 h-4 sm:w-5 sm:h-5",
                                                         skill.is_recognized ? "text-primary" : "text-text-light dark:text-dark-text-muted"
                                                     )} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2">
-                                                        <h3 className="font-medium text-text dark:text-dark-text truncate">
+                                                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                                        <h3 className="font-medium text-sm sm:text-base text-text dark:text-dark-text">
                                                             {skill.name}
                                                         </h3>
                                                         {skill.is_recognized && (
-                                                            <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary font-medium">
+                                                            <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-primary/10 text-primary font-medium">
                                                                 {t('recognized')}
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <div className="flex items-center gap-3 mt-1">
+                                                    <div className="flex flex-wrap items-center gap-2 mt-1">
                                                         <span className={cn(
-                                                            "px-2 py-0.5 text-xs rounded-full font-medium",
+                                                            "px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full font-medium",
                                                             categoryColors[skill.category] || 'bg-gray-100 dark:bg-dark-border text-gray-600 dark:text-gray-400'
                                                         )}>
                                                             {skill.category}
                                                         </span>
-                                                        <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                        <span className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">
                                                             {t('usedBy', { count: skill.user_count })}
                                                         </span>
                                                         {skill.creator_name && (
-                                                            <span className="text-sm text-text-light dark:text-dark-text-muted">
+                                                            <span className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted hidden sm:inline">
                                                                 • {t('createdBy')} {skill.creator_name}
                                                             </span>
                                                         )}
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleEditClick(skill)}
-                                                    className="text-text-light dark:text-dark-text-muted hover:text-primary"
-                                                >
-                                                    <Pencil className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleMergeClick(skill)}
-                                                    className="text-text-light dark:text-dark-text-muted hover:text-amber-600"
-                                                >
-                                                    <GitMerge className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleDeleteClick(skill)}
-                                                    className="text-text-light dark:text-dark-text-muted hover:text-red-600"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
+                                                <div className="flex items-center gap-0.5 sm:gap-2 flex-shrink-0">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleEditClick(skill)}
+                                                        className="text-text-light dark:text-dark-text-muted hover:text-primary p-1.5 sm:p-2 h-auto"
+                                                    >
+                                                        <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleMergeClick(skill)}
+                                                        className="text-text-light dark:text-dark-text-muted hover:text-amber-600 p-1.5 sm:p-2 h-auto"
+                                                    >
+                                                        <GitMerge className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleDeleteClick(skill)}
+                                                        className="text-text-light dark:text-dark-text-muted hover:text-red-600 p-1.5 sm:p-2 h-auto"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}

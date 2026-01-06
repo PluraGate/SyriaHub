@@ -129,43 +129,43 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-md bg-white dark:bg-dark-surface">
-                <DialogHeader>
-                    <div className="flex items-center justify-center mb-4">
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-dark-bg flex items-center justify-center">
-                            <StepIcon className="w-6 h-6 text-text dark:text-dark-text" />
+            <DialogContent className="sm:max-w-md bg-white dark:bg-dark-surface max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pt-2 sm:pt-0">
+                    <div className="flex items-center justify-center mb-3 sm:mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gray-100 dark:bg-dark-bg flex items-center justify-center">
+                            <StepIcon className="w-5 h-5 sm:w-6 sm:h-6 text-text dark:text-dark-text" />
                         </div>
                     </div>
-                    <DialogTitle className="text-center text-xl">
+                    <DialogTitle className="text-center text-lg sm:text-xl">
                         {currentStepData.title}
                     </DialogTitle>
-                    <DialogDescription className="text-center">
+                    <DialogDescription className="text-center text-sm sm:text-base">
                         {currentStepData.description}
                     </DialogDescription>
                 </DialogHeader>
 
                 {/* Step content */}
-                <div className="py-4">
+                <div className="py-3 sm:py-4">
                     {currentStep === 0 && (
-                        <div className="text-center space-y-4">
+                        <div className="text-center space-y-3 sm:space-y-4">
                             <div className="flex justify-center">
                                 <UserAvatar name={userName} email={userEmail} size="xl" />
                             </div>
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">
+                            <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">
                                 {userName ? `Welcome, ${userName}.` : 'Welcome.'} Ready to contribute?
                             </p>
-                            <div className="grid grid-cols-3 gap-3 pt-4">
-                                <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
-                                    <div className="text-sm font-medium text-text dark:text-dark-text">Publish</div>
-                                    <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Share research</div>
+                            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-3 sm:pt-4">
+                                <div className="text-center p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-dark-border">
+                                    <div className="text-xs sm:text-sm font-medium text-text dark:text-dark-text">Publish</div>
+                                    <div className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted mt-0.5">Share research</div>
                                 </div>
-                                <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
-                                    <div className="text-sm font-medium text-text dark:text-dark-text">Deliberate</div>
-                                    <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Collaborate</div>
+                                <div className="text-center p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-dark-border">
+                                    <div className="text-xs sm:text-sm font-medium text-text dark:text-dark-text">Deliberate</div>
+                                    <div className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted mt-0.5">Collaborate</div>
                                 </div>
-                                <div className="text-center p-3 rounded-lg border border-gray-200 dark:border-dark-border">
-                                    <div className="text-sm font-medium text-text dark:text-dark-text">Grow</div>
-                                    <div className="text-xs text-text-light dark:text-dark-text-muted mt-0.5">Establish credibility</div>
+                                <div className="text-center p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-dark-border">
+                                    <div className="text-xs sm:text-sm font-medium text-text dark:text-dark-text">Grow</div>
+                                    <div className="text-[10px] sm:text-xs text-text-light dark:text-dark-text-muted mt-0.5">Establish credibility</div>
                                 </div>
                             </div>
                         </div>
@@ -213,29 +213,29 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                     )}
 
                     {currentStep === 2 && (
-                        <div className="space-y-4 text-center">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
-                                    <Check className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                        <div className="space-y-3 sm:space-y-4 text-center">
+                            <div className="space-y-2 sm:space-y-3">
+                                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
+                                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                                    <span className="text-xs sm:text-sm text-text dark:text-dark-text">
                                         Browse the <strong>Research Stream</strong> for latest work
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
-                                    <Check className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
+                                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                                    <span className="text-xs sm:text-sm text-text dark:text-dark-text">
                                         <strong>Explore</strong> topics and trending tags
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
-                                    <Check className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
+                                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                                    <span className="text-xs sm:text-sm text-text dark:text-dark-text">
                                         Join <strong>Groups</strong> to collaborate
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
-                                    <Check className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm text-text dark:text-dark-text">
+                                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50 dark:bg-dark-bg text-left">
+                                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                                    <span className="text-xs sm:text-sm text-text dark:text-dark-text">
                                         Ask <strong>Questions</strong> to solve problems
                                     </span>
                                 </div>
@@ -245,12 +245,12 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                 </div>
 
                 {/* Step indicators */}
-                <div className="flex justify-center gap-2 mb-4">
+                <div className="flex justify-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                     {ONBOARDING_STEPS.map((_, index) => (
                         <div
                             key={index}
-                            className={`w-2 h-2 rounded-full transition-all ${index === currentStep
-                                ? 'w-6 bg-primary dark:bg-accent-light'
+                            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all ${index === currentStep
+                                ? 'w-5 sm:w-6 bg-primary dark:bg-accent-light'
                                 : index < currentStep
                                     ? 'bg-primary/50 dark:bg-accent-light/50'
                                     : 'bg-gray-200 dark:bg-dark-border'
@@ -259,12 +259,12 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                     ))}
                 </div>
 
-                <DialogFooter className="gap-2">
+                <DialogFooter className="gap-2 flex-col-reverse sm:flex-row">
                     {currentStep > 0 && (
                         <Button
                             variant="outline"
                             onClick={handlePrevious}
-                            className="flex-1 sm:flex-none"
+                            className="w-full sm:w-auto sm:flex-none"
                         >
                             {tCommon('back')}
                         </Button>
@@ -273,14 +273,14 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                     {currentStep === 0 && (
                         <button
                             onClick={handleSkip}
-                            className="text-sm text-text-light dark:text-dark-text-muted hover:underline"
+                            className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted hover:underline py-2 sm:py-0"
                         >
                             {t('skipForNow')}
                         </button>
                     )}
 
                     {currentStep < ONBOARDING_STEPS.length - 1 ? (
-                        <Button onClick={handleNext} className="flex-1 sm:flex-none btn-press">
+                        <Button onClick={handleNext} className="w-full sm:w-auto sm:flex-none btn-press">
                             {tCommon('next')}
                             <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
@@ -288,7 +288,7 @@ export function OnboardingModal({ userId, userEmail, userName }: OnboardingModal
                         <Button
                             onClick={handleSaveProfile}
                             disabled={saving}
-                            className="flex-1 sm:flex-none btn-press"
+                            className="w-full sm:w-auto sm:flex-none btn-press"
                         >
                             {saving ? t('saving') : t('getStarted')}
                             <Sparkles className="w-4 h-4 ml-2" />

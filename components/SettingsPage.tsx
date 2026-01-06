@@ -90,10 +90,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
 
     return (
         <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                 <div className="flex items-center gap-3">
-                    <Settings className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
+                    <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    <h1 className="text-xl sm:text-2xl font-display font-bold text-text dark:text-dark-text">
                         {t('title')}
                     </h1>
                 </div>
@@ -101,7 +101,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                 <div className="flex items-center gap-2 overflow-hidden px-1 py-1">
                     {showResetConfirm ? (
                         <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <span className="text-sm font-medium text-destructive dark:text-red-400 mr-2 whitespace-nowrap">
+                            <span className="text-xs sm:text-sm font-medium text-destructive dark:text-red-400 mr-1 sm:mr-2 whitespace-nowrap">
                                 {t('confirmReset')}
                             </span>
                             <div className="flex items-center bg-gray-100 dark:bg-dark-surface rounded-lg p-1 border border-gray-200 dark:border-dark-border shadow-sm">
@@ -109,16 +109,16 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                     variant="destructive"
                                     size="sm"
                                     onClick={handleReset}
-                                    className="gap-2 h-8 px-3 rounded-md shadow-sm"
+                                    className="gap-1 sm:gap-2 h-7 sm:h-8 px-2 sm:px-3 rounded-md shadow-sm text-xs sm:text-sm"
                                 >
-                                    <Check className="w-3.5 h-3.5" />
+                                    <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                     {t('confirm')}
                                 </Button>
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setShowResetConfirm(false)}
-                                    className="h-8 px-3 rounded-md hover:bg-gray-200 dark:hover:bg-dark-bg transition-colors"
+                                    className="h-7 sm:h-8 px-2 sm:px-3 rounded-md hover:bg-gray-200 dark:hover:bg-dark-bg transition-colors text-xs sm:text-sm"
                                 >
                                     {t('cancel')}
                                 </Button>
@@ -127,19 +127,58 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     ) : (
                         <Button
                             variant="outline"
+                            size="sm"
                             onClick={() => setShowResetConfirm(true)}
-                            className="gap-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive transition-all duration-300 group"
+                            className="gap-1 sm:gap-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive transition-all duration-300 group text-xs sm:text-sm"
                         >
-                            <RotateCcw className="w-4 h-4 group-hover:rotate-[-45deg] transition-transform" />
-                            {t('resetToDefaults')}
+                            <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:rotate-[-45deg] transition-transform" />
+                            <span className="hidden sm:inline">{t('resetToDefaults')}</span>
+                            <span className="sm:hidden">Reset</span>
                         </Button>
                     )}
                 </div>
             </div>
 
-            <div className="flex gap-8">
-                {/* Sidebar */}
-                <nav className="w-48 flex-shrink-0">
+            {/* Mobile Navigation - Horizontal scrollable tabs */}
+            <div className="md:hidden mb-4">
+                <div className="relative">
+                    {/* Left fade indicator */}
+                    <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-background dark:from-dark-bg to-transparent pointer-events-none z-10" />
+                    {/* Right fade indicator */}
+                    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background dark:from-dark-bg to-transparent pointer-events-none z-10" />
+                    <div 
+                        className="overflow-x-auto scrollbar-hide touch-pan-x"
+                        style={{ WebkitOverflowScrolling: 'touch' }}
+                    >
+                        <div className="flex gap-2 px-4 py-1" style={{ width: 'max-content' }}>
+                            {sections.map(section => {
+                                const Icon = section.icon
+                                return (
+                                    <button
+                                        key={section.id}
+                                        onClick={() => setActiveSection(section.id)}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${activeSection === section.id
+                                            ? 'bg-primary text-white'
+                                            : 'text-text-light dark:text-dark-text-muted bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-border'
+                                            }`}
+                                    >
+                                        <Icon className="w-3.5 h-3.5" />
+                                        {section.label}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+                {/* Scroll hint text */}
+                <p className="text-[10px] text-text-light/60 dark:text-dark-text-muted/60 text-center mt-1">
+                    ← Swipe to see more →
+                </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                {/* Sidebar - Hidden on mobile */}
+                <nav className="hidden md:block w-48 flex-shrink-0">
                     <ul className="space-y-1">
                         {sections.map(section => {
                             const Icon = section.icon
@@ -162,11 +201,11 @@ export function SettingsPage({ user }: SettingsPageProps) {
                 </nav>
 
                 {/* Content */}
-                <div className="flex-1 card p-6">
+                <div className="flex-1 card p-4 sm:p-6">
                     {/* Appearance */}
                     {activeSection === 'appearance' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('appearance')}
                             </h2>
 
@@ -174,7 +213,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-3">
                                     {t('theme.title')}
                                 </label>
-                                <div className="flex gap-3">
+                                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     {[
                                         { value: 'light', label: t('theme.light'), icon: Sun },
                                         { value: 'dark', label: t('theme.dark'), icon: Moon },
@@ -186,14 +225,14 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                             <button
                                                 key={option.value}
                                                 onClick={() => updatePreference('theme', option.value as UserPreferences['theme'])}
-                                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
+                                                className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border-2 transition-all ${isSelected
                                                     ? 'border-primary bg-primary text-white shadow-sm'
                                                     : 'border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
-                                                <Icon className="w-5 h-5" />
-                                                <span className="font-medium">{option.label}</span>
-                                                {isSelected && <Check className="w-4 h-4" />}
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                <span className="font-medium text-sm sm:text-base">{option.label}</span>
+                                                {isSelected && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                                             </button>
                                         )
                                     })}
@@ -205,12 +244,12 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Notifications */}
                     {activeSection === 'notifications' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('notificationSettings.title')}
                             </h2>
 
                             <div className="space-y-4">
-                                <h3 className="text-sm font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
+                                <h3 className="text-xs sm:text-sm font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide">
                                     {t('notificationSettings.emailNotifications')}
                                 </h3>
 
@@ -258,7 +297,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Display */}
                     {activeSection === 'display' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('displaySettings.title')}
                             </h2>
 
@@ -326,10 +365,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                     {t('displaySettings.calendarSystem')}
                                 </label>
-                                <p className="text-sm text-text-light dark:text-dark-text-muted mb-3">
+                                <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted mb-3">
                                     {t('displaySettings.calendarSystemDesc')}
                                 </p>
-                                <div className="flex gap-3">
+                                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     {[
                                         { value: 'hijri', label: t('displaySettings.hijri') },
                                         { value: 'gregorian', label: t('displaySettings.gregorian') },
@@ -339,12 +378,12 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                             <button
                                                 key={option.value}
                                                 onClick={() => updatePreference('calendar', option.value as 'hijri' | 'gregorian')}
-                                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${isSelected
+                                                className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border-2 transition-all ${isSelected
                                                     ? 'border-primary bg-primary text-white'
                                                     : 'border-gray-200 dark:border-dark-border text-text-light dark:text-dark-text hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-dark-bg'
                                                     }`}
                                             >
-                                                <span className="font-medium">{option.label}</span>
+                                                <span className="font-medium text-sm sm:text-base">{option.label}</span>
                                             </button>
                                         )
                                     })}
@@ -356,7 +395,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Privacy */}
                     {activeSection === 'privacy' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('privacySectionSettings.title')}
                             </h2>
 
@@ -384,10 +423,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Security */}
                     {activeSection === 'security' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('security')}
                             </h2>
-                            <p className="text-text-light dark:text-dark-text-muted mb-6">
+                            <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mb-6">
                                 {t('securityDescription')}
                             </p>
                             <TwoFactorSetup userId={user.id} />
@@ -397,7 +436,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Editor */}
                     {activeSection === 'editor' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('editorSettings.title')}
                             </h2>
 
@@ -442,10 +481,10 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Invites */}
                     {activeSection === 'invites' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-text dark:text-dark-text mb-4">
+                            <h2 className="text-lg sm:text-xl font-semibold text-text dark:text-dark-text mb-4">
                                 {t('invitesSection.title')}
                             </h2>
-                            <p className="text-text-light dark:text-dark-text-muted mb-6">
+                            <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mb-6">
                                 {t('invitesSection.description')}
                             </p>
                             <InviteManager />
@@ -471,22 +510,22 @@ interface ToggleSettingProps {
 
 function ToggleSetting({ label, description, checked, onChange }: ToggleSettingProps) {
     return (
-        <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-border last:border-0">
-            <div>
-                <p className="font-medium text-text dark:text-dark-text">{label}</p>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">{description}</p>
+        <div className="flex items-start sm:items-center justify-between gap-3 py-3 border-b border-gray-100 dark:border-dark-border last:border-0">
+            <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm sm:text-base text-text dark:text-dark-text">{label}</p>
+                <p className="text-xs sm:text-sm text-text-light dark:text-dark-text-muted">{description}</p>
             </div>
             <button
                 role="switch"
                 aria-checked={checked}
                 onClick={() => onChange(!checked)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'
+                className={`relative flex-shrink-0 w-10 h-5 sm:w-11 sm:h-6 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
             >
                 <span
-                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5.5 left-0.5' : 'translate-x-0.5 left-0'
+                    className={`absolute top-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5.5 left-0.5' : 'translate-x-0.5 left-0'
                         }`}
-                    style={{ transform: checked ? 'translateX(22px)' : 'translateX(2px)' }}
+                    style={{ transform: checked ? 'translateX(20px)' : 'translateX(2px)' }}
                 />
             </button>
         </div>
