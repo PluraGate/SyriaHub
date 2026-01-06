@@ -2647,6 +2647,9 @@
         "requiredQuestion": "سؤال مطلوب",
         "noQuestions": "لا توجد أسئلة بعد",
         "addQuestionsHint": "أضف أسئلة من الشريط الجانبي لبدء بناء استبيانك",
+        "addQuestionsHintMobile": "اضغط على الزر أعلاه لإضافة أسئلة",
+        "selectQuestionType": "اختر نوع السؤال:",
+        "cancel": "إلغاء",
         "addQuestionTitle": "إضافة سؤال",
         "optionPlaceholder": "الخيار {number}",
         "questionPlaceholder2": "السؤال {number}",
@@ -2930,6 +2933,7 @@
         "empty": {
             "title": "لا يوجد {type} بعد",
             "items": "عناصر محفوظة",
+            "all": "عناصر محفوظة",
             "posts": "منشورات",
             "events": "فعاليات",
             "web": "مراجع ويب",
