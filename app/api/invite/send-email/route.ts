@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabaseClient'
-import { sendEmail, emailTemplates } from '@/lib/email'
+import { sendInvitationEmail, emailTemplates } from '@/lib/email'
 import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
@@ -78,8 +78,8 @@ async function handlePost(request: NextRequest) {
             ? emailTemplates.pluraGateInviteAR(inviteUrl, recipientName)
             : emailTemplates.pluraGateInviteEN(inviteUrl, recipientName)
 
-        // Send the email
-        const success = await sendEmail({
+        // Send the email using dedicated invitation sender (invitations@syriahub.org)
+        const success = await sendInvitationEmail({
             to: recipientEmail,
             subject: template.subject,
             html: template.html,
