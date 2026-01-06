@@ -10,9 +10,7 @@ import {
     TrendingDown,
     BarChart3,
     Activity,
-    Eye,
     ThumbsUp,
-    Quote,
     AlertTriangle,
     Scale,
     UserPlus,
@@ -20,8 +18,6 @@ import {
     Loader2
 } from 'lucide-react'
 import {
-    LineChart,
-    Line,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -33,22 +29,27 @@ import {
     Bar,
     Legend
 } from 'recharts'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 import { useTranslations } from 'next-intl'
 
-const CustomTooltip = ({ active, payload, label, t }: any) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border p-3 rounded-lg shadow-xl backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
-                <p className="text-sm font-bold text-text dark:text-dark-text mb-2 border-b border-gray-100 dark:border-dark-border pb-1">
+            <div className="bg-white/95 dark:bg-dark-surface/95 backdrop-blur-xl border border-gray-100 dark:border-dark-border px-4 py-3 rounded-xl shadow-lg">
+                <p className="text-sm font-semibold text-text dark:text-dark-text mb-2">
                     {format(new Date(label), 'MMM d, yyyy')}
                 </p>
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                     {payload.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center gap-3">
-                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-xs text-text-light dark:text-dark-text-muted">{entry.name}:</span>
-                            <span className="text-xs font-bold text-text dark:text-dark-text ml-auto">
+                        <div key={index} className="flex items-center gap-2.5">
+                            <span 
+                                className="w-2 h-2 rounded-full" 
+                                style={{ backgroundColor: entry.color }} 
+                            />
+                            <span className="text-xs text-text-light dark:text-dark-text-muted">
+                                {entry.name}:
+                            </span>
+                            <span className="text-xs font-semibold text-text dark:text-dark-text ml-auto">
                                 {entry.value?.toLocaleString()}
                             </span>
                         </div>
@@ -158,164 +159,134 @@ export function AnalyticsDashboard() {
         loadData()
     }, [daysBack, loadData])
 
-
-    const calculateGrowthRate = (current: number, previous: number) => {
-        if (previous === 0) return current > 0 ? 100 : 0
-        return Math.round(((current - previous) / previous) * 100)
-    }
-
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-96">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="flex items-center justify-center h-[60vh]">
+                <div className="text-center">
+                    <Loader2 className="w-10 h-10 animate-spin text-primary/60 mx-auto" />
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-3">
+                        Loading analytics...
+                    </p>
+                </div>
             </div>
         )
     }
 
     if (!stats) {
         return (
-            <div className="text-center py-12 text-text-light dark:text-dark-text-muted">
-                {t('failedToLoad')}
-            </div>
-        )
-    }
-
-    const StatCard = ({
-        icon: Icon,
-        label,
-        value,
-        subValue,
-        trend,
-        color = 'primary'
-    }: {
-        icon: typeof Users
-        label: string
-        value: number | string
-        subValue?: string
-        trend?: number
-        color?: 'primary' | 'accent' | 'green' | 'yellow' | 'red' | 'purple'
-    }) => {
-        const colorClasses = {
-            primary: 'text-primary dark:text-primary-light',
-            accent: 'text-accent dark:text-accent-light',
-            green: 'text-green-600 dark:text-green-400',
-            yellow: 'text-yellow-600 dark:text-yellow-400',
-            red: 'text-red-600 dark:text-red-400',
-            purple: 'text-purple-600 dark:text-purple-400'
-        }
-
-        return (
-            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                <div className="flex items-start justify-between">
-                    <div className={`p-2.5 rounded-lg bg-gray-100 dark:bg-dark-border ${colorClasses[color]}`}>
-                        <Icon className="w-5 h-5" />
-                    </div>
-                    {trend !== undefined && (
-                        <div className={`flex items-center gap-1 text-sm font-medium ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                            {Math.abs(trend)}%
-                        </div>
-                    )}
-                </div>
-                <div className="mt-4">
-                    <p className="text-2xl font-display font-bold text-text dark:text-dark-text">
-                        {typeof value === 'number' ? value.toLocaleString() : value}
-                    </p>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{label}</p>
-                    {subValue && (
-                        <p className="text-xs text-text-light/70 dark:text-dark-text-muted/70 mt-0.5">{subValue}</p>
-                    )}
-                </div>
+            <div className="text-center py-16 text-text-light dark:text-dark-text-muted">
+                <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p>{t('failedToLoad')}</p>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6">
-            {/* Time Range Selector */}
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text">
-                    {t('title')}
-                </h2>
-                <div className="flex items-center gap-2">
+        <div className="space-y-8">
+            {/* Header */}
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl font-display font-bold text-text dark:text-dark-text">
+                        {t('title')}
+                    </h1>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">
+                        Track platform growth and user engagement
+                    </p>
+                </div>
+                <div className="flex items-center gap-1 p-1 bg-gray-100/80 dark:bg-dark-border/50 rounded-lg">
                     {[7, 14, 30, 90].map((days) => (
                         <button
                             key={days}
                             onClick={() => setDaysBack(days)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${daysBack === days
-                                ? 'bg-primary text-white'
-                                : 'bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted hover:bg-gray-200 dark:hover:bg-dark-border/80'
-                                }`}
+                            className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                daysBack === days
+                                    ? 'bg-white dark:bg-dark-surface text-text dark:text-dark-text shadow-sm'
+                                    : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
+                            }`}
                         >
                             {days}{tCommon('days_short') || 'd'}
                         </button>
                     ))}
                 </div>
-            </div>
+            </header>
 
             {/* Overview Stats */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     icon={Users}
                     label={t('totalUsers')}
                     value={stats.users.total}
-                    subValue={t('newInPeriod', { count: stats.users.new_period, days: daysBack })}
-                    color="primary"
+                    change={stats.users.new_period}
+                    changeLabel={`+${stats.users.new_period} in ${daysBack}d`}
+                    accentColor="blue"
                 />
                 <StatCard
                     icon={FileText}
                     label={t('totalPosts')}
                     value={stats.posts.total}
-                    subValue={t('newInPeriod', { count: stats.posts.new_period, days: daysBack })}
-                    color="accent"
+                    change={stats.posts.new_period}
+                    changeLabel={`+${stats.posts.new_period} in ${daysBack}d`}
+                    accentColor="rose"
                 />
                 <StatCard
                     icon={MessageSquare}
                     label={t('totalComments')}
                     value={stats.comments.total}
-                    subValue={t('newInPeriod', { count: stats.comments.new_period, days: daysBack })}
-                    color="green"
+                    change={stats.comments.new_period}
+                    changeLabel={`+${stats.comments.new_period} in ${daysBack}d`}
+                    accentColor="emerald"
                 />
                 <StatCard
                     icon={ThumbsUp}
                     label={t('totalVotes')}
                     value={stats.engagement.total_votes}
-                    subValue={t('newInPeriod', { count: stats.engagement.votes_period, days: daysBack })}
-                    color="purple"
+                    change={stats.engagement.votes_period}
+                    changeLabel={`+${stats.engagement.votes_period} in ${daysBack}d`}
+                    accentColor="violet"
                 />
-            </div>
+            </section>
 
-            {/* Charts Row */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            {/* Charts */}
+            <section className="grid gap-6 lg:grid-cols-2">
                 {/* User Growth Chart */}
-                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                    <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-primary" />
-                        {t('userGrowth')}
-                    </h3>
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-border">
+                            <TrendingUp className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                        </div>
+                        <h3 className="font-semibold text-text dark:text-dark-text">
+                            {t('userGrowth')}
+                        </h3>
+                    </div>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={userGrowth}>
                                 <defs>
                                     <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-dark-border" />
+                                <CartesianGrid 
+                                    strokeDasharray="3 3" 
+                                    stroke="currentColor" 
+                                    className="text-gray-100 dark:text-dark-border" 
+                                    vertical={false}
+                                />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(date) => format(new Date(date), 'MMM d')}
-                                    className="text-xs"
-                                    tick={{ fill: '#94a3b8' }}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickLine={false}
                                 />
                                 <YAxis
-                                    className="text-[10px]"
-                                    tick={{ fill: '#94a3b8' }}
-                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
-                                    domain={['auto', 'auto']}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    width={40}
                                 />
-                                <Tooltip content={<CustomTooltip t={t} />} />
+                                <Tooltip content={<CustomTooltip />} />
                                 <Area
                                     type="monotone"
                                     dataKey="cumulative_users"
@@ -330,146 +301,313 @@ export function AnalyticsDashboard() {
                 </div>
 
                 {/* Content Activity Chart */}
-                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                    <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-accent" />
-                        {t('contentActivity')}
-                    </h3>
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-border">
+                            <Activity className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                        </div>
+                        <h3 className="font-semibold text-text dark:text-dark-text">
+                            {t('contentActivity')}
+                        </h3>
+                    </div>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={contentActivity}>
-                                <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-dark-border" />
+                            <BarChart data={contentActivity} barGap={4}>
+                                <CartesianGrid 
+                                    strokeDasharray="3 3" 
+                                    stroke="currentColor" 
+                                    className="text-gray-100 dark:text-dark-border" 
+                                    vertical={false}
+                                />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(date) => format(new Date(date), 'MMM d')}
-                                    className="text-[10px]"
-                                    tick={{ fill: '#94a3b8' }}
-                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickLine={false}
                                 />
                                 <YAxis
-                                    className="text-[10px]"
-                                    tick={{ fill: '#94a3b8' }}
-                                    axisLine={{ stroke: '#94a3b8', opacity: 0.2 }}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    width={40}
                                 />
-                                <Tooltip content={<CustomTooltip t={t} />} />
-                                <Legend />
-                                <Bar dataKey="posts" fill="#3b82f6" name={t('articles')} radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="comments" fill="#10b981" name={t('totalComments')} radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="votes" fill="#8b5cf6" name={t('totalVotes')} radius={[2, 2, 0, 0]} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend 
+                                    iconType="circle" 
+                                    iconSize={8}
+                                    wrapperStyle={{ paddingTop: 16 }}
+                                />
+                                <Bar 
+                                    dataKey="posts" 
+                                    fill="#3b82f6" 
+                                    name={t('articles')} 
+                                    radius={[4, 4, 0, 0]} 
+                                />
+                                <Bar 
+                                    dataKey="comments" 
+                                    fill="#10b981" 
+                                    name={t('totalComments')} 
+                                    radius={[4, 4, 0, 0]} 
+                                />
+                                <Bar 
+                                    dataKey="votes" 
+                                    fill="#8b5cf6" 
+                                    name={t('totalVotes')} 
+                                    radius={[4, 4, 0, 0]} 
+                                />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* User Breakdown & Moderation Stats */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            {/* User Breakdown & Moderation */}
+            <section className="grid gap-6 lg:grid-cols-2">
                 {/* User Role Distribution */}
-                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                    <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-primary" />
-                        {t('userRoles')}
-                    </h3>
-                    <div className="space-y-4">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-border">
+                            <Shield className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                        </div>
+                        <h3 className="font-semibold text-text dark:text-dark-text">
+                            {t('userRoles')}
+                        </h3>
+                    </div>
+                    <div className="space-y-3">
                         {[
                             { label: tUser('researchers'), count: stats.users.researchers, color: 'bg-blue-500' },
-                            { label: tUser('moderators'), count: stats.users.moderators, color: 'bg-green-500' },
-                            { label: tUser('admins'), count: stats.users.admins, color: 'bg-purple-500' },
+                            { label: tUser('moderators'), count: stats.users.moderators, color: 'bg-emerald-500' },
+                            { label: tUser('admins'), count: stats.users.admins, color: 'bg-violet-500' },
                             { label: tUser('verified'), count: stats.users.verified_authors, color: 'bg-amber-500' },
                             { label: tUser('suspended'), count: stats.users.suspended, color: 'bg-red-500' },
                         ].map((item) => (
-                            <div key={item.label} className="flex items-center justify-between">
+                            <div 
+                                key={item.label} 
+                                className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors"
+                            >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                                    <span className="text-text dark:text-dark-text">{item.label}</span>
+                                    <span className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
+                                    <span className="text-sm text-text dark:text-dark-text">
+                                        {item.label}
+                                    </span>
                                 </div>
-                                <span className="font-semibold text-text dark:text-dark-text">{item.count}</span>
+                                <span className="text-sm font-semibold text-text dark:text-dark-text tabular-nums">
+                                    {item.count}
+                                </span>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Moderation Queue */}
-                <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                    <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                        <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                        {t('moderationQueue')}
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-border">
+                            <AlertTriangle className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                        </div>
+                        <h3 className="font-semibold text-text dark:text-dark-text">
+                            {t('moderationQueue')}
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <ModerationCard
+                            icon={AlertTriangle}
+                            label={t('pendingReports')}
+                            value={stats.moderation.pending_reports}
+                            accentColor="amber"
+                        />
+                        <ModerationCard
+                            icon={Scale}
+                            label={t('pendingAppeals')}
+                            value={stats.moderation.pending_appeals}
+                            accentColor="orange"
+                        />
+                        <ModerationCard
+                            icon={UserPlus}
+                            label={t('waitlist')}
+                            value={stats.moderation.waitlist_pending}
+                            accentColor="violet"
+                        />
+                        <ModerationCard
+                            icon={FileText}
+                            label={t('postsPending')}
+                            value={stats.posts.pending_approval}
+                            accentColor="emerald"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {/* Content Distribution */}
+            <section className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-6 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark-border">
+                        <BarChart3 className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                    </div>
+                    <h3 className="font-semibold text-text dark:text-dark-text">
+                        {t('contentDistribution')}
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
-                                <AlertTriangle className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('pendingReports')}</span>
-                            </div>
-                            <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mt-2">
-                                {stats.moderation.pending_reports}
-                            </p>
-                        </div>
-                        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
-                                <Scale className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('pendingAppeals')}</span>
-                            </div>
-                            <p className="text-2xl font-bold text-orange-700 dark:text-orange-300 mt-2">
-                                {stats.moderation.pending_appeals}
-                            </p>
-                        </div>
-                        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
-                                <UserPlus className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('waitlist')}</span>
-                            </div>
-                            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-2">
-                                {stats.moderation.waitlist_pending}
-                            </p>
-                        </div>
-                        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
-                                <FileText className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('postsPending')}</span>
-                            </div>
-                            <p className="text-2xl font-bold text-green-700 dark:text-green-300 mt-2">
-                                {stats.posts.pending_approval}
-                            </p>
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            {/* Content Type Distribution */}
-            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5">
-                <h3 className="font-semibold text-text dark:text-dark-text mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-accent" />
-                    {t('contentDistribution')}
-                </h3>
-                <div className="grid grid-cols-3 gap-6">
-                    <div className="text-center">
-                        <p className="text-3xl font-bold text-primary dark:text-primary-light">
-                            {stats.posts.articles}
-                        </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('articles')}</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold text-accent dark:text-accent-light">
-                            {stats.posts.questions}
-                        </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('questions')}</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                            {stats.posts.discussions}
-                        </p>
-                        <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{t('discussions')}</p>
-                    </div>
+                <div className="grid grid-cols-3 gap-4">
+                    <ContentTypeCard
+                        label={t('articles')}
+                        value={stats.posts.articles}
+                        accentColor="blue"
+                    />
+                    <ContentTypeCard
+                        label={t('questions')}
+                        value={stats.posts.questions}
+                        accentColor="rose"
+                    />
+                    <ContentTypeCard
+                        label={t('discussions')}
+                        value={stats.posts.discussions}
+                        accentColor="violet"
+                    />
                 </div>
-            </div>
+            </section>
 
-            {/* Footer info */}
+            {/* Footer */}
             {stats.generated_at && (
-                <div className="text-center text-xs text-text-light/50 dark:text-dark-text-muted/50 pb-4">
-                    {tCommon('lastUpdated', { date: format(new Date(stats.generated_at), 'MMM d, yyyy HH:mm') })}
-                </div>
+                <footer className="text-center pb-4">
+                    <p className="text-xs text-text-light/60 dark:text-dark-text-muted/60">
+                        {tCommon('lastUpdated', { date: format(new Date(stats.generated_at), 'MMM d, yyyy HH:mm') })}
+                    </p>
+                </footer>
             )}
+        </div>
+    )
+}
+
+// Stat Card Component
+function StatCard({
+    icon: Icon,
+    label,
+    value,
+    change,
+    changeLabel,
+    accentColor
+}: {
+    icon: typeof Users
+    label: string
+    value: number
+    change: number
+    changeLabel: string
+    accentColor: 'blue' | 'rose' | 'emerald' | 'violet'
+}) {
+    const borderColors = {
+        blue: 'border-l-blue-500',
+        rose: 'border-l-rose-500',
+        emerald: 'border-l-emerald-500',
+        violet: 'border-l-violet-500'
+    }
+
+    const iconColors = {
+        blue: 'text-blue-600 dark:text-blue-400',
+        rose: 'text-rose-600 dark:text-rose-400',
+        emerald: 'text-emerald-600 dark:text-emerald-400',
+        violet: 'text-violet-600 dark:text-violet-400'
+    }
+
+    return (
+        <div className={`bg-white dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border border-l-4 ${borderColors[accentColor]} p-5 shadow-sm`}>
+            <div className="flex items-start justify-between">
+                <div className={`p-2 rounded-lg bg-gray-50 dark:bg-dark-border ${iconColors[accentColor]}`}>
+                    <Icon className="w-5 h-5" />
+                </div>
+                {change > 0 && (
+                    <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                        <TrendingUp className="w-3.5 h-3.5" />
+                        <span className="text-xs font-medium">+{change}</span>
+                    </div>
+                )}
+            </div>
+            <div className="mt-4">
+                <p className="text-3xl font-display font-bold text-text dark:text-dark-text tabular-nums">
+                    {value.toLocaleString()}
+                </p>
+                <p className="text-sm font-medium text-text-light dark:text-dark-text-muted mt-1">
+                    {label}
+                </p>
+                <p className="text-xs text-text-light/70 dark:text-dark-text-muted/70 mt-0.5">
+                    {changeLabel}
+                </p>
+            </div>
+        </div>
+    )
+}
+
+// Moderation Card Component
+function ModerationCard({
+    icon: Icon,
+    label,
+    value,
+    accentColor
+}: {
+    icon: typeof AlertTriangle
+    label: string
+    value: number
+    accentColor: 'amber' | 'orange' | 'violet' | 'emerald'
+}) {
+    const colors = {
+        amber: {
+            border: 'border-amber-500/50',
+            icon: 'text-amber-600 dark:text-amber-400'
+        },
+        orange: {
+            border: 'border-orange-500/50',
+            icon: 'text-orange-600 dark:text-orange-400'
+        },
+        violet: {
+            border: 'border-violet-500/50',
+            icon: 'text-violet-600 dark:text-violet-400'
+        },
+        emerald: {
+            border: 'border-emerald-500/50',
+            icon: 'text-emerald-600 dark:text-emerald-400'
+        }
+    }
+
+    const style = colors[accentColor]
+
+    return (
+        <div className={`bg-white dark:bg-dark-surface rounded-xl border ${style.border} p-4`}>
+            <div className={`flex items-center gap-2 ${style.icon} mb-2`}>
+                <Icon className="w-4 h-4" />
+                <span className="text-xs font-medium text-text-light dark:text-dark-text-muted">{label}</span>
+            </div>
+            <p className="text-2xl font-bold text-text dark:text-dark-text tabular-nums">
+                {value}
+            </p>
+        </div>
+    )
+}
+
+// Content Type Card Component
+function ContentTypeCard({
+    label,
+    value,
+    accentColor
+}: {
+    label: string
+    value: number
+    accentColor: 'blue' | 'rose' | 'violet'
+}) {
+    const colors = {
+        blue: 'border-blue-500/40 text-blue-600 dark:text-blue-400',
+        rose: 'border-rose-500/40 text-rose-600 dark:text-rose-400',
+        violet: 'border-violet-500/40 text-violet-600 dark:text-violet-400'
+    }
+
+    return (
+        <div className={`bg-white dark:bg-dark-surface rounded-xl border ${colors[accentColor].split(' ')[0]} p-5 text-center`}>
+            <p className={`text-3xl font-bold ${colors[accentColor].split(' ').slice(1).join(' ')} tabular-nums`}>
+                {value}
+            </p>
+            <p className="text-sm text-text-light dark:text-dark-text-muted mt-1.5 font-medium">
+                {label}
+            </p>
         </div>
     )
 }

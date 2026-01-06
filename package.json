@@ -19,7 +19,8 @@
     "i18n:check:verbose": "node scripts/check-translations.js --verbose",
     "i18n:report": "node scripts/check-translations.js --json",
     "db:reset": "npx tsx scripts/reset-database.ts",
-    "db:reset:force": "npx tsx scripts/reset-database.ts --force"
+    "db:reset:force": "npx tsx scripts/reset-database.ts --force",
+    "setup:admin": "npx tsx scripts/setup-main-admin.ts"
   },
   "keywords": [
     "nextjs",

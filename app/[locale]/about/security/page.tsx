@@ -216,7 +216,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
                     <div className="p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
                         <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-primary dark:text-secondary" />
-                            {isRTL ? 'التحقق من Turnstile' : 'Turnstile Verification'}
+                            {isRTL ? 'التحقق عبر Turnstile' : 'Turnstile Verification'}
                         </h4>
                         <p className="text-sm text-text-muted dark:text-dark-text-muted">
                             {isRTL

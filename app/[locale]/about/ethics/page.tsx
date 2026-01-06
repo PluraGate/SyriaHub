@@ -221,7 +221,7 @@ export default async function EthicsPage({ params }: { params: Promise<{ locale:
                         <li>{isArabic ? 'الانتحال أو السرقة الأكاديمية' : 'Plagiarism or academic theft'}</li>
                         <li>{isArabic ? 'المعلومات المضللة عن قصد' : 'Intentional misinformation'}</li>
                         <li>{isArabic ? 'خطاب الكراهية أو التمييز' : 'Hate speech or discrimination'}</li>
-                        <li>{isArabic ? 'التحرش أو الإساءة الشخصية' : 'Harassment or personal attacks'}</li>
+                        <li>{isArabic ? 'الإساءة اللفظية أو الشخصية' : 'Harassment or personal attacks'}</li>
                         <li>{isArabic ? 'المحتوى غير القانوني' : 'Illegal content'}</li>
                     </ul>
                 </div>

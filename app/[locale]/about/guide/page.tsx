@@ -183,7 +183,7 @@ export default async function UserGuidePage({ params }: { params: Promise<{ loca
                 </h2>
                 <p>
                     {isArabic
-                        ? 'يدعم SyriaHub عدة أنواع من المحتوى: المقالات البحثية، الأسئلة والأجوبة، الموارد (مجموعات البيانات، الأدوات)، والفعاليات.'
+                        ? 'تدعم SyriaHub عدة أنواع من المحتوى: المقالات البحثية، الأسئلة والأجوبة، الموارد (مجموعات البيانات، الأدوات)، والفعاليات.'
                         : 'SyriaHub supports several content types: Research articles, Questions & Answers, Resources (datasets, tools), and Events.'}
                 </p>
                 <p>
@@ -277,7 +277,7 @@ export default async function UserGuidePage({ params }: { params: Promise<{ loca
                 <ul className="not-prose my-4 space-y-2">
                     <li className="flex items-start gap-2">
                         <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الفلترة الآلية:' : 'AI Pre-Filter:'}</strong> {isArabic ? 'يتم فحص المحتوى تلقائياً للكشف عن خطاب الكراهية والتحرش والبريد العشوائي' : 'Content is automatically scanned for hate speech, harassment, and spam'}</span>
+                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الفلترة الآلية:' : 'AI Pre-Filter:'}</strong> {isArabic ? 'يتم فحص المحتوى تلقائياً للكشف عن خطاب الكراهية والإساءة اللفظية والبريد العشوائي' : 'Content is automatically scanned for hate speech, harassment, and spam'}</span>
                     </li>
                     <li className="flex items-start gap-2">
                         <span className="text-primary dark:text-secondary">•</span>

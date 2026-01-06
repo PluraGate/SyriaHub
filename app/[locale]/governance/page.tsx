@@ -124,11 +124,11 @@ export default async function GovernancePage({ params }: { params: Promise<{ loc
                                     { title: t('ai.principle3Title'), desc: t('ai.principle3Desc') },
                                     { title: t('ai.principle4Title'), desc: t('ai.principle4Desc') }
                                 ].map((principle, i) => (
-                                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-dark-border">
+                                    <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50/50 dark:bg-dark-border/30">
                                         <span className="text-primary dark:text-secondary font-bold">•</span>
-                                        <div>
+                                        <div className="text-sm">
                                             <span className="font-medium text-text dark:text-dark-text">{principle.title}:</span>
-                                            <span className="text-text-muted dark:text-dark-text-muted ml-1">{principle.desc}</span>
+                                            <span className="text-text-muted dark:text-dark-text-muted ms-1">{principle.desc}</span>
                                         </div>
                                     </div>
                                 ))}

@@ -60,7 +60,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
                 <ul>
                     <li>{isArabic ? 'انتهاك حقوق الملكية الفكرية' : 'Violating intellectual property rights'}</li>
                     <li>{isArabic ? 'نشر محتوى ضار أو غير قانوني' : 'Posting harmful or illegal content'}</li>
-                    <li>{isArabic ? 'التحرش بالمستخدمين الآخرين' : 'Harassing other users'}</li>
+                    <li>{isArabic ? 'الإساءة اللفظية للمستخدمين الآخرين' : 'Harassing other users'}</li>
                     <li>{isArabic ? 'محاولة الوصول غير المصرح به' : 'Attempting unauthorized access'}</li>
                     <li>{isArabic ? 'استخدام المنصة لأغراض تجارية غير مصرح بها' : 'Using the platform for unauthorized commercial purposes'}</li>
                 </ul>
