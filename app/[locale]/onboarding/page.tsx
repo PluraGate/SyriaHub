@@ -76,7 +76,7 @@ export default function OnboardingPage() {
         setLoading(false)
 
         if (!error) {
-            router.push('/feed')
+            router.push('/insights')
         }
     }
 
@@ -243,7 +243,7 @@ export default function OnboardingPage() {
 
                     {/* Skip Link */}
                     <p className="text-center mt-6 text-sm text-text-light dark:text-dark-text-muted">
-                        <button onClick={() => router.push('/feed')} className="hover:text-primary transition-colors">
+                        <button onClick={() => router.push('/insights')} className="hover:text-primary transition-colors">
                             {t('skipForNow')}
                         </button>
                     </p>

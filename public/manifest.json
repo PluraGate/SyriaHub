@@ -16,7 +16,7 @@
             "purpose": "any"
         },
         {
-            "src": "/icons/icon-512x512_Dark.png",
+            "src": "/icons/icon-512x512_Dark_PWA.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
