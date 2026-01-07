@@ -33,7 +33,7 @@ export function FirstContributionPrompt() {
             titleKey: 'browse.title',
             descriptionKey: 'browse.description',
             actionKey: 'browse.action',
-            href: '/feed'
+            href: '/insights'
         },
         {
             id: 'comment',
@@ -41,7 +41,7 @@ export function FirstContributionPrompt() {
             titleKey: 'comment.title',
             descriptionKey: 'comment.description',
             actionKey: 'comment.action',
-            href: '/feed'
+            href: '/insights'
         },
         {
             id: 'cite',
