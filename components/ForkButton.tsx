@@ -13,9 +13,10 @@ interface ForkButtonProps {
     postTitle: string
     postContent: string
     postTags: string[]
+    iconOnly?: boolean
 }
 
-export function ForkButton({ postId, postTitle, postContent, postTags }: ForkButtonProps) {
+export function ForkButton({ postId, postTitle, postContent, postTags, iconOnly }: ForkButtonProps) {
     const [isForking, setIsForking] = useState(false)
     const router = useRouter()
     const supabase = createClient()
@@ -64,13 +65,14 @@ export function ForkButton({ postId, postTitle, postContent, postTags }: ForkBut
     return (
         <Button
             variant="outline"
-            size="sm"
+            size={iconOnly ? "icon" : "sm"}
             onClick={handleFork}
             disabled={isForking}
-            className="gap-2"
+            className={iconOnly ? "" : "gap-2"}
+            title={t('remix')}
         >
             {isForking ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitFork className="h-4 w-4" />}
-            {isForking ? t('remixing') : t('remix')}
+            {!iconOnly && (isForking ? t('remixing') : t('remix'))}
         </Button>
     )
 }

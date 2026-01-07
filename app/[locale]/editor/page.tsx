@@ -22,6 +22,13 @@ import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { ChartBlock, ChartConfig } from '@/components/ChartBlock'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from '@/lib/utils'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
 import { useTranslations } from 'next-intl'
@@ -813,42 +820,42 @@ export default function EditorPage() {
 
                 {/* Content Type Toggle */}
                 <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
+                  <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl">
                     <button
                       type="button"
                       onClick={() => setContentType('article')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
                         ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.article')}
                     >
                       <BookOpen className="w-4 h-4" />
-                      {t('page.article')}
+                      <span className="hidden sm:inline">{t('page.article')}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setContentType('question')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
                         ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.question')}
                     >
                       <HelpCircle className="w-4 h-4" />
-                      {t('page.question')}
+                      <span className="hidden sm:inline">{t('page.question')}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setContentType('trace')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
                         ? 'bg-white dark:bg-dark-surface text-secondary-dark dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.trace')}
                     >
                       <Camera className="w-4 h-4" />
-                      {t('page.trace')}
+                      <span className="hidden sm:inline">{t('page.trace')}</span>
                     </button>
                   </div>
                   {/* Help text for selected content type */}
@@ -966,25 +973,32 @@ export default function EditorPage() {
                   <label htmlFor="license" className="text-sm font-semibold text-text dark:text-dark-text">
                     {t('license')}
                   </label>
-                  <select
-                    id="license"
+                  <Select
                     value={license}
-                    onChange={e => setLicense(e.target.value)}
-                    className="select-input"
+                    onValueChange={setLicense}
                   >
-                    <option value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</option>
-                    <option value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</option>
-                    <option value="CC0-1.0">{tLicenses('CC0-1_0')}</option>
-                    <option value="MIT">{tLicenses('MIT')}</option>
-                    <option value="All Rights Reserved">{tLicenses('All Rights Reserved')}</option>
-                  </select>
-                  <div className="text-xs text-text-light dark:text-dark-text-muted space-y-1">
-                    <p>{tLicenses('helpText')}</p>
-                    <p className={cn(
-                      "font-medium",
-                      license === 'All Rights Reserved' ? "text-amber-600 dark:text-amber-400" : "text-primary dark:text-primary-light"
-                    )}>
-                      {tLicenses(`descriptions.${license.replace(/\./g, '_')}`)}
+                    <SelectTrigger id="license" className="w-full bg-white dark:bg-dark-surface">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CC-BY-4.0">{tLicenses('CC-BY-4_0')}</SelectItem>
+                      <SelectItem value="CC-BY-SA-4.0">{tLicenses('CC-BY-SA-4_0')}</SelectItem>
+                      <SelectItem value="CC0-1.0">{tLicenses('CC0-1_0')}</SelectItem>
+                      <SelectItem value="MIT">{tLicenses('MIT')}</SelectItem>
+                      <SelectItem value="All Rights Reserved">{tLicenses('All Rights Reserved')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="text-s leading-relaxed text-text-light dark:text-gray-100 space-y-0.5">
+                    <p className="text-s">{tLicenses('helpText')}</p>
+                    <p className="mt-1.5 text-s">
+                      <span className="font-semibold text-text dark:text-gray-200">
+                        {tLicenses(license.replace(/\./g, '_'))}:
+                      </span>{' '}
+                      <span className={cn(
+                        license === 'All Rights Reserved' ? "text-amber-600 dark:text-amber-200" : "text-emerald-600 dark:text-emerald-400/80"
+                      )}>
+                        {tLicenses(`descriptions.${license.replace(/\./g, '_')}`)}
+                      </span>
                     </p>
                   </div>
                 </div>
