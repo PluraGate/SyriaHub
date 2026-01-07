@@ -373,6 +373,62 @@ export default function EditorPage() {
 
             if (groupData) setGroup(groupData)
           }
+
+          // Load linked resources for editing using the existing RPC function
+          const { data: linkedResourcesData, error: resourceError } = await supabase
+            .rpc('get_post_resources', { p_post_id: postIdParam })
+
+          if (resourceError) {
+            console.error('Error loading linked resources:', resourceError)
+          } else if (linkedResourcesData && linkedResourcesData.length > 0) {
+            setLinkedResources(linkedResourcesData)
+          }
+
+          // Load citations (references) for editing
+          const { data: citationsData, error: citationsError } = await supabase
+            .from('citations')
+            .select(`
+              id,
+              type,
+              target_post_id,
+              quote_content,
+              external_url,
+              external_doi,
+              external_title,
+              external_author,
+              external_year,
+              external_source,
+              target_post:posts!citations_target_post_id_fkey(
+                id,
+                title,
+                created_at,
+                author:users!posts_author_id_fkey(name, email)
+              )
+            `)
+            .eq('source_post_id', postIdParam)
+
+          if (citationsError) {
+            console.error('Error loading citations:', citationsError)
+          } else if (citationsData && citationsData.length > 0) {
+            const loadedCitations: Citation[] = citationsData.map(cit => ({
+              type: cit.type as 'internal' | 'external',
+              target_post_id: cit.target_post_id || undefined,
+              target_post: cit.target_post ? {
+                id: (cit.target_post as any).id,
+                title: (cit.target_post as any).title,
+                created_at: (cit.target_post as any).created_at,
+                author: (cit.target_post as any).author
+              } : undefined,
+              quote_content: cit.quote_content || undefined,
+              external_url: cit.external_url || undefined,
+              external_doi: cit.external_doi || undefined,
+              external_title: cit.external_title || undefined,
+              external_author: cit.external_author || undefined,
+              external_year: cit.external_year || undefined,
+              external_source: cit.external_source || undefined,
+            }))
+            setCitations(loadedCitations)
+          }
         }
       } catch (error) {
         console.error('Error loading post:', error)

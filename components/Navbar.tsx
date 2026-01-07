@@ -149,11 +149,11 @@ export function Navbar({ user: userProp }: NavbarProps) {
             aria-label={tCommon('appTitle')}
           >
             <Image
-              src="/icons/Pluragate-logo.ico"
+              src="/icons/icon-512x512.png"
               alt="SyriaHub Logo"
               width={32}
               height={32}
-              className="w-8 h-8 rounded-lg shadow-sm group-hover:shadow-md transition-all object-cover mb-1"
+              className="w-8 h-8 rounded-lg shadow-sm group-hover:shadow-md transition-all object-cover"
             />
             <span className="font-display font-bold text-xl text-primary dark:text-dark-text group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors leading-none mb-1">
               {tCommon('appTitle')}

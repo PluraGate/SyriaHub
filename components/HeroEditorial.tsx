@@ -10,9 +10,18 @@ interface HeroEditorialProps {
     subtitle?: string
     badge?: string
     stats?: {
-        researchers?: number
+        contributors?: number
         publications?: number
-        universities?: number
+        contexts?: number
+    }
+    statLabels?: {
+        contributors?: string
+        publications?: string
+        contexts?: string
+    }
+    ctaLabels?: {
+        getStarted?: string
+        browse?: string
     }
     featuredPosts?: Array<{
         id: string
@@ -32,9 +41,18 @@ export function HeroEditorial({
     subtitle = "A collaborative platform for Syrian researchers to share, discover, and connect.",
     badge = "Research Platform",
     stats = {
-        researchers: 500,
-        publications: 1200,
-        universities: 50,
+        contributors: 0,
+        publications: 0,
+        contexts: 0,
+    },
+    statLabels = {
+        contributors: 'Contributors',
+        publications: 'Publications',
+        contexts: 'Contexts Mapped',
+    },
+    ctaLabels = {
+        getStarted: 'Begin Contributing',
+        browse: 'Browse Research',
     },
     featuredPosts = [],
     showCTA = true,
@@ -97,7 +115,7 @@ export function HeroEditorial({
                                         'btn-press'
                                     )}
                                 >
-                                    <span>Get Started</span>
+                                    <span>{ctaLabels.getStarted}</span>
                                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                                 </Link>
                                 <Link
@@ -111,7 +129,7 @@ export function HeroEditorial({
                                         'btn-press'
                                     )}
                                 >
-                                    Browse Research
+                                    {ctaLabels.browse}
                                 </Link>
                             </div>
                         )}
@@ -120,18 +138,18 @@ export function HeroEditorial({
                         <div className="flex flex-wrap gap-8 pt-8 border-t border-gray-200 dark:border-dark-border">
                             <StatItem
                                 icon={<Users className="w-5 h-5" />}
-                                value={stats.researchers || 500}
-                                label="Researchers"
+                                value={stats.contributors || 0}
+                                label={statLabels.contributors || 'Contributors'}
                             />
                             <StatItem
                                 icon={<BookOpen className="w-5 h-5" />}
-                                value={stats.publications || 1200}
-                                label="Publications"
+                                value={stats.publications || 0}
+                                label={statLabels.publications || 'Publications'}
                             />
                             <StatItem
                                 icon={<TrendingUp className="w-5 h-5" />}
-                                value={stats.universities || 50}
-                                label="Universities"
+                                value={stats.contexts || 0}
+                                label={statLabels.contexts || 'Contexts Mapped'}
                             />
                         </div>
                     </div>
@@ -162,14 +180,16 @@ export function HeroEditorial({
                                             <div className="text-sm font-semibold text-text dark:text-dark-text line-clamp-2">
                                                 {featuredPosts[0]?.title || "Impact of Diaspora Communities on Economic Development"}
                                             </div>
-                                            <div className="mt-2 flex gap-2">
-                                                <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-dark-border rounded-full text-text-muted">
-                                                    Economics
-                                                </span>
-                                                <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-dark-border rounded-full text-text-muted">
-                                                    Migration
-                                                </span>
-                                            </div>
+                                            {/* Show actual tags from the post, or hide if none */}
+                                            {featuredPosts[0]?.tags && featuredPosts[0].tags.length > 0 ? (
+                                                <div className="mt-2 flex gap-2 flex-wrap">
+                                                    {featuredPosts[0].tags.slice(0, 2).map((tag, idx) => (
+                                                        <span key={idx} className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-dark-border rounded-full text-text-muted">
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            ) : null}
                                         </div>
                                     </div>
                                 </div>
@@ -216,8 +236,8 @@ export function HeroEditorial({
                                             ))}
                                         </div>
                                         <div className="text-sm text-text-light dark:text-dark-text-muted">
-                                            <span className="font-semibold text-text dark:text-dark-text">12 researchers</span>
-                                            {' '}joined this week
+                                            <span className="font-semibold text-text dark:text-dark-text">{stats.contributors}+</span>
+                                            {' '}contributors
                                         </div>
                                     </div>
                                 </div>
