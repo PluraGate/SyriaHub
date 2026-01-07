@@ -182,12 +182,13 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
     }
 
     // Filter items based on user role
+    // Default to showing all items (admin view) while loading to prevent flicker for admins
     const filteredNavItems = navItems.filter(item => {
-        if (item.adminOnly && userRole !== 'admin') return false
+        if (item.adminOnly && userRole === 'moderator') return false
         return true
     })
 
-    const panelTitle = userRole === 'admin' ? t('adminPanel') : t('moderation')
+    const panelTitle = userRole === 'moderator' ? t('moderation') : t('adminPanel')
 
     // On mobile: mobileOpen controls expanded vs collapsed (icons only)
     // On desktop: collapsed controls expanded vs collapsed
@@ -204,135 +205,136 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                 />
             )}
 
-            {/* Sidebar - NOT fixed, part of flex layout */}
+            {/* Sidebar - Track (Full Height) */}
             <aside
                 className={cn(
                     'bg-white dark:bg-dark-surface border-e border-gray-200 dark:border-dark-border',
-                    'transition-all duration-300 ease-in-out flex flex-col flex-shrink-0',
-                    // Sticky on all screen sizes
-                    'sticky top-[65px] h-[calc(100vh-65px)] overflow-hidden self-start z-40',
+                    'transition-all duration-300 ease-in-out flex flex-col flex-shrink-0 min-h-full',
                     // Width: icons-only vs expanded
                     mobileOpen ? 'w-56' : 'w-14',
                     isCollapsedDesktop ? 'lg:w-16' : 'lg:w-64',
                     className
                 )}
             >
-                {/* Header */}
-                <div className="p-2 lg:p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between min-h-[52px]">
-                    {/* Mobile: Toggle button */}
-                    <button
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-primary transition-colors"
-                        aria-label={mobileOpen ? "Collapse menu" : "Expand menu"}
-                    >
-                        {mobileOpen ? <ChevronLeft className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                    </button>
-                    
-                    {/* Title - show when expanded */}
-                    <h2 className={cn(
-                        "font-display font-semibold text-primary dark:text-dark-text text-sm truncate",
-                        !mobileOpen && "hidden lg:block",
-                        isCollapsedDesktop && "lg:hidden"
-                    )}>
-                        {panelTitle}
-                    </h2>
-                    
-                    {/* Desktop collapse button */}
-                    <button
-                        onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:block p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-text-light dark:text-dark-text-muted transition-colors"
-                        title={collapsed ? t('expand') : t('collapse')}
-                    >
-                        {collapsed ? (
-                            <ChevronRight className="w-4 h-4" />
-                        ) : (
-                            <ChevronLeft className="w-4 h-4" />
-                        )}
-                    </button>
-                </div>
+                {/* Sticky Container */}
+                <div className="sticky top-[65px] h-[calc(100vh-65px)] flex flex-col w-full overflow-hidden self-start z-40">
+                    {/* Header */}
+                    <div className="p-2 lg:p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-start lg:justify-between gap-3 min-h-[52px] shrink-0">
+                        {/* Mobile: Toggle button */}
+                        <button
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-primary transition-colors"
+                            aria-label={mobileOpen ? "Collapse menu" : "Expand menu"}
+                        >
+                            {mobileOpen ? <ChevronLeft className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        </button>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-1 lg:p-2 space-y-0.5 lg:space-y-1 overflow-y-auto">
-                {filteredNavItems.map((item) => {
-                    const active = isActive(item.href, item.exact)
-                    const Icon = item.icon
-                    // Map label to translation key
-                    const keyMap: Record<string, string> = {
-                        'Overview': 'overview',
-                        'Analytics': 'analytics',
-                        'Platform Health': 'platformHealth',
-                        'Search Analytics': 'searchAnalytics',
-                        'Schema Registry': 'schemaregistry',
-                        'Settings': 'settings',
-                        'Users': 'users',
-                        'Content': 'content',
-                        'Reports': 'reports',
-                        'Appeals': 'appeals',
-                        'Tags': 'tags',
-                        'Skills': 'skills',
-                        'Waitlist': 'waitlist',
-                        'Coordination': 'coordination',
-                        'Feedback': 'feedback',
-                        'Governance': 'governance',
-                        'Audit Logs': 'auditLog',
-                        'Precedents': 'precedents'
-                    }
-                    const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')
-                    const label = t(translationKey) || item.label
+                        {/* Title - show when expanded */}
+                        <h2 className={cn(
+                            "font-display font-semibold text-primary dark:text-dark-text text-sm truncate",
+                            !mobileOpen && "hidden lg:block",
+                            isCollapsedDesktop && "lg:hidden"
+                        )}>
+                            {panelTitle}
+                        </h2>
 
-                    return (
+                        {/* Desktop collapse button */}
+                        <button
+                            onClick={() => setCollapsed(!collapsed)}
+                            className="hidden lg:block p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-text-light dark:text-dark-text-muted transition-colors"
+                            title={collapsed ? t('expand') : t('collapse')}
+                        >
+                            {collapsed ? (
+                                <ChevronRight className="w-4 h-4" />
+                            ) : (
+                                <ChevronLeft className="w-4 h-4" />
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Back to site - Moved to top - HIDDEN as per request */}
+                    <div className="hidden p-1 lg:p-4 border-b border-gray-100 dark:border-dark-border shrink-0">
                         <Link
-                            key={item.href}
-                            href={item.href}
+                            href="/insights"
                             onClick={() => setMobileOpen(false)}
                             className={cn(
-                                'flex items-center gap-3 rounded-lg transition-colors',
-                                // Mobile: centered icons when collapsed, normal padding when expanded
-                                mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center lg:justify-start',
-                                // Desktop: normal padding
-                                'lg:px-3 lg:py-2.5',
-                                isCollapsedDesktop && 'lg:justify-center',
-                                active
-                                    ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-dark-text font-medium'
-                                    : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border hover:text-text dark:hover:text-dark-text'
+                                'flex items-center gap-3 rounded-lg text-sm',
+                                mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center',
+                                'lg:px-3 lg:py-2 lg:justify-start',
+                                'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
                             )}
-                            title={!mobileOpen || isCollapsedDesktop ? label : undefined}
+                            title={!mobileOpen ? t('backToSite') : undefined}
                         >
-                            <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-dark-text')} />
+                            <ChevronLeft className="w-4 h-4 flex-shrink-0" />
                             <span className={cn(
-                                // Mobile: hide when collapsed, show on desktop
                                 !mobileOpen && "hidden lg:inline",
-                                // Desktop: hide when collapsed
-                                isCollapsedDesktop && "lg:hidden",
-                                // Truncate long labels
-                                "truncate"
-                            )}>{label}</span>
+                                isCollapsedDesktop && "lg:hidden"
+                            )}>{t('backToSite')}</span>
                         </Link>
-                    )
-                })}
-            </nav>
+                    </div>
 
-            {/* Footer */}
-            <div className="p-1 lg:p-4 border-t border-gray-100 dark:border-dark-border">
-                <Link
-                    href="/insights"
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                        'flex items-center gap-3 rounded-lg text-sm',
-                        mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center',
-                        'lg:px-3 lg:py-2 lg:justify-start',
-                        'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
-                    )}
-                    title={!mobileOpen ? t('backToSite') : undefined}
-                >
-                    <ChevronLeft className="w-4 h-4 flex-shrink-0" />
-                    <span className={cn(
-                        !mobileOpen && "hidden lg:inline",
-                        isCollapsedDesktop && "lg:hidden"
-                    )}>{t('backToSite')}</span>
-                </Link>
-            </div>
-        </aside>
+                    {/* Navigation */}
+                    <nav className="flex-1 p-1 lg:p-2 space-y-0.5 lg:space-y-1 overflow-y-auto scrollbar-thin">
+                        {filteredNavItems.map((item) => {
+                            const active = isActive(item.href, item.exact)
+                            const Icon = item.icon
+                            // Map label to translation key
+                            const keyMap: Record<string, string> = {
+                                'Overview': 'overview',
+                                'Analytics': 'analytics',
+                                'Platform Health': 'platformHealth',
+                                'Search Analytics': 'searchAnalytics',
+                                'Schema Registry': 'schemaregistry',
+                                'Settings': 'settings',
+                                'Users': 'users',
+                                'Content': 'content',
+                                'Reports': 'reports',
+                                'Appeals': 'appeals',
+                                'Tags': 'tags',
+                                'Skills': 'skills',
+                                'Waitlist': 'waitlist',
+                                'Coordination': 'coordination',
+                                'Feedback': 'feedback',
+                                'Governance': 'governance',
+                                'Audit Logs': 'auditLog',
+                                'Precedents': 'precedents'
+                            }
+                            const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')
+                            const label = t(translationKey) || item.label
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className={cn(
+                                        'flex items-center gap-3 rounded-lg transition-colors',
+                                        // Mobile: centered icons when collapsed, normal padding when expanded
+                                        mobileOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center lg:justify-start',
+                                        // Desktop: normal padding
+                                        'lg:px-3 lg:py-2.5',
+                                        isCollapsedDesktop && 'lg:justify-center',
+                                        active
+                                            ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-dark-text font-medium'
+                                            : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border hover:text-text dark:hover:text-dark-text'
+                                    )}
+                                    title={!mobileOpen || isCollapsedDesktop ? label : undefined}
+                                >
+                                    <Icon className={cn('w-5 h-5 flex-shrink-0', active && 'text-primary dark:text-dark-text')} />
+                                    <span className={cn(
+                                        // Mobile: hide when collapsed, show on desktop
+                                        !mobileOpen && "hidden lg:inline",
+                                        // Desktop: hide when collapsed
+                                        isCollapsedDesktop && "lg:hidden",
+                                        // Truncate long labels
+                                        "truncate"
+                                    )}>{label}</span>
+                                </Link>
+                            )
+                        })}
+                    </nav>
+                </div>
+            </aside>
         </>
     )
 }
