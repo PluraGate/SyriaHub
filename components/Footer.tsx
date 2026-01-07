@@ -36,11 +36,11 @@ export function Footer() {
               aria-label="SyriaHub Home"
             >
               <Image
-                src="/icons/Pluragate-logo.ico"
+                src="/icons/icon-512x512.png"
                 alt="SyriaHub Logo"
                 width={32}
                 height={32}
-                className="w-8 h-8 rounded-lg shadow-sm object-cover mb-1"
+                className="w-8 h-8 rounded-lg shadow-sm object-cover"
               />
               <span className="font-display font-bold text-xl text-primary dark:text-dark-text leading-none mb-1">
                 SyriaHub
