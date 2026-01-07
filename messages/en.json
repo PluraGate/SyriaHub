@@ -393,7 +393,10 @@
         "backToInsights": "Back to Insights",
         "minRead": "{count} min read",
         "remixedFrom": "Remixed from",
-        "suggestions": "Suggestions"
+        "suggestions": "Suggestions",
+        "askAuthor": "Ask Author",
+        "download": "Download",
+        "loginRequired": "Please sign in to perform this action"
     },
     "Editor": {
         "draft": {

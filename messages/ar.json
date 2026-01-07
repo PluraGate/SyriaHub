@@ -393,7 +393,10 @@
         "backToInsights": "العودة للمستجدات",
         "minRead": "{count} دقائق للقراءة",
         "remixedFrom": "مطوّر من",
-        "suggestions": "اقتراحات"
+        "suggestions": "اقتراحات",
+        "askAuthor": "اسأل الكاتب",
+        "download": "تحميل",
+        "loginRequired": "يرجى تسجيل الدخول لتنفيذ هذا الإجراء"
     },
     "Editor": {
         "draft": {

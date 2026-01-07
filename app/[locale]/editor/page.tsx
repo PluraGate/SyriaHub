@@ -813,42 +813,42 @@ export default function EditorPage() {
 
                 {/* Content Type Toggle */}
                 <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl w-fit">
+                  <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-gray-100 dark:bg-dark-bg rounded-xl">
                     <button
                       type="button"
                       onClick={() => setContentType('article')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'article'
                         ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.article')}
                     >
                       <BookOpen className="w-4 h-4" />
-                      {t('page.article')}
+                      <span className="hidden sm:inline">{t('page.article')}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setContentType('question')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'question'
                         ? 'bg-white dark:bg-dark-surface text-primary dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.question')}
                     >
                       <HelpCircle className="w-4 h-4" />
-                      {t('page.question')}
+                      <span className="hidden sm:inline">{t('page.question')}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setContentType('trace')}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${contentType === 'trace'
                         ? 'bg-white dark:bg-dark-surface text-secondary-dark dark:text-white/80 shadow-sm'
                         : 'text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                         }`}
                       title={t('page.contentTypeHelp.trace')}
                     >
                       <Camera className="w-4 h-4" />
-                      {t('page.trace')}
+                      <span className="hidden sm:inline">{t('page.trace')}</span>
                     </button>
                   </div>
                   {/* Help text for selected content type */}

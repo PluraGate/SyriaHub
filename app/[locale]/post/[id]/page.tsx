@@ -273,14 +273,32 @@ export default async function PostPage(props: PostPageProps) {
         {/* Header Content */}
         <div className="relative z-10">
           <div className="container-custom max-w-5xl py-6">
-            {/* Back Link */}
-            <Link
-              href="/insights"
-              className="inline-flex items-center gap-2 text-sm transition-colors mb-4 md:mb-8 text-white/80 hover:text-white"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {t('backToInsights')}
-            </Link>
+            {/* Top Row: Back Link + Mobile Quick Actions */}
+            <div className="flex items-center justify-between mb-4 md:mb-8">
+              {/* Back Link */}
+              <Link
+                href="/insights"
+                className="inline-flex items-center gap-2 text-sm transition-colors text-white/80 hover:text-white"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t('backToInsights')}
+              </Link>
+
+              {/* Mobile Quick Actions - only visible on mobile */}
+              <div className="flex items-center gap-1 md:hidden [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
+                {user && user.id !== post.author_id && (
+                  <ForkButton
+                    postId={post.id}
+                    postTitle={post.title}
+                    postContent={post.content}
+                    postTags={post.tags || []}
+                    iconOnly
+                  />
+                )}
+                <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
+                <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+              </div>
+            </div>
 
             {/* Content Type Badge */}
             {post.content_type === 'question' && (
@@ -293,7 +311,7 @@ export default async function PostPage(props: PostPageProps) {
             )}
 
             {/* Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
+            <h1 dir="auto" className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
               {post.title}
             </h1>
 
@@ -398,7 +416,7 @@ export default async function PostPage(props: PostPageProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
               {user && user.id === post.author_id ? (
                 <>
                   <EditButton
@@ -415,12 +433,15 @@ export default async function PostPage(props: PostPageProps) {
                 </>
               ) : (
                 <>
-                  <ForkButton
-                    postId={post.id}
-                    postTitle={post.title}
-                    postContent={post.content}
-                    postTags={post.tags || []}
-                  />
+                  {/* ForkButton - hidden on mobile (shown in header) */}
+                  <div className="hidden md:block">
+                    <ForkButton
+                      postId={post.id}
+                      postTitle={post.title}
+                      postContent={post.content}
+                      postTags={post.tags || []}
+                    />
+                  </div>
                   <SuggestionDialog
                     postId={post.id}
                     originalContent={post.content}
@@ -429,7 +450,7 @@ export default async function PostPage(props: PostPageProps) {
                     <Link href={`/correspondence/compose?post=${post.id}`}>
                       <Button variant="outline" size="sm" className="gap-2">
                         <HelpCircle className="w-4 h-4" />
-                        Ask Author
+                        {t('askAuthor')}
                       </Button>
                     </Link>
                   )}
@@ -456,15 +477,18 @@ export default async function PostPage(props: PostPageProps) {
                 >
                   <Button variant="outline" size="sm" className="gap-2">
                     <Download className="w-4 h-4" />
-                    Download
+                    {t('download')}
                   </Button>
                 </a>
               )}
 
-              <div className="flex-1" />
+              <div className="flex-1 min-w-0 hidden md:block" />
 
-              <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
-              <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+              {/* Bookmark & More Options - hidden on mobile (shown in header) */}
+              <div className="hidden md:flex items-center gap-2">
+                <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
+                <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+              </div>
             </div>
           </div>
         </div>
@@ -485,7 +509,7 @@ export default async function PostPage(props: PostPageProps) {
             />
 
             {/* Article Content */}
-            <div className="prose prose-lg max-w-none dark:prose-invert 
+            <div dir="auto" className="prose prose-lg max-w-none dark:prose-invert 
               prose-headings:font-bold prose-headings:text-text dark:prose-headings:text-dark-text 
               prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
               prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
