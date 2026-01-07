@@ -74,6 +74,11 @@ async function handlePost(request: NextRequest) {
             return fallbackTextSearch(supabase, query, filters, limit, offset, startTime, user?.id)
         }
 
+        // If semantic search returned no results (e.g., no embeddings in database), fall back to text search
+        if (!searchResults || searchResults.length === 0) {
+            return fallbackTextSearch(supabase, query, filters, limit, offset, startTime, user?.id)
+        }
+
         // Enrich results with full data and explanations
         const enrichedResults = await Promise.all(
             (searchResults || []).map(async (result: {

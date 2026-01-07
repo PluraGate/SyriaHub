@@ -35,11 +35,11 @@ export default async function SearchAnalyticsPage() {
         <div className="min-h-screen bg-gray-50 dark:bg-dark-bg">
             <Navbar user={{ id: user.id, email: user.email }} />
 
-            <div className="flex pt-16">
+            <div className="flex">
                 <AdminSidebar />
 
                 <div className="flex-1 flex flex-col min-w-0">
-                    <main className="flex-1 p-3 sm:p-6">
+                    <main className="flex-1 p-3 sm:p-6 overflow-x-hidden">
                         <SearchAnalytics />
                     </main>
                     <Footer />

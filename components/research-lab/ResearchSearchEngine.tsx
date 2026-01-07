@@ -466,7 +466,7 @@ export function ResearchSearchEngine() {
                         <button
                             onClick={saveSearch}
                             disabled={savingSearch}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-primary/10 dark:bg-primary/20 text-primary dark:text-white/50 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-md transition-colors disabled:opacity-50"
                         >
                             {savingSearch ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -626,15 +626,17 @@ export function ResearchSearchEngine() {
                                     autoComplete="off"
                                 />
 
-                                <div className="flex items-center gap-2 pe-3 z-10">
+                                <div className="flex items-center gap-1.5 sm:gap-2 pe-2 sm:pe-3 z-10 shrink-0">
                                     <Button
                                         variant="outline"
                                         size="sm"
                                         onClick={() => setShowFilters(!showFilters)}
-                                        className="gap-1.5 border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg"
+                                        className="gap-1.5 border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg px-2 sm:px-3 h-9"
+                                        title={t('filters')}
+                                        aria-label={t('filters')}
                                     >
                                         <Filter className="w-4 h-4" />
-                                        {t('filters')}
+                                        <span className="hidden sm:inline">{t('filters')}</span>
                                         {activeFilterCount > 0 && (
                                             <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-white rounded-full">
                                                 {activeFilterCount}
@@ -648,9 +650,16 @@ export function ResearchSearchEngine() {
                                             handleSearch()
                                         }}
                                         disabled={loading || !query.trim()}
-                                        className="px-5"
+                                        className="px-3 sm:px-5 h-9"
+                                        title={t('search')}
+                                        aria-label={t('search')}
                                     >
-                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('search')}
+                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                            <>
+                                                <Search className="w-4 h-4 sm:hidden" />
+                                                <span className="hidden sm:inline">{t('search')}</span>
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
