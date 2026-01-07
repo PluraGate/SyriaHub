@@ -17,14 +17,12 @@ export default async function ResearchSearchPage() {
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
             <Navbar user={user} />
 
-            <div className="flex flex-1 overflow-x-hidden">
+            <div className="flex flex-1">
                 {/* Sidebar - collapsed icons at md, full at xl */}
-                <div className="hidden md:block shrink-0">
-                    <ResearchLabNav />
-                </div>
+                <ResearchLabNav className="hidden md:flex" />
 
                 {/* Main Content */}
-                <main className="flex-1 min-w-0 container-custom py-8">
+                <main className="flex-1 min-w-0 container-custom py-8 overflow-x-hidden">
                     <ResearchSearchEngine />
                 </main>
             </div>

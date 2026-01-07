@@ -85,75 +85,77 @@ export function ResearchLabNav({ className }: ResearchLabNavProps) {
     return (
         <aside
             className={cn(
-                // Collapsed (icons only) at md, expanded at xl
-                'w-16 xl:w-64 shrink-0 bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border',
-                'flex flex-col h-[calc(100vh-4rem)] sticky top-16 transition-all duration-200',
+                // Outer container: Layout track (full height background & border)
+                'w-16 xl:w-64 shrink-0 bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border min-h-full',
                 className
             )}
         >
-            {/* Header */}
-            <div className="p-3 xl:p-4 border-b border-gray-100 dark:border-dark-border">
-                <Link
-                    href="/research-lab"
-                    className="flex items-center justify-center xl:justify-start gap-2 text-lg font-display font-semibold text-text dark:text-dark-text"
-                    title={t('title')}
-                >
-                    <Sparkles className="w-5 h-5 text-primary shrink-0" />
-                    <span className="hidden xl:inline">{t('title')}</span>
-                </Link>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="p-2 xl:p-4 space-y-2 border-b border-gray-100 dark:border-dark-border">
-                {quickActions.map((action) => (
+            {/* Inner container: Sticky navigation content */}
+            <div className="sticky top-16 h-[calc(100vh-4rem)] flex flex-col w-full">
+                {/* Header */}
+                <div className="p-3 xl:p-4 border-b border-gray-100 dark:border-dark-border shrink-0">
                     <Link
-                        key={action.label}
-                        href={action.href}
-                        className={cn(
-                            'flex items-center justify-center xl:justify-start gap-2 w-full p-2 xl:px-3 xl:py-2 rounded-lg text-sm font-medium text-white transition-colors',
-                            action.color
-                        )}
-                        title={action.label}
+                        href="/research-lab"
+                        className="flex items-center justify-center xl:justify-start gap-2 text-lg font-display font-semibold text-text dark:text-dark-text"
+                        title={t('title')}
                     >
-                        <action.icon className="w-4 h-4 shrink-0" />
-                        <span className="hidden xl:inline">{action.label}</span>
+                        <Sparkles className="w-5 h-5 text-primary shrink-0" />
+                        <span className="hidden xl:inline">{t('title')}</span>
                     </Link>
-                ))}
-            </div>
+                </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-2 xl:p-4 space-y-1 overflow-y-auto">
-                {navItems.map((item) => (
+                {/* Back to Insights - moved to top for easier access */}
+                <div className="p-2 xl:p-4 border-b border-gray-100 dark:border-dark-border shrink-0">
                     <Link
-                        key={item.label}
-                        href={item.href}
+                        href="/insights"
                         className={cn(
-                            'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm transition-colors',
-                            isActive(item.href, item.exact)
-                                ? 'bg-primary/10 dark:bg-secondary/10 text-primary dark:text-secondary font-medium'
-                                : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
+                            'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm',
+                            'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
                         )}
-                        title={item.label}
+                        title={t('nav.backToInsights')}
                     >
-                        <item.icon className="w-4 h-4 shrink-0" />
-                        <span className="hidden xl:inline">{item.label}</span>
+                        <ChevronLeft className="w-4 h-4 shrink-0" />
+                        <span className="hidden xl:inline">{t('nav.backToInsights')}</span>
                     </Link>
-                ))}
-            </nav>
+                </div>
 
-            {/* Back to Site */}
-            <div className="p-2 xl:p-4 border-t border-gray-100 dark:border-dark-border">
-                <Link
-                    href="/insights"
-                    className={cn(
-                        'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm',
-                        'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border transition-colors'
-                    )}
-                    title={t('nav.backToInsights')}
-                >
-                    <ChevronLeft className="w-4 h-4 shrink-0" />
-                    <span className="hidden xl:inline">{t('nav.backToInsights')}</span>
-                </Link>
+                {/* Quick Actions */}
+                <div className="p-2 xl:p-4 space-y-2 border-b border-gray-100 dark:border-dark-border shrink-0">
+                    {quickActions.map((action) => (
+                        <Link
+                            key={action.label}
+                            href={action.href}
+                            className={cn(
+                                'flex items-center justify-center xl:justify-start gap-2 w-full p-2 xl:px-3 xl:py-2 rounded-lg text-sm font-medium text-white transition-colors',
+                                action.color
+                            )}
+                            title={action.label}
+                        >
+                            <action.icon className="w-4 h-4 shrink-0" />
+                            <span className="hidden xl:inline">{action.label}</span>
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex-1 p-2 xl:p-4 space-y-1 overflow-y-auto scrollbar-thin">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            className={cn(
+                                'flex items-center justify-center xl:justify-start gap-3 p-2 xl:px-3 xl:py-2 rounded-lg text-sm transition-colors',
+                                isActive(item.href, item.exact)
+                                    ? 'bg-primary/10 dark:bg-secondary/10 text-primary dark:text-secondary font-medium'
+                                    : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
+                            )}
+                            title={item.label}
+                        >
+                            <item.icon className="w-4 h-4 shrink-0" />
+                            <span className="hidden xl:inline">{item.label}</span>
+                        </Link>
+                    ))}
+                </nav>
             </div>
         </aside>
     )
