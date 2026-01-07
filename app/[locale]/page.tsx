@@ -52,6 +52,34 @@ export default async function Home({
     recentPosts = allPosts.slice(4)
   }
 
+  // Fetch platform stats for landing page (only for non-authenticated users)
+  let platformStats = { contributors: 0, publications: 0, contexts: 0 }
+  if (!user) {
+    // Count users who have published at least one post (contributors)
+    const { count: contributorsCount } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+
+    // Count published posts
+    const { count: publicationsCount } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published')
+      .neq('approval_status', 'rejected')
+
+    // Count verified tags (topics)
+    const { count: topicsCount } = await supabase
+      .from('tags')
+      .select('*', { count: 'exact', head: true })
+      .eq('verified', true)
+
+    platformStats = {
+      contributors: contributorsCount || 0,
+      publications: publicationsCount || 0,
+      contexts: topicsCount || 0
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
       <Navbar user={user} />
@@ -97,6 +125,20 @@ export default async function Home({
               subtitle={t('heroSubtitle')}
               badge={t('badge')}
               featuredPosts={featuredPosts}
+              stats={{
+                contributors: platformStats.contributors,
+                publications: platformStats.publications,
+                contexts: platformStats.contexts
+              }}
+              statLabels={{
+                contributors: t('stats.contributors'),
+                publications: t('stats.publications'),
+                contexts: t('stats.contexts')
+              }}
+              ctaLabels={{
+                getStarted: t('getStarted'),
+                browse: t('browsePosts')
+              }}
             />
 
             {/* Featured Content - Bento Grid */}
