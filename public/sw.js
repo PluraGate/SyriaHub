@@ -7,181 +7,181 @@ const OFFLINE_CACHE = `syriahub-offline-${CACHE_VERSION}`
 
 // Assets to cache on install
 const STATIC_ASSETS = [
-  '/',
-  '/offline',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+    '/',
+    '/offline',
+    '/manifest.json',
+    '/icons/icon-192x192.png',
+    '/icons/icon-512x512.png',
 ]
 
 // API routes that should use network-first strategy
 const API_ROUTES = [
-  '/api/',
-  '/auth/',
+    '/api/',
+    '/auth/',
 ]
 
 // Routes that can be cached for offline reading
 const CACHEABLE_ROUTES = [
-  '/post/',
-  '/profile/',
-  '/insights',
-  '/explore',
+    '/post/',
+    '/profile/',
+    '/feed',
+    '/explore',
 ]
 
 // Maximum age for cached responses (24 hours)
 const MAX_CACHE_AGE = 24 * 60 * 60 * 1000
 
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...')
+    console.log('[SW] Installing service worker...')
 
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('[SW] Pre-caching static assets')
-        return cache.addAll(STATIC_ASSETS)
-      })
-      .then(() => self.skipWaiting())
-  )
+    event.waitUntil(
+        caches.open(STATIC_CACHE)
+            .then((cache) => {
+                console.log('[SW] Pre-caching static assets')
+                return cache.addAll(STATIC_ASSETS)
+            })
+            .then(() => self.skipWaiting())
+    )
 })
 
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...')
+    console.log('[SW] Activating service worker...')
 
-  event.waitUntil(
-    caches.keys()
-      .then((keys) => {
-        return Promise.all(
-          keys
-            .filter((key) =>
-              key !== STATIC_CACHE &&
-              key !== DYNAMIC_CACHE &&
-              key !== OFFLINE_CACHE
-            )
-            .map((key) => {
-              console.log('[SW] Removing old cache:', key)
-              return caches.delete(key)
+    event.waitUntil(
+        caches.keys()
+            .then((keys) => {
+                return Promise.all(
+                    keys
+                        .filter((key) =>
+                            key !== STATIC_CACHE &&
+                            key !== DYNAMIC_CACHE &&
+                            key !== OFFLINE_CACHE
+                        )
+                        .map((key) => {
+                            console.log('[SW] Removing old cache:', key)
+                            return caches.delete(key)
+                        })
+                )
             })
-        )
-      })
-      .then(() => self.clients.claim())
-  )
+            .then(() => self.clients.claim())
+    )
 })
 
 self.addEventListener('fetch', (event) => {
-  const { request } = event
-  const url = new URL(request.url)
+    const { request } = event
+    const url = new URL(request.url)
 
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
-    return
-  }
+    // Skip non-GET requests
+    if (request.method !== 'GET') {
+        return
+    }
 
-  // Skip cross-origin requests
-  if (url.origin !== self.location.origin) {
-    return
-  }
+    // Skip cross-origin requests
+    if (url.origin !== self.location.origin) {
+        return
+    }
 
-  // API requests: Network first, fall back to cache
-  if (API_ROUTES.some((route) => url.pathname.startsWith(route))) {
+    // API requests: Network first, fall back to cache
+    if (API_ROUTES.some((route) => url.pathname.startsWith(route))) {
+        event.respondWith(networkFirst(request))
+        return
+    }
+
+    // Static assets: Cache first
+    if (isStaticAsset(url.pathname)) {
+        event.respondWith(cacheFirst(request))
+        return
+    }
+
+    // Cacheable routes (posts, profiles): Stale-while-revalidate
+    if (CACHEABLE_ROUTES.some((route) => url.pathname.startsWith(route))) {
+        event.respondWith(staleWhileRevalidate(request))
+        return
+    }
+
+    // Default: Network first with offline fallback
     event.respondWith(networkFirst(request))
-    return
-  }
-
-  // Static assets: Cache first
-  if (isStaticAsset(url.pathname)) {
-    event.respondWith(cacheFirst(request))
-    return
-  }
-
-  // Cacheable routes (posts, profiles): Stale-while-revalidate
-  if (CACHEABLE_ROUTES.some((route) => url.pathname.startsWith(route))) {
-    event.respondWith(staleWhileRevalidate(request))
-    return
-  }
-
-  // Default: Network first with offline fallback
-  event.respondWith(networkFirst(request))
 })
 
 // Cache-first strategy for static assets
 async function cacheFirst(request) {
-  const cached = await caches.match(request)
-  if (cached) {
-    return cached
-  }
-
-  try {
-    const response = await fetch(request)
-    if (response.ok) {
-      const cache = await caches.open(STATIC_CACHE)
-      cache.put(request, response.clone())
+    const cached = await caches.match(request)
+    if (cached) {
+        return cached
     }
-    return response
-  } catch (error) {
-    return offlineFallback()
-  }
+
+    try {
+        const response = await fetch(request)
+        if (response.ok) {
+            const cache = await caches.open(STATIC_CACHE)
+            cache.put(request, response.clone())
+        }
+        return response
+    } catch (error) {
+        return offlineFallback()
+    }
 }
 
 // Network-first strategy for API and dynamic content
 async function networkFirst(request) {
-  try {
-    const response = await fetch(request)
-    if (response.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE)
-      cache.put(request, response.clone())
+    try {
+        const response = await fetch(request)
+        if (response.ok) {
+            const cache = await caches.open(DYNAMIC_CACHE)
+            cache.put(request, response.clone())
+        }
+        return response
+    } catch (error) {
+        const cached = await caches.match(request)
+        if (cached) {
+            return cached
+        }
+        return offlineFallback()
     }
-    return response
-  } catch (error) {
-    const cached = await caches.match(request)
-    if (cached) {
-      return cached
-    }
-    return offlineFallback()
-  }
 }
 
 // Stale-while-revalidate for posts/profiles
 async function staleWhileRevalidate(request) {
-  const cache = await caches.open(DYNAMIC_CACHE)
-  const cached = await cache.match(request)
+    const cache = await caches.open(DYNAMIC_CACHE)
+    const cached = await cache.match(request)
 
-  const networkPromise = fetch(request)
-    .then((response) => {
-      if (response.ok) {
-        cache.put(request, response.clone())
-      }
-      return response
-    })
-    .catch(() => cached || offlineFallback())
+    const networkPromise = fetch(request)
+        .then((response) => {
+            if (response.ok) {
+                cache.put(request, response.clone())
+            }
+            return response
+        })
+        .catch(() => cached || offlineFallback())
 
-  return cached || networkPromise
+    return cached || networkPromise
 }
 
 // Check if URL is a static asset
 function isStaticAsset(pathname) {
-  return (
-    pathname.startsWith('/_next/static/') ||
-    pathname.startsWith('/icons/') ||
-    pathname.endsWith('.js') ||
-    pathname.endsWith('.css') ||
-    pathname.endsWith('.png') ||
-    pathname.endsWith('.jpg') ||
-    pathname.endsWith('.svg') ||
-    pathname.endsWith('.woff2')
-  )
+    return (
+        pathname.startsWith('/_next/static/') ||
+        pathname.startsWith('/icons/') ||
+        pathname.endsWith('.js') ||
+        pathname.endsWith('.css') ||
+        pathname.endsWith('.png') ||
+        pathname.endsWith('.jpg') ||
+        pathname.endsWith('.svg') ||
+        pathname.endsWith('.woff2')
+    )
 }
 
 // Offline fallback page
 async function offlineFallback() {
-  const cache = await caches.open(OFFLINE_CACHE)
-  const offlinePage = await cache.match('/offline')
-  if (offlinePage) {
-    return offlinePage
-  }
+    const cache = await caches.open(OFFLINE_CACHE)
+    const offlinePage = await cache.match('/offline')
+    if (offlinePage) {
+        return offlinePage
+    }
 
-  // Fallback HTML following SyriaHub Design System
-  return new Response(
-    `<!DOCTYPE html>
+    // Fallback HTML following SyriaHub Design System
+    return new Response(
+        `<!DOCTYPE html>
     <html lang="en" class="dark">
       <head>
         <meta charset="utf-8">
@@ -390,64 +390,64 @@ async function offlineFallback() {
         </div>
       </body>
     </html>`,
-    {
-      headers: { 'Content-Type': 'text/html' },
-      status: 503,
-      statusText: 'Service Unavailable',
-    }
-  )
+        {
+            headers: { 'Content-Type': 'text/html' },
+            status: 503,
+            statusText: 'Service Unavailable',
+        }
+    )
 }
 
 // Background sync for pending submissions
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-drafts') {
-    event.waitUntil(syncDrafts())
-  }
+    if (event.tag === 'sync-drafts') {
+        event.waitUntil(syncDrafts())
+    }
 })
 
 async function syncDrafts() {
-  console.log('[SW] Syncing drafts...')
-  // Get pending drafts from IndexedDB and submit them
-  // This will be coordinated with the offlineStorage lib
+    console.log('[SW] Syncing drafts...')
+    // Get pending drafts from IndexedDB and submit them
+    // This will be coordinated with the offlineStorage lib
 }
 
 // Push notifications (placeholder)
 self.addEventListener('push', (event) => {
-  const data = event.data?.json() || {}
+    const data = event.data?.json() || {}
 
-  const options = {
-    body: data.body || 'New activity on SyriaHub',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    tag: data.tag || 'syriahub-notification',
-    requireInteraction: data.requireInteraction || false,
-    data: {
-      url: data.url || '/',
-    },
-  }
+    const options = {
+        body: data.body || 'New activity on SyriaHub',
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/badge-72x72.png',
+        tag: data.tag || 'syriahub-notification',
+        requireInteraction: data.requireInteraction || false,
+        data: {
+            url: data.url || '/',
+        },
+    }
 
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'SyriaHub', options)
-  )
+    event.waitUntil(
+        self.registration.showNotification(data.title || 'SyriaHub', options)
+    )
 })
 
 self.addEventListener('notificationclick', (event) => {
-  event.notification.close()
+    event.notification.close()
 
-  const url = event.notification.data?.url || '/'
+    const url = event.notification.data?.url || '/'
 
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then((clients) => {
-      // Focus existing window if open
-      for (const client of clients) {
-        if (client.url === url && 'focus' in client) {
-          return client.focus()
-        }
-      }
-      // Otherwise open new window
-      return self.clients.openWindow(url)
-    })
-  )
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window' }).then((clients) => {
+            // Focus existing window if open
+            for (const client of clients) {
+                if (client.url === url && 'focus' in client) {
+                    return client.focus()
+                }
+            }
+            // Otherwise open new window
+            return self.clients.openWindow(url)
+        })
+    )
 })
 
 console.log('[SW] Service worker loaded')

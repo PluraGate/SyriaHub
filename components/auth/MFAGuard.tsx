@@ -17,7 +17,7 @@ interface MFAGuardProps {
  * 
  * Use this component to wrap authenticated pages/content.
  */
-export function MFAGuard({ children, redirectTo = '/feed' }: MFAGuardProps) {
+export function MFAGuard({ children, redirectTo = '/insights' }: MFAGuardProps) {
     const [loading, setLoading] = useState(true)
     const [needsMFA, setNeedsMFA] = useState(false)
     const [factorId, setFactorId] = useState<string | null>(null)

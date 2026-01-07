@@ -352,8 +352,8 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         </div>
       )}
 
-      {/* Formatting Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 p-2 border-b border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface/50 rounded-t-xl">
+      {/* Formatting Toolbar - fixed at top, content scrolls below */}
+      <div className="flex flex-wrap items-center gap-0.5 p-2 border-b border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface/50 rounded-t-xl flex-shrink-0">
         {/* Headings */}
         <div className="flex items-center border-r border-gray-200 dark:border-dark-border pr-1 mr-1">
           <ToolbarButton
@@ -532,11 +532,23 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
       <style jsx global>{`
         .rich-editor-wrapper {
           min-height: 20rem;
+          max-height: 70vh;
           border-radius: 0.75rem;
           border: 1px solid var(--color-border);
           background: var(--color-bg);
+          display: flex;
+          flex-direction: column;
           overflow: hidden;
+          max-width: 100%;
           transition: all 0.2s ease;
+        }
+        
+        /* Make the editor content area scrollable */
+        .milkdown-editor {
+          flex: 1;
+          overflow-y: auto;
+          overflow-x: hidden;
+          min-height: 0;
         }
         
         /* Line Numbers Logic - Strict Scoping */
@@ -632,7 +644,6 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
         .milkdown .ProseMirror {
           outline: none;
           padding: 1rem 1.5rem;
-          padding-top: 3.5rem;
           min-height: 18rem;
         }
 
