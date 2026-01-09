@@ -93,7 +93,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${outfit.variable} ${cairo.variable} ${locale === 'ar' ? 'font-arabic' : 'font-sans'} bg-background text-text overflow-x-hidden`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${outfit.variable} ${cairo.variable} ${locale === 'ar' ? 'font-arabic' : 'font-sans'} bg-background text-text`} suppressHydrationWarning>
         <SkipNavLink />
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>

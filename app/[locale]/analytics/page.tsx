@@ -204,17 +204,17 @@ export default function ResearcherAnalyticsDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
+        <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col overflow-x-hidden">
             <Navbar user={user} />
 
-            <main className="flex-1 container-custom py-8 lg:py-12">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 lg:py-12 overflow-x-hidden box-border">
                 {/* Page Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10">
-                            <BarChart3 className="w-7 h-7 text-primary" />
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10 flex-shrink-0">
+                            <BarChart3 className="w-5 h-5 sm:w-7 sm:h-7 text-primary" />
                         </div>
-                        <h1 className="text-2xl lg:text-3xl font-display font-bold text-text dark:text-dark-text">
+                        <h1 className="text-lg sm:text-2xl lg:text-3xl font-display font-bold text-text dark:text-dark-text truncate">
                             {t('title')}
                         </h1>
                     </div>
@@ -306,7 +306,7 @@ export default function ResearcherAnalyticsDashboard() {
                 </div>
 
                 {/* Secondary Stats Cards - 5 cards in a row */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 mb-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 mb-8 min-w-0">
                     <StatCard
                         icon={UsersIcon}
                         label={t('followers')}
@@ -359,7 +359,7 @@ export default function ResearcherAnalyticsDashboard() {
                 </div>
 
                 {/* Charts Section */}
-                <div className="grid grid-cols-1 gap-6 lg:gap-8 mb-8">
+                <div className="grid grid-cols-1 gap-6 lg:gap-8 mb-8 min-w-0">
                     {/* Views Over Time Chart */}
                     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border overflow-hidden shadow-sm">
                         <div className="p-5 border-b border-gray-100 dark:border-dark-border">
@@ -676,7 +676,7 @@ function StatCard({ icon: Icon, label, value, suffix = '', trend, daysBack = 30,
     const isPositive = (trend || 0) > 0
 
     return (
-        <div className="group bg-white dark:bg-dark-surface p-4 rounded-2xl border border-gray-200 dark:border-dark-border hover:border-gray-300 dark:hover:border-dark-border-hover transition-all hover:shadow-md">
+        <div className="group bg-white dark:bg-dark-surface p-4 rounded-2xl border border-gray-200 dark:border-dark-border hover:border-gray-300 dark:hover:border-dark-border-hover transition-all hover:shadow-md min-w-0 overflow-hidden">
             <div className="flex items-start justify-between mb-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${gradient} group-hover:scale-105 transition-transform`}>
                     <Icon className={`w-5 h-5 ${iconColor}`} />

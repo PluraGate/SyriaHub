@@ -31,6 +31,13 @@ import {
     FileText,
     Users2
 } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { ResearchGap, ResearchGapPriority, ResearchGapStatus, ResearchGapType } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { formatDistanceToNow } from 'date-fns'
@@ -339,42 +346,46 @@ export default function ResearchGapsPage() {
                         {t('filters')}:
                     </div>
 
-                    <select
-                        value={statusFilter}
-                        onChange={e => setStatusFilter(e.target.value as ResearchGapStatus | 'all')}
-                        className="select-input"
-                    >
-                        <option value="all">{t('allStatuses')}</option>
-                        <option value="identified">{t('statuses.identified')}</option>
-                        <option value="investigating">{t('statuses.investigating')}</option>
-                        <option value="addressed">{t('statuses.addressed')}</option>
-                        <option value="closed">{t('statuses.closed')}</option>
-                    </select>
 
-                    <select
-                        value={priorityFilter}
-                        onChange={e => setPriorityFilter(e.target.value as ResearchGapPriority | 'all')}
-                        className="select-input"
-                    >
-                        <option value="all">{t('allPriorities')}</option>
-                        <option value="critical">{t('priorities.critical')}</option>
-                        <option value="high">{t('priorities.high')}</option>
-                        <option value="medium">{t('priorities.medium')}</option>
-                        <option value="low">{t('priorities.low')}</option>
-                    </select>
+                    <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as ResearchGapStatus | 'all')}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder={t('allStatuses')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allStatuses')}</SelectItem>
+                            <SelectItem value="identified">{t('statuses.identified')}</SelectItem>
+                            <SelectItem value="investigating">{t('statuses.investigating')}</SelectItem>
+                            <SelectItem value="addressed">{t('statuses.addressed')}</SelectItem>
+                            <SelectItem value="closed">{t('statuses.closed')}</SelectItem>
+                        </SelectContent>
+                    </Select>
 
-                    <select
-                        value={gapTypeFilter}
-                        onChange={e => setGapTypeFilter(e.target.value as ResearchGapType | 'all')}
-                        className="select-input"
-                    >
-                        <option value="all">{t('allTypes')}</option>
-                        <option value="topical">{t('types.topical')}</option>
-                        <option value="data">{t('types.data')}</option>
-                        <option value="methodological">{t('types.methodological')}</option>
-                        <option value="population">{t('types.population')}</option>
-                        <option value="outdated">{t('types.outdated')}</option>
-                    </select>
+                    <Select value={priorityFilter} onValueChange={(value) => setPriorityFilter(value as ResearchGapPriority | 'all')}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder={t('allPriorities')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allPriorities')}</SelectItem>
+                            <SelectItem value="critical">{t('priorities.critical')}</SelectItem>
+                            <SelectItem value="high">{t('priorities.high')}</SelectItem>
+                            <SelectItem value="medium">{t('priorities.medium')}</SelectItem>
+                            <SelectItem value="low">{t('priorities.low')}</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={gapTypeFilter} onValueChange={(value) => setGapTypeFilter(value as ResearchGapType | 'all')}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder={t('allTypes')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allTypes')}</SelectItem>
+                            <SelectItem value="topical">{t('types.topical')}</SelectItem>
+                            <SelectItem value="data">{t('types.data')}</SelectItem>
+                            <SelectItem value="methodological">{t('types.methodological')}</SelectItem>
+                            <SelectItem value="population">{t('types.population')}</SelectItem>
+                            <SelectItem value="outdated">{t('types.outdated')}</SelectItem>
+                        </SelectContent>
+                    </Select>
 
                     <button
                         onClick={() => setStrategicOnly(!strategicOnly)}
@@ -395,325 +406,333 @@ export default function ResearchGapsPage() {
                 </div>
 
                 {/* Success Stories - Resolved Gaps Showcase */}
-                {gaps.filter(g => g.status === 'addressed' && g.addressed_by_post_id).length > 0 && statusFilter !== 'identified' && statusFilter !== 'investigating' && (
-                    <div className="mb-8 p-5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl">
-                        <div className="flex items-center gap-2 mb-4">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                            <h3 className="font-semibold text-emerald-800 dark:text-emerald-300">
-                                {t('successStories.title')}
-                            </h3>
+                {
+                    gaps.filter(g => g.status === 'addressed' && g.addressed_by_post_id).length > 0 && statusFilter !== 'identified' && statusFilter !== 'investigating' && (
+                        <div className="mb-8 p-5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl">
+                            <div className="flex items-center gap-2 mb-4">
+                                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                <h3 className="font-semibold text-emerald-800 dark:text-emerald-300">
+                                    {t('successStories.title')}
+                                </h3>
+                            </div>
+                            <p className="text-sm text-emerald-700 dark:text-emerald-400/80 mb-4">
+                                {t('successStories.description')}
+                            </p>
+                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                {gaps
+                                    .filter(g => g.status === 'addressed' && g.addressed_by_post_id)
+                                    .slice(0, 3)
+                                    .map(gap => (
+                                        <Link
+                                            key={gap.id}
+                                            href={`/post/${gap.addressed_by_post_id}`}
+                                            className="group p-3 bg-white dark:bg-dark-surface rounded-lg border border-emerald-100 dark:border-emerald-800/30 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all"
+                                        >
+                                            <h4 className="text-sm font-medium text-text dark:text-dark-text line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                                {gap.title}
+                                            </h4>
+                                            <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
+                                                <ArrowRight className="w-3.5 h-3.5" />
+                                                {t('successStories.viewResearch')}
+                                            </div>
+                                        </Link>
+                                    ))}
+                            </div>
                         </div>
-                        <p className="text-sm text-emerald-700 dark:text-emerald-400/80 mb-4">
-                            {t('successStories.description')}
-                        </p>
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                            {gaps
-                                .filter(g => g.status === 'addressed' && g.addressed_by_post_id)
-                                .slice(0, 3)
-                                .map(gap => (
-                                    <Link
-                                        key={gap.id}
-                                        href={`/post/${gap.addressed_by_post_id}`}
-                                        className="group p-3 bg-white dark:bg-dark-surface rounded-lg border border-emerald-100 dark:border-emerald-800/30 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all"
-                                    >
-                                        <h4 className="text-sm font-medium text-text dark:text-dark-text line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                            {gap.title}
-                                        </h4>
-                                        <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
-                                            <ArrowRight className="w-3.5 h-3.5" />
-                                            {t('successStories.viewResearch')}
-                                        </div>
-                                    </Link>
-                                ))}
-                        </div>
-                    </div>
-                )}
+                    )
+                }
 
                 {/* New Gap Form Modal */}
-                {showNewGapForm && (
-                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
-                            <h2 className="text-xl font-bold text-text dark:text-dark-text mb-4">
-                                {t('form.title')}
-                            </h2>
-                            <form onSubmit={handleSubmitGap} className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        {t('form.titleLabel')} *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={newGapTitle}
-                                        onChange={e => setNewGapTitle(e.target.value)}
-                                        placeholder={t('form.titlePlaceholder')}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
-                                        required
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        {t('form.descriptionLabel')}
-                                    </label>
-                                    <textarea
-                                        value={newGapDescription}
-                                        onChange={e => setNewGapDescription(e.target.value)}
-                                        placeholder={t('form.descriptionPlaceholder')}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text min-h-[100px] resize-y"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
+                {
+                    showNewGapForm && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
+                                <h2 className="text-xl font-bold text-text dark:text-dark-text mb-4">
+                                    {t('form.title')}
+                                </h2>
+                                <form onSubmit={handleSubmitGap} className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                            {t('form.disciplineLabel')}
+                                            {t('form.titleLabel')} *
                                         </label>
                                         <input
                                             type="text"
-                                            value={newGapDiscipline}
-                                            onChange={e => setNewGapDiscipline(e.target.value)}
-                                            placeholder={t('form.disciplinePlaceholder')}
+                                            value={newGapTitle}
+                                            onChange={e => setNewGapTitle(e.target.value)}
+                                            placeholder={t('form.titlePlaceholder')}
+                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                            {t('form.descriptionLabel')}
+                                        </label>
+                                        <textarea
+                                            value={newGapDescription}
+                                            onChange={e => setNewGapDescription(e.target.value)}
+                                            placeholder={t('form.descriptionPlaceholder')}
+                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text min-h-[100px] resize-y"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                                {t('form.disciplineLabel')}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={newGapDiscipline}
+                                                onChange={e => setNewGapDiscipline(e.target.value)}
+                                                placeholder={t('form.disciplinePlaceholder')}
+                                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                                {t('form.priorityLabel')}
+                                            </label>
+                                            <Select value={newGapPriority} onValueChange={(value) => setNewGapPriority(value as ResearchGapPriority)}>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="low">{t('priorities.low')}</SelectItem>
+                                                    <SelectItem value="medium">{t('priorities.medium')}</SelectItem>
+                                                    <SelectItem value="high">{t('priorities.high')}</SelectItem>
+                                                    <SelectItem value="critical">{t('priorities.critical')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                            {t('form.gapTypeLabel')}
+                                        </label>
+                                        <Select value={newGapType} onValueChange={(value) => setNewGapType(value as ResearchGapType)}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="topical">{t('typeDescriptions.topical')}</SelectItem>
+                                                <SelectItem value="data">{t('typeDescriptions.data')}</SelectItem>
+                                                <SelectItem value="methodological">{t('typeDescriptions.methodological')}</SelectItem>
+                                                <SelectItem value="population">{t('typeDescriptions.population')}</SelectItem>
+                                                <SelectItem value="outdated">{t('typeDescriptions.outdated')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                            {t('form.geographicLabel')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newGapSpatialContext}
+                                            onChange={e => setNewGapSpatialContext(e.target.value)}
+                                            placeholder={t('form.geographicPlaceholder')}
                                             className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                            {t('form.priorityLabel')}
+
+                                    {/* Strategic Checkbox */}
+                                    <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                        <input
+                                            type="checkbox"
+                                            id="strategic-checkbox"
+                                            checked={newGapIsStrategic}
+                                            onChange={e => setNewGapIsStrategic(e.target.checked)}
+                                            className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                                        />
+                                        <label htmlFor="strategic-checkbox" className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                                                <span className="font-medium text-amber-800 dark:text-amber-300">{t('form.strategicCheckbox')}</span>
+                                            </div>
+                                            <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                                                {t('form.strategicNote')}
+                                            </p>
                                         </label>
-                                        <select
-                                            value={newGapPriority}
-                                            onChange={e => setNewGapPriority(e.target.value as ResearchGapPriority)}
-                                            className="select-input"
-                                        >
-                                            <option value="low">{t('priorities.low')}</option>
-                                            <option value="medium">{t('priorities.medium')}</option>
-                                            <option value="high">{t('priorities.high')}</option>
-                                            <option value="critical">{t('priorities.critical')}</option>
-                                        </select>
                                     </div>
-                                </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        {t('form.gapTypeLabel')}
-                                    </label>
-                                    <select
-                                        value={newGapType}
-                                        onChange={e => setNewGapType(e.target.value as ResearchGapType)}
-                                        className="select-input"
-                                    >
-                                        <option value="topical">{t('typeDescriptions.topical')}</option>
-                                        <option value="data">{t('typeDescriptions.data')}</option>
-                                        <option value="methodological">{t('typeDescriptions.methodological')}</option>
-                                        <option value="population">{t('typeDescriptions.population')}</option>
-                                        <option value="outdated">{t('typeDescriptions.outdated')}</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
-                                        {t('form.geographicLabel')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={newGapSpatialContext}
-                                        onChange={e => setNewGapSpatialContext(e.target.value)}
-                                        placeholder={t('form.geographicPlaceholder')}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text"
-                                    />
-                                </div>
-
-                                {/* Strategic Checkbox */}
-                                <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                                    <input
-                                        type="checkbox"
-                                        id="strategic-checkbox"
-                                        checked={newGapIsStrategic}
-                                        onChange={e => setNewGapIsStrategic(e.target.checked)}
-                                        className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
-                                    />
-                                    <label htmlFor="strategic-checkbox" className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                                            <span className="font-medium text-amber-800 dark:text-amber-300">{t('form.strategicCheckbox')}</span>
-                                        </div>
-                                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                                            {t('form.strategicNote')}
-                                        </p>
-                                    </label>
-                                </div>
-
-                                <div className="flex gap-3 pt-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowNewGapForm(false)}
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg transition-all"
-                                    >
-                                        {t('form.cancel')}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={submitting}
-                                        className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                                    >
-                                        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                                        {t('form.submit')}
-                                    </button>
-                                </div>
-                            </form>
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewGapForm(false)}
+                                            className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-bg transition-all"
+                                        >
+                                            {t('form.cancel')}
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={submitting}
+                                            className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                        >
+                                            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                                            {t('form.submit')}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )
+                }
 
                 {/* Gaps List */}
-                {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                    </div>
-                ) : gaps.length === 0 ? (
-                    <div className="text-center py-20">
-                        <AlertCircle className="w-12 h-12 mx-auto text-text-light dark:text-dark-text-muted mb-4" />
-                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
-                            {t('empty.title')}
-                        </h3>
-                        <p className="text-text-light dark:text-dark-text-muted mb-6">
-                            {t('empty.description')}
-                        </p>
-                        <button
-                            onClick={() => setShowNewGapForm(true)}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all"
-                        >
-                            <Plus className="w-5 h-5" />
-                            {t('identifyGap')}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {gaps.map(gap => (
-                            <div
-                                key={gap.id}
-                                className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5 hover:border-primary/30 dark:hover:border-primary-light/30 transition-all"
+                {
+                    loading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        </div>
+                    ) : gaps.length === 0 ? (
+                        <div className="text-center py-20">
+                            <AlertCircle className="w-12 h-12 mx-auto text-text-light dark:text-dark-text-muted mb-4" />
+                            <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2">
+                                {t('empty.title')}
+                            </h3>
+                            <p className="text-text-light dark:text-dark-text-muted mb-6">
+                                {t('empty.description')}
+                            </p>
+                            <button
+                                onClick={() => setShowNewGapForm(true)}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all"
                             >
-                                <div className="flex gap-4">
-                                    {/* Upvote Button */}
-                                    <div className="flex flex-col items-center gap-1">
-                                        <button
-                                            onClick={() => handleUpvote(gap.id)}
-                                            className={`p-2 rounded-lg transition-all ${userUpvotes.has(gap.id)
-                                                ? 'bg-primary text-white'
-                                                : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-primary/10 hover:text-primary'
-                                                }`}
-                                        >
-                                            <ChevronUp className="w-5 h-5" />
-                                        </button>
-                                        <span className={`text-sm font-semibold ${userUpvotes.has(gap.id) ? 'text-primary' : 'text-text dark:text-dark-text'}`}>
-                                            {gap.upvote_count}
-                                        </span>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            {/* Strategic Star */}
-                                            {gap.is_strategic && (
-                                                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-medium flex items-center gap-1">
-                                                    <Star className="w-3 h-3 fill-current" />
-                                                    Strategic
-                                                </span>
-                                            )}
-                                            {/* Gap Type Badge */}
-                                            {gap.gap_type && (
-                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${gapTypeColors[gap.gap_type]}`}>
-                                                    {gapTypeLabels[gap.gap_type]}
-                                                </span>
-                                            )}
-                                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[gap.status]}`}>
-                                                {statusLabels[gap.status]}
-                                            </span>
-                                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityColors[gap.priority]}`}>
-                                                {t('card.priorityLabel', { priority: t(`priorities.${gap.priority}`) })}
-                                            </span>
-                                            {gap.discipline && (
-                                                <span className="px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-dark-bg text-xs font-medium text-text-light dark:text-dark-text-muted">
-                                                    {gap.discipline}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2 line-clamp-2">
-                                            {gap.title}
-                                        </h3>
-
-                                        {gap.description && (
-                                            <p className="text-sm text-text-light dark:text-dark-text-muted mb-3 line-clamp-2">
-                                                {gap.description}
-                                            </p>
-                                        )}
-
-                                        <div className="flex flex-wrap items-center gap-4 text-xs text-text-light dark:text-dark-text-muted">
-                                            {gap.spatial_context && (
-                                                <span className="flex items-center gap-1">
-                                                    <MapPin className="w-3.5 h-3.5" />
-                                                    {gap.spatial_context}
-                                                </span>
-                                            )}
-                                            <span className="flex items-center gap-1">
-                                                <Clock className="w-3.5 h-3.5" />
-                                                {formatDistanceToNow(new Date(gap.created_at), { addSuffix: true })}
-                                            </span>
-                                            {gap.creator && (
-                                                <span className="flex items-center gap-1">
-                                                    <UserIcon className="w-3.5 h-3.5" />
-                                                    {(gap.creator as any).name || (gap.creator as any).email?.split('@')[0]}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {/* Claim / Progress Section */}
-                                        {gap.status === 'identified' && user && user.id !== gap.created_by && (
+                                <Plus className="w-5 h-5" />
+                                {t('identifyGap')}
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {gaps.map(gap => (
+                                <div
+                                    key={gap.id}
+                                    className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-5 hover:border-primary/30 dark:hover:border-primary-light/30 transition-all"
+                                >
+                                    <div className="flex gap-4">
+                                        {/* Upvote Button */}
+                                        <div className="flex flex-col items-center gap-1">
                                             <button
-                                                onClick={() => handleClaim(gap.id)}
-                                                className="mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-all"
+                                                onClick={() => handleUpvote(gap.id)}
+                                                className={`p-2 rounded-lg transition-all ${userUpvotes.has(gap.id)
+                                                    ? 'bg-primary text-white'
+                                                    : 'bg-gray-100 dark:bg-dark-bg text-text-light dark:text-dark-text-muted hover:bg-primary/10 hover:text-primary'
+                                                    }`}
                                             >
-                                                <Target className="w-4 h-4" />
-                                                {t('card.claimButton')}
+                                                <ChevronUp className="w-5 h-5" />
                                             </button>
-                                        )}
+                                            <span className={`text-sm font-semibold ${userUpvotes.has(gap.id) ? 'text-primary' : 'text-text dark:text-dark-text'}`}>
+                                                {gap.upvote_count}
+                                            </span>
+                                        </div>
 
-                                        {gap.status === 'investigating' && gap.claimer && (
-                                            <div className="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
-                                                <TrendingUp className="w-4 h-4" />
-                                                Being investigated by {(gap.claimer as any).name || (gap.claimer as any).email?.split('@')[0]}
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                {/* Strategic Star */}
+                                                {gap.is_strategic && (
+                                                    <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-medium flex items-center gap-1">
+                                                        <Star className="w-3 h-3 fill-current" />
+                                                        Strategic
+                                                    </span>
+                                                )}
+                                                {/* Gap Type Badge */}
+                                                {gap.gap_type && (
+                                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${gapTypeColors[gap.gap_type]}`}>
+                                                        {gapTypeLabels[gap.gap_type]}
+                                                    </span>
+                                                )}
+                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[gap.status]}`}>
+                                                    {statusLabels[gap.status]}
+                                                </span>
+                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityColors[gap.priority]}`}>
+                                                    {t('card.priorityLabel', { priority: t(`priorities.${gap.priority}`) })}
+                                                </span>
+                                                {gap.discipline && (
+                                                    <span className="px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-dark-bg text-xs font-medium text-text-light dark:text-dark-text-muted">
+                                                        {gap.discipline}
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
-                                        {gap.status === 'addressed' && gap.addressed_by_post_id && (
-                                            <Link
-                                                href={`/post/${gap.addressed_by_post_id}`}
-                                                className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-                                            >
-                                                <CheckCircle2 className="w-4 h-4" />
-                                                {t('card.viewAddressing')}
-                                                <ArrowRight className="w-4 h-4" />
-                                            </Link>
-                                        )}
 
-                                        {/* Gap Contributions - formal collaboration system */}
-                                        {gap.status !== 'closed' && (
-                                            <GapContributions
-                                                gapId={gap.id}
-                                                gapClaimerId={gap.claimed_by || undefined}
-                                                className="mt-4"
-                                            />
-                                        )}
+                                            <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-2 line-clamp-2">
+                                                {gap.title}
+                                            </h3>
+
+                                            {gap.description && (
+                                                <p className="text-sm text-text-light dark:text-dark-text-muted mb-3 line-clamp-2">
+                                                    {gap.description}
+                                                </p>
+                                            )}
+
+                                            <div className="flex flex-wrap items-center gap-4 text-xs text-text-light dark:text-dark-text-muted">
+                                                {gap.spatial_context && (
+                                                    <span className="flex items-center gap-1">
+                                                        <MapPin className="w-3.5 h-3.5" />
+                                                        {gap.spatial_context}
+                                                    </span>
+                                                )}
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-3.5 h-3.5" />
+                                                    {formatDistanceToNow(new Date(gap.created_at), { addSuffix: true })}
+                                                </span>
+                                                {gap.creator && (
+                                                    <span className="flex items-center gap-1">
+                                                        <UserIcon className="w-3.5 h-3.5" />
+                                                        {(gap.creator as any).name || (gap.creator as any).email?.split('@')[0]}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Claim / Progress Section */}
+                                            {gap.status === 'identified' && user && user.id !== gap.created_by && (
+                                                <button
+                                                    onClick={() => handleClaim(gap.id)}
+                                                    className="mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-all"
+                                                >
+                                                    <Target className="w-4 h-4" />
+                                                    {t('card.claimButton')}
+                                                </button>
+                                            )}
+
+                                            {gap.status === 'investigating' && gap.claimer && (
+                                                <div className="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                                                    <TrendingUp className="w-4 h-4" />
+                                                    Being investigated by {(gap.claimer as any).name || (gap.claimer as any).email?.split('@')[0]}
+                                                </div>
+                                            )}
+                                            {gap.status === 'addressed' && gap.addressed_by_post_id && (
+                                                <Link
+                                                    href={`/post/${gap.addressed_by_post_id}`}
+                                                    className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                                >
+                                                    <CheckCircle2 className="w-4 h-4" />
+                                                    {t('card.viewAddressing')}
+                                                    <ArrowRight className="w-4 h-4" />
+                                                </Link>
+                                            )}
+
+                                            {/* Gap Contributions - formal collaboration system */}
+                                            {gap.status !== 'closed' && (
+                                                <GapContributions
+                                                    gapId={gap.id}
+                                                    gapClaimerId={gap.claimed_by || undefined}
+                                                    className="mt-4"
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </main>
+                            ))}
+                        </div>
+                    )
+                }
+            </main >
 
             <Footer />
-        </div>
+        </div >
     )
 }

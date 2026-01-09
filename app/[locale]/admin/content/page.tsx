@@ -358,7 +358,7 @@ export default function AdminContentPage() {
                                 </div>
                             </div>
 
-                            {/* Content Table */}
+                            {/* Content Table (Desktop) / Cards (Mobile) */}
                             <div className="card overflow-hidden">
                                 {loading ? (
                                     <div className="p-12 flex justify-center">
@@ -371,7 +371,78 @@ export default function AdminContentPage() {
                                     </div>
                                 ) : (
                                     <>
-                                        <table className="w-full text-start">
+                                        {/* Mobile Card View */}
+                                        <div className="md:hidden divide-y divide-gray-100 dark:divide-dark-border">
+                                            {posts.map((post) => (
+                                                <div key={post.id} className="p-4 space-y-3">
+                                                    {/* Title & Type */}
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <Link
+                                                            href={`/post/${post.id}`}
+                                                            className="font-medium text-text dark:text-dark-text hover:text-primary dark:hover:text-primary-light transition-colors line-clamp-2 flex-1"
+                                                        >
+                                                            {post.title}
+                                                        </Link>
+                                                        {getTypeBadge(post.content_type)}
+                                                    </div>
+
+                                                    {/* Author, Status, Date */}
+                                                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                                                        <span className="text-text-light dark:text-dark-text-muted">
+                                                            {post.author?.name || 'Unknown'}
+                                                        </span>
+                                                        <span className="text-text-light/40 dark:text-dark-text-muted/40">•</span>
+                                                        {getStatusBadge(post.approval_status)}
+                                                        <span className="text-text-light/40 dark:text-dark-text-muted/40">•</span>
+                                                        <span className="text-text-light dark:text-dark-text-muted">
+                                                            {format(new Date(post.created_at), 'MMM d, yyyy')}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Actions */}
+                                                    <div className="flex items-center gap-2 pt-1">
+                                                        <Link href={`/post/${post.id}`} className="flex-1">
+                                                            <Button variant="outline" size="sm" className="w-full">
+                                                                <Eye className="w-4 h-4 mr-2" />
+                                                                {t('view')}
+                                                            </Button>
+                                                        </Link>
+                                                        {post.approval_status !== 'approved' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleApprove(post.id)}
+                                                                className="text-green-600 hover:text-green-700 hover:bg-green-50 flex-1"
+                                                            >
+                                                                <CheckCircle className="w-4 h-4 mr-2" />
+                                                                {t('approve')}
+                                                            </Button>
+                                                        )}
+                                                        {post.approval_status !== 'rejected' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleRejectClick(post)}
+                                                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                            >
+                                                                <XCircle className="w-4 h-4" />
+                                                            </Button>
+                                                        )}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleDeleteClick(post)}
+                                                            className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Desktop Table View */}
+                                        <table className="w-full text-start hidden md:table">
                                             <thead>
                                                 <tr className="border-b border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-border/50">
                                                     <th className="text-start p-4 text-sm font-medium text-text-light dark:text-dark-text-muted">{t('tableTitle')}</th>

@@ -15,6 +15,14 @@ import {
     CheckCircle2,
     Loader2
 } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { NumberInput } from "@/components/ui/NumberInput"
 import { cn } from '@/lib/utils'
 
 interface SettingsSection {
@@ -88,9 +96,9 @@ export function PlatformSettingsDashboard() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-x-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-primary dark:text-dark-text">
                         {t('platformSettings.title')}
@@ -127,31 +135,34 @@ export function PlatformSettingsDashboard() {
                 </div>
             )}
 
-            <div className="flex gap-6">
-                {/* Sidebar Navigation */}
-                <nav className="w-64 flex-shrink-0 space-y-1">
-                    {sections.map((section) => {
-                        const Icon = section.icon
-                        const isActive = activeSection === section.id
-                        return (
-                            <button
-                                key={section.id}
-                                onClick={() => setActiveSection(section.id)}
-                                className={cn(
-                                    'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-start transition-colors',
-                                    isActive
-                                        ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-white'
-                                        : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
-                                )}
-                            >
-                                <Icon className="w-5 h-5" />
-                                <div>
-                                    <div className="font-medium">{section.title}</div>
-                                    <div className="text-xs opacity-70">{section.description}</div>
-                                </div>
-                            </button>
-                        )
-                    })}
+            <div className="flex flex-col lg:flex-row gap-6">
+                {/* Sidebar Navigation - horizontal scroll on mobile */}
+                <nav className="lg:w-64 lg:flex-shrink-0">
+                    <div className="flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 lg:space-y-1 scrollbar-thin">
+                        {sections.map((section) => {
+                            const Icon = section.icon
+                            const isActive = activeSection === section.id
+                            return (
+                                <button
+                                    key={section.id}
+                                    onClick={() => setActiveSection(section.id)}
+                                    className={cn(
+                                        'flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg text-start transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full',
+                                        isActive
+                                            ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-white'
+                                            : 'text-text-light dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
+                                    )}
+                                >
+                                    <Icon className="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" />
+                                    <div className="hidden lg:block">
+                                        <div className="font-medium">{section.title}</div>
+                                        <div className="text-xs opacity-70">{section.description}</div>
+                                    </div>
+                                    <span className="lg:hidden text-sm font-medium">{section.title}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
                 </nav>
 
                 {/* Settings Content */}
@@ -250,13 +261,12 @@ export function PlatformSettingsDashboard() {
                                     <p className="text-sm text-text-light dark:text-dark-text-muted mb-2">
                                         {t('platformSettings.moderation.autoHideThresholdDesc')}
                                     </p>
-                                    <input
-                                        type="number"
+                                    <NumberInput
                                         min={1}
                                         max={10}
                                         value={settings.maxReportsBeforeAutoHide}
-                                        onChange={(e) => updateSetting('maxReportsBeforeAutoHide', parseInt(e.target.value) || 3)}
-                                        className="w-24 px-4 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        onChange={(val) => updateSetting('maxReportsBeforeAutoHide', val)}
+                                        className="w-full sm:w-auto"
                                     />
                                 </div>
                             </div>
@@ -279,16 +289,20 @@ export function PlatformSettingsDashboard() {
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                         {t('platformSettings.notifications.digestFrequency')}
                                     </label>
-                                    <select
+                                    <Select
                                         value={settings.digestFrequency}
-                                        onChange={(e) => updateSetting('digestFrequency', e.target.value)}
-                                        className="select-input"
+                                        onValueChange={(value) => updateSetting('digestFrequency', value)}
                                     >
-                                        <option value="realtime">{t('platformSettings.notifications.options.realtime')}</option>
-                                        <option value="daily">{t('platformSettings.notifications.options.daily')}</option>
-                                        <option value="weekly">{t('platformSettings.notifications.options.weekly')}</option>
-                                        <option value="never">{t('platformSettings.notifications.options.never')}</option>
-                                    </select>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="realtime">{t('platformSettings.notifications.options.realtime')}</SelectItem>
+                                            <SelectItem value="daily">{t('platformSettings.notifications.options.daily')}</SelectItem>
+                                            <SelectItem value="weekly">{t('platformSettings.notifications.options.weekly')}</SelectItem>
+                                            <SelectItem value="never">{t('platformSettings.notifications.options.never')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                         </div>
@@ -318,14 +332,18 @@ export function PlatformSettingsDashboard() {
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                         {t('platformSettings.localization.defaultLanguage')}
                                     </label>
-                                    <select
+                                    <Select
                                         value={settings.defaultLocale}
-                                        onChange={(e) => updateSetting('defaultLocale', e.target.value)}
-                                        className="select-input"
+                                        onValueChange={(value) => updateSetting('defaultLocale', value)}
                                     >
-                                        <option value="en">{t('platformSettings.localization.languages.en')}</option>
-                                        <option value="ar">{t('platformSettings.localization.languages.ar')}</option>
-                                    </select>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="en">{t('platformSettings.localization.languages.en')}</SelectItem>
+                                            <SelectItem value="ar">{t('platformSettings.localization.languages.ar')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
 
                                 <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">

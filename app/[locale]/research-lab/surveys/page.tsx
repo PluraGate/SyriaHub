@@ -56,7 +56,7 @@ export default async function SurveysPage() {
         .from('survey_responses')
         .select('survey_id')
         .eq('respondent_id', user.id) : { data: null }
-    
+
     const completedSurveyIds = new Set(userResponses?.map(r => r.survey_id) || [])
 
     return (
@@ -65,9 +65,7 @@ export default async function SurveysPage() {
 
             <div className="flex flex-1">
                 {/* Sidebar - hidden on mobile */}
-                <div className="hidden lg:block">
-                    <ResearchLabNav />
-                </div>
+                <ResearchLabNav className="hidden md:flex" />
 
                 {/* Main Content */}
                 <main className="flex-1 container-custom py-8">
