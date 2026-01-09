@@ -11,6 +11,13 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, Check, AlertCircle, PenTool, Search } from 'lucide-react'
 import { generateShortTitle, sanitizeForSlug, generateResourceSlug } from '@/lib/utils/slug-generator'
 
@@ -581,20 +588,41 @@ export default function UploadResourcePage() {
 
                     <div className="space-y-2">
                         <Label htmlFor="license">{t('licenseLabel')}</Label>
-                        <select
-                            id="license"
-                            value={license}
-                            onChange={(e) => setLicense(e.target.value)}
-                            className="select-input"
-                        >
-                            {LICENSES.map(l => (
-                                <option key={l.value} value={l.value}>
-                                    {l.value === 'Copyright' ? tLicenses('All Rights Reserved') :
-                                        l.value === 'Other' ? l.label :
-                                            tLicenses(l.value.replace(/\./g, '_'))}
-                                </option>
-                            ))}
-                        </select>
+
+                        <Select value={license} onValueChange={setLicense}>
+                            <SelectTrigger id="license" className="w-full">
+                                <SelectValue placeholder={t('licenseLabel')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {LICENSES.map(l => (
+                                    <SelectItem key={l.value} value={l.value}>
+                                        {l.value === 'Copyright' ? tLicenses('All Rights Reserved') :
+                                            l.value === 'Other' ? l.label :
+                                                tLicenses(l.value.replace(/\./g, '_'))}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        {/* License Description */}
+                        <div className="mt-2 text-sm leading-relaxed text-text-light dark:text-gray-100 space-y-0.5 transition-all animate-in fade-in slide-in-from-top-1">
+                            <p>{tLicenses('helpText')}</p>
+                            <p className="mt-1.5">
+                                <span className="font-semibold text-text dark:text-gray-200">
+                                    {license === 'Copyright' ? tLicenses('All Rights Reserved') :
+                                        license === 'Other' ? (LICENSES.find(l => l.value === 'Other')?.label || 'Other') :
+                                            tLicenses(license.replace(/\./g, '_'))}:
+                                </span>{' '}
+                                <span className={license === 'Copyright' ? "text-amber-600 dark:text-amber-200" : "text-emerald-600 dark:text-emerald-400/80"}>
+                                    {license === 'Copyright'
+                                        ? tLicenses('descriptions.All Rights Reserved')
+                                        : license === 'Other'
+                                            ? tLicenses('descriptions.Other')
+                                            : tLicenses('descriptions.' + license.replace(/\./g, '_'))
+                                    }
+                                </span>
+                            </p>
+                        </div>
                     </div>
 
                     <div className="flex justify-end pt-4">

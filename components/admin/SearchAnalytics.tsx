@@ -171,33 +171,36 @@ export function SearchAnalytics() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 border-b border-gray-200 dark:border-dark-border pb-2">
+            <div className="flex gap-1 sm:gap-2 border-b border-gray-200 dark:border-dark-border pb-2">
                 <Button
                     variant={activeTab === 'top' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => setActiveTab('top')}
-                    className="gap-2"
+                    className="gap-2 whitespace-nowrap"
+                    title={t('topSearches')}
                 >
-                    <TrendingUp className="w-4 h-4" />
-                    {t('topSearches')}
+                    <TrendingUp className="w-4 h-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('topSearches')}</span>
                 </Button>
                 <Button
                     variant={activeTab === 'gaps' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => setActiveTab('gaps')}
-                    className="gap-2"
+                    className="gap-2 whitespace-nowrap"
+                    title={t('contentGaps')}
                 >
-                    <AlertCircle className="w-4 h-4" />
-                    {t('contentGaps')}
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('contentGaps')}</span>
                 </Button>
                 <Button
                     variant={activeTab === 'trends' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => setActiveTab('trends')}
-                    className="gap-2"
+                    className="gap-2 whitespace-nowrap"
+                    title={t('trends')}
                 >
-                    <BarChart3 className="w-4 h-4" />
-                    {t('trends')}
+                    <BarChart3 className="w-4 h-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('trends')}</span>
                 </Button>
             </div>
 

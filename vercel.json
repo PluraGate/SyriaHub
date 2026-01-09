@@ -4,6 +4,13 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/en",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/_next/static/(.*)",

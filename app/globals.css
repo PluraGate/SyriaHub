@@ -70,10 +70,7 @@
     scroll-behavior: smooth;
   }
 
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
+  /* Note: overflow-x-hidden is handled by page containers, not html/body, to preserve sticky positioning */
 
   body {
     @apply bg-background text-text font-sans antialiased;
@@ -408,6 +405,7 @@ select option:hover {
   }
 }
 
+
 /* ============================================ */
 /* CUSTOM ANIMATIONS & MICRO-INTERACTIONS      */
 /* ============================================ */
@@ -681,6 +679,17 @@ select option:hover {
 .tag-interactive:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide number input spinners globally */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield;
 }
 
 /* ============================================ */

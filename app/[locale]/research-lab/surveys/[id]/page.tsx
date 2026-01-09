@@ -76,9 +76,7 @@ export default async function SurveyPage({ params }: PageProps) {
             <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
                 <Navbar user={user} />
                 <div className="flex flex-1">
-                    <div className="hidden lg:block">
-                        <ResearchLabNav />
-                    </div>
+                    <ResearchLabNav className="hidden md:flex" />
                     <main className="flex-1 container-custom py-8">
                         <div className="text-center py-16">
                             <Lock className="w-16 h-16 mx-auto text-gray-300 dark:text-dark-text-muted mb-4" />
@@ -107,9 +105,7 @@ export default async function SurveyPage({ params }: PageProps) {
             <Navbar user={user} />
 
             <div className="flex flex-1">
-                <div className="hidden lg:block">
-                    <ResearchLabNav />
-                </div>
+                <ResearchLabNav className="hidden md:flex" />
 
                 <main className="flex-1 container-custom py-8">
                     {/* Back button */}

@@ -17,6 +17,7 @@ import {
 import { getTranslations } from 'next-intl/server'
 import { ResearchFootprint } from '@/components/research-lab/ResearchFootprint'
 import { UnansweredResearch } from '@/components/research-lab/UnansweredResearch'
+import { ResearchLabMobileNav } from '@/components/research-lab/ResearchLabMobileNav'
 
 export default async function ResearchLabPage() {
     const supabase = await createClient()
@@ -420,6 +421,7 @@ export default async function ResearchLabPage() {
                 </section>
             </main>
 
+            <ResearchLabMobileNav />
             <Footer />
         </div>
     )
