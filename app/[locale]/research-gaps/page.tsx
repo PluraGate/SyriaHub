@@ -8,6 +8,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { useToast } from '@/components/ui/toast'
 import { GapContributions } from '@/components/GapContributions'
+import { ResearchLabMobileNav } from '@/components/research-lab/ResearchLabMobileNav'
 import {
     Search,
     Plus,
@@ -732,6 +733,7 @@ export default function ResearchGapsPage() {
                 }
             </main >
 
+            <ResearchLabMobileNav />
             <Footer />
         </div >
     )
