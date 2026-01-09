@@ -25,6 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { NumberInput } from "@/components/ui/NumberInput"
 import { Button } from '@/components/ui/button'
 import { usePreferences, type UserPreferences } from '@/contexts/PreferencesContext'
 import { useToast } from '@/components/ui/toast'
@@ -146,7 +147,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-background dark:from-dark-bg to-transparent pointer-events-none z-10" />
                     {/* Right fade indicator */}
                     <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background dark:from-dark-bg to-transparent pointer-events-none z-10" />
-                    <div 
+                    <div
                         className="overflow-x-auto scrollbar-hide touch-pan-x"
                         style={{ WebkitOverflowScrolling: 'touch' }}
                     >
@@ -452,13 +453,13 @@ export function SettingsPage({ user }: SettingsPageProps) {
                                     <label className="block text-sm font-medium text-text dark:text-dark-text mb-2">
                                         {t('editorSettings.autosaveInterval')}
                                     </label>
-                                    <input
-                                        type="number"
+                                    <NumberInput
                                         min={10}
                                         max={120}
+                                        step={5}
                                         value={preferences.editor.autosave_interval}
-                                        onChange={(e) => handleUpdate('editor', 'autosave_interval', parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text"
+                                        onChange={(val) => handleUpdate('editor', 'autosave_interval', val)}
+                                        className="w-full sm:w-auto"
                                     />
                                 </div>
                             )}
