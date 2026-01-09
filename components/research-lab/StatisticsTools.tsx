@@ -377,7 +377,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-dark-border">
+            <div className="flex gap-1 sm:gap-2 mb-6 border-b border-gray-200 dark:border-dark-border">
                 {[
                     { id: 'charts', label: t('tabs.chartBuilder'), icon: BarChart3 },
                     { id: 'calculator', label: t('tabs.calculator'), icon: Calculator },
@@ -387,15 +387,16 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
                         className={`
-                            flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors
+                            flex items-center gap-2 px-3 sm:px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap
                             ${activeTab === tab.id
                                 ? 'border-secondary text-primary dark:text-secondary'
                                 : 'border-transparent text-text-light dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text'
                             }
                         `}
+                        title={tab.label}
                     >
-                        <tab.icon className="w-4 h-4" />
-                        {tab.label}
+                        <tab.icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                 ))}
             </div>
@@ -557,7 +558,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                             try {
                                                 const response = await fetch(dataset.file_url)
                                                 const text = await response.text()
-                                                
+
                                                 if (dataset.file_type?.includes('json')) {
                                                     const json = JSON.parse(text)
                                                     if (Array.isArray(json)) {

@@ -421,14 +421,14 @@ export function ResearchSearchEngine() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto overflow-x-hidden">
             {/* Header with Tabs */}
             <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('title')}</h1>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('title')}</h1>
 
                     {/* Tab Buttons */}
-                    <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg">
+                    <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-dark-border rounded-lg flex-shrink-0 self-start sm:self-auto">
                         <button
                             onClick={() => setActiveTab('search')}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'search'
@@ -437,7 +437,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Search className="w-4 h-4" />
-                            {t('search')}
+                            <span className="hidden xs:inline">{t('search')}</span>
                         </button>
                         <button
                             onClick={() => {
@@ -450,7 +450,7 @@ export function ResearchSearchEngine() {
                                 }`}
                         >
                             <Bookmark className="w-4 h-4" />
-                            {t('saved')}
+                            <span className="hidden xs:inline">{t('saved')}</span>
                             {savedSearches.length > 0 && (
                                 <span className="px-1.5 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
                                     {savedSearches.length}

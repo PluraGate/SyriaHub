@@ -11,7 +11,7 @@ export default async function QuestionAdvisorPage() {
     // Check AI usage limits
     let usageLimits = null
     let questionHistory: any[] = []
-    
+
     if (user) {
         const { data: limitsData } = await supabase.rpc('check_ai_usage_limit', {
             p_user_id: user.id,
@@ -26,7 +26,7 @@ export default async function QuestionAdvisorPage() {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
             .limit(20)
-        
+
         questionHistory = historyData || []
     }
 
@@ -36,9 +36,7 @@ export default async function QuestionAdvisorPage() {
 
             <div className="flex flex-1">
                 {/* Sidebar - hidden on mobile */}
-                <div className="hidden lg:block">
-                    <ResearchLabNav />
-                </div>
+                <ResearchLabNav className="hidden md:flex" />
 
                 {/* Main Content */}
                 <main className="flex-1 container-custom py-8">

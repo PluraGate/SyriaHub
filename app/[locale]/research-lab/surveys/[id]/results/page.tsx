@@ -76,9 +76,7 @@ export default async function SurveyResultsPage({ params }: PageProps) {
             <Navbar user={user} />
 
             <div className="flex flex-1">
-                <div className="hidden lg:block">
-                    <ResearchLabNav />
-                </div>
+                <ResearchLabNav className="hidden md:flex" />
 
                 <main className="flex-1 container-custom py-8">
                     {/* Back button */}

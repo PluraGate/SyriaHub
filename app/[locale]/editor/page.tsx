@@ -549,7 +549,7 @@ export default function EditorPage() {
           tags: tagArray,
           author_id: user.id,
           content_type: contentType,
-          status: publish ? 'published' : 'draft',
+          status: publish ? 'queued' : 'draft',
           group_id: group?.id || null,
           license: license,
         }

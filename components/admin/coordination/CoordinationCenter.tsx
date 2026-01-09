@@ -165,7 +165,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-display font-semibold text-text dark:text-dark-text flex items-center gap-2">
                         <MessagesSquare className="w-5 h-5 text-primary" />
@@ -175,9 +175,10 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                         {t('description')}
                     </p>
                 </div>
-                <Button onClick={() => setShowNewThreadDialog(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('newThread')}
+                <Button onClick={() => setShowNewThreadDialog(true)} className="whitespace-nowrap self-start sm:self-auto" size="sm">
+                    <Plus className="w-4 h-4 mr-1 sm:mr-2" />
+                    <span className="hidden xs:inline">{t('newThread')}</span>
+                    <span className="xs:hidden">{t('new')}</span>
                 </Button>
             </div>
 

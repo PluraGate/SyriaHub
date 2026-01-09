@@ -39,17 +39,17 @@ export function SocialProofBanner() {
                 // Get active users from the last 30 minutes (based on post views)
                 const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
-                // Check post_views for recent activity
-                const { count: postViewUsers } = await supabase
+                // Fetch distinct user_ids from post_views for recent activity
+                const { data: postViewData } = await supabase
                     .from('post_views')
-                    .select('user_id', { count: 'exact', head: true })
+                    .select('user_id')
                     .gte('created_at', thirtyMinutesAgo.toISOString())
                     .not('user_id', 'is', null)
 
-                // Also check reading_history for users who have been active
-                const { count: readingHistoryUsers } = await supabase
+                // Fetch distinct user_ids from reading_history for users who have been active
+                const { data: readingHistoryData } = await supabase
                     .from('reading_history')
-                    .select('user_id', { count: 'exact', head: true })
+                    .select('user_id')
                     .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
 
                 // Check if current user is authenticated (they count as online too)
@@ -57,13 +57,17 @@ export function SocialProofBanner() {
                 const { data: { session } } = await supabase.auth.getSession()
                 const currentUserId = session?.user?.id
 
-                // Calculate base count from activity
-                const activityCount = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
+                // Combine all user_ids into a Set to get unique users
+                const uniqueUsers = new Set<string>()
+                postViewData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
+                readingHistoryData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
 
-                // If user is authenticated but activity count is 0, count them as 1
-                // This ensures the current user is always counted, but avoids double-counting
-                // if they're already in the activity queries
-                const onlineNow = currentUserId && activityCount === 0 ? 1 : activityCount
+                // If user is authenticated, add them to the set (Set handles duplicates)
+                if (currentUserId) {
+                    uniqueUsers.add(currentUserId)
+                }
+
+                const onlineNow = uniqueUsers.size
 
                 // Get this week's new users
                 const { count: thisWeekUsers } = await supabase
@@ -202,17 +206,17 @@ export function OnlineIndicator() {
             const now = new Date()
             const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
-            // Check post_views for recent activity
-            const { count: postViewUsers } = await supabase
+            // Fetch distinct user_ids from post_views for recent activity
+            const { data: postViewData } = await supabase
                 .from('post_views')
-                .select('user_id', { count: 'exact', head: true })
+                .select('user_id')
                 .gte('created_at', thirtyMinutesAgo.toISOString())
                 .not('user_id', 'is', null)
 
-            // Also check reading_history for users who have been active
-            const { count: readingHistoryUsers } = await supabase
+            // Fetch distinct user_ids from reading_history for users who have been active
+            const { data: readingHistoryData } = await supabase
                 .from('reading_history')
-                .select('user_id', { count: 'exact', head: true })
+                .select('user_id')
                 .gte('last_viewed_at', thirtyMinutesAgo.toISOString())
 
             // Check if current user is authenticated (they count as online too)
@@ -220,12 +224,17 @@ export function OnlineIndicator() {
             const { data: { session } } = await supabase.auth.getSession()
             const currentUserId = session?.user?.id
 
-            // Calculate base count from activity
-            const activityCount = Math.max(postViewUsers || 0, readingHistoryUsers || 0)
+            // Combine all user_ids into a Set to get unique users
+            const uniqueUsers = new Set<string>()
+            postViewData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
+            readingHistoryData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
 
-            // If user is authenticated but activity count is 0, count them as 1
-            // This ensures the current user is always counted, but avoids double-counting
-            setOnlineCount(currentUserId && activityCount === 0 ? 1 : activityCount)
+            // If user is authenticated, add them to the set (Set handles duplicates)
+            if (currentUserId) {
+                uniqueUsers.add(currentUserId)
+            }
+
+            setOnlineCount(uniqueUsers.size)
         }
 
         loadOnlineCount()
