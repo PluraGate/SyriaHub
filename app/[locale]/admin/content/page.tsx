@@ -46,6 +46,7 @@ interface Post {
     title: string
     content_type: 'article' | 'question' | 'discussion' | 'resource' | 'event'
     approval_status: 'pending' | 'approved' | 'rejected'
+    status: 'draft' | 'queued' | 'published' | 'archived'
     created_at: string
     author: {
         id: string
@@ -110,9 +111,10 @@ export default function AdminContentPage() {
         let query = supabase
             .from('posts')
             .select(`
-                id, title, content_type, approval_status, created_at,
+                id, title, content_type, approval_status, created_at, status,
                 author:users!posts_author_id_fkey(id, name, avatar_url)
             `, { count: 'exact' })
+            .neq('status', 'draft')
             .order('created_at', { ascending: false })
             .range((page - 1) * pageSize, page * pageSize - 1)
 
@@ -148,7 +150,7 @@ export default function AdminContentPage() {
     const handleApprove = async (postId: string) => {
         const { error } = await supabase
             .from('posts')
-            .update({ approval_status: 'approved' })
+            .update({ approval_status: 'approved', status: 'published' })
             .eq('id', postId)
 
         if (error) {
@@ -302,59 +304,67 @@ export default function AdminContentPage() {
 
                             {/* Filters */}
                             <div className="card p-3 sm:p-4 mb-4 sm:mb-6">
-                                <div className="flex flex-col gap-3 sm:gap-4">
+                                <div className="flex flex-col md:flex-row gap-3">
                                     {/* Search */}
-                                    <div className="flex-1 relative">
+                                    <div className="flex-1 relative order-1">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
                                         <Input
                                             placeholder={t('searchPlaceholder')}
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                            className="pl-9"
+                                            className="pl-9 w-full"
                                         />
                                     </div>
 
-                                    {/* Status Filter */}
-                                    <div className="flex items-center gap-2">
-                                        <Filter className="w-4 h-4 text-text-light" />
-                                        <Select
-                                            value={statusFilter}
-                                            onValueChange={(value) => { setStatusFilter(value as StatusFilter); setPage(1) }}
-                                        >
-                                            <SelectTrigger className="w-[130px] bg-white dark:bg-dark-surface">
-                                                <SelectValue placeholder={t('allStatus')} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">{t('allStatus')}</SelectItem>
-                                                <SelectItem value="pending">{t('pending')}</SelectItem>
-                                                <SelectItem value="approved">{t('approved')}</SelectItem>
-                                                <SelectItem value="rejected">{t('rejected')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    {/* Filters & Button Group */}
+                                    <div className="flex flex-col sm:flex-row gap-3 order-2 md:items-center">
+                                        {/* Status & Type Filters - Side by side on mobile */}
+                                        <div className="flex gap-2 w-full sm:w-auto">
+                                            {/* Status Filter */}
+                                            <div className="flex items-center gap-2 flex-1 sm:flex-none min-w-0">
+                                                <Filter className="w-4 h-4 text-text-light shrink-0" />
+                                                <Select
+                                                    value={statusFilter}
+                                                    onValueChange={(value) => { setStatusFilter(value as StatusFilter); setPage(1) }}
+                                                >
+                                                    <SelectTrigger className="w-full sm:w-[130px] bg-white dark:bg-dark-surface">
+                                                        <SelectValue placeholder={t('allStatus')} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('allStatus')}</SelectItem>
+                                                        <SelectItem value="pending">{t('pending')}</SelectItem>
+                                                        <SelectItem value="approved">{t('approved')}</SelectItem>
+                                                        <SelectItem value="rejected">{t('rejected')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Type Filter */}
+                                            <div className="flex-1 sm:flex-none min-w-0">
+                                                <Select
+                                                    value={typeFilter}
+                                                    onValueChange={(value) => { setTypeFilter(value as ContentTypeFilter); setPage(1) }}
+                                                >
+                                                    <SelectTrigger className="w-full sm:w-[130px] bg-white dark:bg-dark-surface">
+                                                        <SelectValue placeholder={t('allTypes')} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('allTypes')}</SelectItem>
+                                                        <SelectItem value="article">{t('articles')}</SelectItem>
+                                                        <SelectItem value="question">{t('questions')}</SelectItem>
+                                                        <SelectItem value="discussion">{t('discussions')}</SelectItem>
+                                                        <SelectItem value="resource">{t('resources')}</SelectItem>
+                                                        <SelectItem value="event">{t('events')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+
+                                        <Button onClick={handleSearch} className="w-full sm:w-auto">
+                                            {t('search')}
+                                        </Button>
                                     </div>
-
-                                    {/* Type Filter */}
-                                    <Select
-                                        value={typeFilter}
-                                        onValueChange={(value) => { setTypeFilter(value as ContentTypeFilter); setPage(1) }}
-                                    >
-                                        <SelectTrigger className="w-[130px] bg-white dark:bg-dark-surface">
-                                            <SelectValue placeholder={t('allTypes')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">{t('allTypes')}</SelectItem>
-                                            <SelectItem value="article">{t('articles')}</SelectItem>
-                                            <SelectItem value="question">{t('questions')}</SelectItem>
-                                            <SelectItem value="discussion">{t('discussions')}</SelectItem>
-                                            <SelectItem value="resource">{t('resources')}</SelectItem>
-                                            <SelectItem value="event">{t('events')}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-
-                                    <Button onClick={handleSearch}>
-                                        {t('search')}
-                                    </Button>
                                 </div>
                             </div>
 

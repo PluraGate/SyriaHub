@@ -81,7 +81,7 @@ export function ResearchLabMobileNav() {
     }
 
     return (
-        <div className="md:hidden fixed bottom-6 right-24 z-50">
+        <div className="fixed bottom-6 right-24 z-50">
             {/* Backdrop overlay when open */}
             {isOpen && (
                 <div

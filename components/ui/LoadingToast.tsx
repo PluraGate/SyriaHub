@@ -42,21 +42,27 @@ export function LoadingToast({
             }, 1000)
         } else if (status === 'success' || status === 'error') {
             // Show immediately for success/error
-            setShouldRender(true)
-            requestAnimationFrame(() => setVisible(true))
-
-            // Auto dismiss after duration
+            // Wrap in timeout to avoid setting state synchronously in effect
             timeoutRef.current = setTimeout(() => {
-                setVisible(false)
-                setTimeout(() => {
-                    setShouldRender(false)
-                    onClose?.()
-                }, 300) // Wait for exit animation
-            }, duration)
+                setShouldRender(true)
+                requestAnimationFrame(() => setVisible(true))
+
+                // Auto dismiss after duration
+                timeoutRef.current = setTimeout(() => {
+                    setVisible(false)
+                    setTimeout(() => {
+                        setShouldRender(false)
+                        onClose?.()
+                    }, 300) // Wait for exit animation
+                }, duration)
+            }, 0)
         } else {
             // Idle - hide
-            setVisible(false)
-            setTimeout(() => setShouldRender(false), 300)
+            // Wrap in timeout to avoid setting state synchronously in effect
+            timeoutRef.current = setTimeout(() => {
+                setVisible(false)
+                setTimeout(() => setShouldRender(false), 300)
+            }, 0)
         }
 
         return () => {
