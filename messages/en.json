@@ -618,6 +618,9 @@
         "ctaDesc": "Add your research to a shared, traceable knowledge base.",
         "createAccount": "Join the Commons",
         "latestResources": "Latest Resources",
+        "resources": {
+            "subtitle": "Latest tools, datasets, and reports"
+        },
         "recentResearch": "Recent Contributions",
         "viewAll": "View All",
         "popularTopics": "Active Topics",

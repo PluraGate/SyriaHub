@@ -187,7 +187,7 @@ export default function AchievementsPage() {
                     <div className="flex items-start gap-3">
                         <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0 mt-1" />
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text">
+                            <h1 className="text-xl sm:text-2xl font-bold text-text dark:text-dark-text">
                                 {t('pageTitle')}
                             </h1>
                             <p className="text-sm sm:text-base text-text-light dark:text-dark-text-muted mt-0.5">
@@ -217,7 +217,7 @@ export default function AchievementsPage() {
                         {/* Stats Summary */}
                         {achievements && (
                             <div className="mt-6 p-6 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-                                <h3 className="font-semibold text-text dark:text-dark-text mb-4">
+                                <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-4">
                                     {t('achievementProgress')}
                                 </h3>
                                 <div className="space-y-4">
@@ -237,11 +237,11 @@ export default function AchievementsPage() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4 pt-2">
                                         <div className="text-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg">
-                                            <p className="text-2xl font-bold text-primary">{achievements.unlocked_count}</p>
+                                            <p className="text-xl font-bold text-primary">{achievements.unlocked_count}</p>
                                             <p className="text-xs text-text-light dark:text-dark-text-muted">{t('unlocked')}</p>
                                         </div>
                                         <div className="text-center p-3 bg-gray-50 dark:bg-dark-bg rounded-lg">
-                                            <p className="text-2xl font-bold text-text dark:text-dark-text">
+                                            <p className="text-xl font-bold text-text dark:text-dark-text">
                                                 {achievements.total_count - achievements.unlocked_count}
                                             </p>
                                             <p className="text-xs text-text-light dark:text-dark-text-muted">{t('remaining')}</p>
