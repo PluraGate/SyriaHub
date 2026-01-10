@@ -17,6 +17,7 @@ interface TrendingPost {
     comment_count: number
     tags: string[]
     hot_score: number
+    content_type: string
 }
 
 type TimeRange = '24h' | '7d' | '30d'
@@ -52,29 +53,31 @@ export function TrendingPosts() {
             const { data, error } = await supabase
                 .from('posts')
                 .select(`
-          id,
-          title,
-          created_at,
-          vote_count,
-          tags,
-          content_type,
-          metadata,
-          author:users!posts_author_id_fkey(id, name, email)
-        `)
+                  id,
+                  title,
+                  created_at,
+                  vote_count,
+                  tags,
+                  content_type,
+                  metadata,
+                  author:users!posts_author_id_fkey(id, name, email)
+                `)
                 .eq('status', 'published')
                 .neq('approval_status', 'rejected')
+                .neq('content_type', 'resource') // Filter resources on server
                 .gte('created_at', since.toISOString())
                 .order('vote_count', { ascending: false, nullsFirst: false })
-                .limit(20) // Fetch more to allow filtering
+                .limit(10) // Fetch less since we filter less on client
 
             if (!error && data) {
-                // Filter out past events (events whose start_time has passed)
+                // Filter out past events
                 const filteredData = data.filter(post => {
+                    // Exclude past events
                     if (post.content_type === 'event' && post.metadata?.start_time) {
                         const eventDate = new Date(post.metadata.start_time)
                         return eventDate >= now // Only include future events
                     }
-                    return true // Include all non-event posts
+                    return true // Include all other posts
                 })
 
                 // Calculate hot score and transform data
@@ -94,6 +97,7 @@ export function TrendingPosts() {
                         comment_count: 0, // Would need separate query
                         tags: post.tags || [],
                         hot_score: hotScore,
+                        content_type: post.content_type || 'post',
                     }
                 })
 
@@ -166,7 +170,7 @@ export function TrendingPosts() {
                     posts.map((post, index) => (
                         <Link
                             key={post.id}
-                            href={`/post/${post.id}`}
+                            href={post.content_type === 'event' ? `/events/${post.id}` : `/post/${post.id}`}
                             className="flex gap-4 p-4 hover:bg-gray-50 dark:hover:bg-dark-bg transition-colors group"
                         >
                             {/* Rank Number */}

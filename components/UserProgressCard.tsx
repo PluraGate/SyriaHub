@@ -121,8 +121,8 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
             {/* Header */}
             <div className="p-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">{t('yourProgress')}</h3>
+                    <Zap className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                    <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide">{t('yourProgress')}</h3>
                 </div>
                 <Link
                     href="/achievements"
@@ -137,16 +137,16 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
             <div className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-dark-bg dark:to-dark-surface">
                 <div className="flex items-center gap-4 mb-4">
                     <div className={cn(
-                        "w-16 h-16 rounded-2xl flex items-center justify-center",
+                        "w-10 h-10 rounded-lg flex items-center justify-center",
                         tier === 'bronze' && "bg-gradient-to-br from-amber-400 to-amber-600",
                         tier === 'silver' && "bg-gradient-to-br from-gray-300 to-gray-500",
                         tier === 'gold' && "bg-gradient-to-br from-yellow-300 to-yellow-500",
                         tier === 'platinum' && "bg-gradient-to-br from-purple-400 to-purple-600"
                     )}>
-                        <span className="text-2xl font-bold text-white">{progress.level}</span>
+                        <span className="text-lg font-bold text-white">{progress.level}</span>
                     </div>
                     <div>
-                        <p className="text-lg font-bold text-text dark:text-dark-text">
+                        <p className="font-semibold text-text dark:text-dark-text">
                             {progress.current_level?.name || `Level ${progress.level}`}
                         </p>
                         <p className="text-sm text-text-light dark:text-dark-text-muted capitalize">
@@ -188,15 +188,15 @@ export function UserProgressCard({ userId, compact = false }: UserProgressCardPr
             {/* Stats Grid */}
             <div className="grid grid-cols-2 divide-x divide-gray-100 dark:divide-dark-border border-t border-gray-100 dark:border-dark-border">
                 <div className="p-4 text-center">
-                    <div className="flex items-center justify-center gap-1 text-2xl font-bold text-text dark:text-dark-text">
-                        <Zap className="w-5 h-5 text-yellow-500" />
+                    <div className="flex items-center justify-center gap-1 text-lg font-bold text-text dark:text-dark-text">
+                        <Zap className="w-4 h-4 text-yellow-500" />
                         {progress.xp_points.toLocaleString()}
                     </div>
                     <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">{t('totalXp')}</p>
                 </div>
                 <div className="p-4 text-center">
-                    <div className="flex items-center justify-center gap-1 text-2xl font-bold text-text dark:text-dark-text">
-                        <Trophy className="w-5 h-5 text-primary" />
+                    <div className="flex items-center justify-center gap-1 text-lg font-bold text-text dark:text-dark-text">
+                        <Trophy className="w-4 h-4 text-primary" />
                         {progress.achievements_unlocked}/{progress.total_achievements}
                     </div>
                     <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">{t('achievementsLabel')}</p>

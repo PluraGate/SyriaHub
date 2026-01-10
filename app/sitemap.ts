@@ -32,6 +32,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.7,
         },
         {
+            url: `${siteUrl}/resources`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.7,
+        },
+        {
             url: `${siteUrl}/auth/login`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
@@ -45,17 +51,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ]
 
-    // Fetch all published posts
+    // Fetch all published posts (non-resource) with slugs
     const { data: posts } = await supabase
         .from('posts')
-        .select('id, updated_at, created_at')
+        .select('id, slug, updated_at, created_at')
         .eq('status', 'published')
+        .neq('content_type', 'resource')
         .order('updated_at', { ascending: false })
         .limit(1000)
 
     const postPages: MetadataRoute.Sitemap = (posts || []).map((post) => ({
-        url: `${siteUrl}/post/${post.id}`,
+        url: `${siteUrl}/post/${post.slug || post.id}`,
         lastModified: new Date(post.updated_at || post.created_at),
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+    }))
+
+    // Fetch all published resources (with slugs)
+    const { data: resources } = await supabase
+        .from('posts')
+        .select('id, slug, updated_at, created_at')
+        .eq('status', 'published')
+        .eq('content_type', 'resource')
+        .order('updated_at', { ascending: false })
+        .limit(1000)
+
+    const resourcePages: MetadataRoute.Sitemap = (resources || []).map((resource) => ({
+        url: `${siteUrl}/resources/${resource.slug || resource.id}`,
+        lastModified: new Date(resource.updated_at || resource.created_at),
         changeFrequency: 'weekly' as const,
         priority: 0.6,
     }))
@@ -75,7 +98,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.5,
     }))
 
-    // Fetch user profiles (only those with posts)
+    // Fetch user profiles
     const { data: users } = await supabase
         .from('users')
         .select('id, updated_at, created_at')
@@ -89,5 +112,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.4,
     }))
 
-    return [...staticPages, ...postPages, ...groupPages, ...profilePages]
+    return [...staticPages, ...postPages, ...resourcePages, ...groupPages, ...profilePages]
 }
+
