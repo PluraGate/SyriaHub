@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ChevronLeft, ChevronRight, Sparkles, Clock, Quote } from 'lucide-react'
+import { MagazineCard } from '@/components/MagazineCard'
+import { Clock, Quote } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface SuggestedPost {
@@ -132,26 +133,15 @@ export function SuggestedPostsCarousel({
         loadPosts()
     }, [supabase, currentPostId, currentTags, limit])
 
-    const scroll = (direction: 'left' | 'right') => {
-        if (scrollRef.current) {
-            const scrollAmount = 324 // Card width (300) + gap (24)
-            scrollRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth',
-            })
-        }
-    }
-
     if (loading) {
         return (
-            <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-primary dark:text-accent-light" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">{displayTitle}</h3>
-                </div>
-                <div className="flex gap-6 overflow-hidden py-4 px-4 -mx-4">
-                    {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="min-w-[300px] skeleton h-40 rounded-xl" />
+            <div className="space-y-6">
+                <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-6">
+                    {displayTitle}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="aspect-[16/10] skeleton rounded-2xl" />
                     ))}
                 </div>
             </div>
@@ -163,81 +153,19 @@ export function SuggestedPostsCarousel({
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-primary dark:text-accent-light animate-pulse" />
-                    <h3 className="font-semibold text-text dark:text-dark-text">{displayTitle}</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => scroll('left')}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-surface transition-colors btn-press"
-                        aria-label="Scroll left"
-                    >
-                        <ChevronLeft className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
-                    </button>
-                    <button
-                        onClick={() => scroll('right')}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-surface transition-colors btn-press"
-                        aria-label="Scroll right"
-                    >
-                        <ChevronRight className="w-5 h-5 text-text-light dark:text-dark-text-muted" />
-                    </button>
-                </div>
-            </div>
+        <div className="space-y-6">
+            <h3 className="text-sm font-semibold text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-6">
+                {displayTitle}
+            </h3>
 
-            <div
-                ref={scrollRef}
-                className="flex gap-6 overflow-x-auto scrollbar-hide pb-8 pt-4 px-4 -mx-4"
-                style={{ scrollSnapType: 'x mandatory' }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {posts.map((post) => (
-                    <Link
+                    <MagazineCard
                         key={post.id}
-                        href={`/post/${post.id}`}
-                        className="min-w-[300px] max-w-[300px] card card-glow p-4 space-y-3 animate-fade-in-up"
-                        style={{ scrollSnapAlign: 'start' }}
-                    >
-                        <h4 className="font-semibold text-text dark:text-dark-text line-clamp-2 group-hover:text-primary dark:group-hover:text-accent-light transition-colors">
-                            {post.title}
-                        </h4>
-
-                        <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2">
-                            {post.content.substring(0, 100)}...
-                        </p>
-
-                        {post.tags && post.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                                {post.tags.slice(0, 2).map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-dark-border text-text-light dark:text-dark-text-muted rounded-full"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-dark-border">
-                            <div className="flex items-center gap-2">
-                                <UserAvatar
-                                    name={post.author?.name}
-                                    email={post.author?.email}
-                                    avatarUrl={post.author?.avatar_url}
-                                    size="sm"
-                                />
-                                <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                    {post.author?.name || 'Anonymous'}
-                                </span>
-                            </div>
-                            <span className="text-xs text-text-light/70 dark:text-dark-text-muted/70 flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                            </span>
-                        </div>
-                    </Link>
+                        post={post}
+                        variant="standard"
+                        className="h-full"
+                    />
                 ))}
             </div>
         </div>

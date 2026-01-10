@@ -227,7 +227,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId, latestRe
           )}
 
           {/* Suggested Posts Carousel */}
-          {!isFiltering && <SuggestedPostsCarousel limit={6} />}
+          {!isFiltering && <SuggestedPostsCarousel limit={4} />}
         </div>
 
         {/* Sidebar Column - "Context Stack" */}

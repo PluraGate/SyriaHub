@@ -618,6 +618,9 @@
         "ctaDesc": "أضف بحثك إلى قاعدة معرفية مشتركة وقابلة للتتبع.",
         "createAccount": "انضم للمشاع",
         "latestResources": "أحدث الموارد",
+        "resources": {
+            "subtitle": "أحدث الأدوات ومجموعات البيانات والتقارير"
+        },
         "recentResearch": "مساهمات حديثة",
         "viewAll": "عرض الكل",
         "popularTopics": "مواضيع نشطة",
