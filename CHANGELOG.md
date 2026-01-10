@@ -5,6 +5,16 @@ All notable changes to the SyriaHub project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.7] - 2026-01-10
+
+### Changed
+- System-wide version synchronization to 0.8.7.
+- Updated documentation and project summaries to reflect current platform maturity.
+
+### Added
+- Canonical Slugs for Post and Resource pages for SEO and traceable links.
+- Enhanced Recommendation Engine (filtering out resources from post sections).
+
 ## [0.8.0] - 2026-01-05
 
 ### Updated - Platform Documentation Refresh

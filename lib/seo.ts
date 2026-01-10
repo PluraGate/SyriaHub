@@ -74,7 +74,7 @@ function truncateDescription(content: string, maxLength: number = 155): string {
 }
 
 function getSiteUrl(): string {
-    return process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
+    return process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.org'
 }
 
 // =============================================================================
@@ -359,4 +359,3 @@ export function JsonLdScript({ data }: { data: object }): React.ReactElement {
         dangerouslySetInnerHTML: { __html: JSON.stringify(data) }
     })
 }
-

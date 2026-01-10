@@ -21,8 +21,12 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 const cairo = Cairo({ subsets: ['arabic'], variable: '--font-arabic' })
 
 export const metadata = {
-  title: 'SyriaHub',
-  description: 'A minimalist research platform for collaborative knowledge sharing',
+  title: {
+    default: 'SyriaHub – Open Knowledge for Reconstruction',
+    template: '%s | SyriaHub',
+  },
+  description: 'SyriaHub is an open, research-driven platform for architecture, urbanism, data, and post-conflict reconstruction.',
+  metadataBase: new URL('https://syriahub.org'),
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -39,6 +43,20 @@ export const metadata = {
       { url: '/icons/icon-152x152_Dark.png', sizes: '152x152', type: 'image/png' },
     ],
     shortcut: ['/icons/pluragate-logo.ico'],
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://syriahub.org',
+    title: 'SyriaHub – Open Knowledge for Reconstruction',
+    description: 'SyriaHub is an open, research-driven platform for architecture, urbanism, data, and post-conflict reconstruction.',
+    siteName: 'SyriaHub',
+    images: [{ url: '/og.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SyriaHub – Open Knowledge for Reconstruction',
+    description: 'SyriaHub is an open, research-driven platform for architecture, urbanism, data, and post-conflict reconstruction.',
+    images: ['/og.jpg'],
   },
 }
 
