@@ -16,6 +16,7 @@ interface SuggestedPost {
     content: string
     tags: string[]
     created_at: string
+    cover_image_url?: string | null
     author: {
         id: string
         name: string
@@ -58,6 +59,7 @@ export function SuggestedPostsCarousel({
             content_type,
             tags,
             created_at,
+            cover_image_url,
             author:users!posts_author_id_fkey(
               id,
               name,
@@ -96,6 +98,7 @@ export function SuggestedPostsCarousel({
                 content_type,
                 tags,
                 created_at,
+                cover_image_url,
                 author:users!posts_author_id_fkey(
                   id,
                   name,

@@ -2,10 +2,10 @@ import { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.org'
     const supabase = await createClient()
 
-    // Static pages
+    // Static pages - auth pages deliberately excluded for crawl budget
     const staticPages: MetadataRoute.Sitemap = [
         {
             url: siteUrl,
@@ -16,11 +16,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         {
             url: `${siteUrl}/feed`,
             lastModified: new Date(),
-            changeFrequency: 'hourly',
+            changeFrequency: 'daily',
             priority: 0.9,
         },
         {
             url: `${siteUrl}/explore`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.8,
+        },
+        {
+            url: `${siteUrl}/insights`,
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.8,
@@ -38,16 +44,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.7,
         },
         {
-            url: `${siteUrl}/auth/login`,
+            url: `${siteUrl}/events`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
+            changeFrequency: 'weekly',
+            priority: 0.7,
         },
         {
-            url: `${siteUrl}/auth/signup`,
+            url: `${siteUrl}/research-gaps`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
+            changeFrequency: 'weekly',
+            priority: 0.6,
         },
     ]
 
@@ -114,4 +120,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticPages, ...postPages, ...resourcePages, ...groupPages, ...profilePages]
 }
-
