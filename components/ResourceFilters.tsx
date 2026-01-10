@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Search, Filter, X, ChevronDown, Database, FileText, Wrench, Film, FileSpreadsheet } from 'lucide-react'
+import { Search, Filter, X, ChevronDown, Database, FileText, Wrench, Film, FileSpreadsheet, PenTool } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,6 +28,7 @@ const RESOURCE_TYPES = [
     { value: 'tool', Icon: Wrench },
     { value: 'media', Icon: Film },
     { value: 'template', Icon: FileSpreadsheet },
+    { value: 'design', Icon: PenTool },
 ]
 
 const LICENSES = [

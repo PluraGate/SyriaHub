@@ -94,6 +94,7 @@ function ExplorePageContent() {
           `)
           .eq('status', 'published')
           .neq('approval_status', 'rejected') // Hide rejected posts
+          .neq('content_type', 'resource') // Exclude resources
           .order('created_at', { ascending: false })
           .limit(6)
 
@@ -134,6 +135,7 @@ function ExplorePageContent() {
           `)
           .eq('status', 'published') // Only show published posts
           .neq('content_type', 'event') // Exclude events
+          .neq('content_type', 'resource') // Exclude resources
           .neq('approval_status', 'rejected') // Hide rejected posts
 
         // Apply sorting

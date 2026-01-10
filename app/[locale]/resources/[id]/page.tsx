@@ -3,7 +3,8 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { CommentsSection } from '@/components/CommentsSection'
 import { notFound, redirect } from 'next/navigation'
-import { FileText, Download, Calendar, User, HardDrive, Link2 } from 'lucide-react'
+import { FileText, Download, Calendar, User, HardDrive, Link2, Pencil } from 'lucide-react'
+import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { TagChip } from '@/components/TagChip'
 import { ViewTracker } from '@/components/ViewTracker'
@@ -152,6 +153,16 @@ export default async function ResourceDetailsPage({ params }: { params: Promise<
                                 <Download className="w-4 h-4" />
                                 Download
                             </a>
+
+                            {user && user.id === resource.author_id && (
+                                <Link
+                                    href={`/resources/upload?edit=${resource.id}`}
+                                    className="btn btn-outline flex items-center gap-2"
+                                >
+                                    <Pencil className="w-4 h-4" />
+                                    Edit Resource
+                                </Link>
+                            )}
                         </div>
                     </div>
 

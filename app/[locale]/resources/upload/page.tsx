@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/toast'
 import { Navbar } from '@/components/Navbar'
@@ -66,9 +66,53 @@ export default function UploadResourcePage() {
     const [isSuggesting, setIsSuggesting] = useState(false)
     const [tagSearch, setTagSearch] = useState('')
 
+
+    const [isEditing, setIsEditing] = useState(false)
+    const [originalSlug, setOriginalSlug] = useState<string | null>(null)
+    const [originalFileUrl, setOriginalFileUrl] = useState<string | null>(null)
+
     const supabase = createClient()
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const editId = searchParams.get('edit')
     const { showToast } = useToast()
+
+    // Fetch existing resource data if in edit mode
+    useEffect(() => {
+        if (!editId) return
+
+        setIsEditing(true)
+        setIsLoading(true)
+
+        async function fetchResource() {
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('id', editId)
+                .single()
+
+            if (error) {
+                console.error('Error fetching resource:', error)
+                showToast('Failed to load resource for editing', 'error')
+                router.push('/resources')
+                return
+            }
+
+            if (data) {
+                setTitle(data.title)
+                setShortTitle(data.short_title || '')
+                setDescription(data.content || '')
+                setResourceType(data.metadata?.resource_type || '')
+                setSelectedTags(data.tags || [])
+                setLicense(data.metadata?.license || 'CC-BY-4.0')
+                setOriginalSlug(data.slug)
+                setOriginalFileUrl(data.metadata?.url)
+            }
+            setIsLoading(false)
+        }
+
+        fetchResource()
+    }, [editId, supabase, router, showToast])
 
     // Optimized: Debounce slug generation to prevent input lag
     useEffect(() => {
@@ -236,7 +280,7 @@ export default function UploadResourcePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!file) {
+        if (!file && !isEditing) {
             showToast('Please select a file to upload.', 'error')
             return
         }
@@ -260,69 +304,153 @@ export default function UploadResourcePage() {
                 return
             }
 
-            // 1. Generate the post UUID first (for slug hash)
-            const postId = crypto.randomUUID()
+            if (isEditing && editId) {
+                // UPDATE EXISTING RESOURCE
 
-            // 2. Generate the canonical slug
-            const slugResult = generateResourceSlug({
-                resourceType,
-                discipline: primaryDiscipline,
-                shortTitle,
-                date: new Date(),
-                uuid: postId
-            })
+                let publicUrl = originalFileUrl
+                let fileSize = 0
+                let fileType = ''
+                let fileName = ''
 
-            // 3. Upload File
-            const fileExt = file.name.split('.').pop()
-            // Use the postId for storage path consistency
-            const fileName = `${postId}.${fileExt}`
-            const filePath = `${user.id}/${fileName}`
+                // 1. Upload new file if selected
+                if (file) {
+                    const fileExt = file.name.split('.').pop()
+                    const fileNameNew = `${editId}.${fileExt}` // Overwrite existing or created new
+                    const filePath = `${user.id}/${fileNameNew}`
 
-            const { error: uploadError } = await supabase.storage
-                .from('resources')
-                .upload(filePath, file)
+                    const { error: uploadError } = await supabase.storage
+                        .from('resources')
+                        .upload(filePath, file, { upsert: true })
 
-            if (uploadError) throw uploadError
+                    if (uploadError) throw uploadError
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('resources')
-                .getPublicUrl(filePath)
+                    const { data: urlData } = supabase.storage
+                        .from('resources')
+                        .getPublicUrl(filePath)
 
-            // 4. Create Post with slug and short_title
-            const { data, error: postError } = await supabase
-                .from('posts')
-                .insert({
-                    id: postId,
-                    title,
-                    short_title: slugResult.shortTitle,
-                    slug: slugResult.slug,
-                    content: description,
-                    tags: selectedTags,
-                    content_type: 'resource',
-                    author_id: user.id,
-                    status: 'published',
-                    metadata: {
-                        url: publicUrl,
-                        size: file.size,
-                        mime_type: file.type,
-                        original_name: file.name,
-                        downloads: 0,
-                        license: license,
-                        resource_type: resourceType
+                    publicUrl = urlData.publicUrl
+                    fileSize = file.size
+                    fileType = file.type
+                    fileName = file.name
+                } else {
+                    // Keep existing metadata if no new file
+                    // Fetch existing metadata to preserve size/type if not changing file
+                    const { data: existingPost } = await supabase.from('posts').select('metadata').eq('id', editId).single()
+                    if (existingPost) {
+                        fileSize = existingPost.metadata.size
+                        fileType = existingPost.metadata.mime_type
+                        fileName = existingPost.metadata.original_name
                     }
+                }
+
+                // 2. Regenerate slug (if title/short_title changed) or keep existing
+                // If short_title changed, we regenerate slug. If not, we might keep it.
+                // For simplicity, we re-generate slug logic here but only update if short_title changed or forced.
+                // Actually, let's respect the user's short_title input.
+
+                const slugResult = generateResourceSlug({
+                    resourceType,
+                    discipline: primaryDiscipline,
+                    shortTitle,
+                    date: new Date(), // We might want to keep original date? stick to new date for slug versioning?
+                    // Or better, keep original UUID part but update prefix?
+                    // Let's generate a new slug based on current inputs, but reuse the ID.
+                    uuid: editId
                 })
-                .select()
-                .single()
 
-            if (postError) throw postError
+                // 3. Update Post
+                const { error: updateError } = await supabase
+                    .from('posts')
+                    .update({
+                        title,
+                        short_title: slugResult.shortTitle, // Update short title
+                        slug: slugResult.slug, // Update slug 
+                        content: description,
+                        tags: selectedTags,
+                        metadata: {
+                            url: publicUrl,
+                            size: fileSize,
+                            mime_type: fileType,
+                            original_name: fileName,
+                            downloads: 0, // Reset downloads on update? Maybe not. Let's try to preserve it? 
+                            // Postgres update handles merging JSONB? No, it replaces.
+                            // We should fetch downloads count first if we want to preserve it.
+                            resource_type: resourceType,
+                            license: license
+                        }
+                    })
+                    .eq('id', editId)
 
-            showToast('Your resource has been successfully shared.', 'success')
+                if (updateError) throw updateError
 
-            // Navigate to the new slug-based URL
-            router.push(`/resources/${slugResult.slug}`)
+                showToast('Resource updated successfully.', 'success')
+                router.push(`/resources/${slugResult.slug}`)
+
+            } else {
+                // CREATE NEW RESOURCE (Existing Logic)
+
+                // 1. Generate the post UUID first (for slug hash)
+                const postId = crypto.randomUUID()
+
+                // 2. Generate the canonical slug
+                const slugResult = generateResourceSlug({
+                    resourceType,
+                    discipline: primaryDiscipline,
+                    shortTitle,
+                    date: new Date(),
+                    uuid: postId
+                })
+
+                // 3. Upload File
+                const fileExt = file!.name.split('.').pop()
+                // Use the postId for storage path consistency
+                const fileName = `${postId}.${fileExt}`
+                const filePath = `${user.id}/${fileName}`
+
+                const { error: uploadError } = await supabase.storage
+                    .from('resources')
+                    .upload(filePath, file!)
+
+                if (uploadError) throw uploadError
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('resources')
+                    .getPublicUrl(filePath)
+
+                // 4. Create Post with slug and short_title
+                const { error: postError } = await supabase
+                    .from('posts')
+                    .insert({
+                        id: postId,
+                        title,
+                        short_title: slugResult.shortTitle,
+                        slug: slugResult.slug,
+                        content: description,
+                        tags: selectedTags,
+                        content_type: 'resource',
+                        author_id: user.id,
+                        status: 'published',
+                        metadata: {
+                            url: publicUrl,
+                            size: file!.size,
+                            mime_type: file!.type,
+                            original_name: file!.name,
+                            downloads: 0,
+                            license: license,
+                            resource_type: resourceType
+                        }
+                    })
+
+                if (postError) throw postError
+
+                showToast('Your resource has been successfully shared.', 'success')
+
+                // Navigate to the new slug-based URL
+                router.push(`/resources/${slugResult.slug}`)
+            }
         } catch (error: any) {
-            console.error('Error uploading resource:', error)
-            showToast(error.message || 'Failed to upload resource.', 'error')
+            console.error('Error uploading/updating resource:', error)
+            showToast(error.message || 'Failed to save resource.', 'error')
         } finally {
             setUploading(false)
         }
@@ -347,7 +475,7 @@ export default function UploadResourcePage() {
 
             <main className="flex-1 container-custom max-w-3xl py-12">
                 <h1 className="text-3xl font-display font-bold text-primary dark:text-dark-text mb-8">
-                    {t('title')}
+                    {isEditing ? 'Edit Resource' : t('title')}
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-dark-surface p-8 rounded-xl border border-gray-200 dark:border-dark-border shadow-sm">
@@ -371,13 +499,23 @@ export default function UploadResourcePage() {
                                 </>
                             ) : (
                                 <>
-                                    <UploadCloud className="w-10 h-10 text-gray-400" />
-                                    <p className="font-medium text-text dark:text-dark-text">
-                                        {t('selectFile')}
-                                    </p>
-                                    <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                        {t('fileTypes')}
-                                    </p>
+                                    {isEditing && originalFileUrl ? (
+                                        <div className="flex flex-col items-center">
+                                            <FileText className="w-10 h-10 text-primary mb-2" />
+                                            <p className="font-medium text-text dark:text-dark-text">Current File Uploaded</p>
+                                            <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">Click to replace</p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <UploadCloud className="w-10 h-10 text-gray-400" />
+                                            <p className="font-medium text-text dark:text-dark-text">
+                                                {t('selectFile')}
+                                            </p>
+                                            <p className="text-sm text-text-light dark:text-dark-text-muted">
+                                                {t('fileTypes')}
+                                            </p>
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
@@ -626,9 +764,9 @@ export default function UploadResourcePage() {
                     </div>
 
                     <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={uploading || !file || !resourceType || !shortTitle.trim()} size="lg">
+                        <Button type="submit" disabled={uploading || (!file && !isEditing) || !resourceType || !shortTitle.trim()} size="lg">
                             {uploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            {uploading ? t('uploading') : t('submitButton')}
+                            {uploading ? (isEditing ? 'Updating...' : t('uploading')) : (isEditing ? 'Update Resource' : t('submitButton'))}
                         </Button>
                     </div>
                 </form>

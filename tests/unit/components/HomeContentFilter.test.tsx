@@ -23,6 +23,7 @@ vi.mock('next-intl', () => ({
     }
     return translations[namespace]?.[key] || key
   },
+  useLocale: () => 'en',
 }))
 
 // Mock next/link
@@ -70,10 +71,15 @@ vi.mock('@/components/SuggestedPosts', () => ({
   SuggestedPostsCarousel: () => <div data-testid="suggested-posts">Suggested</div>,
 }))
 
+vi.mock('@/components/LatestResourcesSidebar', () => ({
+  LatestResourcesSidebar: () => <div data-testid="latest-resources-sidebar">Latest Resources</div>,
+}))
+
 const mockFeaturedPosts = [
   {
     id: '1',
     title: 'Research on Syrian Refugees',
+    slug: 'research-syrian-refugees',
     content: 'This is about migration patterns in the Middle East.',
     excerpt: 'A study on refugee movements',
     created_at: '2025-01-01T00:00:00Z',
@@ -83,6 +89,7 @@ const mockFeaturedPosts = [
   {
     id: '2',
     title: 'Economic Analysis of Damascus',
+    slug: 'economic-analysis-damascus',
     content: 'Economic trends and market analysis.',
     excerpt: 'Understanding the economy',
     created_at: '2025-01-02T00:00:00Z',
@@ -93,18 +100,20 @@ const mockFeaturedPosts = [
 
 const mockRecentPosts = [
   {
-    id: '3',
-    title: 'Healthcare Challenges in Aleppo',
-    content: 'Analysis of healthcare infrastructure.',
+    id: '2',
+    title: 'Healthcare in Conflict Zones',
+    slug: 'healthcare-conflict-zones',
+    content: 'Analysis of medical facilities.',
     excerpt: 'Healthcare access study',
     created_at: '2025-01-03T00:00:00Z',
     tags: ['healthcare', 'aleppo'],
     author: { id: 'u3', name: 'Mohammed Youssef', email: 'mohammed@test.com' },
   },
   {
-    id: '4',
-    title: 'Educational Reforms',
-    content: 'New educational policies and their impact.',
+    id: '3',
+    title: 'Education Policy 2024',
+    slug: 'education-policy-2024',
+    content: 'New framework for schools.',
     excerpt: 'Education system changes',
     created_at: '2025-01-04T00:00:00Z',
     tags: ['education', 'policy'],
@@ -117,6 +126,7 @@ describe('HomeContentFilter Component', () => {
     featuredPosts: mockFeaturedPosts,
     recentPosts: mockRecentPosts,
     userId: 'user-123',
+    latestResources: [],
   }
 
   beforeEach(() => {
@@ -215,6 +225,7 @@ describe('HomeContentFilter Component', () => {
         {
           id: 'ar1',
           title: 'دراسة عن اللاجئين',
+          slug: 'study-refugees-ar',
           content: 'محتوى باللغة العربية',
           created_at: '2025-01-01T00:00:00Z',
           tags: ['لاجئين'],
@@ -223,7 +234,7 @@ describe('HomeContentFilter Component', () => {
       ]
 
       const user = userEvent.setup()
-      render(<HomeContentFilter featuredPosts={arabicPosts} recentPosts={[]} userId="user-123" />)
+      render(<HomeContentFilter featuredPosts={arabicPosts} recentPosts={[]} latestResources={[]} userId="user-123" />)
 
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
       await user.type(filterInput, 'اللاجئين')
@@ -238,6 +249,7 @@ describe('HomeContentFilter Component', () => {
         {
           id: 'ar2',
           title: 'أحمد إبراهيم آدم',
+          slug: 'ahmad-ibrahim',
           content: 'Test content',
           created_at: '2025-01-01T00:00:00Z',
           author: { id: 'aru2', name: 'Test' },
@@ -245,7 +257,7 @@ describe('HomeContentFilter Component', () => {
       ]
 
       const user = userEvent.setup()
-      render(<HomeContentFilter featuredPosts={arabicPosts} recentPosts={[]} userId="user-123" />)
+      render(<HomeContentFilter featuredPosts={arabicPosts} recentPosts={[]} latestResources={[]} userId="user-123" />)
 
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
       // Search with different Alef variation
@@ -294,7 +306,7 @@ describe('HomeContentFilter Component', () => {
 
   describe('Empty state', () => {
     it('should handle empty featured posts', () => {
-      render(<HomeContentFilter featuredPosts={[]} recentPosts={mockRecentPosts} userId="user-123" />)
+      render(<HomeContentFilter featuredPosts={[]} recentPosts={mockRecentPosts} latestResources={[]} userId="user-123" />)
 
       // Component should render without crashing
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
@@ -302,7 +314,7 @@ describe('HomeContentFilter Component', () => {
     })
 
     it('should handle empty recent posts', () => {
-      render(<HomeContentFilter featuredPosts={mockFeaturedPosts} recentPosts={[]} userId="user-123" />)
+      render(<HomeContentFilter featuredPosts={mockFeaturedPosts} recentPosts={[]} latestResources={[]} userId="user-123" />)
 
       // Component should render without crashing
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
@@ -310,7 +322,7 @@ describe('HomeContentFilter Component', () => {
     })
 
     it('should handle both empty', () => {
-      render(<HomeContentFilter featuredPosts={[]} recentPosts={[]} userId="user-123" />)
+      render(<HomeContentFilter featuredPosts={[]} recentPosts={[]} latestResources={[]} userId="user-123" />)
 
       // Should render without error
       const filterInput = screen.getByPlaceholderText(/filter posts/i)
