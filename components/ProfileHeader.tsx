@@ -105,6 +105,7 @@ export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySet
                     src={mounted ? coverImage : getCoverWithFallback(profile.cover_image_url, 'dark', 'large')}
                     alt="Profile cover"
                     fill
+                    sizes="100vw"
                     className="object-cover"
                     unoptimized
                     suppressHydrationWarning

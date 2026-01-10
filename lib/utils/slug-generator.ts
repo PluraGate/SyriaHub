@@ -233,3 +233,61 @@ export function parseSlug(slug: string): {
 
     return { type, discipline, shortTitle, date, hash }
 }
+
+// =============================================================================
+// Post Slug Generator (Simpler format for posts)
+// =============================================================================
+
+export interface PostSlugInput {
+    /** Post title */
+    title: string
+    /** Date of creation (defaults to now) */
+    date?: Date
+    /** Post UUID (used to derive hash) */
+    uuid: string
+}
+
+/**
+ * Generates a post slug
+ * 
+ * Format: [short-title]-[YYYYMMDD]-[hash6]
+ * 
+ * @example
+ * generatePostSlug({
+ *   title: 'Water Crisis in Damascus: A 2025 Analysis',
+ *   uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'
+ * })
+ * // Returns: { slug: 'water-crisis-damascus-2025-analysis-20260110-567890', ... }
+ */
+export function generatePostSlug(input: PostSlugInput): SlugResult {
+    const { title, date = new Date(), uuid } = input
+
+    // Generate short title from full title
+    const sanitizedTitle = sanitizeForSlug(title, 50) || generateShortTitle(title)
+    const dateString = formatDateForSlug(date)
+    const hash = extractHashFromUUID(uuid)
+
+    // Build slug: title-date-hash
+    const slug = `${sanitizedTitle}-${dateString}-${hash}`
+
+    return {
+        slug,
+        shortTitle: sanitizedTitle,
+        hash,
+        dateString
+    }
+}
+
+/**
+ * Validates a post slug format (simpler than resource slugs)
+ * Returns true if the slug follows the expected pattern
+ */
+export function isValidPostSlug(slug: string): boolean {
+    if (!slug || typeof slug !== 'string') return false
+
+    // Pattern: title-YYYYMMDD-hash6
+    // The title part can contain letters, numbers, and dashes
+    const pattern = /^[a-z0-9-]+-\d{8}-[a-f0-9]{6}$/
+    return pattern.test(slug)
+}
+

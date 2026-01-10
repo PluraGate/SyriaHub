@@ -346,6 +346,13 @@ export default function EditorPage() {
             return
           }
 
+          // Redirect if editing a resource
+          if (data.content_type === 'resource') {
+            console.log('[Editor] Redirecting resource edit to upload page:', postIdParam);
+            router.push(`/resources/upload?edit=${postIdParam}`);
+            return; // Stop further processing in this editor
+          }
+
           setTitle(data.title)
           setContent(data.content)
           setTags(data.tags ? data.tags.join(', ') : '')

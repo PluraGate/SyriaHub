@@ -119,14 +119,16 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                 const supabase = createClient()
                 const { data: fallbackData } = await supabase
                     .from('posts')
-                    .select('id, title, tags')
+                    .select('id, title, tags, content_type')
                     .eq('status', 'published')
                     .neq('id', postId)
                     .overlaps('tags', postTags)
-                    .limit(6)
+                    .limit(10)
 
                 if (fallbackData) {
-                    setRecommendations(fallbackData.map(p => ({
+                    // Filter out resources client-side
+                    const filteredPosts = fallbackData.filter((p: any) => p.content_type !== 'resource').slice(0, 6)
+                    setRecommendations(filteredPosts.map(p => ({
                         id: p.id,
                         title: p.title,
                         recommendation_category: 'contrasting_findings',

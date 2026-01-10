@@ -32,53 +32,49 @@ export default async function Home({
   const { data: { user } } = await supabase.auth.getUser()
   const t = await getTranslations({ locale, namespace: 'Landing' });
 
-  // Fetch recent posts for feed preview
+  // Fetch all starting data in parallel to avoid waterfalls
+  const [
+    { data: allPosts },
+    { data: latestResources },
+    { data: platformStatsData }
+  ] = await Promise.all([
+    supabase
+      .from('posts')
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email)
+      `)
+      .eq('status', 'published')
+      .neq('approval_status', 'rejected')
+      .neq('content_type', 'resource')
+      .order('created_at', { ascending: false })
+      .limit(8),
+
+    supabase
+      .from('posts')
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email)
+      `)
+      .eq('content_type', 'resource')
+      .eq('status', 'published')
+      .neq('approval_status', 'rejected')
+      .order('created_at', { ascending: false })
+      .limit(4),
+
+    user ? Promise.resolve({ data: null }) : supabase.rpc('get_platform_stats')
+  ])
+
   let recentPosts: any[] = []
   let featuredPosts: any[] = []
-
-  const { data: allPosts } = await supabase
-    .from('posts')
-    .select(`
-      *,
-      author:users!posts_author_id_fkey(id, name, email)
-    `)
-    .eq('status', 'published') // Only show published posts
-    .neq('approval_status', 'rejected') // Hide rejected posts
-    .order('created_at', { ascending: false })
-    .limit(8)
 
   if (allPosts) {
     featuredPosts = allPosts.slice(0, 4)
     recentPosts = allPosts.slice(4)
   }
 
-  // Fetch platform stats for landing page (only for non-authenticated users)
-  let platformStats = { contributors: 0, publications: 0, contexts: 0 }
-  if (!user) {
-    // Count users who have published at least one post (contributors)
-    const { count: contributorsCount } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-
-    // Count published posts
-    const { count: publicationsCount } = await supabase
-      .from('posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'published')
-      .neq('approval_status', 'rejected')
-
-    // Count verified tags (topics)
-    const { count: topicsCount } = await supabase
-      .from('tags')
-      .select('*', { count: 'exact', head: true })
-      .eq('verified', true)
-
-    platformStats = {
-      contributors: contributorsCount || 0,
-      publications: publicationsCount || 0,
-      contexts: topicsCount || 0
-    }
-  }
+  // Use platform stats from RPC or default
+  const platformStats = platformStatsData || { contributors: 0, publications: 0, contexts: 0 }
 
   return (
     <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
@@ -113,6 +109,7 @@ export default async function Home({
                   featuredPosts={featuredPosts}
                   recentPosts={recentPosts}
                   userId={user.id}
+                  latestResources={latestResources || []} // Pass latest resources to filter component
                 />
               </div>
             </section>
@@ -130,16 +127,47 @@ export default async function Home({
                 publications: platformStats.publications,
                 contexts: platformStats.contexts
               }}
-              statLabels={{
-                contributors: t('stats.contributors'),
-                publications: t('stats.publications'),
-                contexts: t('stats.contexts')
-              }}
               ctaLabels={{
                 getStarted: t('getStarted'),
                 browse: t('browsePosts')
               }}
             />
+
+            {/* Latest Resources Section - New! */}
+            {latestResources && latestResources.length > 0 && (
+              <section className="section bg-white dark:bg-dark-bg border-b border-gray-100 dark:border-dark-border">
+                <div className="container-custom max-w-7xl">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="text-2xl md:text-3xl font-bold text-text dark:text-dark-text">
+                        {t('latestResources')}
+                      </h2>
+                      <p className="text-text-light dark:text-dark-text-muted mt-1">
+                        {t('resources.subtitle') || "Latest tools, datasets, and reports"}
+                      </p>
+                    </div>
+                    <Link
+                      href="/resources"
+                      className="text-primary dark:text-primary-light font-medium flex items-center gap-2 hover:underline"
+                    >
+                      {t('viewAll')}
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {latestResources.map((resource: any) => (
+                      <MagazineCard
+                        key={resource.id}
+                        post={resource}
+                        variant="compact"
+                        className="h-full bg-gray-50 dark:bg-dark-surface/50 border-transparent hover:border-primary/20"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Featured Content - Bento Grid */}
             {featuredPosts.length > 0 && (

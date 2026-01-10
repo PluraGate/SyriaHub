@@ -183,13 +183,13 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
         if (preferences.theme === 'system') {
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             const systemDark = mediaQuery.matches
-            console.log('[Theme] System mode - detected system prefers-dark:', systemDark)
+
             root.classList.toggle('dark', systemDark)
 
             // Listen for system theme changes
             const listener = (e: MediaQueryListEvent) => {
                 if (preferences.theme === 'system') {
-                    console.log('[Theme] System preference changed to:', e.matches ? 'dark' : 'light')
+
                     root.classList.toggle('dark', e.matches)
                 }
             }
@@ -197,13 +197,13 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
             mediaQuery.addEventListener('change', listener)
             return () => mediaQuery.removeEventListener('change', listener)
         } else {
-            console.log('[Theme] Manual mode:', preferences.theme)
+
             root.classList.toggle('dark', preferences.theme === 'dark')
         }
     }, [preferences.theme])
 
     const savePreferences = useCallback(async (newPrefs: UserPreferences) => {
-        console.log('[Preferences] Saving:', newPrefs)
+
         // Save to localStorage immediately
         if (typeof window !== 'undefined') {
             localStorage.setItem('user_preferences', JSON.stringify(newPrefs))
@@ -224,12 +224,12 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
                     )
 
                 if (error) {
-                    console.error('[Preferences] Supabase save error:', error)
+                    // Silent fail
                 } else {
-                    console.log('[Preferences] Saved and synced to database')
+                    // Success
                 }
             } catch (error) {
-                console.error('[Preferences] Failed to save preferences to database:', error)
+                // Silent fail for sync
             }
         }
     }, [userId, supabase])
