@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Filter, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { TagsCloud } from '@/components/TagsCloud'
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { MagazineCard } from '@/components/MagazineCard'
@@ -12,10 +12,12 @@ import { TrendingPosts } from '@/components/TrendingPosts'
 import { ActivityInsightsCompact } from '@/components/ActivityInsights'
 import { RelatedAuthors } from '@/components/RelatedAuthors'
 import { SuggestedPostsCarousel } from '@/components/SuggestedPosts'
+import { LatestResourcesSidebar } from '@/components/LatestResourcesSidebar'
 
 interface Post {
   id: string
   title: string
+  slug: string
   content?: string
   excerpt?: string
   created_at: string
@@ -35,11 +37,14 @@ interface HomeContentFilterProps {
   featuredPosts: Post[]
   recentPosts: Post[]
   userId: string
+  latestResources: Post[]
 }
 
-export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeContentFilterProps) {
+export function HomeContentFilter({ featuredPosts, recentPosts, userId, latestResources }: HomeContentFilterProps) {
   const t = useTranslations('Landing')
   const tForms = useTranslations('Forms')
+  const tResources = useTranslations('Resources')
+  const locale = useLocale()
   const [filterQuery, setFilterQuery] = useState('')
 
   // Normalize text for better Arabic/multilingual search
@@ -79,6 +84,7 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
 
   const filteredFeatured = useMemo(() => filterPosts(featuredPosts), [filterPosts, featuredPosts])
   const filteredRecent = useMemo(() => filterPosts(recentPosts), [filterPosts, recentPosts])
+  // Resources in sidebar are not filtered to match other sidebar items behavior
 
   const hasResults = filteredFeatured.length > 0 || filteredRecent.length > 0
   const isFiltering = filterQuery.trim().length > 0
@@ -132,6 +138,8 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
           </button>
         </div>
       )}
+
+
 
       {/* Featured Posts - Bento Grid */}
       {filteredFeatured.length > 0 && (
@@ -238,6 +246,13 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId }: HomeCo
           <div>
             <ActivityInsightsCompact limit={5} />
           </div>
+
+          {/* Latest Resources */}
+          {latestResources.length > 0 && (
+            <div className="card p-4">
+              <LatestResourcesSidebar resources={latestResources} locale={locale} />
+            </div>
+          )}
 
           {/* Related Researchers */}
           <div className="card p-4">

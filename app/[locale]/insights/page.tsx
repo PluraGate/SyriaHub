@@ -89,6 +89,7 @@ export default function InsightsPage() {
           .select('*')
           .eq('status', 'published')
           .neq('content_type', 'event')
+          .neq('content_type', 'resource') // Exclude resources
           .neq('approval_status', 'rejected') // Hide rejected posts from feed
 
         // Content type filter
