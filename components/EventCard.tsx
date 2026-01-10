@@ -179,6 +179,7 @@ export function EventCard({ event, currentUser, isPast = false }: EventCardProps
                             alt=""
                             fill
                             className="absolute inset-0 object-cover opacity-40"
+                            sizes="(max-width: 768px) 100vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
                     </>

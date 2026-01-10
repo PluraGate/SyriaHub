@@ -39,13 +39,23 @@ import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { PostHeroBackground } from '@/components/PostHeroBackground'
 import { SchemaFieldDisplay, SchemaFieldValue } from '@/components/post/SchemaFieldDisplay'
+import { buildArticleSchema, buildQAPageSchema, JsonLdScript } from '@/lib/seo'
 
 
 
 interface PostPageProps {
   params: Promise<{
     id: string
+    locale: string
   }>
+}
+
+/**
+ * Checks if a string is a valid UUID v4
+ */
+function isUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  return uuidRegex.test(str)
 }
 
 // Generate dynamic metadata for SEO
@@ -118,22 +128,59 @@ function getReadingTime(content: string): number {
 
 export default async function PostPage(props: PostPageProps) {
   const params = await props.params
-  const { id } = params
+  const { id, locale } = params
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: post, error } = await supabase
-    .from('posts')
-    .select(
-      `
+  let post: any = null
+  let error: any = null
+
+  // Determine if id is a UUID or a slug
+  if (isUUID(id)) {
+    // Lookup by UUID
+    const result = await supabase
+      .from('posts')
+      .select(`
         *,
         author:users!posts_author_id_fkey(id, name, email, bio, affiliation, avatar_url)
-      `
-    )
-    .eq('id', id)
-    .single()
+      `)
+      .eq('id', id)
+      .single()
+
+    post = result.data
+    error = result.error
+
+    // If post has a slug, redirect to the canonical slug URL (permanent redirect for SEO)
+    if (post?.slug) {
+      redirect(`/${locale}/post/${post.slug}`)
+    }
+
+    // If no slug, try to generate one (lazy backfill via RPC)
+    if (post && !post.slug) {
+      const { data: generatedSlug } = await supabase
+        .rpc('get_post_slug', { p_post_id: id })
+
+      if (generatedSlug) {
+        // Redirect to the newly generated slug
+        redirect(`/${locale}/post/${generatedSlug}`)
+      }
+    }
+  } else {
+    // Lookup by slug (primary method - SEO friendly)
+    const result = await supabase
+      .from('posts')
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email, bio, affiliation, avatar_url)
+      `)
+      .eq('slug', id)
+      .single()
+
+    post = result.data
+    error = result.error
+  }
 
   if (error || !post) {
     console.error('Error fetching post:', error)
@@ -261,255 +308,273 @@ export default async function PostPage(props: PostPageProps) {
   const tc = await getTranslations('Common')
   const tLicenses = await getTranslations('Licenses')
 
+  // Build JSON-LD structured data
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
+  const hasAnswers = answers && answers.length > 0
+  const isScholarly = citationBacklinks.length > 0 || (post.academic_impact_score && post.academic_impact_score > 0)
+
+  const jsonLdData = post.content_type === 'question' && hasAnswers
+    ? buildQAPageSchema(
+      { ...post, author: post.author as any },
+      answers.map((a: any) => ({ ...a, author: a.author as any })),
+      { siteUrl }
+    )
+    : buildArticleSchema(
+      { ...post, author: post.author as any },
+      { type: isScholarly ? 'ScholarlyArticle' : 'Article', siteUrl }
+    )
+
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-      <Navbar user={user} />
+    <>
+      <JsonLdScript data={jsonLdData} />
+      <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
+        <Navbar user={user} />
 
-      {/* Hero Header with Cover Image Background - always shows cover (with Pluragate fallback) */}
-      <header className="group relative overflow-hidden min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">
-        {/* Cover Image Background - uses Pluragate covers as fallback */}
-        <PostHeroBackground coverImageUrl={post.cover_image_url} />
+        {/* Hero Header with Cover Image Background - always shows cover (with Pluragate fallback) */}
+        <header className="group relative overflow-hidden min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">
+          {/* Cover Image Background - uses Pluragate covers as fallback */}
+          <PostHeroBackground coverImageUrl={post.cover_image_url} />
 
-        {/* Header Content */}
-        <div className="relative z-10">
-          <div className="container-custom max-w-5xl py-6">
-            {/* Top Row: Back Link + Mobile Quick Actions */}
-            <div className="flex items-center justify-between mb-4 md:mb-8">
-              {/* Back Link */}
-              <Link
-                href="/insights"
-                className="inline-flex items-center gap-2 text-sm transition-colors text-white/80 hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                {t('backToInsights')}
-              </Link>
-
-              {/* Mobile Quick Actions - only visible on mobile */}
-              <div className="flex items-center gap-1 md:hidden [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
-                {user && user.id !== post.author_id && (
-                  <ForkButton
-                    postId={post.id}
-                    postTitle={post.title}
-                    postContent={post.content}
-                    postTags={post.tags || []}
-                    iconOnly
-                  />
-                )}
-                <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
-                <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
-              </div>
-            </div>
-
-            {/* Content Type Badge */}
-            {post.content_type === 'question' && (
-              <div className="mb-4">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/20 text-secondary-dark dark:text-secondary text-sm font-semibold">
-                  <MessageSquare className="w-4 h-4" />
-                  {t('question')}
-                </span>
-              </div>
-            )}
-
-            {/* Title */}
-            <h1 dir="auto" className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
-              {post.title}
-            </h1>
-
-            {/* Forked From */}
-            {post.forked_from && (
-              <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-white/80 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 w-fit">
-                <GitFork className="w-4 h-4 text-white" />
-                <span>{t('remixedFrom')}</span>
-                <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-white hover:underline">
-                  {post.forked_from.title}
+          {/* Header Content */}
+          <div className="relative z-10">
+            <div className="container-custom max-w-5xl py-6">
+              {/* Top Row: Back Link + Mobile Quick Actions */}
+              <div className="flex items-center justify-between mb-4 md:mb-8">
+                {/* Back Link */}
+                <Link
+                  href="/insights"
+                  className="inline-flex items-center gap-2 text-sm transition-colors text-white/80 hover:text-white"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t('backToInsights')}
                 </Link>
-              </div>
-            )}
 
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-                {post.tags.map((tag: string) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-colors"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Meta Row */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-white/80">
-              {/* Author */}
-              <Link
-                href={`/profile/${post.author_id}`}
-                className="flex items-center gap-3 transition-colors hover:text-white"
-              >
-                {post.author?.avatar_url ? (
-                  <Image
-                    src={post.author.avatar_url}
-                    alt={authorDisplay}
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                    {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
-                  </div>
-                )}
-                <div>
-                  <span className="font-semibold block text-white">{authorDisplay}</span>
-                  {post.author?.affiliation && (
-                    <span className="text-xs">{post.author.affiliation}</span>
-                  )}
-                </div>
-              </Link>
-
-              <span className="text-gray-300 dark:text-gray-700">•</span>
-
-              {/* Date */}
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <time dateTime={post.created_at}>
-                  {new Date(post.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-
-              <span className="text-gray-300 dark:text-gray-700">•</span>
-
-              {/* Reading Time */}
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{t('minRead', { count: readingTime })}</span>
-              </div>
-
-              {/* Knowledge Impact Score - if available */}
-              {post.academic_impact_score && post.academic_impact_score > 0 && (
-                <>
-                  <span className="text-gray-300 dark:text-gray-700">•</span>
-                  <div
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold"
-                    title="Knowledge Impact Score: Based on quality citations and scholarly engagement"
-                  >
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    <span>{t('impact')}: {post.academic_impact_score.toFixed(1)}</span>
-                  </div>
-                </>
-              )}
-
-              {/* License */}
-              {post.license && (
-                <>
-                  <span className="text-gray-300 dark:text-gray-700">•</span>
-                  <span className="px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-bg text-xs">
-                    {tLicenses(post.license.replace(/\./g, '_'))}
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
-              {user && user.id === post.author_id ? (
-                <>
-                  <EditButton
-                    postId={post.id}
-                    postCreatedAt={post.created_at}
-                    isAuthor={true}
-                  />
-                  <Link href={`/post/${post.id}/suggestions`}>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <GitPullRequest className="w-4 h-4" />
-                      {t('suggestions')}
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  {/* ForkButton - hidden on mobile (shown in header) */}
-                  <div className="hidden md:block">
+                {/* Mobile Quick Actions - only visible on mobile */}
+                <div className="flex items-center gap-1 md:hidden [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
+                  {user && user.id !== post.author_id && (
                     <ForkButton
                       postId={post.id}
                       postTitle={post.title}
                       postContent={post.content}
                       postTags={post.tags || []}
+                      iconOnly
                     />
+                  )}
+                  <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
+                  <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+                </div>
+              </div>
+
+              {/* Content Type Badge */}
+              {post.content_type === 'question' && (
+                <div className="mb-4">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/20 text-secondary-dark dark:text-secondary text-sm font-semibold">
+                    <MessageSquare className="w-4 h-4" />
+                    {t('question')}
+                  </span>
+                </div>
+              )}
+
+              {/* Title */}
+              <h1 dir="auto" className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
+                {post.title}
+              </h1>
+
+              {/* Forked From */}
+              {post.forked_from && (
+                <div className="flex items-center gap-2 mb-4 md:mb-6 text-sm text-white/80 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 w-fit">
+                  <GitFork className="w-4 h-4 text-white" />
+                  <span>{t('remixedFrom')}</span>
+                  <Link href={`/post/${post.forked_from.id}`} className="font-semibold text-white hover:underline">
+                    {post.forked_from.title}
+                  </Link>
+                </div>
+              )}
+
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+                  {post.tags.map((tag: string) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-colors"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Meta Row */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-white/80">
+                {/* Author */}
+                <Link
+                  href={`/profile/${post.author_id}`}
+                  className="flex items-center gap-3 transition-colors hover:text-white"
+                >
+                  {post.author?.avatar_url ? (
+                    <Image
+                      src={post.author.avatar_url}
+                      alt={authorDisplay}
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                      {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <span className="font-semibold block text-white">{authorDisplay}</span>
+                    {post.author?.affiliation && (
+                      <span className="text-xs">{post.author.affiliation}</span>
+                    )}
                   </div>
-                  <SuggestionDialog
-                    postId={post.id}
-                    originalContent={post.content}
-                  />
-                  {user && (
-                    <Link href={`/correspondence/compose?post=${post.id}`}>
+                </Link>
+
+                <span className="text-gray-300 dark:text-gray-700">•</span>
+
+                {/* Date */}
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <time dateTime={post.created_at}>
+                    {new Date(post.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+
+                <span className="text-gray-300 dark:text-gray-700">•</span>
+
+                {/* Reading Time */}
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{t('minRead', { count: readingTime })}</span>
+                </div>
+
+                {/* Knowledge Impact Score - if available */}
+                {post.academic_impact_score && post.academic_impact_score > 0 && (
+                  <>
+                    <span className="text-gray-300 dark:text-gray-700">•</span>
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold"
+                      title="Knowledge Impact Score: Based on quality citations and scholarly engagement"
+                    >
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>{t('impact')}: {post.academic_impact_score.toFixed(1)}</span>
+                    </div>
+                  </>
+                )}
+
+                {/* License */}
+                {post.license && (
+                  <>
+                    <span className="text-gray-300 dark:text-gray-700">•</span>
+                    <span className="px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-bg text-xs">
+                      {tLicenses(post.license.replace(/\./g, '_'))}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-4 pt-4 md:mt-8 md:pt-6 border-t border-white/20 [&_button]:bg-white/20 [&_button]:backdrop-blur-sm [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/30">
+                {user && user.id === post.author_id ? (
+                  <>
+                    <EditButton
+                      postId={post.id}
+                      postCreatedAt={post.created_at}
+                      isAuthor={true}
+                    />
+                    <Link href={`/post/${post.id}/suggestions`}>
                       <Button variant="outline" size="sm" className="gap-2">
-                        <HelpCircle className="w-4 h-4" />
-                        {t('askAuthor')}
+                        <GitPullRequest className="w-4 h-4" />
+                        {t('suggestions')}
                       </Button>
                     </Link>
-                  )}
-                </>
-              )}
+                  </>
+                ) : (
+                  <>
+                    {/* ForkButton - hidden on mobile (shown in header) */}
+                    <div className="hidden md:block">
+                      <ForkButton
+                        postId={post.id}
+                        postTitle={post.title}
+                        postContent={post.content}
+                        postTags={post.tags || []}
+                      />
+                    </div>
+                    <SuggestionDialog
+                      postId={post.id}
+                      originalContent={post.content}
+                    />
+                    {user && (
+                      <Link href={`/correspondence/compose?post=${post.id}`}>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <HelpCircle className="w-4 h-4" />
+                          {t('askAuthor')}
+                        </Button>
+                      </Link>
+                    )}
+                  </>
+                )}
 
-              {/* Cite Button - visible for all users */}
-              <CiteButton
-                postId={post.id}
-                postTitle={post.title}
-                postAuthor={post.author}
-                postCreatedAt={post.created_at}
-                postContent={post.content}
-                postTags={post.tags}
-              />
+                {/* Cite Button - visible for all users */}
+                <CiteButton
+                  postId={post.id}
+                  postTitle={post.title}
+                  postAuthor={post.author}
+                  postCreatedAt={post.created_at}
+                  postContent={post.content}
+                  postTags={post.tags}
+                />
 
-              {/* Download Button - for resources */}
-              {post.content_type === 'resource' && post.metadata?.url && (
-                <a
-                  href={post.metadata.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
-                >
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Download className="w-4 h-4" />
-                    {t('download')}
-                  </Button>
-                </a>
-              )}
+                {/* Download Button - for resources */}
+                {post.content_type === 'resource' && post.metadata?.url && (
+                  <a
+                    href={post.metadata.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Download className="w-4 h-4" />
+                      {t('download')}
+                    </Button>
+                  </a>
+                )}
 
-              <div className="flex-1 min-w-0 hidden md:block" />
+                <div className="flex-1 min-w-0 hidden md:block" />
 
-              {/* Bookmark & More Options - hidden on mobile (shown in header) */}
-              <div className="hidden md:flex items-center gap-2">
-                <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
-                <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+                {/* Bookmark & More Options - hidden on mobile (shown in header) */}
+                <div className="hidden md:flex items-center gap-2">
+                  <BookmarkButton postId={post.id} className="!text-white hover:!bg-white/30" />
+                  <PostMoreOptions postId={post.id} className="!text-white hover:!bg-white/30" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="flex-1 container-custom max-w-5xl py-12">
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Main Content */}
-          <article className="lg:col-span-2 space-y-12">
-            {/* Rejection Banner - shown only to authors of rejected posts */}
-            <RejectionBanner
-              postId={post.id}
-              postTitle={post.title}
-              rejectionReason={post.rejection_reason}
-              approvalStatus={post.approval_status || 'approved'}
-              isAuthor={user?.id === post.author_id}
-              contentType={post.content_type as 'post' | 'article' | 'question' | 'event'}
-            />
+        <main className="flex-1 container-custom max-w-5xl py-12">
+          <div className="grid lg:grid-cols-3 gap-12">
+            {/* Main Content */}
+            <article className="lg:col-span-2 space-y-12">
+              {/* Rejection Banner - shown only to authors of rejected posts */}
+              <RejectionBanner
+                postId={post.id}
+                postTitle={post.title}
+                rejectionReason={post.rejection_reason}
+                approvalStatus={post.approval_status || 'approved'}
+                isAuthor={user?.id === post.author_id}
+                contentType={post.content_type as 'post' | 'article' | 'question' | 'event'}
+              />
 
-            {/* Article Content */}
-            <div dir="auto" className="prose prose-lg max-w-none dark:prose-invert 
+              {/* Article Content */}
+              <div dir="auto" className="prose prose-lg max-w-none dark:prose-invert 
               prose-headings:font-bold prose-headings:text-text dark:prose-headings:text-dark-text 
               prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
               prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
@@ -521,196 +586,197 @@ export default async function PostPage(props: PostPageProps) {
               prose-img:rounded-xl prose-img:shadow-soft-md
               prose-ul:my-6 prose-li:my-1
             ">
-              <TextSelectionHandler postId={post.id}>
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm, remarkMath]}
-                  rehypePlugins={[rehypeKatex]}
-                >
-                  {post.content || ''}
-                </ReactMarkdown>
-              </TextSelectionHandler>
-            </div>
+                <TextSelectionHandler postId={post.id}>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
+                  >
+                    {post.content || ''}
+                  </ReactMarkdown>
+                </TextSelectionHandler>
+              </div>
 
-            {/* Data Visualizations */}
-            {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
-              <PostCharts
-                chartBlocks={post.metadata.chartBlocks}
-                linkedResources={linkedResources}
-              />
-            )}
-
-            {/* Spatial Context - between content and citations */}
-            <SpatialContextCard
-              spatialCoverage={post.spatial_coverage}
-              spatialGeometry={post.spatial_geometry}
-              temporalStart={post.temporal_start}
-              temporalEnd={post.temporal_end}
-            />
-
-            {/* References Section - what this post cites */}
-            <ReferencesSection postId={post.id} />
-
-
-            {/* Answers Section for Questions */}
-            {post.content_type === 'question' && (
-              <section className="space-y-8">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-text dark:text-dark-text">
-                    {t('answers', { count: answers.length })}
-                  </h2>
-                </div>
-
-                <AnswerList
-                  answers={answers}
-                  isQuestionAuthor={user?.id === post.author_id}
+              {/* Data Visualizations */}
+              {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
+                <PostCharts
+                  chartBlocks={post.metadata.chartBlocks}
+                  linkedResources={linkedResources}
                 />
+              )}
 
-                {/* Answer Form */}
-                {user ? (
-                  <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-                    <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">{t('yourAnswer')}</h3>
-                    <AnswerForm questionId={post.id} />
+              {/* Spatial Context - between content and citations */}
+              <SpatialContextCard
+                spatialCoverage={post.spatial_coverage}
+                spatialGeometry={post.spatial_geometry}
+                temporalStart={post.temporal_start}
+                temporalEnd={post.temporal_end}
+              />
+
+              {/* References Section - what this post cites */}
+              <ReferencesSection postId={post.id} />
+
+
+              {/* Answers Section for Questions */}
+              {post.content_type === 'question' && (
+                <section className="space-y-8">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-text dark:text-dark-text">
+                      {t('answers', { count: answers.length })}
+                    </h2>
                   </div>
-                ) : (
-                  <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface rounded-2xl">
-                    <p className="text-text-light dark:text-dark-text-muted mb-4">
-                      {t('signInToAnswer')}
-                    </p>
-                    <Link href="/auth/login">
-                      <Button>{tc('signIn')}</Button>
-                    </Link>
-                  </div>
-                )}
-              </section>
-            )}
 
-            {/* Comments Section */}
-            {post.content_type !== 'question' && <CommentsSection postId={post.id} />}
-          </article>
-
-          {/* Sidebar */}
-          <aside className="lg:col-span-1 space-y-6">
-            {/* Author Card */}
-            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-              <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                {t('aboutAuthor')}
-              </h3>
-              <Link
-                href={`/profile/${post.author_id}`}
-                className="flex items-start gap-4 group"
-              >
-                {post.author?.avatar_url ? (
-                  <Image
-                    src={post.author.avatar_url}
-                    alt={authorDisplay}
-                    width={56}
-                    height={56}
-                    className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                  <AnswerList
+                    answers={answers}
+                    isQuestionAuthor={user?.id === post.author_id}
                   />
-                ) : (
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:scale-105 transition-transform">
-                    {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
-                    {authorDisplay}
-                  </p>
-                  {post.author?.affiliation && (
-                    <p className="text-sm text-text-light dark:text-dark-text-muted truncate">
-                      {post.author.affiliation}
-                    </p>
-                  )}
-                  {post.author?.bio && (
-                    <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-2">
-                      {post.author.bio}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            </div>
 
-            {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-              <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-                <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                  {t('relatedResearch')}
-                </h3>
-                <div className="space-y-4">
-                  {relatedPosts.slice(0, 4).map((relPost: any) => (
-                    <Link
-                      key={relPost.id}
-                      href={`/post/${relPost.id}`}
-                      className="block group"
-                    >
-                      <h4 className="font-medium text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-2 text-sm">
-                        {relPost.title}
-                      </h4>
-                      <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">
-                        {new Date(relPost.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {/* Answer Form */}
+                  {user ? (
+                    <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+                      <h3 className="text-lg font-semibold text-text dark:text-dark-text mb-4">{t('yourAnswer')}</h3>
+                      <AnswerForm questionId={post.id} />
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-gray-50 dark:bg-dark-surface rounded-2xl">
+                      <p className="text-text-light dark:text-dark-text-muted mb-4">
+                        {t('signInToAnswer')}
                       </p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+                      <Link href="/auth/login">
+                        <Button>{tc('signIn')}</Button>
+                      </Link>
+                    </div>
+                  )}
+                </section>
+              )}
 
-            {/* Citation Backlinks */}
-            {citationBacklinks.length > 0 && (
+              {/* Comments Section */}
+              {post.content_type !== 'question' && <CommentsSection postId={post.id} />}
+            </article>
+
+            {/* Sidebar */}
+            <aside className="lg:col-span-1 space-y-6">
+              {/* Author Card */}
               <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                  {t('citedBy')}
+                  {t('aboutAuthor')}
                 </h3>
-                <div className="space-y-4">
-                  {citationBacklinks.slice(0, 4).map((citation: any) => (
-                    <Link
-                      key={citation.id}
-                      href={`/post/${citation.id}`}
-                      className="block group"
-                    >
-                      <h4 className="font-medium text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-2 text-sm">
-                        {citation.title}
-                      </h4>
-                      {citation.quote_content && (
-                        <p className="text-xs text-text-light dark:text-dark-text-muted mt-1 italic line-clamp-2">
-                          &quot;{citation.quote_content}&quot;
-                        </p>
-                      )}
-                    </Link>
-                  ))}
-                </div>
+                <Link
+                  href={`/profile/${post.author_id}`}
+                  className="flex items-start gap-4 group"
+                >
+                  {post.author?.avatar_url ? (
+                    <Image
+                      src={post.author.avatar_url}
+                      alt={authorDisplay}
+                      width={56}
+                      height={56}
+                      className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white flex-shrink-0 group-hover:scale-105 transition-transform">
+                      {(post.author?.name?.[0] || post.author?.email?.[0] || 'U').toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
+                      {authorDisplay}
+                    </p>
+                    {post.author?.affiliation && (
+                      <p className="text-sm text-text-light dark:text-dark-text-muted truncate">
+                        {post.author.affiliation}
+                      </p>
+                    )}
+                    {post.author?.bio && (
+                      <p className="text-sm text-text-light dark:text-dark-text-muted line-clamp-2 mt-2">
+                        {post.author.bio}
+                      </p>
+                    )}
+                  </div>
+                </Link>
               </div>
-            )}
 
-            {/* Linked Resources */}
-            <LinkedResourcesSection resources={linkedResources} />
+              {/* Related Posts */}
+              {relatedPosts.length > 0 && (
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+                  <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
+                    {t('relatedResearch')}
+                  </h3>
+                  <div className="space-y-4">
+                    {relatedPosts.slice(0, 4).map((relPost: any) => (
+                      <Link
+                        key={relPost.id}
+                        href={`/post/${relPost.id}`}
+                        className="block group"
+                      >
+                        <h4 className="font-medium text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-2 text-sm">
+                          {relPost.title}
+                        </h4>
+                        <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">
+                          {new Date(relPost.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* Knowledge Graph */}
-            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
-              <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
-                {t('knowledgeGraph')}
-              </h3>
-              <KnowledgeGraph centerPostId={post.id} />
-            </div>
+              {/* Citation Backlinks */}
+              {citationBacklinks.length > 0 && (
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+                  <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
+                    {t('citedBy')}
+                  </h3>
+                  <div className="space-y-4">
+                    {citationBacklinks.slice(0, 4).map((citation: any) => (
+                      <Link
+                        key={citation.id}
+                        href={`/post/${citation.id}`}
+                        className="block group"
+                      >
+                        <h4 className="font-medium text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-2 text-sm">
+                          {citation.title}
+                        </h4>
+                        {citation.quote_content && (
+                          <p className="text-xs text-text-light dark:text-dark-text-muted mt-1 italic line-clamp-2">
+                            &quot;{citation.quote_content}&quot;
+                          </p>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* Dynamic Schema Fields (Research Metadata) */}
-            {schemaValues.length > 0 && (
-              <SchemaFieldDisplay fields={schemaValues} />
-            )}
+              {/* Linked Resources */}
+              <LinkedResourcesSection resources={linkedResources} />
 
-            {/* Epistemic Recommendations - To Broaden This Inquiry */}
-            <EpistemicRecommendations postId={post.id} postTags={post.tags || []} />
-          </aside>
-        </div>
-      </main>
+              {/* Knowledge Graph */}
+              <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6">
+                <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
+                  {t('knowledgeGraph')}
+                </h3>
+                <KnowledgeGraph centerPostId={post.id} />
+              </div>
 
-      {/* Session Tracker - adds post to research trail */}
-      <PostSessionTracker postId={post.id} postTitle={post.title} postTags={post.tags || []} />
+              {/* Dynamic Schema Fields (Research Metadata) */}
+              {schemaValues.length > 0 && (
+                <SchemaFieldDisplay fields={schemaValues} />
+              )}
 
-      {/* Citation Context Bar */}
-      <CitationContextBar postId={post.id} currentTags={post.tags || []} />
+              {/* Epistemic Recommendations - To Broaden This Inquiry */}
+              <EpistemicRecommendations postId={post.id} postTags={post.tags || []} />
+            </aside>
+          </div>
+        </main>
 
-      <Footer />
-    </div>
+        {/* Session Tracker - adds post to research trail */}
+        <PostSessionTracker postId={post.id} postTitle={post.title} postTags={post.tags || []} />
+
+        {/* Citation Context Bar */}
+        <CitationContextBar postId={post.id} currentTags={post.tags || []} />
+
+        <Footer />
+      </div>
+    </>
   )
 }

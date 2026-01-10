@@ -28,7 +28,7 @@ export function FollowButton({ userId, className, variant = 'default' }: FollowB
                         .select('id')
                         .eq('follower_id', user.id)
                         .eq('following_id', userId)
-                        .single()
+                        .maybeSingle()
 
                     setIsFollowing(!!data)
                 }

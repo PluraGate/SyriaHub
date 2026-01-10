@@ -32,67 +32,49 @@ export default async function Home({
   const { data: { user } } = await supabase.auth.getUser()
   const t = await getTranslations({ locale, namespace: 'Landing' });
 
-  // Fetch recent posts for feed preview
+  // Fetch all starting data in parallel to avoid waterfalls
+  const [
+    { data: allPosts },
+    { data: latestResources },
+    { data: platformStatsData }
+  ] = await Promise.all([
+    supabase
+      .from('posts')
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email)
+      `)
+      .eq('status', 'published')
+      .neq('approval_status', 'rejected')
+      .neq('content_type', 'resource')
+      .order('created_at', { ascending: false })
+      .limit(8),
+
+    supabase
+      .from('posts')
+      .select(`
+        *,
+        author:users!posts_author_id_fkey(id, name, email)
+      `)
+      .eq('content_type', 'resource')
+      .eq('status', 'published')
+      .neq('approval_status', 'rejected')
+      .order('created_at', { ascending: false })
+      .limit(4),
+
+    user ? Promise.resolve({ data: null }) : supabase.rpc('get_platform_stats')
+  ])
+
   let recentPosts: any[] = []
   let featuredPosts: any[] = []
-
-  const { data: allPosts } = await supabase
-    .from('posts')
-    .select(`
-      *,
-      author:users!posts_author_id_fkey(id, name, email)
-    `)
-    .eq('status', 'published') // Only show published posts
-    .neq('approval_status', 'rejected') // Hide rejected posts
-    .neq('content_type', 'resource') // Exclude resources from main feed
-    .order('created_at', { ascending: false })
-    .limit(8)
-
-  // Fetch latest resources separately for the new section
-  const { data: latestResources } = await supabase
-    .from('posts')
-    .select(`
-      *,
-      author:users!posts_author_id_fkey(id, name, email)
-    `)
-    .eq('content_type', 'resource')
-    .eq('status', 'published')
-    .neq('approval_status', 'rejected')
-    .order('created_at', { ascending: false })
-    .limit(4)
 
   if (allPosts) {
     featuredPosts = allPosts.slice(0, 4)
     recentPosts = allPosts.slice(4)
   }
 
-  // Fetch platform stats for landing page (only for non-authenticated users)
-  let platformStats = { contributors: 0, publications: 0, contexts: 0 }
-  if (!user) {
-    // Count users who have published at least one post (contributors)
-    const { count: contributorsCount } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-
-    // Count published posts
-    const { count: publicationsCount } = await supabase
-      .from('posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'published')
-      .neq('approval_status', 'rejected')
-
-    // Count verified tags (topics)
-    const { count: topicsCount } = await supabase
-      .from('tags')
-      .select('*', { count: 'exact', head: true })
-      .eq('verified', true)
-
-    platformStats = {
-      contributors: contributorsCount || 0,
-      publications: publicationsCount || 0,
-      contexts: topicsCount || 0
-    }
-  }
+  // Use platform stats from RPC or default
+  const platformStats = platformStatsData || { contributors: 0, publications: 0, contexts: 0 }
 
   return (
     <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
