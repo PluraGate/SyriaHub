@@ -54,6 +54,7 @@ export function SuggestedPostsCarousel({
             id,
             title,
             content,
+            content_type,
             tags,
             created_at,
             author:users!posts_author_id_fkey(
@@ -64,6 +65,7 @@ export function SuggestedPostsCarousel({
             )
           `)
                     .eq('status', 'published')
+                    .neq('content_type', 'resource') // Exclude resources
                     .order('created_at', { ascending: false })
                     .limit(limit)
 
@@ -72,8 +74,6 @@ export function SuggestedPostsCarousel({
                 }
 
                 if (currentTags.length > 0) {
-                    // This is a simple implementation. For better tag matching, 
-                    // we might need a more complex query or edge function
                     query = query.contains('tags', currentTags)
                 }
 
@@ -92,6 +92,7 @@ export function SuggestedPostsCarousel({
                 id,
                 title,
                 content,
+                content_type,
                 tags,
                 created_at,
                 author:users!posts_author_id_fkey(
@@ -102,6 +103,7 @@ export function SuggestedPostsCarousel({
                 )
               `)
                             .eq('status', 'published')
+                            .neq('content_type', 'resource') // Exclude resources
                             .neq('id', currentPostId || '')
                             .order('created_at', { ascending: false })
                             .limit(limit - data.length)
@@ -112,12 +114,12 @@ export function SuggestedPostsCarousel({
                             const unique = combined.filter((post, index, self) =>
                                 index === self.findIndex((p) => p.id === post.id)
                             )
-                            setPosts(unique)
+                            setPosts(unique.slice(0, limit))
                         } else {
-                            setPosts(data.map(formatPost))
+                            setPosts(data.map(formatPost).slice(0, limit))
                         }
                     } else {
-                        setPosts(data.map(formatPost))
+                        setPosts(data.map(formatPost).slice(0, limit))
                     }
                 }
             } catch (error) {
@@ -264,10 +266,12 @@ export function SuggestedPostsList({
                     .select(`
             id,
             title,
+            content_type,
             created_at,
             author:users!posts_author_id_fkey(name)
           `)
                     .eq('status', 'published')
+                    .neq('content_type', 'resource') // Exclude resources
                     .order('created_at', { ascending: false })
                     .limit(limit)
 

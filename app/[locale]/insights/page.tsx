@@ -61,7 +61,7 @@ export default function InsightsPage() {
           .select('following_id')
           .eq('follower_id', user.id)
 
-        if (follows) {
+        if (follows && follows.length > 0) {
           setFollowingIds(follows.map(f => f.following_id))
         }
       }
@@ -86,7 +86,10 @@ export default function InsightsPage() {
         // Fetch posts without author join (workaround for schema cache issue)
         let query = supabase
           .from('posts')
-          .select('*')
+          .select(`
+            *,
+            author:users!posts_author_id_fkey(id, name, email, avatar_url)
+          `)
           .eq('status', 'published')
           .neq('content_type', 'event')
           .neq('content_type', 'resource') // Exclude resources
@@ -132,24 +135,8 @@ export default function InsightsPage() {
             console.error('Error fetching posts:', error.message || error.code)
           }
           setPosts([])
-        } else if (postsData && postsData.length > 0) {
-          // Fetch authors separately
-          const authorIds = [...new Set(postsData.map(p => p.author_id).filter(Boolean))]
-          const { data: authors } = await supabase
-            .from('users')
-            .select('id, name, email, avatar_url')
-            .in('id', authorIds)
-
-          // Map authors to posts
-          const authorsMap = new Map(authors?.map(a => [a.id, a]) || [])
-          const postsWithAuthors = postsData.map(post => ({
-            ...post,
-            author: authorsMap.get(post.author_id) || null
-          }))
-
-          setPosts(postsWithAuthors)
         } else {
-          setPosts([])
+          setPosts(postsData || [])
         }
       } catch (error) {
         console.error('Error:', error)

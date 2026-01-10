@@ -10,11 +10,51 @@ import { EndorsementSection } from '@/components/EndorsementSection'
 import { UserActivityInsights } from '@/components/UserActivityInsights'
 import { ProfileCompletionCard } from '@/components/ProfileCompletionCard'
 import { getTranslations } from 'next-intl/server'
+import { Metadata } from 'next'
+import { buildProfileMetadata, buildPersonSchema, JsonLdScript } from '@/lib/seo'
 
 interface ProfilePageProps {
   params: Promise<{
     id: string
   }>
+}
+
+// Generate dynamic metadata for SEO
+export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: profile } = await supabase
+    .from('users')
+    .select('id, name, bio, affiliation, avatar_url')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (!profile) {
+    return {
+      title: 'Researcher Not Found | SyriaHub',
+      description: 'The requested profile could not be found.',
+    }
+  }
+
+  // Check privacy settings
+  const { data: prefData } = await supabase
+    .from('user_preferences')
+    .select('preferences')
+    .eq('user_id', id)
+    .maybeSingle()
+
+  const privacySettings = prefData?.preferences?.privacy || { show_profile_public: true }
+
+  // Don't index private profiles
+  if (!privacySettings.show_profile_public) {
+    return {
+      title: 'Private Profile | SyriaHub',
+      robots: { index: false, follow: false }
+    }
+  }
+
+  return buildProfileMetadata(profile)
 }
 
 export default async function ProfilePage(props: ProfilePageProps) {
@@ -172,63 +212,70 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
 
 
+  // Build JSON-LD for public profiles only
+  const jsonLdData = privacySettings.show_profile_public
+    ? buildPersonSchema(displayProfile)
+    : null
+
   return (
-    <div className="flex min-h-screen flex-col bg-background dark:bg-dark-bg overflow-x-hidden">
-      <Navbar user={user} />
+    <>
+      {jsonLdData && <JsonLdScript data={jsonLdData} />}
+      <div className="flex min-h-screen flex-col bg-background dark:bg-dark-bg overflow-x-hidden">
+        <Navbar user={user} />
 
-      {/* Back Navigation */}
-      <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
-        <div className="container-custom w-full max-w-6xl py-4">
-          <Link
-            href="/insights"
-            className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t('backToInsights')}
-          </Link>
-        </div>
-      </div>
-
-      <main className="container-custom w-full max-w-6xl py-8 flex-1">
-        <ProfileHeader
-          profile={displayProfile}
-          stats={{
-            post_count: Number(stats?.post_count || 0),
-            event_count: Number(stats?.event_count || 0),
-            comment_count: Number(stats?.comment_count || 0),
-            citation_count: Number(stats?.citation_count || 0),
-            group_count: Number(stats?.group_count || 0),
-            follower_count: Number(stats?.follower_count || 0),
-            academic_impact: Number(stats?.academic_impact || 0)
-          }}
-          badges={userBadges || []}
-          isOwnProfile={isOwnProfile}
-          privacySettings={privacySettings}
-        />
-
-        {/* Skills & Endorsements Section */}
-        <div className="mb-8">
-          <EndorsementSection
-            userId={params.id}
-            isOwnProfile={isOwnProfile}
-          />
-        </div>
-
-        {/* Profile Completion - only show on own profile */}
-        {isOwnProfile && (
-          <div className="mb-8">
-            <ProfileCompletionCard userId={params.id} />
+        {/* Back Navigation */}
+        <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
+          <div className="container-custom w-full max-w-6xl py-4">
+            <Link
+              href="/insights"
+              className="inline-flex items-center gap-2 text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-accent-light transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t('backToInsights')}
+            </Link>
           </div>
-        )}
+        </div>
 
-        <UserActivityInsights
-          posts={posts || []}
-          groups={groups}
-        />
-      </main>
+        <main className="container-custom w-full max-w-6xl py-8 flex-1">
+          <ProfileHeader
+            profile={displayProfile}
+            stats={{
+              post_count: Number(stats?.post_count || 0),
+              event_count: Number(stats?.event_count || 0),
+              comment_count: Number(stats?.comment_count || 0),
+              citation_count: Number(stats?.citation_count || 0),
+              group_count: Number(stats?.group_count || 0),
+              follower_count: Number(stats?.follower_count || 0),
+              academic_impact: Number(stats?.academic_impact || 0)
+            }}
+            badges={userBadges || []}
+            isOwnProfile={isOwnProfile}
+            privacySettings={privacySettings}
+          />
 
-      <Footer />
-    </div>
+          {/* Skills & Endorsements Section */}
+          <div className="mb-8">
+            <EndorsementSection
+              userId={params.id}
+              isOwnProfile={isOwnProfile}
+            />
+          </div>
+
+          {/* Profile Completion - only show on own profile */}
+          {isOwnProfile && (
+            <div className="mb-8">
+              <ProfileCompletionCard userId={params.id} />
+            </div>
+          )}
+
+          <UserActivityInsights
+            posts={posts || []}
+            groups={groups}
+          />
+        </main>
+
+        <Footer />
+      </div>
+    </>
   )
 }
-
