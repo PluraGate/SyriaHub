@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import Image from 'next/image'
 
 /**
  * Global loading state shown during page navigation.
@@ -7,18 +7,45 @@ import { Loader2 } from 'lucide-react'
  */
 export default function Loading() {
     return (
-        <div className="min-h-screen bg-background dark:bg-dark-bg flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                    {/* Outer ring */}
-                    <div className="w-16 h-16 rounded-full border-4 border-gray-200 dark:border-dark-border" />
-                    {/* Spinning ring */}
-                    <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin" />
+        <div className="fixed inset-0 z-[100] w-full h-full flex flex-col items-center justify-center overflow-hidden bg-slate-900">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src="/covers/Pluragate_cover_Dark_2560x960.jpeg"
+                    alt="Background"
+                    fill
+                    className="object-cover opacity-100"
+                    priority
+                    sizes="100vw"
+                />
+                {/* Overlay to ensure text/logo contrast and match the deep feel */}
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center animate-in fade-in duration-700">
+                <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 drop-shadow-2xl">
+                    <Image
+                        src="/icons/Pluragate_512x512.svg"
+                        alt="SyriaHub Logo"
+                        fill
+                        className="object-contain"
+                        priority
+                    />
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted animate-pulse">
-                    Loading...
-                </p>
+
+                <h1 className="text-3xl md:text-4xl font-display font-bold text-white tracking-widest drop-shadow-lg">
+                    SyriaHub
+                </h1>
+
+                {/* Subtle loading indicator */}
+                <div className="mt-8 flex gap-2">
+                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce" />
+                </div>
             </div>
         </div>
     )
 }
+

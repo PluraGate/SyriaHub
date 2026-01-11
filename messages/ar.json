@@ -641,7 +641,9 @@
             "contributors": "المساهمون",
             "publications": "المنشورات",
             "contexts": "السياقات المرصودة"
-        }
+        },
+        "moreTags": "المزيد",
+        "showLess": "عرض أقل"
     },
     "Footer": {
         "description": "مساحة بحثية تعاونية للمعرفة والسياق والذاكرة السورية. SyriaHub جزء من شبكة PluraGate للمنصات البحثية.",
@@ -3072,7 +3074,9 @@
         "viewAllPosts": "← عرض الكل",
         "minRead": "{count} د قراءة",
         "min": "د",
-        "event": "فعالية"
+        "event": "فعالية",
+        "moreDisciplines": "المزيد",
+        "showLess": "عرض أقل"
     },
     "Categories": {
         "Computer Science": "علوم الحاسوب",

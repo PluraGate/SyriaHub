@@ -13,7 +13,7 @@ import { BentoGrid, BentoGridItem } from '@/components/BentoGrid'
 import { GroupCard } from '@/components/GroupCard'
 import { ProfileCard } from '@/components/ProfileCard'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, X, Calendar } from 'lucide-react'
+import { Compass, TrendingUp, Users, BookOpen, Sparkles, ChevronDown, ChevronUp, X, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
 
@@ -50,7 +50,7 @@ function ExplorePageContent() {
   const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
   const [profiles, setProfiles] = useState<any[]>([])
   const [comingEvents, setComingEvents] = useState<Post[]>([])
-
+  const [disciplinesExpanded, setDisciplinesExpanded] = useState(false)
   // Get theme-aware hero cover image
   const heroCover = useDefaultCover('large')
 
@@ -244,30 +244,67 @@ function ExplorePageContent() {
         </div>
 
         <div className="container-custom max-w-7xl py-12">
-          {/* Discipline Pills */}
+          {/* Discipline Pills - Collapsible on mobile */}
           <div className="mb-12">
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setSelectedTag(null)}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === null
-                  ? 'bg-primary text-white shadow-md'
-                  : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
-                  }`}
+            {/* Collapsed view with expand button */}
+            <div className="relative">
+              <div
+                className="flex gap-3 flex-wrap transition-all duration-300 ease-in-out"
               >
-                {tInsights('allTopics')}
-              </button>
-              {disciplines.map((discipline) => (
                 <button
-                  key={discipline}
-                  onClick={() => setSelectedTag(discipline)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedTag === discipline
+                  onClick={() => setSelectedTag(null)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedTag === null
                     ? 'bg-primary text-white shadow-md'
                     : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
                     }`}
                 >
-                  {tCategories(discipline)}
+                  {tInsights('allTopics')}
                 </button>
-              ))}
+                {/* Show only first 4 disciplines when collapsed, all when expanded */}
+                {(disciplinesExpanded ? disciplines : disciplines.slice(0, 4)).map((discipline) => (
+                  <button
+                    key={discipline}
+                    onClick={() => setSelectedTag(discipline)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedTag === discipline
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-text dark:text-dark-text hover:border-primary dark:hover:border-primary-light'
+                      }`}
+                  >
+                    {tCategories(discipline)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Expand/Collapse button */}
+              {disciplines.length > 4 && (
+                <div className="flex justify-center mt-3">
+                  <button
+                    onClick={() => setDisciplinesExpanded(!disciplinesExpanded)}
+                    className="
+                      inline-flex items-center gap-1.5 px-4 py-1.5 
+                      text-sm font-medium rounded-full
+                      bg-primary/10 dark:bg-primary/20 
+                      text-primary dark:text-primary-light
+                      hover:bg-primary/20 dark:hover:bg-primary/30
+                      border border-primary/20 dark:border-primary/30
+                      transition-all duration-200
+                      hover:scale-105 active:scale-95
+                    "
+                  >
+                    {disciplinesExpanded ? (
+                      <>
+                        <span>{t('showLess')}</span>
+                        <ChevronUp className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>+{disciplines.length - 4} {t('moreDisciplines')}</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
