@@ -315,7 +315,9 @@
         "noPostsDesc": "كن أول من يشارك أبحاثه مع المجتمع!",
         "noPostsTaggedTitle": "لم يتم العثور على مستجدات لـ \"{tag}\"",
         "noPostsTaggedDesc": "جرب موضوعاً مختلفاً أو امسح التصفية لرؤية المزيد من المحتوى.",
-        "actionLabel": "إنشاء منشور"
+        "actionLabel": "إنشاء منشور",
+        "showMore": "عرض المزيد",
+        "showLess": "عرض أقل"
     },
     "Post": {
         "edit": "تعديل",

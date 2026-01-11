@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ImpactStoriesSection } from '@/components/ImpactStoriesSection'
 import { Post } from '@/types'
-import { ChevronDown, TrendingUp, Sparkles, PenSquare } from 'lucide-react'
+import { ChevronDown, ChevronUp, TrendingUp, Sparkles, PenSquare, FileText, HelpCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
 
@@ -36,6 +36,7 @@ export default function InsightsPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [tagsExpanded, setTagsExpanded] = useState(false)
   const [filter, setFilter] = useState<'all' | 'article' | 'question'>('all')
   const [sortBy, setSortBy] = useState<SortOption>('new')
   const [insightTab, setInsightTab] = useState<InsightTab>('all')
@@ -269,42 +270,80 @@ export default function InsightsPage() {
                   <button
                     key={type}
                     onClick={() => setFilter(type)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === type
+                    className={`flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === type
                       ? 'bg-white dark:bg-dark-bg text-primary dark:text-white/50 shadow-sm'
                       : 'text-gray-600 dark:text-gray-300 hover:text-text dark:hover:text-dark-text'
                       }`}
+                    title={type === 'all' ? t('all') : type === 'article' ? t('article') : t('question')}
                   >
-                    {type === 'all' ? t('all') : type === 'article' ? t('article') : t('question')}
+                    <span className="md:hidden">
+                      {type === 'all' && <Sparkles className="w-4 h-4" />}
+                      {type === 'article' && <FileText className="w-4 h-4" />}
+                      {type === 'question' && <HelpCircle className="w-4 h-4" />}
+                    </span>
+                    <span className="hidden md:inline">
+                      {type === 'all' ? t('all') : type === 'article' ? t('article') : t('question')}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Tags Pills */}
+
           {officialTags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
-              <button
-                onClick={() => setSelectedTag(null)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === null
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
-                  }`}
-              >
-                {t('allTopics')}
-              </button>
-              {officialTags.slice(0, 8).map(tag => (
+            <div className="mb-8">
+              <div className="flex flex-wrap gap-2 transition-all duration-300 ease-in-out">
                 <button
-                  key={tag}
-                  onClick={() => setSelectedTag(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === tag
+                  onClick={() => setSelectedTag(null)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === null
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
                     }`}
                 >
-                  {tag}
+                  {t('allTopics')}
                 </button>
-              ))}
+                {(tagsExpanded ? officialTags : officialTags.slice(0, 6)).map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSelectedTag(tag)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === tag
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border'
+                      }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              {officialTags.length > 6 && (
+                <div className="flex justify-center mt-3">
+                  <button
+                    onClick={() => setTagsExpanded(!tagsExpanded)}
+                    className="
+                      inline-flex items-center gap-1.5 px-4 py-1.5 
+                      text-sm font-medium rounded-full
+                      bg-gray-100 dark:bg-dark-surface
+                      text-text-light dark:text-dark-text-muted
+                      hover:bg-gray-200 dark:hover:bg-dark-border
+                      transition-all duration-200
+                    "
+                  >
+                    {tagsExpanded ? (
+                      <>
+                        <span>{t('showLess') || 'Show Less'}</span>
+                        <ChevronUp className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>+{officialTags.length - 6} {t('showMore') || 'More'}</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

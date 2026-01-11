@@ -337,34 +337,35 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6 transition-all">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 gap-4">
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="flex items-center gap-2 group hover:opacity-80 transition-opacity flex-1"
+                    className="flex items-center gap-2 group hover:opacity-80 transition-opacity min-w-0 text-left"
                 >
-                    <Award className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold text-text dark:text-dark-text">
+                    <Award className="w-5 h-5 text-primary shrink-0" />
+                    <h3 className="text-lg font-semibold text-text dark:text-dark-text truncate">
                         {t('skillsEndorsements')}
                     </h3>
                     {skills.length > 0 && (
-                        <span className="text-sm text-text-light dark:text-dark-text-muted">
-                            ({t('endorsementsCount', { count: skills.reduce((sum, s) => sum + s.endorsement_count, 0) })})
+                        <span className="hidden xs:inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium shrink-0">
+                            {skills.reduce((sum, s) => sum + s.endorsement_count, 0)}
                         </span>
                     )}
                 </button>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                     {isOwnProfile && (
                         <Button
                             variant="outline"
                             size="sm"
+                            className="whitespace-nowrap"
                             onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation()
                                 setShowAddSkill(!showAddSkill)
                                 if (isCollapsed) setIsCollapsed(false)
                             }}
                         >
-                            <Plus className="w-4 h-4 me-1" />
-                            {t('addSkill')}
+                            <Plus className="w-4 h-4 sm:me-1" />
+                            <span className="hidden sm:inline">{t('addSkill')}</span>
                         </Button>
                     )}
                     <button

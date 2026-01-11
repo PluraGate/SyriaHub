@@ -4,8 +4,8 @@
     "description": "Open research platform for Syria's reconstruction and cultural heritage preservation",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#0f172a",
+    "background_color": "#0A1B1D",
+    "theme_color": "#0A1B1D",
     "orientation": "portrait-primary",
     "scope": "/",
     "icons": [
@@ -16,10 +16,10 @@
             "purpose": "any"
         },
         {
-            "src": "/icons/icon-512x512_Dark_PWA.png",
+            "src": "/icons/icon-512x512_Dark_noDot.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any"
+            "purpose": "any maskable"
         },
         {
             "src": "/icons/icon-192x192_Dark.png",
