@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
-import { TrendingUp, Flame } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface VerifiedTag {
   label: string
@@ -18,11 +18,21 @@ interface TagCount {
   count: number
 }
 
-export function TagsCloud() {
+interface TagsCloudProps {
+  /** Number of tags to show when collapsed (default: 3) */
+  initialVisibleCount?: number
+  /** Whether the component starts expanded (default: false) */
+  defaultExpanded?: boolean
+}
+
+export function TagsCloud({ initialVisibleCount = 3, defaultExpanded = false }: TagsCloudProps) {
   const [tags, setTags] = useState<VerifiedTag[]>([])
   const [loading, setLoading] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+  const contentRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
   const locale = useLocale()
+  const t = useTranslations('Landing')
 
   useEffect(() => {
     const loadTags = async () => {
@@ -87,47 +97,80 @@ export function TagsCloud() {
   if (loading) {
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <div key={i} className="h-8 w-20 skeleton rounded-full" />
         ))}
       </div>
     )
   }
 
-  // Function to determine if color is light or dark for text contrast
-  const isLightColor = (hex: string) => {
-    const c = hex.substring(1)
-    const rgb = parseInt(c, 16)
-    const r = (rgb >> 16) & 0xff
-    const g = (rgb >> 8) & 0xff
-    const b = (rgb >> 0) & 0xff
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
-    return luma > 128
+  // Determine visible tags and remaining count
+  const visibleTags = isExpanded ? tags : tags.slice(0, initialVisibleCount)
+  const remainingCount = tags.length - initialVisibleCount
+  const showExpandButton = tags.length > initialVisibleCount
+
+  const renderTag = (tag: VerifiedTag) => {
+    const displayLabel = (locale === 'ar' && tag.label_ar) ? tag.label_ar : tag.label
+    const bgColor = tag.color || '#1A3D40'
+
+    return (
+      <Link
+        key={tag.label}
+        href={`/explore?tag=${encodeURIComponent(tag.label)}`}
+        className="flex items-center gap-2 pl-3 pr-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-md bg-gray-100/50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-200"
+        style={{
+          borderInlineStartWidth: '4px',
+          borderInlineStartColor: bgColor,
+        }}
+      >
+        <span>{displayLabel}</span>
+        <span className="text-xs opacity-60 font-mono">
+          {tag.post_count}
+        </span>
+      </Link>
+    )
   }
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center items-center">
-      {tags.map((tag) => {
-        const displayLabel = (locale === 'ar' && tag.label_ar) ? tag.label_ar : tag.label
-        const bgColor = tag.color || '#1A3D40'
+    <div className="relative">
+      {/* Tags container - renders only visible tags when collapsed */}
+      <div
+        ref={contentRef}
+        className="flex gap-2 justify-center items-center flex-wrap transition-all duration-300 ease-in-out"
+      >
+        {visibleTags.map(renderTag)}
+      </div>
 
-        return (
-          <Link
-            key={tag.label}
-            href={`/explore?tag=${encodeURIComponent(tag.label)}`}
-            className="flex items-center gap-2 pl-3 pr-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-md bg-gray-100/50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-200"
-            style={{
-              borderInlineStartWidth: '4px',
-              borderInlineStartColor: bgColor,
-            }}
+      {/* Expand/Collapse button */}
+      {showExpandButton && (
+        <div className="flex justify-center mt-3">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="
+              inline-flex items-center gap-1.5 px-4 py-1.5 
+              text-sm font-medium rounded-full
+              bg-primary/10 dark:bg-primary/20 
+              text-primary dark:text-primary-light
+              hover:bg-primary/20 dark:hover:bg-primary/30
+              border border-primary/20 dark:border-primary/30
+              transition-all duration-200
+              hover:scale-105 active:scale-95
+            "
           >
-            <span>{displayLabel}</span>
-            <span className="text-xs opacity-60 font-mono">
-              {tag.post_count}
-            </span>
-          </Link>
-        )
-      })}
+            {isExpanded ? (
+              <>
+                <span>{t('showLess')}</span>
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <span>+{remainingCount} {t('moreTags')}</span>
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

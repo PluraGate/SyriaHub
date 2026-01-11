@@ -313,7 +313,12 @@ export function Navbar({ user: userProp }: NavbarProps) {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-1 border-t border-gray-200 dark:border-dark-border animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden py-4 space-y-1 border-t border-gray-200 dark:border-dark-border animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgb(203 213 225) transparent'
+            }}
+          >
             {/* Content: Insights */}
             <Link
               href="/insights"

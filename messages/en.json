@@ -641,7 +641,9 @@
             "contributors": "Contributors",
             "publications": "Publications",
             "contexts": "Contexts Mapped"
-        }
+        },
+        "moreTags": "more",
+        "showLess": "Show less"
     },
     "Footer": {
         "description": "A collaborative research commons for Syrian knowledge, context, and memory. SyriaHub is part of the PluraGate network of research platforms.",
@@ -3072,7 +3074,9 @@
         "viewAllPosts": "→ View all",
         "minRead": "{count} min read",
         "min": "min",
-        "event": "Event"
+        "event": "Event",
+        "moreDisciplines": "more",
+        "showLess": "Show less"
     },
     "Categories": {
         "Computer Science": "Computer Science",
