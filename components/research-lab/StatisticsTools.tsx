@@ -78,6 +78,24 @@ const DEMO_DATA = [
     { name: 'Jun', value: 239, secondary: 380 },
 ]
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border shadow-lg rounded-lg p-3 text-sm z-50">
+                <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">{label}</p>
+                {payload.map((entry: any, index: number) => (
+                    <div key={index} className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color || entry.fill }} />
+                        <span className="text-gray-600 dark:text-gray-300 capitalize">{entry.name}:</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{entry.value}</span>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+    return null
+}
+
 export function StatisticsTools({ userId, savedAnalyses, availableDatasets, userSurveys = [], userPolls = [] }: StatisticsToolsProps) {
     const t = useTranslations('ResearchLab.statisticsPage')
     const [activeTab, setActiveTab] = useState<'charts' | 'calculator' | 'import'>('charts')
@@ -312,7 +330,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
                         <XAxis dataKey="name" className="text-xs" />
                         <YAxis className="text-xs" />
-                        <Tooltip />
+                        <Tooltip content={<CustomTooltip />} />
                         <Legend />
                         <Line type="monotone" dataKey="value" stroke={COLORS[0]} strokeWidth={2} dot={{ r: 4 }} />
                         {showSecondary && <Line type="monotone" dataKey="secondary" stroke={COLORS[1]} strokeWidth={2} dot={{ r: 4 }} />}
@@ -334,7 +352,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip content={<CustomTooltip />} />
                         <Legend />
                     </RechartsPie>
                 )
@@ -344,7 +362,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
                         <XAxis dataKey="name" className="text-xs" />
                         <YAxis className="text-xs" />
-                        <Tooltip />
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
                         <Legend />
                         <Area type="monotone" dataKey="value" stroke={COLORS[0]} fill={`${COLORS[0]}33`} />
                         {showSecondary && <Area type="monotone" dataKey="secondary" stroke={COLORS[1]} fill={`${COLORS[1]}33`} />}
@@ -356,7 +374,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
                         <XAxis dataKey="name" className="text-xs" />
                         <YAxis className="text-xs" />
-                        <Tooltip />
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
                         <Legend />
                         <Bar dataKey="value" fill={COLORS[0]} radius={[4, 4, 0, 0]} />
                         {showSecondary && <Bar dataKey="secondary" fill={COLORS[1]} radius={[4, 4, 0, 0]} />}
@@ -416,7 +434,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                     {/* Controls */}
                     <div className="space-y-4">
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                            <h3 className="font-medium text-text dark:text-dark-text mb-3">
+                            <h3 className="text-sm font-semibold text-text dark:text-dark-text mb-3">
                                 {t('chartType')}
                             </h3>
                             <div className="grid grid-cols-2 gap-2">
@@ -440,7 +458,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
                         </div>
 
                         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
-                            <h3 className="font-medium text-text dark:text-dark-text mb-3">
+                            <h3 className="text-sm font-semibold text-text dark:text-dark-text mb-3">
                                 {t('options')}
                             </h3>
                             <label className="flex items-center gap-2 cursor-pointer">

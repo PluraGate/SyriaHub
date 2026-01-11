@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { MagazineCard } from '@/components/MagazineCard'
 import { GroupCard } from '@/components/GroupCard'
 import { EventCard } from '@/components/EventCard'
+import { ResourceCard } from '@/components/ResourceCard'
 import { FileText, Users, BookOpen, Calendar, FolderOpen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -119,9 +120,9 @@ export function UserActivityInsights({ posts, groups }: UserActivityInsightsProp
                 )}
 
                 {activeTab === 'resources' && resourcePosts.length > 0 && (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="flex flex-col gap-4">
                         {resourcePosts.map((resource) => (
-                            <MagazineCard key={resource.id} post={resource} variant="standard" />
+                            <ResourceCard key={resource.id} resource={resource} />
                         ))}
                     </div>
                 )}

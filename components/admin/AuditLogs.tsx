@@ -223,7 +223,7 @@ export function AuditLogs() {
                                         </div>
 
                                         {/* Role Change */}
-                                        <div className="ml-10 space-y-2">
+                                        <div className="ml-0 sm:ml-10 mt-3 sm:mt-0 space-y-2">
                                             {getRoleChangeVisual(log.old_role, log.new_role)}
 
                                             {log.reason && (

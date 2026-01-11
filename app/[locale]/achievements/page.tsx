@@ -261,7 +261,7 @@ export default function AchievementsPage() {
                                 className={cn(
                                     "px-4 py-2 rounded-lg font-medium transition-colors",
                                     activeTab === 'unlocked'
-                                        ? "bg-primary text-white"
+                                        ? "bg-primary text-white dark:text-white"
                                         : "bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border"
                                 )}
                             >
@@ -273,7 +273,7 @@ export default function AchievementsPage() {
                                 className={cn(
                                     "px-4 py-2 rounded-lg font-medium transition-colors",
                                     activeTab === 'available'
-                                        ? "bg-primary text-white"
+                                        ? "bg-primary text-white dark:text-white"
                                         : "bg-gray-100 dark:bg-dark-surface text-text dark:text-dark-text hover:bg-gray-200 dark:hover:bg-dark-border"
                                 )}
                             >
@@ -343,14 +343,14 @@ export default function AchievementsPage() {
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className="p-3 rounded-xl bg-gray-50 dark:bg-dark-bg shrink-0 group-hover:bg-gray-100 dark:group-hover:bg-dark-border transition-colors">
-                                                <Icon className="w-6 h-6 text-text-light dark:text-dark-text-muted group-hover:text-primary transition-colors" />
+                                                <Icon className={cn("w-6 h-6 transition-colors", colors.text)} />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between gap-2 mb-1">
                                                     <h3 className="font-semibold text-lg text-text dark:text-dark-text leading-tight truncate pr-2">
                                                         {achievement.name}
                                                     </h3>
-                                                    <Lock className="w-4 h-4 text-text-light dark:text-dark-text-muted shrink-0" />
+                                                    <Lock className="w-4 h-4 text-text-light dark:text-dark-text-muted/60 shrink-0" />
                                                 </div>
                                                 <p className="text-sm text-text-light dark:text-dark-text-muted mb-3 line-clamp-2">
                                                     {achievement.description}

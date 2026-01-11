@@ -9,6 +9,13 @@ import {
 import { CopyCitationButton } from '@/components/CopyCitationButton'
 import { useTranslations } from 'next-intl'
 import { useDateFormatter } from '@/hooks/useDateFormatter'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface SavedPost {
     id: string
@@ -136,10 +143,10 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
     const getColorClasses = (color: string, isActive: boolean) => {
         if (!isActive) return 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
         switch (color) {
-            case 'primary': return 'bg-primary/10 text-primary'
-            case 'blue': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-            case 'purple': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
-            default: return 'bg-gray-200 dark:bg-dark-border text-gray-800 dark:text-gray-200'
+            case 'primary': return 'bg-primary/20 text-primary dark:bg-teal-800/50 dark:text-teal-300'
+            case 'blue': return 'bg-blue-100 text-blue-600 dark:bg-blue-800/50 dark:text-blue-300'
+            case 'purple': return 'bg-purple-100 text-purple-600 dark:bg-purple-800/50 dark:text-purple-300'
+            default: return 'bg-gray-200 dark:bg-dark-surface text-gray-800 dark:text-white'
         }
     }
 
@@ -158,7 +165,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                             >
                                 <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span className="hidden xs:inline">{label}</span>
-                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeFilter === type ? 'bg-white/50' : 'bg-gray-200 dark:bg-dark-bg'}`}>
+                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeFilter === type ? 'bg-white/50 dark:bg-black/40 dark:text-white' : 'bg-gray-200 dark:bg-black/20 dark:text-white'}`}>
                                     {counts[type]}
                                 </span>
                             </button>
@@ -167,17 +174,18 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                 </div>
 
                 {/* Sort dropdown */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{t('sort')}:</span>
-                    <select
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-                        className="select-input text-sm"
-                    >
-                        <option value="newest">{t('newestFirst')}</option>
-                        <option value="oldest">{t('oldestFirst')}</option>
-                        <option value="alphabetical">{t('alphabetical')}</option>
-                    </select>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-shrink-0">
+                    <span className="hidden sm:block text-sm font-medium text-gray-600 dark:text-gray-300">{t('sort')}</span>
+                    <Select value={sortOrder} onValueChange={(value) => setSortOrder(value as SortOrder)}>
+                        <SelectTrigger className="w-full sm:w-[160px] bg-white dark:bg-dark-surface">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="newest">{t('newestFirst')}</SelectItem>
+                            <SelectItem value="oldest">{t('oldestFirst')}</SelectItem>
+                            <SelectItem value="alphabetical">{t('alphabetical')}</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 

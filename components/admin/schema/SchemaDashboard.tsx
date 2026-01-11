@@ -530,7 +530,7 @@ function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }:
                                     id="is_required"
                                     checked={formData.is_required || false}
                                     onChange={e => setFormData(p => ({ ...p, is_required: e.target.checked }))}
-                                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-900 accent-primary"
                                 />
                                 <label htmlFor="is_required" className="text-sm text-text dark:text-dark-text font-medium">{t('schemaRegistry.field.required')}</label>
                             </div>
@@ -551,7 +551,7 @@ function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }:
                                                         : current.filter((t: string) => t !== ct)
                                                     setFormData(p => ({ ...p, applies_to: updated }))
                                                 }}
-                                                className="rounded border-gray-300 text-primary focus:ring-primary"
+                                                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-900 accent-primary"
                                             />
                                             <span className="text-sm text-text dark:text-dark-text capitalize">{t(`schemaRegistry.contentTypes.${ct}`)}</span>
                                         </label>
