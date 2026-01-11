@@ -315,7 +315,9 @@
         "noPostsDesc": "Be the first to share your research with the community!",
         "noPostsTaggedTitle": "No insights found for \"{tag}\"",
         "noPostsTaggedDesc": "Try a different topic or clear the filter to see more content.",
-        "actionLabel": "Create Post"
+        "actionLabel": "Create Post",
+        "showMore": "Show More",
+        "showLess": "Show Less"
     },
     "Post": {
         "edit": "Edit",

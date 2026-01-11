@@ -381,8 +381,12 @@ export function Navbar({ user: userProp }: NavbarProps) {
                 {/* Separator before User Section */}
                 <div className="border-t border-gray-200 dark:border-dark-border my-3" />
 
-                {/* User Info */}
-                <div className="px-4 py-2 flex items-center gap-3">
+                {/* User Info - Clickable Profile Link */}
+                <Link
+                  href={`/profile/${user.id}`}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   <Avatar className="w-10 h-10 border border-gray-200 dark:border-dark-border">
                     <AvatarImage src={userAvatar} alt={userName} />
                     <AvatarFallback className="bg-primary/10 text-primary">
@@ -393,17 +397,9 @@ export function Navbar({ user: userProp }: NavbarProps) {
                     <p className="font-medium text-sm text-text dark:text-dark-text">{userName}</p>
                     <p className="text-xs text-text-light dark:text-dark-text-muted truncate max-w-[200px]">{user.email}</p>
                   </div>
-                </div>
-
-                {/* User Account Items: Profile, Saved, Analytics, Achievements, Settings */}
-                <Link
-                  href={`/profile/${user.id}`}
-                  className="flex items-center gap-2 px-4 py-3 text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User className="w-4 h-4" />
-                  {t('profile')}
                 </Link>
+
+                {/* User Account Items: Saved, Analytics, Achievements, Settings */}
 
                 <Link
                   href="/saved"
