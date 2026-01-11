@@ -43,3 +43,31 @@ status_*.json
 # Playwright
 playwright-report/
 test-results/
+
+# Debug/output files
+*-output.txt
+*_output.txt
+*.output.txt
+lint_*.txt
+lint_*.json
+lint-*.txt
+vitest_*.txt
+test_*.txt
+test-*.txt
+typecheck_*.txt
+db-push-*.txt
+push-*.txt
+push_*.txt
+rls-*.txt
+final_*.txt
+fresh_*.txt
+direct_*.txt
+verify_*.txt
+orphan_*.txt
+smtp_*.txt
+temp_*.txt
+temp_*.ps1
+ddd_*.txt
+repo_*.txt
+translation_issues.json
+schema_dump.sql
