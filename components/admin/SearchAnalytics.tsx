@@ -324,7 +324,7 @@ export function SearchAnalytics() {
                                                 return (
                                                     <div
                                                         key={trend.search_date}
-                                                        className="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t"
+                                                        className="flex-1 bg-primary/20 dark:bg-teal-500/30 hover:bg-primary/40 dark:hover:bg-teal-500/50 transition-colors rounded-t"
                                                         style={{ height: `${Math.max(height, 4)}%` }}
                                                         title={`${trend.search_date}: ${trend.search_count} ${t('searches')}`}
                                                     />

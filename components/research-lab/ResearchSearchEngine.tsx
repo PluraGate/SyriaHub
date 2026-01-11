@@ -860,14 +860,14 @@ export function ResearchSearchEngine() {
                     {(searchSource === 'internal' || searchSource === 'all') && results.length > 0 && (
                         <div className="mb-8">
                             {/* Mode Banner - Internal Evidence Space */}
-                            <div className="mb-4 p-3 bg-gradient-to-r from-primary/5 to-teal-50 dark:from-primary/10 dark:to-teal-900/10 border border-primary/20 dark:border-primary/30 rounded-lg">
+                            <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <div className="p-1.5 bg-primary/10 rounded-md">
-                                            <Database className="w-4 h-4 text-primary" />
+                                        <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-md">
+                                            <Database className="w-4 h-4 text-green-600 dark:text-green-400" />
                                         </div>
                                         <div>
-                                            <span className="font-semibold text-primary dark:text-primary">{t('internalEvidenceSpace')}</span>
+                                            <span className="font-semibold text-green-700 dark:text-green-400">{t('internalEvidenceSpace')}</span>
                                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{t('internalDesc')}</span>
                                         </div>
                                     </div>
@@ -1020,7 +1020,7 @@ function SearchResultCard({ result, expanded, onToggleExpand }: SearchResultCard
                     )}
                     <button
                         onClick={onToggleExpand}
-                        className="ml-auto flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                        className="ml-auto flex items-center gap-1.5 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors text-sm font-medium"
                     >
                         <Info className="w-4 h-4" />
                         {expanded ? 'Hide' : 'Show'} explanation

@@ -12,6 +12,7 @@
         "refresh": "Refresh",
         "cancel": "Cancel",
         "days_short": "d",
+        "date": "Date",
         "delete": "Delete",
         "lastUpdated": "Last updated: {date}",
         "edit": "Edit",
@@ -641,7 +642,9 @@
             "contributors": "Contributors",
             "publications": "Publications",
             "contexts": "Contexts Mapped"
-        }
+        },
+        "moreTags": "more",
+        "showLess": "Show less"
     },
     "Footer": {
         "description": "A collaborative research commons for Syrian knowledge, context, and memory. SyriaHub is part of the PluraGate network of research platforms.",
@@ -663,7 +666,7 @@
         "researchCommonsStatement": "This is not a discussion platform. It is a research commons.",
         "updates": "Updates",
         "platformStage": "Beta",
-        "platformVersion": "v0.8.8",
+        "platformVersion": "v0.9.0",
         "platformSustainability": "Platform Sustainability",
         "sustainabilityIntro": "SyriaHub is a non-profit research commons. When contributions are accepted, they are used exclusively to sustain the shared infrastructure that enables long-term access, research integrity, and platform reliability.",
         "sustainabilityDataInfrastructure": "Data Infrastructure",
@@ -3072,7 +3075,9 @@
         "viewAllPosts": "→ View all",
         "minRead": "{count} min read",
         "min": "min",
-        "event": "Event"
+        "event": "Event",
+        "moreDisciplines": "more",
+        "showLess": "Show less"
     },
     "Categories": {
         "Computer Science": "Computer Science",

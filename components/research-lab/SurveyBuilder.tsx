@@ -405,7 +405,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                     <div className="lg:hidden">
                         <button
                             onClick={() => setShowAddQuestion(!showAddQuestion)}
-                            className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-colors text-primary"
+                            className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-colors text-text dark:text-dark-text"
                         >
                             {showAddQuestion ? (
                                 <>

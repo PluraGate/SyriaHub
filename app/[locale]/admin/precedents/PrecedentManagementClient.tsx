@@ -377,7 +377,7 @@ export default function PrecedentManagementClient() {
                                             <SelectContent className="bg-white dark:bg-dark-surface border-gray-200 dark:border-dark-border">
                                                 {PATTERNS.map(p => (
                                                     <SelectItem key={p.id} value={p.id} className="text-text dark:text-dark-text focus:bg-gray-100 dark:focus:bg-dark-border">
-                                                        <span className="font-semibold text-primary dark:text-primary-light">{p.id}:</span> {locale === 'ar' ? p.name_ar : p.name}
+                                                        <span className="font-semibold text-primary dark:text-teal-400">{p.id}:</span> {locale === 'ar' ? p.name_ar : p.name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -492,7 +492,7 @@ export default function PrecedentManagementClient() {
                             </SelectItem>
                             {PATTERNS.map(p => (
                                 <SelectItem key={p.id} value={p.id}>
-                                    <span className="font-semibold text-primary">{p.id}:</span> {locale === 'ar' ? p.name_ar : p.name}
+                                    <span className="font-semibold text-primary dark:text-teal-400">{p.id}:</span> {locale === 'ar' ? p.name_ar : p.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>

@@ -163,11 +163,8 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <a
-                                            href={metadata.url || '#'}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            href={`/api/download?id=${resource.id}`}
                                             className="btn btn-primary btn-sm flex items-center gap-2"
-                                            download
                                         >
                                             <Download className="w-4 h-4" />
                                             Download
@@ -263,11 +260,8 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
                                 </div>
 
                                 <a
-                                    href={metadata.url || '#'}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={`/api/download?id=${resource.id}`}
                                     className="btn btn-primary flex items-center gap-2"
-                                    download
                                 >
                                     <Download className="w-4 h-4" />
                                     Download

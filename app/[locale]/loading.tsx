@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import Image from 'next/image'
 
 /**
  * Global loading state shown during page navigation.
@@ -7,18 +7,28 @@ import { Loader2 } from 'lucide-react'
  */
 export default function Loading() {
     return (
-        <div className="min-h-screen bg-background dark:bg-dark-bg flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                    {/* Outer ring */}
-                    <div className="w-16 h-16 rounded-full border-4 border-gray-200 dark:border-dark-border" />
-                    {/* Spinning ring */}
-                    <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin" />
+        <div className="fixed inset-0 z-[100] w-full h-full flex flex-col items-center justify-center overflow-hidden bg-background dark:bg-dark-bg">
+            {/* Spinner with Logo */}
+            <div className="relative flex items-center justify-center w-24 h-24">
+                {/* Spinning ring */}
+                <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+
+                {/* Logo in center (doesn't spin) - invert for light theme */}
+                <div className="relative w-12 h-12">
+                    <Image
+                        src="/icons/Pluragate_512x512_NoDot.svg"
+                        alt="SyriaHub"
+                        fill
+                        className="object-contain opacity-50 dark:opacity-60 invert dark:invert-0"
+                        priority
+                    />
                 </div>
-                <p className="text-sm text-text-light dark:text-dark-text-muted animate-pulse">
-                    Loading...
-                </p>
             </div>
+
+            {/* Optional subtle text */}
+            <p className="mt-6 text-sm text-text-light dark:text-dark-text-muted tracking-wider">
+                Loading...
+            </p>
         </div>
     )
 }

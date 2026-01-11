@@ -412,7 +412,7 @@ export default function AdminSkillsPage() {
                                                 )}>
                                                     <Award className={cn(
                                                         "w-4 h-4 sm:w-5 sm:h-5",
-                                                        skill.is_recognized ? "text-primary" : "text-text-light dark:text-dark-text-muted"
+                                                        skill.is_recognized ? "text-green-600 dark:text-green-400" : "text-text-light dark:text-dark-text-muted"
                                                     )} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -421,7 +421,7 @@ export default function AdminSkillsPage() {
                                                             {skill.name}
                                                         </h3>
                                                         {skill.is_recognized && (
-                                                            <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-primary/10 text-primary font-medium">
+                                                            <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-medium">
                                                                 {t('recognized')}
                                                             </span>
                                                         )}
