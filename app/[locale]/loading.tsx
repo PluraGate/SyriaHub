@@ -7,45 +7,28 @@ import Image from 'next/image'
  */
 export default function Loading() {
     return (
-        <div className="fixed inset-0 z-[100] w-full h-full flex flex-col items-center justify-center overflow-hidden bg-slate-900">
-            {/* Background Image */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src="/covers/Pluragate_cover_Dark_2560x960.jpeg"
-                    alt="Background"
-                    fill
-                    className="object-cover opacity-100"
-                    priority
-                    sizes="100vw"
-                />
-                {/* Overlay to ensure text/logo contrast and match the deep feel */}
-                <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
-            </div>
+        <div className="fixed inset-0 z-[100] w-full h-full flex flex-col items-center justify-center overflow-hidden bg-background dark:bg-dark-bg">
+            {/* Spinner with Logo */}
+            <div className="relative flex items-center justify-center w-24 h-24">
+                {/* Spinning ring */}
+                <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
 
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center animate-in fade-in duration-700">
-                <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 drop-shadow-2xl">
+                {/* Logo in center (doesn't spin) - invert for light theme */}
+                <div className="relative w-12 h-12">
                     <Image
-                        src="/icons/Pluragate_512x512.svg"
-                        alt="SyriaHub Logo"
+                        src="/icons/Pluragate_512x512_NoDot.svg"
+                        alt="SyriaHub"
                         fill
-                        className="object-contain"
+                        className="object-contain opacity-50 dark:opacity-60 invert dark:invert-0"
                         priority
                     />
                 </div>
-
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-white tracking-widest drop-shadow-lg">
-                    SyriaHub
-                </h1>
-
-                {/* Subtle loading indicator */}
-                <div className="mt-8 flex gap-2">
-                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce [animation-delay:-0.3s]" />
-                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce [animation-delay:-0.15s]" />
-                    <div className="w-2 h-2 rounded-full bg-white/50 animate-bounce" />
-                </div>
             </div>
+
+            {/* Optional subtle text */}
+            <p className="mt-6 text-sm text-text-light dark:text-dark-text-muted tracking-wider">
+                Loading...
+            </p>
         </div>
     )
 }
-
