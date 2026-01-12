@@ -351,11 +351,12 @@ export function buildProfileMetadata(
 
 /**
  * Renders JSON-LD as a script tag for use in Next.js pages
- * Usage: <JsonLdScript data={buildArticleSchema(post)} />
+ * Usage: <JsonLdScript data={buildArticleSchema(post)} nonce={nonce} />
  */
-export function JsonLdScript({ data }: { data: object }): React.ReactElement {
+export function JsonLdScript({ data, nonce }: { data: object; nonce?: string }): React.ReactElement {
     return React.createElement('script', {
         type: 'application/ld+json',
+        nonce,
         dangerouslySetInnerHTML: { __html: JSON.stringify(data) }
     })
 }

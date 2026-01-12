@@ -140,7 +140,7 @@ export async function proxy(request: NextRequest) {
     // strict-dynamic allows trusted scripts to load additional scripts
     const csp = [
         "default-src 'self'",
-        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://va.vercel-scripts.com`,
+        `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com https://va.vercel-scripts.com`,
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://cdnjs.cloudflare.com",
