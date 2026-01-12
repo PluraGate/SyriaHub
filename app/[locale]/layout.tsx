@@ -98,7 +98,6 @@ export default async function RootLayout({
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
         {/* iOS Splash Screen Meta Tags */}
-        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-startup-image" href="/icons/icon-512x512_Dark.png" />
         {/* Theme initialization - runs before React hydration to prevent flash */}
