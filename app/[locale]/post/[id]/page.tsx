@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap, Download } from 'lucide-react'
@@ -308,6 +309,10 @@ export default async function PostPage(props: PostPageProps) {
   const tc = await getTranslations('Common')
   const tLicenses = await getTranslations('Licenses')
 
+  // Get nonce for CSP compliance
+  const headersList = await headers()
+  const nonce = headersList.get('x-nonce') || undefined
+
   // Build JSON-LD structured data
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
   const hasAnswers = answers && answers.length > 0
@@ -326,7 +331,7 @@ export default async function PostPage(props: PostPageProps) {
 
   return (
     <>
-      <JsonLdScript data={jsonLdData} />
+      <JsonLdScript data={jsonLdData} nonce={nonce} />
       <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
         <Navbar user={user} />
 
