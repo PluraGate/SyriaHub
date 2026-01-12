@@ -16,7 +16,7 @@ export default async function WaitlistPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     return (
