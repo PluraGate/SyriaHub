@@ -102,7 +102,7 @@ export function ImpactStoriesSection({ limit = 3, className }: ImpactStoriesSect
                         </div>
                     </div>
                     <Link
-                        href="/research-outcomes"
+                        href="/research-gaps"
                         className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-primary dark:text-secondary hover:underline"
                     >
                         {t('viewAll')}
@@ -144,7 +144,7 @@ export function ImpactStoriesSection({ limit = 3, className }: ImpactStoriesSect
                 {/* Mobile view all link */}
                 <div className="mt-6 sm:hidden">
                     <Link
-                        href="/research-outcomes"
+                        href="/research-gaps"
                         className="flex items-center justify-center gap-1.5 w-full py-3 text-sm font-medium text-primary dark:text-secondary border border-primary/30 dark:border-secondary/30 rounded-lg hover:bg-primary/5 dark:hover:bg-secondary/5 transition-colors"
                     >
                         {t('viewAll')}
