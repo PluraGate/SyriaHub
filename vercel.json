@@ -9,6 +9,26 @@
       "source": "/",
       "destination": "/en",
       "permanent": false
+    },
+    {
+      "source": "/feed",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/:locale/feed",
+      "destination": "/:locale/insights",
+      "permanent": true
+    },
+    {
+      "source": "/research-outcomes",
+      "destination": "/research-gaps",
+      "permanent": true
+    },
+    {
+      "source": "/:locale/research-outcomes",
+      "destination": "/:locale/research-gaps",
+      "permanent": true
     }
   ],
   "headers": [
