@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Link2, ArrowRight, X, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 
 interface RelatedPost {
     id: string
@@ -194,29 +195,36 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
     const hasMore = Object.keys(disciplineGroups).length > 3
 
     return (
-        <div className="sticky bottom-4 z-40 mx-auto max-w-4xl px-4">
+        <div className="fixed bottom-8 z-40 left-4 right-28 md:left-0 md:right-0 md:px-6 mx-auto max-w-4xl">
+            <style>{`
+                @media (max-width: 768px) {
+                    .global-fab {
+                        bottom: 2rem !important;
+                    }
+                }
+            `}</style>
             <div className="bg-white/95 dark:bg-dark-surface/95 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-dark-border shadow-soft-lg overflow-hidden">
                 {/* Header */}
                 <div
                     className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-bg/50 transition-colors"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="p-1.5 rounded-lg bg-primary/10">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="p-1.5 rounded-lg bg-primary/10 flex-shrink-0">
                             <Link2 className="w-4 h-4 text-primary" />
                         </div>
-                        <span className="text-sm font-semibold text-text dark:text-dark-text">
+                        <span className="text-sm font-semibold text-text dark:text-dark-text whitespace-nowrap">
                             {t('contextualThreads')}
                         </span>
                         {/* Animated text with fixed width and horizontal scroll for long text */}
-                        <div className="relative overflow-hidden w-[280px] h-5">
+                        <div className="relative overflow-hidden flex-1 min-w-0 h-5">
                             <div
                                 className="absolute inset-0 flex items-center whitespace-nowrap animate-fade-in"
                                 key={animatedTextIndex}
                             >
                                 <span
-                                    className={`text-xs text-text-light dark:text-dark-text-muted ${animatedTexts[animatedTextIndex].length > 45 ? 'animate-marquee' : ''
-                                        }`}
+                                    className={`text - xs text - text - light dark: text - dark - text - muted ${animatedTexts[animatedTextIndex].length > 45 ? 'animate-marquee' : ''
+                                        } `}
                                 >
                                     {animatedTexts[animatedTextIndex]}
                                 </span>
@@ -245,41 +253,32 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                 {/* Content - Progressive Disclosure */}
                 {
                     isExpanded && (
-                        <div className="px-4 pb-4 space-y-3">
+                        <div className="px-4 pb-4 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar">
                             {visibleDisciplineEntries.map(([discipline, posts]) => (
-                                <div key={discipline} className="flex items-start gap-3">
+                                <div key={discipline} className="flex flex-col md:flex-row items-start gap-2 md:gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-bg/30 transition-colors">
                                     {/* Discipline Badge */}
-                                    <div
-                                        className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium text-white"
+                                    <span
+                                        className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap min-w-fit text-white"
                                         style={{ backgroundColor: tagColors[discipline] || '#6B7280' }}
                                     >
-                                        {discipline}
-                                    </div>
+                                        {t(`disciplines.${discipline}`)}
+                                    </span>
 
-                                    {/* Related Posts - Show max 2 per discipline when not expanded */}
-                                    <div className="flex-1 flex flex-wrap items-center gap-2">
-                                        {posts.slice(0, showAll ? posts.length : 2).map((post, idx) => (
-                                            <div key={post.id} className="flex items-center gap-1.5">
-                                                {idx > 0 && (
-                                                    <span className="text-xs text-text-light dark:text-dark-text-muted">•</span>
-                                                )}
-                                                <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                    {getConnectionLabel(post.connectionType)}
-                                                </span>
-                                                <Link
-                                                    href={`/post/${post.id}`}
-                                                    className="text-sm font-medium text-primary dark:text-primary-light hover:underline truncate max-w-[200px]"
-                                                    title={post.title}
-                                                >
-                                                    {post.title}
-                                                </Link>
-                                            </div>
+                                    <div className="flex-1 min-w-0 space-y-1 w-full">
+                                        {posts.map((post) => (
+                                            <Link
+                                                key={post.id}
+                                                href={`/ post / ${post.id} `}
+                                                className="block group"
+                                            >
+                                                <div className="flex items-baseline justify-between gap-2">
+                                                    <span className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
+                                                        Related {post.title}
+                                                    </span>
+                                                    <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100" />
+                                                </div>
+                                            </Link>
                                         ))}
-                                        {!showAll && posts.length > 2 && (
-                                            <span className="text-xs text-text-light dark:text-dark-text-muted">
-                                                +{posts.length - 2} {t('more')}
-                                            </span>
-                                        )}
                                     </div>
 
                                     <ArrowRight className="w-4 h-4 text-text-light dark:text-dark-text-muted flex-shrink-0" />
