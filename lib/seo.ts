@@ -357,6 +357,7 @@ export function JsonLdScript({ data, nonce }: { data: object; nonce?: string }):
     return React.createElement('script', {
         type: 'application/ld+json',
         nonce,
-        dangerouslySetInnerHTML: { __html: JSON.stringify(data) }
+        dangerouslySetInnerHTML: { __html: JSON.stringify(data) },
+        suppressHydrationWarning: true
     })
 }

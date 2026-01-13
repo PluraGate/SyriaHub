@@ -399,6 +399,17 @@
         "suggestions": "اقتراحات",
         "askAuthor": "اسأل الكاتب",
         "download": "تحميل",
+        "disciplines": {
+            "Architecture": "هندسة معمارية",
+            "Urbanism": "عمران",
+            "Heritage": "تراث",
+            "Economics": "اقتصاد",
+            "Sociology": "علم اجتماع",
+            "Law": "قانون",
+            "History": "تاريخ",
+            "Art": "فن",
+            "Research": "بحث"
+        },
         "loginRequired": "يرجى تسجيل الدخول لتنفيذ هذا الإجراء"
     },
     "Editor": {
