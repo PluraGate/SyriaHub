@@ -72,7 +72,7 @@ export function FloatingActionButton({ className }: { className?: string }) {
     }
 
     return (
-        <div className={cn('fixed bottom-6 right-6 z-50', className)}>
+        <div className={cn('fixed bottom-6 right-6 z-50 global-fab', className)}>
             {/* Backdrop overlay when open */}
             {isOpen && (
                 <div
