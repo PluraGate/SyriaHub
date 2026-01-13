@@ -64,18 +64,27 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: post } = await supabase
+  // Determine if id is a UUID or a slug
+  const isIdUUID = isUUID(id)
+
+  let query = supabase
     .from('posts')
     .select(`
-id,
-  title,
-  content,
-  tags,
-  content_type,
-  author: users!posts_author_id_fkey(name, email)
+      id,
+      title,
+      content,
+      tags,
+      content_type,
+      author: users!posts_author_id_fkey(name, email)
     `)
-    .eq('id', id)
-    .single()
+
+  if (isIdUUID) {
+    query = query.eq('id', id)
+  } else {
+    query = query.eq('slug', id)
+  }
+
+  const { data: post } = await query.single()
 
   if (!post) {
     return {
@@ -342,7 +351,7 @@ export default async function PostPage(props: PostPageProps) {
 
           {/* Header Content */}
           <div className="relative z-10">
-            <div className="container-custom max-w-5xl py-6">
+            <div className="container-custom max-w-5xl py-6 px-6 md:px-8">
               {/* Top Row: Back Link + Mobile Quick Actions */}
               <div className="flex items-center justify-between mb-4 md:mb-8">
                 {/* Back Link */}
@@ -381,7 +390,7 @@ export default async function PostPage(props: PostPageProps) {
               )}
 
               {/* Title */}
-              <h1 dir="auto" className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
+              <h1 dir="auto" className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-4 md:mb-6 text-white">
                 {post.title}
               </h1>
 
@@ -564,7 +573,7 @@ export default async function PostPage(props: PostPageProps) {
           </div>
         </header>
 
-        <main className="flex-1 container-custom max-w-5xl py-12">
+        <main className="flex-1 container-custom max-w-5xl py-12 px-6 md:px-8 pb-40">
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <article className="lg:col-span-2 space-y-12">
@@ -579,7 +588,7 @@ export default async function PostPage(props: PostPageProps) {
               />
 
               {/* Article Content */}
-              <div dir="auto" className="prose prose-lg max-w-none dark:prose-invert 
+              <div dir="auto" className="prose lg:prose-lg max-w-none dark:prose-invert 
               prose-headings:font-bold prose-headings:text-text dark:prose-headings:text-dark-text 
               prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
               prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
