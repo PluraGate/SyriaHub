@@ -399,6 +399,17 @@
         "suggestions": "Suggestions",
         "askAuthor": "Ask Author",
         "download": "Download",
+        "disciplines": {
+            "Architecture": "Architecture",
+            "Urbanism": "Urbanism",
+            "Heritage": "Heritage",
+            "Economics": "Economics",
+            "Sociology": "Sociology",
+            "Law": "Law",
+            "History": "History",
+            "Art": "Art",
+            "Research": "Research"
+        },
         "loginRequired": "Please sign in to perform this action"
     },
     "Editor": {
