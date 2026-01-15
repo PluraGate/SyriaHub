@@ -163,19 +163,19 @@ export function EpistemicOnboarding() {
                             icon={Bot}
                             title={t('researchLab.advisor')}
                             description={t('researchLab.advisorDesc')}
-                            tag="Coming Soon"
+                            tag="Available Now"
                         />
                         <FeatureRow
                             icon={BarChart3}
                             title={t('researchLab.surveys')}
                             description={t('researchLab.surveysDesc')}
-                            tag="Coming Soon"
+                            tag="Available Now"
                         />
                         <FeatureRow
                             icon={Sparkles}
                             title={t('researchLab.graph')}
                             description={t('researchLab.graphDesc')}
-                            tag="Coming Soon"
+                            tag="Available Now"
                         />
                     </div>
                 </div>
@@ -355,8 +355,8 @@ function FeatureRow({
 }) {
     return (
         <div className={`flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg sm:rounded-xl transition-colors ${highlight
-                ? 'bg-primary/5 dark:bg-primary/10 border border-primary/20'
-                : 'bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-dark-bg/80'
+            ? 'bg-primary/5 dark:bg-primary/10 border border-primary/20'
+            : 'bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-dark-bg/80'
             }`}>
             <div className={`flex-shrink-0 p-2 sm:p-2.5 rounded-lg sm:rounded-xl shadow-sm ${highlight ? 'bg-white dark:bg-dark-surface text-primary' : 'bg-white dark:bg-dark-surface text-text-light dark:text-dark-text-muted'
                 }`}>
@@ -369,8 +369,8 @@ function FeatureRow({
                     </h4>
                     {tag && (
                         <span className={`text-[9px] sm:text-[10px] font-medium px-1 sm:px-1.5 py-0.5 rounded-full whitespace-nowrap ${tag === 'Available Now'
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
                             }`}>
                             {tag}
                         </span>

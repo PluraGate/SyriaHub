@@ -1,6 +1,6 @@
 # 🎉 SyriaHub Project Status
 
-SyriaHub has matured from a setup phase into a comprehensive research platform (v0.8.7 Beta).
+SyriaHub has matured from a setup phase into a comprehensive research platform (v0.9.0 Beta).
 
 ### 1. Updated Tech Stack
 - **Framework**: Next.js 16 (App Router)
@@ -21,10 +21,10 @@ SyriaHub has matured from a setup phase into a comprehensive research platform (
 - **Localization**: 875+ Multi-lingual keys (EN/AR)
 
 ### 3. Project Roadmap Status
-- **Current Version**: v0.8.7 (Beta)
+- **Current Version**: v0.9.0 (Beta)
 - **Phase**: Enterprise Maturity / Feature Stabilization
 
-## Advanced Core Features (v0.8.7)
+## Advanced Core Features (v0.9.0)
 
 SyriaHub now includes enterprise-grade research capabilities:
 
