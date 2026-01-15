@@ -331,7 +331,7 @@ curl http://localhost:3000/api/posts?limit=10
 
 ---
 
-## API Statistics (v0.8.7)
+## API Statistics (v0.9.0)
 
 - **Total Endpoints**: 74 routes across 37 resource types
 - **Protected**: 62 routes (required auth)
