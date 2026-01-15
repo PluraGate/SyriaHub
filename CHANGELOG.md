@@ -5,6 +5,13 @@ All notable changes to the SyriaHub project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-01-15
+
+### Added
+- **Research Lab Maturity**: "Knowledge Graph", "Polls & Surveys", and "RAIA Advisor" are now fully available and integrated into the onboarding flow.
+- **RAIA Branding**: Unified "Smart Search" under the "RAIA Search Engine" banner for better clarity and system identity.
+- **PWA Enhancements**: Improved mobile launcher icons with proper maskable safe-zone padding to prevent cropping across different OS devices.
+
 ## [0.8.7] - 2026-01-10
 
 ### Changed
