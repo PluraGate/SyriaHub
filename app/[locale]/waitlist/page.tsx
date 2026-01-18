@@ -5,18 +5,27 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Ticket, Users, Clock, Sparkles } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-export const metadata = {
-    title: 'Join the Waitlist | SyriaHub',
-    description: 'Request access to SyriaHub, the invite-only research platform for Syrian researchers.',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'Waitlist' })
+    return {
+        title: t('pageTitle'),
+        description: t('pageDescription'),
+    }
 }
 
-export default async function WaitlistPage() {
+export default async function WaitlistPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params
+    setRequestLocale(locale)
+
+    const t = await getTranslations({ locale, namespace: 'Waitlist' })
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-        redirect('/insights')
+        redirect(`/${locale}/insights`)
     }
 
     return (
@@ -40,10 +49,10 @@ export default async function WaitlistPage() {
                         </Link>
 
                         <h1 className="text-4xl font-bold text-white mb-4">
-                            Request Early Access
+                            {t('heroTitle')}
                         </h1>
                         <p className="text-xl text-white/80 mb-12 max-w-md">
-                            SyriaHub is currently in private beta. Join the waitlist and we will notify you when a spot opens up.
+                            {t('heroSubtitle')}
                         </p>
 
                         <div className="space-y-6">
@@ -52,8 +61,8 @@ export default async function WaitlistPage() {
                                     <Clock className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white">Quick Review</h3>
-                                    <p className="text-sm text-white/70">Applications typically reviewed within 24-48 hours</p>
+                                    <h3 className="font-semibold text-white">{t('perks.review.title')}</h3>
+                                    <p className="text-sm text-white/70">{t('perks.review.desc')}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -61,8 +70,8 @@ export default async function WaitlistPage() {
                                     <Users className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white">Priority Access</h3>
-                                    <p className="text-sm text-white/70">Researchers get priority in the queue</p>
+                                    <h3 className="font-semibold text-white">{t('perks.priority.title')}</h3>
+                                    <p className="text-sm text-white/70">{t('perks.priority.desc')}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -70,8 +79,8 @@ export default async function WaitlistPage() {
                                     <Sparkles className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white">Early Adopter Perks</h3>
-                                    <p className="text-sm text-white/70">Shape the platform & get extra invites</p>
+                                    <h3 className="font-semibold text-white">{t('perks.earlyAdopter.title')}</h3>
+                                    <p className="text-sm text-white/70">{t('perks.earlyAdopter.desc')}</p>
                                 </div>
                             </div>
                         </div>
@@ -98,24 +107,14 @@ export default async function WaitlistPage() {
                                     <Ticket className="w-5 h-5 text-secondary-dark" />
                                 </div>
                                 <h2 className="text-2xl font-bold text-text dark:text-dark-text">
-                                    Join the Waitlist
+                                    {t('formTitle')}
                                 </h2>
                             </div>
                             <p className="text-text-light dark:text-dark-text-muted mb-8">
-                                Tell us about yourself and we will be in touch!
+                                {t('formSubtitle')}
                             </p>
 
                             <WaitlistForm />
-                        </div>
-
-                        {/* Already have code */}
-                        <div className="mt-6 text-center">
-                            <p className="text-sm text-text-light dark:text-dark-text-muted">
-                                Already have an invite code?{' '}
-                                <Link href="/auth/signup" className="text-primary hover:underline font-medium">
-                                    Sign up here
-                                </Link>
-                            </p>
                         </div>
                     </div>
                 </div>

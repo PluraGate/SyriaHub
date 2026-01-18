@@ -245,16 +245,16 @@ export default async function SignupPage({
                 <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
                   {t('createAccountTitle')}
                 </h2>
-                <p className="text-text-light dark:text-dark-text-muted mb-8">
+                <p className="text-text-light dark:text-dark-text/90 mb-8">
                   {t('alreadyHaveAccount')}{' '}
-                  <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-dark transition-colors">
+                  <Link href="/auth/login" className="font-semibold text-primary dark:text-secondary-dark hover:text-primary-dark dark:hover:text-secondary transition-colors">
                     {ta('login')}
                   </Link>
                 </p>
 
                 <SignupForm preValidatedCode={preValidatedCode} preFilledEmail={search.email || ''} action={handleSignup} />
 
-                <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text-muted">
+                <p className="mt-6 text-xs text-center text-text-light dark:text-dark-text/70">
                   {t('termsAgreeLong')}
                 </p>
               </div>

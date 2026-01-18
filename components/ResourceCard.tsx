@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { FileText, Download, Calendar, Database, FileType, Wrench, Film, FileSpreadsheet, Link2, Clock, PenTool } from 'lucide-react'
