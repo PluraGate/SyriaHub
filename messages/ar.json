@@ -3008,13 +3008,51 @@
         }
     },
     "Waitlist": {
-        "onTheList": "أنت على القائمة!",
+        "pageTitle": "انضم إلى قائمة الانتظار | SyriaHub",
+        "pageDescription": "اطلب الانضمام إلى SyriaHub، المنصة البحثية المخصصة للباحثين السوريين.",
+        "heroTitle": "اطلب وصولاً مبكراً",
+        "heroSubtitle": "SyriaHub في المرحلة التجريبية الخاصة حالياً. انضم إلى قائمة الانتظار وسنقوم بإعلامك عند توفر مكان.",
+        "perks": {
+            "review": {
+                "title": "مراجعة سريعة",
+                "desc": "تتم مراجعة الطلبات عادةً خلال 24-48 ساعة"
+            },
+            "priority": {
+                "title": "أولوية الوصول",
+                "desc": "يتمتع الباحثون بالأولوية في قائمة الانتظار"
+            },
+            "earlyAdopter": {
+                "title": "مزايا المستخدمين الأوائل",
+                "desc": "ساهم في تشكيل المنصة واحصل على دعوات إضافية"
+            }
+        },
+        "formTitle": "انضم إلى قائمة الانتظار",
+        "formSubtitle": "أخبرنا عن نفسك وسنتواصل معك!",
+        "alreadyHaveCode": "هل لديك رمز دعوة بالفعل؟",
+        "signUpHere": "سجل هنا",
         "email": "البريد الإلكتروني",
         "fullName": "الاسم الكامل",
         "organization": "الجامعة / المؤسسة",
         "whyJoin": "لماذا تريد الانضمام؟",
         "referralSource": "كيف سمعت عنّا؟",
-        "joinWaitlist": "انضم للقائمة"
+        "joinWaitlist": "انضم للقائمة",
+        "onTheList": "أنت على القائمة!",
+        "joining": "جاري الانضمام...",
+        "successNotification": "سنقوم بإعلامك على <bold>{email}</bold> عند توفر مكان.",
+        "placeholders": {
+            "email": "researcher@university.edu",
+            "name": "يرجى إدخال اسمك الكامل",
+            "org": "جامعة دمشق",
+            "reason": "أخبرنا عن اهتماماتك البحثية..."
+        },
+        "referralOptions": {
+            "placeholder": "—",
+            "colleague": "زميل / صديق",
+            "social_media": "وسائل التواصل الاجتماعي",
+            "search": "محرك بحث",
+            "conference": "مؤتمر / حدث",
+            "other": "آخر"
+        }
     },
     "SocialProof": {
         "researchersOnline": "باحثون متصلون",

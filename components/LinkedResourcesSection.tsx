@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { FileText, Download, Database, FileType, Wrench, Film, FileSpreadsheet, Link2, ExternalLink } from 'lucide-react'
 
 interface ResourceMetadata {

@@ -3008,13 +3008,51 @@
         }
     },
     "Waitlist": {
-        "onTheList": "You're on the list!",
+        "pageTitle": "Join the Waitlist | SyriaHub",
+        "pageDescription": "Request access to SyriaHub, the invite-only research platform for Syrian researchers.",
+        "heroTitle": "Request Early Access",
+        "heroSubtitle": "SyriaHub is currently in private beta. Join the waitlist and we will notify you when a spot opens up.",
+        "perks": {
+            "review": {
+                "title": "Quick Review",
+                "desc": "Applications typically reviewed within 24-48 hours"
+            },
+            "priority": {
+                "title": "Priority Access",
+                "desc": "Researchers get priority in the queue"
+            },
+            "earlyAdopter": {
+                "title": "Early Adopter Perks",
+                "desc": "Shape the platform & get extra invites"
+            }
+        },
+        "formTitle": "Join the Waitlist",
+        "formSubtitle": "Tell us about yourself and we will be in touch!",
+        "alreadyHaveCode": "Already have an invite code?",
+        "signUpHere": "Sign up here",
         "email": "Email",
         "fullName": "Full Name",
         "organization": "University / Organization",
         "whyJoin": "Why do you want to join?",
         "referralSource": "How did you hear about us?",
-        "joinWaitlist": "Join Waitlist"
+        "joinWaitlist": "Join Waitlist",
+        "onTheList": "You're on the list!",
+        "joining": "Joining waitlist...",
+        "successNotification": "We'll notify you at <bold>{email}</bold> when a spot opens up.",
+        "placeholders": {
+            "email": "researcher@university.edu",
+            "name": "Please enter your full name",
+            "org": "Damascus University",
+            "reason": "Tell us about your research interests..."
+        },
+        "referralOptions": {
+            "placeholder": "—",
+            "colleague": "Colleague / Friend",
+            "social_media": "Social Media",
+            "search": "Search Engine",
+            "conference": "Conference / Event",
+            "other": "Other"
+        }
     },
     "SocialProof": {
         "researchersOnline": "researchers online",

@@ -4,6 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Mail, User, Building, MessageSquare, Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useTranslations } from 'next-intl'
 
 interface WaitlistFormProps {
@@ -63,15 +70,12 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 <h3 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
                     {t('onTheList')}
                 </h3>
-                <p className="text-text-light dark:text-dark-text-muted mb-6">
-                    We&apos;ll notify you at <strong>{email}</strong> when a spot opens up.
-                </p>
-                <p className="text-sm text-text-light dark:text-dark-text-muted">
-                    Already have an invite code?{' '}
-                    <Link href="/auth/signup" className="text-primary hover:underline">
-                        Sign up here
-                    </Link>
-                </p>
+                <div className="text-text-light dark:text-dark-text-muted mb-6">
+                    {t.rich('successNotification', {
+                        email: email,
+                        bold: (chunks) => <strong className="font-semibold text-text dark:text-dark-text">{chunks}</strong>
+                    })}
+                </div>
             </div>
         )
     }
@@ -97,7 +101,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        placeholder="researcher@university.edu"
+                        placeholder={t('placeholders.email')}
                         className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light/50 dark:placeholder:text-dark-text-muted/50 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     />
                 </div>
@@ -114,7 +118,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Dr. Jane Smith"
+                        placeholder={t('placeholders.name')}
                         className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light/50 dark:placeholder:text-dark-text-muted/50 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     />
                 </div>
@@ -131,7 +135,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                         type="text"
                         value={affiliation}
                         onChange={(e) => setAffiliation(e.target.value)}
-                        placeholder="Damascus University"
+                        placeholder={t('placeholders.org')}
                         className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light/50 dark:placeholder:text-dark-text-muted/50 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     />
                 </div>
@@ -147,7 +151,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                     <textarea
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
-                        placeholder="Tell us about your research interests..."
+                        placeholder={t('placeholders.reason')}
                         rows={3}
                         className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-light/50 dark:placeholder:text-dark-text-muted/50 focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
                     />
@@ -159,18 +163,18 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
                     {t('referralSource')}
                 </label>
-                <select
-                    value={referralSource}
-                    onChange={(e) => setReferralSource(e.target.value)}
-                    className="select-input"
-                >
-                    <option value="">Select an option</option>
-                    <option value="colleague">Colleague / Friend</option>
-                    <option value="social_media">Social Media</option>
-                    <option value="search">Search Engine</option>
-                    <option value="conference">Conference / Event</option>
-                    <option value="other">Other</option>
-                </select>
+                <Select value={referralSource} onValueChange={setReferralSource}>
+                    <SelectTrigger className="w-full bg-white dark:bg-dark-bg">
+                        <SelectValue placeholder={t('referralOptions.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="colleague">{t('referralOptions.colleague')}</SelectItem>
+                        <SelectItem value="social_media">{t('referralOptions.social_media')}</SelectItem>
+                        <SelectItem value="search">{t('referralOptions.search')}</SelectItem>
+                        <SelectItem value="conference">{t('referralOptions.conference')}</SelectItem>
+                        <SelectItem value="other">{t('referralOptions.other')}</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             {/* Submit */}
@@ -182,7 +186,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 {loading ? (
                     <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        Joining waitlist...
+                        {t('joining')}
                     </>
                 ) : (
                     <>
@@ -192,10 +196,10 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 )}
             </Button>
 
-            <p className="text-center text-sm text-text-light dark:text-dark-text-muted">
-                Already have an invite code?{' '}
-                <Link href="/auth/signup" className="text-primary hover:underline font-medium">
-                    Sign up here
+            <p className="text-center text-sm text-text-light dark:text-dark-text-light">
+                {t('alreadyHaveCode')}{' '}
+                <Link href="/auth/signup" className="text-primary dark:text-primary-light hover:underline font-medium">
+                    {t('signUpHere')}
                 </Link>
             </p>
         </form>

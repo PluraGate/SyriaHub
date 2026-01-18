@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Link2, ArrowRight, X, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -13,6 +13,7 @@ interface RelatedPost {
     tags: string[]
     discipline: string
     connectionType: 'citation' | 'tag-overlap' | 'fork'
+    contentType?: string
 }
 
 interface CitationContextBarProps {
@@ -62,7 +63,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     .from('citations')
                     .select(`
             target_post_id,
-            posts!citations_target_post_id_fkey(id, title, tags)
+            posts!citations_target_post_id_fkey(id, title, tags, content_type)
           `)
                     .eq('source_post_id', postId)
                     .limit(3)
@@ -74,7 +75,8 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                             title: c.posts.title,
                             tags: c.posts.tags || [],
                             discipline: c.posts.tags?.[0] || 'Research',
-                            connectionType: 'citation'
+                            connectionType: 'citation',
+                            contentType: c.posts.content_type
                         })
                     }
                 })
@@ -83,7 +85,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     .from('citations')
                     .select(`
             source_post_id,
-            posts!citations_source_post_id_fkey(id, title, tags)
+            posts!citations_source_post_id_fkey(id, title, tags, content_type)
           `)
                     .eq('target_post_id', postId)
                     .limit(3)
@@ -95,7 +97,8 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                             title: c.posts.title,
                             tags: c.posts.tags || [],
                             discipline: c.posts.tags?.[0] || 'Research',
-                            connectionType: 'citation'
+                            connectionType: 'citation',
+                            contentType: c.posts.content_type
                         })
                     }
                 })
@@ -104,7 +107,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                 if (currentTags.length > 0) {
                     const { data: tagOverlap } = await supabase
                         .from('posts')
-                        .select('id, title, tags')
+                        .select('id, title, tags, content_type')
                         .neq('id', postId)
                         .overlaps('tags', currentTags)
                         .limit(5)
@@ -121,7 +124,8 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                 title: post.title,
                                 tags: post.tags || [],
                                 discipline: crossDiscipline || 'Research',
-                                connectionType: 'tag-overlap'
+                                connectionType: 'tag-overlap',
+                                contentType: post.content_type
                             })
                         }
                     })
@@ -130,7 +134,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                 // 3. Fetch forks
                 const { data: forks } = await supabase
                     .from('posts')
-                    .select('id, title, tags')
+                    .select('id, title, tags, content_type')
                     .eq('forked_from_id', postId)
                     .limit(2)
 
@@ -141,7 +145,8 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                             title: fork.title,
                             tags: fork.tags || [],
                             discipline: fork.tags?.[0] || 'Research',
-                            connectionType: 'fork'
+                            connectionType: 'fork',
+                            contentType: fork.content_type
                         })
                     }
                 })
@@ -223,8 +228,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                 key={animatedTextIndex}
                             >
                                 <span
-                                    className={`text - xs text - text - light dark: text - dark - text - muted ${animatedTexts[animatedTextIndex].length > 45 ? 'animate-marquee' : ''
-                                        } `}
+                                    className={`text-xs text-text-light dark:text-gray-400 ${animatedTexts[animatedTextIndex].length > 45 ? 'animate-marquee' : ''}`}
                                 >
                                     {animatedTexts[animatedTextIndex]}
                                 </span>
@@ -240,12 +244,12 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                             className="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-border transition-colors"
                             aria-label="Close"
                         >
-                            <X className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                            <X className="w-4 h-4 text-text-light dark:text-gray-400" />
                         </button>
                         {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                            <ChevronDown className="w-4 h-4 text-text-light dark:text-gray-400" />
                         ) : (
-                            <ChevronUp className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
+                            <ChevronUp className="w-4 h-4 text-text-light dark:text-gray-400" />
                         )}
                     </div>
                 </div>
@@ -261,22 +265,19 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                                         className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap min-w-fit text-white"
                                         style={{ backgroundColor: tagColors[discipline] || '#6B7280' }}
                                     >
-                                        {t(`disciplines.${discipline}`)}
+                                        {discipline}
                                     </span>
 
                                     <div className="flex-1 min-w-0 space-y-1 w-full">
                                         {posts.map((post) => (
                                             <Link
                                                 key={post.id}
-                                                href={`/ post / ${post.id} `}
+                                                href={post.contentType === 'resource' ? `/resources/${post.id}` : `/post/${post.id}`}
                                                 className="block group"
                                             >
-                                                <div className="flex items-baseline justify-between gap-2">
-                                                    <span className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary transition-colors">
-                                                        Related {post.title}
-                                                    </span>
-                                                    <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100" />
-                                                </div>
+                                                <span className="text-sm font-medium text-text dark:text-dark-text truncate group-hover:text-primary dark:group-hover:text-accent-light transition-colors">
+                                                    {post.title}
+                                                </span>
                                             </Link>
                                         ))}
                                     </div>
