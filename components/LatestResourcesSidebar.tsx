@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { Database, FileText, Wrench, Film, FileSpreadsheet, PenTool, File, ArrowRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { formatDistanceToNow } from 'date-fns'

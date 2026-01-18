@@ -19,27 +19,31 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/toast'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { Turnstile } from '@/components/ui/Turnstile'
 import { Mail, MapPin, MessageSquare, Send } from 'lucide-react'
 
 const formSchema = z.object({
     name: z.string().min(2, {
         message: "Name must be at least 2 characters.",
-    }),
+    }).max(100),
     email: z.string().email({
         message: "Please enter a valid email address.",
-    }),
+    }).max(255),
     subject: z.string().min(5, {
         message: "Subject must be at least 5 characters.",
-    }),
+    }).max(200),
     message: z.string().min(10, {
         message: "Message must be at least 10 characters.",
-    }),
+    }).max(5000),
+    // Honeypot field - hidden from users, bots fill it
+    company: z.string().max(0).optional(),
 })
 
 export default function ContactPage() {
     const t = useTranslations('Contact')
     const { showToast } = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [turnstileToken, setTurnstileToken] = useState<string>('')
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -48,10 +52,18 @@ export default function ContactPage() {
             email: "",
             subject: "",
             message: "",
+            company: "", // Honeypot
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        // Check if Turnstile is configured and token is required
+        const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+        if (siteKey && !turnstileToken) {
+            showToast("Please complete the security verification.", "error")
+            return
+        }
+
         setIsSubmitting(true)
         try {
             const response = await fetch('/api/contact', {
@@ -59,13 +71,17 @@ export default function ContactPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify({
+                    ...values,
+                    'cf-turnstile-response': turnstileToken || undefined,
+                }),
             })
 
             if (!response.ok) throw new Error('Failed to send message')
 
             showToast("Message sent successfully!", "success")
             form.reset()
+            setTurnstileToken('')
         } catch (error) {
             showToast("Failed to send message. Please try again.", "error")
         } finally {
@@ -220,6 +236,34 @@ export default function ContactPage() {
                                             </FormItem>
                                         )}
                                     />
+
+                                    {/* Honeypot field - hidden from users, bots will fill it */}
+                                    <FormField
+                                        control={form.control}
+                                        name="company"
+                                        render={({ field }) => (
+                                            <FormItem className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                                                <FormLabel>Company</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Company name"
+                                                        {...field}
+                                                        tabIndex={-1}
+                                                        autoComplete="off"
+                                                    />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    {/* Turnstile CAPTCHA */}
+                                    <div className="flex justify-center">
+                                        <Turnstile
+                                            onSuccess={(token: string) => setTurnstileToken(token)}
+                                            onExpire={() => setTurnstileToken('')}
+                                            onError={() => setTurnstileToken('')}
+                                        />
+                                    </div>
 
                                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                                         {isSubmitting ? (

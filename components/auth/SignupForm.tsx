@@ -50,9 +50,9 @@ export function SignupForm({ preValidatedCode, preFilledEmail = '', action }: Si
                     placeholder="XXXX-XXXX"
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all uppercase tracking-widest font-mono text-center text-lg"
                 />
-                <p className="text-xs text-text-light dark:text-dark-text-muted mt-1.5">
+                <p className="text-xs text-text-light dark:text-dark-text/90 mt-1.5">
                     {t('dontHaveCode')}{' '}
-                    <Link href="/waitlist" className="text-primary hover:underline">
+                    <Link href="/waitlist" className="text-primary dark:text-secondary-dark hover:underline font-medium">
                         {t('waitlistLink')}
                     </Link>
                 </p>
