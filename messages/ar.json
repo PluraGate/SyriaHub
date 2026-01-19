@@ -1753,12 +1753,15 @@
             "affiliation": "الانتماء",
             "reason": "السبب",
             "via": "عبر {source}",
+            "approve": "موافقة",
             "approveAndInvite": "موافقة ودعوة",
             "reject": "رفض",
             "approvalSuccess": "تمت الموافقة! كود الدعوة: {code}",
             "rejectionSuccess": "تم رفض المدخل",
             "failureApprove": "فشل في الموافقة",
-            "failureReject": "فشل في الرفض"
+            "failureReject": "فشل في الرفض",
+            "sendingInviteTo": "إرسال دعوة إلى {email}",
+            "emailLanguage": "لغة البريد الإلكتروني"
         },
         "analyticsPage": {
             "title": "تحليلات المنصة",
@@ -3052,7 +3055,8 @@
             "search": "محرك بحث",
             "conference": "مؤتمر / حدث",
             "other": "آخر"
-        }
+        },
+        "securityCheckRequired": "يرجى إكمال التحقق الأمني"
     },
     "SocialProof": {
         "researchersOnline": "باحثون متصلون",
@@ -3296,6 +3300,7 @@
         "nodeDetails": "تفاصيل العقدة",
         "connection": "الاتصال",
         "viewPost": "عرض المنشور",
+        "viewResource": "عرض المورد",
         "currentlyViewing": "أنت تشاهد هذا المنشور حالياً",
         "selectNode": "اختر عقدة",
         "graphOverview": "نظرة عامة على المخطط",

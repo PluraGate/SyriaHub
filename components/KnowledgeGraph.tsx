@@ -30,6 +30,7 @@ interface GraphNode {
     group: 'center' | 'fork' | 'citation' | 'related' | 'author'
     tag: string
     authorName?: string
+    contentType: 'post' | 'resource'
 }
 
 interface GraphEdge {
@@ -468,10 +469,10 @@ function DialogGraphCanvas({
                         {/* Action Button */}
                         {selectedNode.group !== 'center' && (
                             <Button
-                                onClick={() => window.location.href = `/post/${selectedNode.id}`}
+                                onClick={() => window.location.href = selectedNode.contentType === 'resource' ? `/resources/${selectedNode.id}` : `/post/${selectedNode.id}`}
                                 className="w-full bg-secondary hover:bg-secondary/80 text-white text-sm h-9 font-medium"
                             >
-                                {t('viewPost')} →
+                                {selectedNode.contentType === 'resource' ? t('viewResource') : t('viewPost')} →
                             </Button>
                         )}
                         {selectedNode.group === 'center' && (
@@ -605,7 +606,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
         try {
             const { data: centerPost } = await supabase
                 .from('posts')
-                .select('id, title, forked_from_id, tags, author_id, users:author_id(name)')
+                .select('id, title, forked_from_id, tags, author_id, content_type, users:author_id(name)')
                 .eq('id', centerPostId)
                 .single()
 
@@ -615,26 +616,30 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             const newEdges: GraphEdge[] = []
             const nodeIds = new Set<string>()
 
-            const addNode = (post: any, group: GraphNode['group']) => {
+            const addNode = (post: any, group: GraphNode['group'], contentType: 'post' | 'resource' = 'post') => {
                 if (nodeIds.has(post.id)) return
                 nodeIds.add(post.id)
+                // Detect content type from the post data, override if it's a resource
+                const detectedType = post.content_type === 'resource' ? 'resource' : contentType
                 newNodes.push({
                     id: post.id,
-                    title: post.title || 'Untitled',
+                    title: post.title || post.name || 'Untitled',
                     group,
-                    tag: post.tags?.[0] || 'Research',
-                    authorName: post.users?.name || 'Unknown'
+                    tag: post.tags?.[0] || post.resource_type || 'Research',
+                    authorName: post.users?.name || post.created_by_user?.name || 'Unknown',
+                    contentType: detectedType
                 })
             }
 
-            // Center node
-            addNode({ ...centerPost, users: (centerPost as any).users }, 'center')
+            // Center node - detect content type
+            const centerContentType = (centerPost as any).content_type === 'resource' ? 'resource' : 'post'
+            addNode({ ...centerPost, users: (centerPost as any).users }, 'center', centerContentType)
 
             // Parent fork
             if (centerPost.forked_from_id) {
                 const { data: parent } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .eq('id', centerPost.forked_from_id)
                     .single()
                 if (parent) {
@@ -646,7 +651,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             // Child forks
             const { data: forks } = await supabase
                 .from('posts')
-                .select('id, title, tags, author_id, users:author_id(name)')
+                .select('id, title, tags, author_id, content_type, users:author_id(name)')
                 .eq('forked_from_id', centerPostId)
                 .eq('status', 'published')
                 .limit(4)
@@ -659,7 +664,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             // Citations
             const { data: citations } = await supabase
                 .from('citations')
-                .select('source_post_id, posts!citations_source_post_id_fkey(id, title, tags, author_id, users:author_id(name))')
+                .select('source_post_id, posts!citations_source_post_id_fkey(id, title, tags, author_id, content_type, users:author_id(name))')
                 .eq('target_post_id', centerPostId)
                 .limit(4)
 
@@ -675,7 +680,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             if (primaryTag) {
                 const { data: shared } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .contains('tags', [primaryTag])
                     .neq('id', centerPostId)
                     .eq('status', 'published')
@@ -693,7 +698,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             if (centerPost.author_id) {
                 const { data: authorPosts } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .eq('author_id', centerPost.author_id)
                     .neq('id', centerPostId)
                     .eq('status', 'published')
@@ -986,7 +991,8 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
         const node = getNodeAtPosition(x, y)
 
         if (node && node.group !== 'center') {
-            window.location.href = `/post/${node.id}`
+            const route = node.contentType === 'resource' ? '/resources/' : '/post/'
+            window.location.href = `${route}${node.id}`
         }
     }, [getNodeAtPosition])
 
@@ -1110,7 +1116,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                                 </div>
                             )}
                             <div className="text-xs text-secondary dark:text-secondary-light mt-1">
-                                {t('viewPost')} →
+                                {hoveredNode?.contentType === 'resource' ? t('viewResource') : t('viewPost')} →
                             </div>
                         </div>
                     </div>
