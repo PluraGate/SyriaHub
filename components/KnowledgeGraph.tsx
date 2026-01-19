@@ -30,6 +30,7 @@ interface GraphNode {
     group: 'center' | 'fork' | 'citation' | 'related' | 'author'
     tag: string
     authorName?: string
+    contentType: 'post' | 'resource'
 }
 
 interface GraphEdge {
@@ -468,10 +469,10 @@ function DialogGraphCanvas({
                         {/* Action Button */}
                         {selectedNode.group !== 'center' && (
                             <Button
-                                onClick={() => window.location.href = `/post/${selectedNode.id}`}
+                                onClick={() => window.location.href = selectedNode.contentType === 'resource' ? `/resources/${selectedNode.id}` : `/post/${selectedNode.id}`}
                                 className="w-full bg-secondary hover:bg-secondary/80 text-white text-sm h-9 font-medium"
                             >
-                                {t('viewPost')} →
+                                {selectedNode.contentType === 'resource' ? t('viewResource') : t('viewPost')} →
                             </Button>
                         )}
                         {selectedNode.group === 'center' && (
@@ -615,15 +616,16 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             const newEdges: GraphEdge[] = []
             const nodeIds = new Set<string>()
 
-            const addNode = (post: any, group: GraphNode['group']) => {
+            const addNode = (post: any, group: GraphNode['group'], contentType: 'post' | 'resource' = 'post') => {
                 if (nodeIds.has(post.id)) return
                 nodeIds.add(post.id)
                 newNodes.push({
                     id: post.id,
-                    title: post.title || 'Untitled',
+                    title: post.title || post.name || 'Untitled',
                     group,
-                    tag: post.tags?.[0] || 'Research',
-                    authorName: post.users?.name || 'Unknown'
+                    tag: post.tags?.[0] || post.resource_type || 'Research',
+                    authorName: post.users?.name || post.created_by_user?.name || 'Unknown',
+                    contentType
                 })
             }
 
@@ -986,7 +988,8 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
         const node = getNodeAtPosition(x, y)
 
         if (node && node.group !== 'center') {
-            window.location.href = `/post/${node.id}`
+            const route = node.contentType === 'resource' ? '/resources/' : '/post/'
+            window.location.href = `${route}${node.id}`
         }
     }, [getNodeAtPosition])
 
@@ -1110,7 +1113,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                                 </div>
                             )}
                             <div className="text-xs text-secondary dark:text-secondary-light mt-1">
-                                {t('viewPost')} →
+                                {hoveredNode?.contentType === 'resource' ? t('viewResource') : t('viewPost')} →
                             </div>
                         </div>
                     </div>
