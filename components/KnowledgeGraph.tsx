@@ -606,7 +606,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
         try {
             const { data: centerPost } = await supabase
                 .from('posts')
-                .select('id, title, forked_from_id, tags, author_id, users:author_id(name)')
+                .select('id, title, forked_from_id, tags, author_id, content_type, users:author_id(name)')
                 .eq('id', centerPostId)
                 .single()
 
@@ -619,24 +619,27 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             const addNode = (post: any, group: GraphNode['group'], contentType: 'post' | 'resource' = 'post') => {
                 if (nodeIds.has(post.id)) return
                 nodeIds.add(post.id)
+                // Detect content type from the post data, override if it's a resource
+                const detectedType = post.content_type === 'resource' ? 'resource' : contentType
                 newNodes.push({
                     id: post.id,
                     title: post.title || post.name || 'Untitled',
                     group,
                     tag: post.tags?.[0] || post.resource_type || 'Research',
                     authorName: post.users?.name || post.created_by_user?.name || 'Unknown',
-                    contentType
+                    contentType: detectedType
                 })
             }
 
-            // Center node
-            addNode({ ...centerPost, users: (centerPost as any).users }, 'center')
+            // Center node - detect content type
+            const centerContentType = (centerPost as any).content_type === 'resource' ? 'resource' : 'post'
+            addNode({ ...centerPost, users: (centerPost as any).users }, 'center', centerContentType)
 
             // Parent fork
             if (centerPost.forked_from_id) {
                 const { data: parent } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .eq('id', centerPost.forked_from_id)
                     .single()
                 if (parent) {
@@ -648,7 +651,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             // Child forks
             const { data: forks } = await supabase
                 .from('posts')
-                .select('id, title, tags, author_id, users:author_id(name)')
+                .select('id, title, tags, author_id, content_type, users:author_id(name)')
                 .eq('forked_from_id', centerPostId)
                 .eq('status', 'published')
                 .limit(4)
@@ -661,7 +664,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             // Citations
             const { data: citations } = await supabase
                 .from('citations')
-                .select('source_post_id, posts!citations_source_post_id_fkey(id, title, tags, author_id, users:author_id(name))')
+                .select('source_post_id, posts!citations_source_post_id_fkey(id, title, tags, author_id, content_type, users:author_id(name))')
                 .eq('target_post_id', centerPostId)
                 .limit(4)
 
@@ -677,7 +680,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             if (primaryTag) {
                 const { data: shared } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .contains('tags', [primaryTag])
                     .neq('id', centerPostId)
                     .eq('status', 'published')
@@ -695,7 +698,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             if (centerPost.author_id) {
                 const { data: authorPosts } = await supabase
                     .from('posts')
-                    .select('id, title, tags, author_id, users:author_id(name)')
+                    .select('id, title, tags, author_id, content_type, users:author_id(name)')
                     .eq('author_id', centerPost.author_id)
                     .neq('id', centerPostId)
                     .eq('status', 'published')
