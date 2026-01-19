@@ -1753,12 +1753,15 @@
             "affiliation": "Affiliation",
             "reason": "Reason",
             "via": "via {source}",
+            "approve": "Approve",
             "approveAndInvite": "Approve & Invite",
             "reject": "Reject",
             "approvalSuccess": "Approved! Invite code: {code}",
             "rejectionSuccess": "Entry rejected",
             "failureApprove": "Failed to approve",
-            "failureReject": "Failed to reject"
+            "failureReject": "Failed to reject",
+            "sendingInviteTo": "Sending invitation to {email}",
+            "emailLanguage": "Email Language"
         },
         "analyticsPage": {
             "title": "Platform Analytics",
@@ -3052,7 +3055,8 @@
             "search": "Search Engine",
             "conference": "Conference / Event",
             "other": "Other"
-        }
+        },
+        "securityCheckRequired": "Please complete the security check"
     },
     "SocialProof": {
         "researchersOnline": "researchers online",
