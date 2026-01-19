@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { Mail, User, Building, MessageSquare, Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useTranslations } from 'next-intl'
+import { Turnstile, TurnstileRef } from '@/components/ui/Turnstile'
 
 interface WaitlistFormProps {
     onSuccess?: () => void
@@ -27,11 +28,20 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+    const turnstileRef = useRef<TurnstileRef>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError(null)
+
+        // Check if Turnstile token is available (skip if widget not rendered in dev)
+        if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+            setError(t('securityCheckRequired'))
+            setLoading(false)
+            return
+        }
 
         try {
             const response = await fetch('/api/waitlist', {
@@ -43,6 +53,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                     affiliation,
                     reason,
                     referralSource,
+                    turnstileToken,
                 }),
             })
 
@@ -56,6 +67,9 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             onSuccess?.()
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
+            // Reset turnstile on error
+            turnstileRef.current?.reset()
+            setTurnstileToken(null)
         } finally {
             setLoading(false)
         }
@@ -177,6 +191,15 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 </Select>
             </div>
 
+            {/* Turnstile CAPTCHA */}
+            <Turnstile
+                ref={turnstileRef}
+                onSuccess={(token) => setTurnstileToken(token)}
+                onError={() => setTurnstileToken(null)}
+                onExpire={() => setTurnstileToken(null)}
+                className="flex justify-center"
+            />
+
             {/* Submit */}
             <Button
                 type="submit"
@@ -205,3 +228,4 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         </form>
     )
 }
+

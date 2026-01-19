@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit } from '@/lib/rateLimit'
 import { validateOrigin } from '@/lib/apiUtils'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 
 // Submit to waitlist
 async function handlePost(request: NextRequest) {
@@ -9,10 +10,16 @@ async function handlePost(request: NextRequest) {
     if (!validateOrigin(request)) {
         return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
     }
-    
+
     try {
         const body = await request.json()
-        const { email, name, reason, affiliation, referralSource } = body
+        const { email, name, reason, affiliation, referralSource, turnstileToken } = body
+
+        // SECURITY: Verify Turnstile CAPTCHA token
+        const isValidToken = await verifyTurnstileToken(turnstileToken)
+        if (!isValidToken) {
+            return NextResponse.json({ error: 'Security verification failed. Please try again.' }, { status: 400 })
+        }
 
         if (!email) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 })
