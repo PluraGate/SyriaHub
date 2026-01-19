@@ -47,7 +47,7 @@ async function handlePost(request: NextRequest) {
     if (!validateOrigin(request)) {
         return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
     }
-    
+
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -64,20 +64,32 @@ async function handlePost(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid target role. Must be member or researcher.' }, { status: 400 })
         }
 
+        // Check if user is admin (admins have no invite limit)
+        const { data: userData } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+
+        const isAdmin = userData?.role === 'admin'
+
         // Check user's TOTAL invite count for this role type (max 5 per role, lifetime limit)
-        const { count: totalCount, error: countError } = await supabase
-            .from('invite_codes')
-            .select('*', { count: 'exact', head: true })
-            .eq('created_by', user.id)
-            .eq('target_role', target_role)
+        // Skip limit check for admins
+        if (!isAdmin) {
+            const { count: totalCount, error: countError } = await supabase
+                .from('invite_codes')
+                .select('*', { count: 'exact', head: true })
+                .eq('created_by', user.id)
+                .eq('target_role', target_role)
 
-        if (countError) {
-            console.error('Error checking invite count:', countError)
-            return NextResponse.json({ error: 'Failed to check invite limit' }, { status: 500 })
-        }
+            if (countError) {
+                console.error('Error checking invite count:', countError)
+                return NextResponse.json({ error: 'Failed to check invite limit' }, { status: 500 })
+            }
 
-        if (totalCount !== null && totalCount >= 5) {
-            return NextResponse.json({ error: `You have reached your lifetime ${target_role} invite limit (5)` }, { status: 400 })
+            if (totalCount !== null && totalCount >= 5) {
+                return NextResponse.json({ error: `You have reached your lifetime ${target_role} invite limit (5)` }, { status: 400 })
+            }
         }
 
         // Create invite code with target_role (strict single-use)

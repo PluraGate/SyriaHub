@@ -3300,6 +3300,7 @@
         "nodeDetails": "Node Details",
         "connection": "Connection",
         "viewPost": "View Post",
+        "viewResource": "View Resource",
         "currentlyViewing": "Currently viewing this post",
         "selectNode": "Select a Node",
         "graphOverview": "Graph Overview",
