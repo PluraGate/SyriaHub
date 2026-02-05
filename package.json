@@ -85,7 +85,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-geosearch": "^4.2.2",
     "lucide-react": "^0.552.0",
-    "next": "^16.0.1",
+    "next": "^16.1.5",
     "next-intl": "^4.5.6",
     "next-themes": "^0.4.6",
     "nodemailer": "^7.0.11",
@@ -112,7 +112,7 @@
   },
   "overrides": {
     "preact": "10.28.2",
-    "tar": "7.5.6",
+    "tar": "7.5.7",
     "lodash-es": "4.17.23"
   },
   "devDependencies": {
@@ -127,7 +127,7 @@
     "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.9.11",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^16.0.1",
+    "eslint-config-next": "^16.1.5",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-boundaries": "^5.3.1",
     "jsdom": "^27.3.0",
