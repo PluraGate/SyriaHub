@@ -19,7 +19,7 @@ export default async function NotificationsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
             <main className="container-custom py-8 flex-grow">
                 <NotificationsPageContent userId={user.id} />
             </main>

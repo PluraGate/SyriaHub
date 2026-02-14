@@ -1,9 +1,9 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 type Notification = {
     id: string
@@ -32,17 +32,10 @@ const NotificationsContext = createContext<NotificationsContextType | undefined>
 
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {
     const [notifications, setNotifications] = useState<Notification[]>([])
-    const [userId, setUserId] = useState<string | null>(null)
-    const supabase = createClient()
+    const { user } = useAuth()
+    const userId = user?.id ?? null
+    const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
-    const router = useRouter()
-
-    // Fetch initial user
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data }) => {
-            setUserId(data.user?.id || null)
-        })
-    }, [supabase])
 
     // Fetch notifications and subscribe to realtime
     useEffect(() => {

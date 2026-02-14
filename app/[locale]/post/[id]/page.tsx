@@ -2,20 +2,17 @@ import { notFound, redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MessageSquare, Share2, History, Flag, Bookmark, Quote, Info, ExternalLink, Calendar, MapPin, Scale, Lightbulb, AlertTriangle, HelpCircle, ArrowRight, Library, User as UserIcon, PenSquare, GitPullRequest, Clock, Eye, GraduationCap, Download } from 'lucide-react'
+import { ArrowLeft, MessageSquare, Calendar, HelpCircle, GitPullRequest, Clock, GraduationCap, Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { TagChip } from '@/components/TagChip'
-import { RelatedPosts } from '@/components/RelatedPosts'
-import { CitationBacklinks } from '@/components/CitationBacklinks'
 import { CommentsSection } from '@/components/CommentsSection'
 import { AnswerList } from '@/components/AnswerList'
 import { AnswerForm } from '@/components/AnswerForm'
 import { ForkButton } from '@/components/ForkButton'
 import { SuggestionDialog } from '@/components/SuggestionDialog'
-import { KnowledgeGraph } from '@/components/KnowledgeGraph'
+import { LazyKnowledgeGraph } from '@/components/lazy'
 import { CitationContextBar } from '@/components/CitationContextBar'
 import { PostMoreOptions } from '@/components/PostMoreOptions'
 import { TextSelectionHandler } from '@/components/TextSelectionHandler'
@@ -25,10 +22,9 @@ import { LinkedResourcesSection } from '@/components/LinkedResourcesSection'
 import { EpistemicRecommendations } from '@/components/EpistemicRecommendations'
 import { ReferencesSection } from '@/components/ReferencesSection'
 import { CiteButton } from '@/components/CiteButton'
-import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { SpatialContextCard } from '@/components/spatial'
-import { PostCharts } from '@/components/PostCharts'
+import { LazyPostCharts } from '@/components/lazy'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -342,7 +338,7 @@ export default async function PostPage(props: PostPageProps) {
     <>
       <JsonLdScript data={jsonLdData} nonce={nonce} />
       <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-        <Navbar user={user} />
+        <Navbar />
 
         {/* Hero Header with Cover Image Background - always shows cover (with Pluragate fallback) */}
         <header className="group relative overflow-hidden min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">
@@ -612,7 +608,7 @@ export default async function PostPage(props: PostPageProps) {
 
               {/* Data Visualizations */}
               {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
-                <PostCharts
+                <LazyPostCharts
                   chartBlocks={post.metadata.chartBlocks}
                   linkedResources={linkedResources}
                 />
@@ -769,7 +765,7 @@ export default async function PostPage(props: PostPageProps) {
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
                   {t('knowledgeGraph')}
                 </h3>
-                <KnowledgeGraph centerPostId={post.id} />
+                <LazyKnowledgeGraph centerPostId={post.id} />
               </div>
 
               {/* Dynamic Schema Fields (Research Metadata) */}

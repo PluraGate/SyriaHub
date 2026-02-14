@@ -138,7 +138,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
   if (!navbarUser || loading) {
     return (
       <div className="min-h-screen bg-background dark:bg-dark-bg">
-        <Navbar user={navbarUser} />
+        <Navbar />
         <div className="flex">
           <div className="w-64 bg-white dark:bg-dark-surface border-r animate-pulse" />
           <div className="flex-1 p-8">
@@ -158,7 +158,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
 
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg">
-      <Navbar user={navbarUser} />
+      <Navbar />
 
       <div className="flex min-h-[calc(100vh-64px)]">
         <AdminSidebar />

@@ -145,7 +145,7 @@ export async function proxy(request: NextRequest) {
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://cdnjs.cloudflare.com",
         "frame-src https://challenges.cloudflare.com",
-        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org",
+        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.tile.openstreetmap.org https://*.openstreetmap.org https://*.ingest.de.sentry.io https://va.vercel-scripts.com",
         "object-src 'none'",
     ].join('; ');
 
