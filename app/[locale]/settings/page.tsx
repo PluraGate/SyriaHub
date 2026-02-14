@@ -18,7 +18,7 @@ export default async function Settings() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
             <div className="container-custom py-8">
                 <SettingsPage user={{ id: user.id, email: user.email }} />
             </div>

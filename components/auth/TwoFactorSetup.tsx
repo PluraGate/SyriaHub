@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui/toast'
 import { Shield, ShieldCheck, ShieldOff, Loader2, Copy, Check, AlertTriangle } from 'lucide-react'
@@ -17,6 +16,7 @@ interface TwoFactorSetupProps {
 }
 
 export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupProps) {
+    const _userId = userId
     const [loading, setLoading] = useState(true)
     const [enrolling, setEnrolling] = useState(false)
     const [verifying, setVerifying] = useState(false)
@@ -53,8 +53,8 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                     setIsEnrolled(true)
                     setFactorId(totpFactor.id)
                 }
-            } catch (err) {
-                console.error('Error:', err)
+            } catch (_err) {
+                console.error('Error checking MFA enrollment')
             }
             setLoading(false)
         }
@@ -84,7 +84,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                 setSecret(data.totp.secret)
                 setFactorId(data.id)
             }
-        } catch (err) {
+        } catch (_err) {
             showToast(t('failedToStart'), 'error')
         }
         setEnrolling(false)
@@ -99,7 +99,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
 
         setVerifying(true)
         try {
-            const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+            const { error } = await supabase.auth.mfa.challengeAndVerify({
                 factorId,
                 code: verificationCode
             })
@@ -116,7 +116,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
             setVerificationCode('')
             showToast(t('codeVerified'), 'success')
             onEnrollmentComplete?.()
-        } catch (err) {
+        } catch (_err) {
             showToast(t('verifyFailed'), 'error')
         }
         setVerifying(false)
@@ -139,7 +139,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
             setIsEnrolled(false)
             setFactorId(null)
             showToast(t('disabled'), 'success')
-        } catch (err) {
+        } catch (_err) {
             showToast(t('disableFailed'), 'error')
         }
         setUnenrolling(false)

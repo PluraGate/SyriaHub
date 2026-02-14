@@ -48,7 +48,7 @@ export default async function SuggestionsPage(props: SuggestionsPageProps) {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
                 <div className="container-custom max-w-5xl py-4">

@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server'
-import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { BookOpen, FileText, HelpCircle, GitFork, Quote, Map, Lightbulb, Settings } from 'lucide-react'
@@ -16,14 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HowItWorksPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'HowItWorks' })
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
 
     const isArabic = locale === 'ar'
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

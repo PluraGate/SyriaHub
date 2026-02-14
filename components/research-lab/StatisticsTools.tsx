@@ -9,11 +9,6 @@ import {
     Upload,
     FileSpreadsheet,
     Calculator,
-    Save,
-    Download,
-    Trash2,
-    Plus,
-    X,
     ClipboardList,
     Vote,
     Loader2
@@ -96,7 +91,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null
 }
 
-export function StatisticsTools({ userId, savedAnalyses, availableDatasets, userSurveys = [], userPolls = [] }: StatisticsToolsProps) {
+export function StatisticsTools({ userId, savedAnalyses: _savedAnalyses, availableDatasets, userSurveys = [], userPolls = [] }: StatisticsToolsProps) {
     const t = useTranslations('ResearchLab.statisticsPage')
     const [activeTab, setActiveTab] = useState<'charts' | 'calculator' | 'import'>('charts')
     const [chartType, setChartType] = useState('bar')
@@ -289,7 +284,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
             setChartData(importedData.slice(0, 20))
             setActiveTab('charts')
             showToast('Survey data imported!', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to import survey data', 'error')
         } finally {
             setLoadingSurvey(null)
@@ -310,7 +305,7 @@ export function StatisticsTools({ userId, savedAnalyses, availableDatasets, user
             setChartData(importedData)
             setActiveTab('charts')
             showToast('Poll data imported!', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to import poll data', 'error')
         } finally {
             setLoadingPoll(null)

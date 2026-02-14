@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
@@ -17,20 +16,13 @@ import {
     Clock,
     User as UserIcon,
     MapPin,
-    Calendar,
     Filter,
     TrendingUp,
     AlertCircle,
     CheckCircle2,
     Loader2,
     ArrowRight,
-    Star,
-    Database,
-    FlaskConical,
-    Users,
-    History,
-    FileText,
-    Users2
+    Star
 } from 'lucide-react'
 import {
     Select,
@@ -83,9 +75,7 @@ const gapTypeLabels: Record<ResearchGapType, string> = {
 
 export default function ResearchGapsPage() {
     const t = useTranslations('ResearchGaps')
-    const tCommon = useTranslations('Common')
     const supabase = createClient()
-    const router = useRouter()
     const { showToast } = useToast()
 
     const [user, setUser] = useState<User | null>(null)
@@ -98,7 +88,6 @@ export default function ResearchGapsPage() {
     const [strategicOnly, setStrategicOnly] = useState(false)
     const [showNewGapForm, setShowNewGapForm] = useState(false)
     const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set())
-    const [userInterests, setUserInterests] = useState<Set<string>>(new Set())
 
     // Form state for new gap
     const [newGapTitle, setNewGapTitle] = useState('')
@@ -293,7 +282,7 @@ export default function ResearchGapsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             {/* Hero Header */}
             <header className="bg-gradient-to-br from-primary via-primary-dark to-primary relative overflow-hidden">

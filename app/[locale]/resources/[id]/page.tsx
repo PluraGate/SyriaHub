@@ -149,7 +149,7 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
         <>
             <JsonLdScript data={jsonLdData} />
             <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-                <Navbar user={user} />
+                <Navbar />
 
                 <main className="flex-1 container-custom py-12">
                     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden">

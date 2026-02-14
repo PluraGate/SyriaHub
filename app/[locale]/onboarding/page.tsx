@@ -88,7 +88,7 @@ export default function OnboardingPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 container-custom py-12">
                 <div className="max-w-2xl mx-auto">

@@ -44,13 +44,13 @@ const navigationItems = [
     { href: '/about/terms', icon: FileText, key: 'terms' },
 ]
 
-export function AboutLayout({ children, user }: AboutLayoutProps) {
+export function AboutLayout({ children, user: _user }: AboutLayoutProps) {
     const t = useTranslations('About')
     const pathname = usePathname()
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

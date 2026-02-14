@@ -14,7 +14,7 @@ export default async function AdminReportsPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     // Check if user is admin or moderator
@@ -45,7 +45,7 @@ export default async function AdminReportsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="flex">
                 <AdminSidebar />
