@@ -39,7 +39,7 @@ export default async function AdminFeedbackPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={{ id: user.id, email: user.email }} />
+            <Navbar />
 
             <div className="flex">
                 <AdminSidebar />

@@ -293,7 +293,7 @@ export default function ResearchGapsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             {/* Hero Header */}
             <header className="bg-gradient-to-br from-primary via-primary-dark to-primary relative overflow-hidden">

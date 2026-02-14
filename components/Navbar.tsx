@@ -3,14 +3,13 @@
 
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
-import { useRouter } from 'next/navigation'
 import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { NotificationBell } from './NotificationBell'
 import { SearchBar } from './SearchBar'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/PreferencesContext'
 import {
   DropdownMenu,
@@ -24,18 +23,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { FeedbackButton } from "@/components/feedback"
 
-interface NavbarProps {
-  user?: {
-    id: string
-    email?: string
-    user_metadata?: {
-      avatar_url?: string
-      full_name?: string
-      name?: string
-    }
-  } | null
-}
-
 const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
   <Link
     href={href}
@@ -45,83 +32,24 @@ const NavLink = ({ href, children }: { href: string, children: React.ReactNode }
   </Link>
 )
 
-export function Navbar({ user: userProp }: NavbarProps) {
+export function Navbar() {
   const t = useTranslations('Navigation')
   const tCommon = useTranslations('Common')
   const pathname = usePathname()
-  const router = useRouter()
+  const { user: authUser, isAuthenticated, signOut } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState(userProp)
-  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(userProp?.user_metadata?.avatar_url || null)
-  const [userRole, setUserRole] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, isDark } = useTheme()
 
   // Prevent hydration mismatch
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional SSR hydration pattern
     setMounted(true)
   }, [])
 
-  // Auto-fetch user if not provided as prop
-  useEffect(() => {
-    if (!userProp) {
-      const supabase = createClient()
-      supabase.auth.getUser().then(({ data }) => {
-        if (data.user) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email ?? undefined,
-            user_metadata: data.user.user_metadata as {
-              avatar_url?: string
-              full_name?: string
-              name?: string
-            } | undefined
-          })
-        }
-      })
-    }
-  }, [userProp])
-
-  // No longer needed here as we use params or context
-  // const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en'
-
-  // Fetch avatar_url and role from users table
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.id) {
-        const supabase = createClient()
-        const { data } = await supabase
-          .from('users')
-          .select('avatar_url, role')
-          .eq('id', user.id)
-          .maybeSingle()
-
-        if (data) {
-          if (data.avatar_url && !userAvatarUrl) {
-            setUserAvatarUrl(data.avatar_url)
-          }
-          if (data.role) {
-            setUserRole(data.role)
-          }
-        }
-      }
-    }
-    fetchUserData()
-  }, [user?.id, userAvatarUrl])
-
-  const handleSignOut = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
-  }
-
-  // Safe access to user name/avatar since the user object structure might vary
-  // depending on whether it comes from auth.getUser() or a custom query
-  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
-  const userAvatar = userAvatarUrl || user?.user_metadata?.avatar_url
-  const isAdminOrModerator = userRole === 'admin' || userRole === 'moderator'
+  // Derive display values from AuthContext
+  const userName = authUser?.name || authUser?.email?.split('@')[0] || 'User'
+  const userAvatar = authUser?.avatarUrl
+  const isAdminOrModerator = authUser?.role === 'admin' || authUser?.role === 'moderator'
 
   // Toggle between light/dark/system - cycles: light -> dark -> system -> light
   const toggleDarkMode = () => {
@@ -186,7 +114,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
                 {mounted ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <div className="w-4 h-4" />}
               </button>
 
-              {user ? (
+              {isAuthenticated && authUser ? (
                 <>
                   <NotificationBell />
 
@@ -220,13 +148,13 @@ export function Navbar({ user: userProp }: NavbarProps) {
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">{userName}</p>
                           <p className="text-xs leading-none text-muted-foreground truncate">
-                            {user.email}
+                            {authUser.email}
                           </p>
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href={`/profile/${user.id}`} className="cursor-pointer w-full flex items-center">
+                        <Link href={`/profile/${authUser.id}`} className="cursor-pointer w-full flex items-center">
                           <User className="mr-2 h-4 w-4" />
                           <span>{t('profile')}</span>
                         </Link>
@@ -273,7 +201,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
                         </>
                       )}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-accent dark:text-accent-light">
+                      <DropdownMenuItem onClick={signOut} className="cursor-pointer text-accent dark:text-accent-light">
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>{t('logout')}</span>
                       </DropdownMenuItem>
@@ -363,7 +291,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
               {t('events')}
             </Link>
 
-            {user ? (
+            {isAuthenticated && authUser ? (
               <>
                 {/* Separator before Write */}
                 <div className="border-t border-gray-200 dark:border-dark-border my-3" />
@@ -383,7 +311,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
 
                 {/* User Info - Clickable Profile Link */}
                 <Link
-                  href={`/profile/${user.id}`}
+                  href={`/profile/${authUser.id}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-surface rounded-lg transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -395,7 +323,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
                   </Avatar>
                   <div>
                     <p className="font-medium text-sm text-text dark:text-dark-text">{userName}</p>
-                    <p className="text-xs text-text-light dark:text-dark-text-muted truncate max-w-[200px]">{user.email}</p>
+                    <p className="text-xs text-text-light dark:text-dark-text-muted truncate max-w-[200px]">{authUser.email}</p>
                   </div>
                 </Link>
 
@@ -454,7 +382,7 @@ export function Navbar({ user: userProp }: NavbarProps) {
 
                 {/* Sign Out */}
                 <button
-                  onClick={handleSignOut}
+                  onClick={signOut}
                   className="w-full flex items-center gap-2 px-4 py-3 text-accent dark:text-accent-light hover:bg-accent/10 dark:hover:bg-accent/10 rounded-lg transition-all font-medium"
                 >
                   <LogOut className="w-4 h-4" />

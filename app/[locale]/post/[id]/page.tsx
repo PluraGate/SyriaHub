@@ -342,7 +342,7 @@ export default async function PostPage(props: PostPageProps) {
     <>
       <JsonLdScript data={jsonLdData} nonce={nonce} />
       <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-        <Navbar user={user} />
+        <Navbar />
 
         {/* Hero Header with Cover Image Background - always shows cover (with Pluragate fallback) */}
         <header className="group relative overflow-hidden min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">

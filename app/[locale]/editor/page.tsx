@@ -777,7 +777,7 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-      <Navbar user={user} />
+      <Navbar />
 
       {/* Header */}
       <header className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">

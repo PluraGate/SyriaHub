@@ -73,7 +73,7 @@ export default async function SurveyResultsPage({ params }: PageProps) {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="flex flex-1">
                 <ResearchLabNav className="hidden md:flex" />

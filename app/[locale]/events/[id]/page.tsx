@@ -58,7 +58,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 container-custom py-12">
                 <div className="grid gap-8 lg:grid-cols-[1fr_350px]">

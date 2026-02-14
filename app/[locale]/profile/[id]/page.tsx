@@ -124,7 +124,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
   if (!privacySettings.show_profile_public && !isOwnProfile && !isViewerAdmin) {
     return (
       <div className="min-h-screen bg-background dark:bg-dark-bg">
-        <Navbar user={user} />
+        <Navbar />
         <main className="container-custom max-w-4xl py-16 flex flex-col items-center text-center">
           <div className="w-24 h-24 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center mb-6">
             <Lock className="w-10 h-10 text-gray-400" />
@@ -221,7 +221,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
     <>
       {jsonLdData && <JsonLdScript data={jsonLdData} />}
       <div className="flex min-h-screen flex-col bg-background dark:bg-dark-bg overflow-x-hidden">
-        <Navbar user={user} />
+        <Navbar />
 
         {/* Back Navigation */}
         <div className="border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">

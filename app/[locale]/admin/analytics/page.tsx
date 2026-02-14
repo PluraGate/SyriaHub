@@ -24,7 +24,7 @@ export default async function AdminAnalyticsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
             <div className="flex">
                 <AdminSidebar />
                 <div className="flex-1 flex flex-col min-w-0">
