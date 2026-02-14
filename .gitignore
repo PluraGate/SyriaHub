@@ -44,6 +44,9 @@ status_*.json
 playwright-report/
 test-results/
 
+# Archived migrations (squashed)
+supabase/migrations/_archive/
+
 # ==============================================
 # Dev/debug artifacts (added during Phase 1 cleanup)
 # ==============================================
