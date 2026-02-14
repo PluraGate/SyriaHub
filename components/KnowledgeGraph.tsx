@@ -3,16 +3,11 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
-import { useTheme } from 'next-themes'
 import {
     ZoomIn,
     ZoomOut,
     RotateCcw,
-    Info,
-    ExternalLink,
     Maximize2,
-    Minimize2,
-    Search,
     Loader2,
     X
 } from 'lucide-react'
@@ -71,14 +66,6 @@ const RELATION_LABELS: Record<RelationType, string> = {
     citation: 'Cites This',
     shared_tag: 'Related Topic',
     shared_author: 'Same Author'
-}
-
-// Edge descriptions for hover tooltips
-const EDGE_DESCRIPTIONS: Record<RelationType, string> = {
-    fork: 'This work was derived from or built upon the original',
-    citation: 'This work references or cites the original',
-    shared_tag: 'These works share common topics or themes',
-    shared_author: 'These works are by the same author'
 }
 
 // Helper component for dialog canvas - fully self-contained with its own state
@@ -585,21 +572,15 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
 
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const dialogCanvasRef = useRef<HTMLCanvasElement>(null)
 
     const supabase = useMemo(() => createClient(), [])
-    const { resolvedTheme } = useTheme()
-    const isDark = resolvedTheme === 'dark'
 
     // Node positions (will be calculated once and stored)
     const [nodePositions, setNodePositions] = useState<Map<string, { x: number, y: number }>>(new Map())
-    const [dialogPositions, setDialogPositions] = useState<Map<string, { x: number, y: number }>>(new Map())
     const [draggedNode, setDraggedNode] = useState<string | null>(null)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
     const [zoomLevel, setZoomLevel] = useState(0.85) // Start slightly zoomed out
-    const [dialogZoomLevel, setDialogZoomLevel] = useState(0.85)
     const hasDragged = useRef(false) // Track if actual dragging occurred
-    const dialogContainerRef = useRef<HTMLDivElement>(null)
 
     // Fetch graph data
     const fetchGraphData = useCallback(async () => {

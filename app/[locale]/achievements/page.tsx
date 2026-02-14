@@ -148,7 +148,7 @@ export default function AchievementsPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-                <Navbar user={user} />
+                <Navbar />
                 <main className="flex-1 flex items-center justify-center">
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </main>
@@ -160,7 +160,7 @@ export default function AchievementsPage() {
     if (!user) {
         return (
             <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-                <Navbar user={user} />
+                <Navbar />
                 <main className="flex-1 container-custom py-12">
                     <div className="text-center py-16">
                         <Lock className="w-16 h-16 mx-auto text-text-light dark:text-dark-text-muted mb-4" />
@@ -179,7 +179,7 @@ export default function AchievementsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 container-custom py-8">
                 {/* Header */}

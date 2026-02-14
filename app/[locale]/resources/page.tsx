@@ -24,7 +24,6 @@ export default async function ResourcesPage({
 }) {
     const params = await searchParams
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
     const t = await getTranslations('Resources')
 
     // Build the query based on filters
@@ -92,7 +91,7 @@ export default async function ResourcesPage({
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 container-custom py-12">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">

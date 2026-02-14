@@ -5,10 +5,10 @@ import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import {
-    BarChart3, Eye, ThumbsUp, MessageSquare, Download,
+    BarChart3, Eye, ThumbsUp,
     TrendingUp, TrendingDown, Quote, Shield, Users as UsersIcon,
-    Calendar, Award, BookOpen, ArrowUpRight, Activity, HelpCircle,
-    Sparkles, PenLine, ArrowRight, Lightbulb
+    Award, BookOpen, ArrowUpRight, Activity, HelpCircle,
+    PenLine, Lightbulb
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -53,7 +53,6 @@ interface TopPost {
 }
 
 export default function ResearcherAnalyticsDashboard() {
-    const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [stats, setStats] = useState<ResearcherStats | null>(null)
     const [topPosts, setTopPosts] = useState<TopPost[]>([])
@@ -75,7 +74,6 @@ export default function ResearcherAnalyticsDashboard() {
                 router.push('/auth/login')
                 return
             }
-            setUser(user)
 
             // Fetch user's posts for top posts table
             const { data: posts } = await supabase
@@ -205,7 +203,7 @@ export default function ResearcherAnalyticsDashboard() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col overflow-x-hidden">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 lg:py-12 overflow-x-hidden box-border">
                 {/* Page Header */}
@@ -312,7 +310,6 @@ export default function ResearcherAnalyticsDashboard() {
                         label={t('followers')}
                         value={stats?.totalFollowers || 0}
                         trend={stats?.followersTrend}
-                        daysBack={daysBack}
                         tooltip={t('tooltips.followers')}
                         gradient="from-pink-500/20 to-pink-600/5"
                         iconColor="text-pink-500"
@@ -350,7 +347,6 @@ export default function ResearcherAnalyticsDashboard() {
                         label={t('totalViews')}
                         value={stats?.totalViews || 0}
                         trend={stats?.viewsTrend}
-                        daysBack={daysBack}
                         tooltip={t('tooltips.totalViews')}
                         gradient="from-blue-500/20 to-blue-600/5"
                         iconColor="text-blue-500"
@@ -664,14 +660,13 @@ interface StatCardProps {
     value: number
     suffix?: string
     trend?: number
-    daysBack?: number
     tooltip: string
     gradient: string
     iconColor: string
     t: any
 }
 
-function StatCard({ icon: Icon, label, value, suffix = '', trend, daysBack = 30, tooltip, gradient, iconColor, t }: StatCardProps) {
+function StatCard({ icon: Icon, label, value, suffix = '', trend, tooltip, gradient, iconColor, t }: StatCardProps) {
     const hasTrend = trend !== undefined && trend !== 0
     const isPositive = (trend || 0) > 0
 

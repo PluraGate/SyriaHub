@@ -62,7 +62,7 @@ export default async function GroupPage(props: GroupPageProps) {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border">
                 <div className="container-custom max-w-6xl py-8">

@@ -74,7 +74,7 @@ export default async function SurveyPage({ params }: PageProps) {
     if (!isAuthor && survey.status !== 'active') {
         return (
             <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-                <Navbar user={user} />
+                <Navbar />
                 <div className="flex flex-1">
                     <ResearchLabNav className="hidden md:flex" />
                     <main className="flex-1 container-custom py-8">
@@ -102,7 +102,7 @@ export default async function SurveyPage({ params }: PageProps) {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="flex flex-1">
                 <ResearchLabNav className="hidden md:flex" />

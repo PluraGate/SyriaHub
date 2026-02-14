@@ -16,7 +16,6 @@ import {
     XCircle,
     Share2,
     CheckCircle2,
-    Download,
     FileJson,
     FileSpreadsheet,
     Upload
@@ -67,7 +66,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
     const [votingPollId, setVotingPollId] = useState<string | null>(null)
     const [localVotes, setLocalVotes] = useState<Record<string, string[]>>(userVotes)
     const [localPolls, setLocalPolls] = useState(polls)
-    const [editingPoll, setEditingPoll] = useState<Poll | null>(null)
+    const [_editingPoll, setEditingPoll] = useState<Poll | null>(null)
     const [showResults, setShowResults] = useState<string | null>(null)
     const [deletingPollId, setDeletingPollId] = useState<string | null>(null)
     const { showToast } = useToast()
@@ -121,7 +120,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
             }))
 
             showToast('Vote recorded!', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to vote', 'error')
         } finally {
             setVotingPollId(null)
@@ -179,7 +178,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
             setIsMultiple(false)
             setIsCreating(false)
             showToast('Poll created!', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to create poll', 'error')
         } finally {
             setSubmitting(false)
@@ -222,7 +221,7 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                 p.id === pollId ? { ...p, is_active: false } : p
             ))
             showToast('Poll closed', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to close poll', 'error')
         }
     }

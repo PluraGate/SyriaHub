@@ -33,7 +33,7 @@ export default async function SearchAnalyticsPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-dark-bg">
-            <Navbar user={{ id: user.id, email: user.email }} />
+            <Navbar />
 
             <div className="flex">
                 <AdminSidebar />

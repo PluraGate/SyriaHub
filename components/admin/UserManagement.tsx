@@ -6,11 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import {
     Users,
     Search,
-    Filter,
-    ChevronDown,
     Shield,
     ShieldCheck,
-    ShieldX,
     MoreHorizontal,
     Mail,
     Calendar,
@@ -20,8 +17,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Ban,
-    CheckCircle,
-    AlertTriangle
+    CheckCircle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -176,7 +172,7 @@ export function UserManagement() {
                 'success'
             )
             loadUsers()
-        } catch (error) {
+        } catch (_error) {
             showToast(tCommon('errors.general'), 'error')
         } finally {
             setProcessingUserId(null)
