@@ -25,7 +25,7 @@ export default async function ProfileEditPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="container-custom max-w-2xl py-12 space-y-8">
                 <div className="card p-8">

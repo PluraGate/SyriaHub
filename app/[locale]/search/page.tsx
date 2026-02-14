@@ -111,7 +111,7 @@ export default async function SearchPage({
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="container-custom max-w-6xl py-12">
                 <div className="flex flex-col lg:flex-row gap-8">

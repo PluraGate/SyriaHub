@@ -32,7 +32,7 @@ export default async function QuestionsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 container-custom py-12">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">

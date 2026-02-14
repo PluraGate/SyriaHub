@@ -124,7 +124,7 @@ export default async function GroupsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="container-custom max-w-6xl py-12">
                 <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-10">

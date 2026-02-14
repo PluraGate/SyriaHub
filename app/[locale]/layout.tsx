@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components/ui/toast'
 import { NotificationsProvider } from '@/components/NotificationsProvider'
 import { AppErrorBoundary } from '@/components/AppErrorBoundary'
 import { PreferencesProvider } from '@/contexts/PreferencesContext'
+import { AuthProvider } from '@/contexts/AuthContext'
 import { SkipNavLink, SkipNavContent } from '@/components/accessibility'
 import { InstallPWA } from '@/components/InstallPWA'
 import { OfflineIndicator } from '@/components/OfflineIndicator'
@@ -114,20 +115,22 @@ export default async function RootLayout({
         <SkipNavLink />
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
-            <PreferencesProvider userId={user?.id}>
-              <NotificationsProvider>
-                <AppErrorBoundary>
+            <AuthProvider serverUser={user ? { id: user.id, email: user.email ?? undefined } : null}>
+              <PreferencesProvider userId={user?.id}>
+                <NotificationsProvider>
+                  <AppErrorBoundary>
                   <SkipNavContent>
                     {children}
                   </SkipNavContent>
-                </AppErrorBoundary>
-                {/* Global FAB - Only for logged in users */}
-                {user && <FloatingActionButton />}
-                <InstallPWA />
-                <OfflineIndicator />
-                <Analytics />
-              </NotificationsProvider>
-            </PreferencesProvider>
+                  </AppErrorBoundary>
+                  {/* Global FAB - Only for logged in users */}
+                  {user && <FloatingActionButton />}
+                  <InstallPWA />
+                  <OfflineIndicator />
+                  <Analytics />
+                </NotificationsProvider>
+              </PreferencesProvider>
+            </AuthProvider>
           </ToastProvider>
         </NextIntlClientProvider>
       </body>

@@ -78,7 +78,7 @@ export default async function Home({
 
   return (
     <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-      <Navbar user={user} />
+      <Navbar />
 
       <main className="flex-1">
         {/* Epistemic Onboarding - shows on every homepage refresh for testing */}
