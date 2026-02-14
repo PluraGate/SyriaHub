@@ -51,7 +51,7 @@ export default function CreateEventPage() {
 
             if (!user) {
                 showToast(t('signInRequired'), 'error')
-                router.push('/login')
+                router.push('/auth/login')
                 return
             }
 

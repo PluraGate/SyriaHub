@@ -60,7 +60,7 @@ export default async function LoginPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-      <Navbar user={null} />
+      <Navbar />
 
       <main className="flex-1 flex">
         {/* Left - Branding Panel */}

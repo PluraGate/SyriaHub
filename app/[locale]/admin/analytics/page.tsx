@@ -2,7 +2,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { AdminSidebar, AnalyticsDashboard } from '@/components/admin'
+import { AdminSidebar } from '@/components/admin'
+import { LazyAnalyticsDashboard } from '@/components/lazy'
 
 export default async function AdminAnalyticsPage() {
     const supabase = await createClient()
@@ -24,13 +25,13 @@ export default async function AdminAnalyticsPage() {
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
             <div className="flex">
                 <AdminSidebar />
                 <div className="flex-1 flex flex-col min-w-0">
                     <main className="flex-1 p-3 sm:p-6 md:p-8">
                         <div className="max-w-7xl mx-auto">
-                            <AnalyticsDashboard />
+                            <LazyAnalyticsDashboard />
                         </div>
                     </main>
                     <Footer />

@@ -29,7 +29,7 @@ async function handleDeleteCitation(
   const citationId = extractIdFromParams({ id })
   
   // Verify authentication
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   const supabase = await createServerClient()
 

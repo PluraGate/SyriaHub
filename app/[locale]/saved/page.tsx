@@ -66,7 +66,7 @@ export default async function SavedPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     const { bookmarks, references, events } = await getSavedContent(user.id, supabase)
@@ -92,7 +92,7 @@ export default async function SavedPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">
-            <Navbar user={user} />
+            <Navbar />
 
             <main className="flex-1 section pt-20 md:pt-24">
                 <div className="container-custom max-w-4xl">

@@ -10,12 +10,12 @@ export default async function ResearchSearchPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     return (
         <div className="min-h-screen bg-background dark:bg-dark-bg flex flex-col">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="flex flex-1">
                 {/* Sidebar - collapsed icons at md, full at xl */}

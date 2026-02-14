@@ -7,14 +7,11 @@ import {
     MessagesSquare,
     Plus,
     Filter,
-    Search,
     AlertTriangle,
     FileText,
     User,
     MessageSquareWarning,
     Calendar,
-    Flag,
-    Shield,
     Loader2,
     ChevronLeft,
     ChevronRight,
@@ -29,7 +26,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { format, formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 import { ThreadView } from './ThreadView'
 import { NewThreadDialog } from './NewThreadDialog'
 import { cn } from '@/lib/utils'
@@ -80,14 +77,6 @@ const priorityColors: Record<string, string> = {
     urgent: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
 }
 
-const triggerEventLabels: Record<string, string> = {
-    manual: 'manual',
-    auto_report: 'auto_report',
-    auto_appeal: 'auto_appeal',
-    auto_flag: 'auto_flag',
-    auto_moderation: 'auto_moderation'
-}
-
 export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
     const [threads, setThreads] = useState<CoordinationThread[]>([])
     const [loading, setLoading] = useState(true)
@@ -105,7 +94,7 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
     const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
     const [showNewThreadDialog, setShowNewThreadDialog] = useState(false)
 
-    const supabase = useMemo(() => createClient(), [])
+    const _supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
     const t = useTranslations('Coordination')
     const tCommon = useTranslations('Common')
