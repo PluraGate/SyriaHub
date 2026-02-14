@@ -127,6 +127,7 @@
     "@vitest/ui": "^4.0.16",
     "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.9.11",
+    "entities": "^6.0.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.1.5",
     "eslint-import-resolver-typescript": "^4.4.4",
