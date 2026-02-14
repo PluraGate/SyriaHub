@@ -1,0 +1,114 @@
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ⨯ ./node_modules/hast-util-from-html/node_modules/parse5/dist/tokenizer/index.js:4:1
+Module not found: Can't resolve 'entities/decode'
+[0m [90m 2 |[39m [36mimport[39m { [33mCODE_POINTS[39m [36mas[39m $[33m,[39m [33mSEQUENCES[39m [36mas[39m $$[33m,[39m [33mREPLACEMENT_CHARACTER[39m[33m,[39m isSurrogate[33m,[39m isUndefinedCodePoint[33m,[39m isControlCodePoint[33m,[39m } [36mfrom[39m [32m'../common/unicode.js'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mTokenType[39m[33m,[39m getTokenAttr[33m,[39m } [36mfrom[39m [32m'../common/token.js'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { htmlDecodeTree[33m,[39m [33mEntityDecoder[39m[33m,[39m [33mDecodingMode[39m } [36mfrom[39m [32m'entities/decode'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { [33mERR[39m } [36mfrom[39m [32m'../common/error-codes.js'[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mTAG_ID[39m[33m,[39m getTagID } [36mfrom[39m [32m'../common/html.js'[39m[33m;[39m
+ [90m 7 |[39m [90m//States[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/tokenizer/index.js
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/index.js
+    ./node_modules/hast-util-from-html/lib/index.js
+    ./node_modules/hast-util-from-html-isomorphic/lib/index.js
+    ./node_modules/rehype-katex/lib/index.js
+    ./app/[locale]/post/[id]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/hast-util-from-html/node_modules/parse5/dist/serializer/index.js:2:1
+Module not found: Can't resolve 'entities/escape'
+[0m [90m 1 |[39m [36mimport[39m { [33mTAG_NAMES[39m [36mas[39m $[33m,[39m [33mNS[39m[33m,[39m hasUnescapedText } [36mfrom[39m [32m'../common/html.js'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { escapeText[33m,[39m escapeAttribute } [36mfrom[39m [32m'entities/escape'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { defaultTreeAdapter } [36mfrom[39m [32m'../tree-adapters/default.js'[39m[33m;[39m
+ [90m 4 |[39m [90m// Sets[39m
+ [90m 5 |[39m [36mconst[39m [33mVOID_ELEMENTS[39m [33m=[39m [36mnew[39m [33mSet[39m([[0m
+
+
+
+Import trace:
+  Server Component:
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/serializer/index.js
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/index.js
+    ./node_modules/hast-util-from-html/lib/index.js
+    ./node_modules/hast-util-from-html-isomorphic/lib/index.js
+    ./node_modules/rehype-katex/lib/index.js
+    ./app/[locale]/post/[id]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./node_modules/hast-util-from-html/node_modules/parse5/dist/tokenizer/index.js:4:1
+Module not found: Can't resolve 'entities/decode'
+[0m [90m 2 |[39m [36mimport[39m { [33mCODE_POINTS[39m [36mas[39m $[33m,[39m [33mSEQUENCES[39m [36mas[39m $$[33m,[39m [33mREPLACEMENT_CHARACTER[39m[33m,[39m isSurrogate[33m,[39m isUndefinedCodePoint[33m,[39m isControlCodePoint[33m,[39m } [36mfrom[39m [32m'../common/unicode.js'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mTokenType[39m[33m,[39m getTokenAttr[33m,[39m } [36mfrom[39m [32m'../common/token.js'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { htmlDecodeTree[33m,[39m [33mEntityDecoder[39m[33m,[39m [33mDecodingMode[39m } [36mfrom[39m [32m'entities/decode'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { [33mERR[39m } [36mfrom[39m [32m'../common/error-codes.js'[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mTAG_ID[39m[33m,[39m getTagID } [36mfrom[39m [32m'../common/html.js'[39m[33m;[39m
+ [90m 7 |[39m [90m//States[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/tokenizer/index.js
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/index.js
+    ./node_modules/hast-util-from-html/lib/index.js
+    ./node_modules/hast-util-from-html-isomorphic/lib/index.js
+    ./node_modules/rehype-katex/lib/index.js
+    ./app/[locale]/post/[id]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/hast-util-from-html/node_modules/parse5/dist/serializer/index.js:2:1
+Module not found: Can't resolve 'entities/escape'
+[0m [90m 1 |[39m [36mimport[39m { [33mTAG_NAMES[39m [36mas[39m $[33m,[39m [33mNS[39m[33m,[39m hasUnescapedText } [36mfrom[39m [32m'../common/html.js'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { escapeText[33m,[39m escapeAttribute } [36mfrom[39m [32m'entities/escape'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { defaultTreeAdapter } [36mfrom[39m [32m'../tree-adapters/default.js'[39m[33m;[39m
+ [90m 4 |[39m [90m// Sets[39m
+ [90m 5 |[39m [36mconst[39m [33mVOID_ELEMENTS[39m [33m=[39m [36mnew[39m [33mSet[39m([[0m
+
+
+
+Import trace:
+  Server Component:
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/serializer/index.js
+    ./node_modules/hast-util-from-html/node_modules/parse5/dist/index.js
+    ./node_modules/hast-util-from-html/lib/index.js
+    ./node_modules/hast-util-from-html-isomorphic/lib/index.js
+    ./node_modules/rehype-katex/lib/index.js
+    ./app/[locale]/post/[id]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\AvArc\AppData\Local\Temp\next-panic-17d8d7a0eeff26ce85bf8921ed47df6.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Next.js%20package%20not%20found&body=Turbopack%20version%3A%20%6040672141%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Next.js%20package%20not%20found%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+Error: Turbopack build failed with 1 errors:
+./app
+Error: Next.js inferred your workspace root, but it may not be correct.
+    We couldn't find the Next.js package (next/package.json) from the project directory: c:\Users\AvArc\RiderProjects\SyriaHub\app
+     To fix this, set turbopack.root in your Next.js config, or ensure the Next.js package is resolvable from this directory.
+    Note: For security and performance reasons, files outside of the project directory will not be compiled.
+    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+
+    at ignore-listed frames

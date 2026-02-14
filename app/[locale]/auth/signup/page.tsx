@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { SignupForm } from '@/components/auth/SignupForm'
 import { verifyTurnstileToken } from '@/lib/turnstile'
 import { getTranslations } from 'next-intl/server'
-import { CheckCircle2, AlertCircle, Sparkles, Users, BookOpen, Ticket, Gift } from 'lucide-react'
+import { CheckCircle2, AlertCircle, Users, Ticket, Gift } from 'lucide-react'
 import Image from 'next/image'
 
 export default async function SignupPage({
@@ -21,10 +22,29 @@ export default async function SignupPage({
   const t = await getTranslations({ locale, namespace: 'Auth.signupPage' })
   const ta = await getTranslations({ locale, namespace: 'Auth' })
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: { user }, error: userError }, { data: { session } }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.auth.getSession(),
+  ])
+  const hasActiveSession = Boolean(
+    session?.access_token &&
+    session?.user?.id &&
+    (!user || session.user.id === user.id),
+  )
 
-  if (user) {
+  if (user && !userError && hasActiveSession) {
     redirect('/insights')
+  }
+
+  if (userError || !hasActiveSession) {
+    const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
+    const staleAuthCookies = allCookies.filter(c => c.name.startsWith('sb-') && c.name.includes('-auth-'))
+    if (staleAuthCookies.length > 0) {
+      for (const cookie of staleAuthCookies) {
+        cookieStore.set(cookie.name, '', { maxAge: 0, path: '/' })
+      }
+    }
   }
 
   // Pre-validate invite code if provided in URL
