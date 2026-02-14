@@ -4,9 +4,14 @@ import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-})
+// Lazy-init: avoid crashing the build when OPENAI_API_KEY is not set
+let _openai: OpenAI | null = null
+function getOpenAI(): OpenAI {
+    if (!_openai) {
+        _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    }
+    return _openai
+}
 
 // ============================================
 // POST: Semantic search with explainability
@@ -39,7 +44,7 @@ async function handlePost(request: NextRequest) {
         // Generate embedding for query
         let queryEmbedding: number[] = []
         try {
-            const embeddingResponse = await openai.embeddings.create({
+            const embeddingResponse = await getOpenAI().embeddings.create({
                 model: 'text-embedding-3-small',
                 input: query.trim()
             })
