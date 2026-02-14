@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { LoginForm } from '@/components/auth/LoginForm'
@@ -16,10 +17,24 @@ export default async function LoginPage({
 }) {
   const params = await searchParams
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-  if (user) {
+  // If user is valid, redirect to insights
+  if (user && !userError) {
     redirect('/insights')
+  }
+
+  // If getUser failed but stale auth cookies remain, clear them to break
+  // the redirect loop (expired session → login page thinks user exists → redirect to insights → middleware redirects back)
+  if (userError || !user) {
+    const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
+    const staleAuthCookies = allCookies.filter(c => c.name.startsWith('sb-') && c.name.includes('-auth-'))
+    if (staleAuthCookies.length > 0) {
+      for (const cookie of staleAuthCookies) {
+        cookieStore.set(cookie.name, '', { maxAge: 0, path: '/' })
+      }
+    }
   }
 
   async function handleLogin(formData: FormData) {
@@ -28,6 +43,7 @@ export default async function LoginPage({
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const turnstileToken = formData.get('cf-turnstile-response') as string
+    const rememberMe = formData.get('rememberMe') === 'true'
 
     // Verify CAPTCHA if configured
     const captchaValid = await verifyTurnstileToken(turnstileToken)
@@ -52,6 +68,18 @@ export default async function LoginPage({
       await logAuthEvent('login_failed', null, { email, error: error.message })
       redirect(`/auth/login?error=${error.message}`)
     }
+
+    // Set the remember-me preference cookie so the middleware
+    // can decide whether to persist session cookies across browser restarts
+    const cookieStore = await cookies()
+    cookieStore.set('syriahub_remember_me', rememberMe ? '1' : '0', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      // Long-lived cookie — only tracks the *preference*, not the session
+      maxAge: 60 * 60 * 24 * 400, // ~13 months
+    })
 
     // Log successful login
     await logAuthEvent('login_success', data.user?.id, { email })
