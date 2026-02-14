@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import {
     Bookmark, Globe, Database, Calendar, ExternalLink, Trash2,
-    Clock, AlertTriangle, Search, SortAsc, SortDesc, Filter
+    Clock, AlertTriangle
 } from 'lucide-react'
 import { CopyCitationButton } from '@/components/CopyCitationButton'
 import { useTranslations } from 'next-intl'
@@ -58,7 +58,7 @@ type SortOrder = 'newest' | 'oldest' | 'alphabetical'
 
 export function SavedItemsManager({ posts, references, events = [] }: SavedItemsManagerProps) {
     const t = useTranslations('Saved')
-    const tCommon = useTranslations('Common')
+    const _tCommon = useTranslations('Common')
     const { formatDate } = useDateFormatter()
     const [activeFilter, setActiveFilter] = useState<ItemType>('all')
     const [sortOrder, setSortOrder] = useState<SortOrder>('newest')

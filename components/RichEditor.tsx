@@ -24,8 +24,8 @@ import 'katex/dist/katex.min.css'
 import { insert, callCommand, replaceAll } from '@milkdown/utils'
 import { createClient } from '@/lib/supabase/client'
 import {
-  ImagePlus, Loader2, Check, Bold, Italic, Heading1, Heading2, Heading3,
-  List, ListOrdered, Quote, Code, Link2, Minus, HelpCircle, Table, Sigma, X, Type
+  ImagePlus, Loader2, Check, Bold, Italic, Heading1, Heading2,
+  List, ListOrdered, Quote, Code, Link2, Minus, HelpCircle, Table, Sigma, Type
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import {
@@ -111,7 +111,7 @@ interface MilkdownEditorHandle {
 }
 
 const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & { onPasteImage?: (file: File) => void }>(
-  function MilkdownEditorInner({ value, onChange, placeholder, onPasteImage }, ref) {
+  function MilkdownEditorInner({ value, onChange, placeholder: _placeholder, onPasteImage }, ref) {
     const wrapperRef = useRef<HTMLDivElement>(null)
     const lastExternalValueRef = useRef<string>(value)
 
@@ -246,7 +246,7 @@ export function RichEditor({ value, onChange, placeholder, userId }: RichEditorP
       } else {
         showToast('Failed to upload image', 'error')
       }
-    } catch (error) {
+    } catch (_error) {
       showToast('Failed to upload image', 'error')
     } finally {
       setIsUploading(false)

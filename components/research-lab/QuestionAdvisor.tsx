@@ -51,7 +51,6 @@ interface AnalysisResult {
 
 export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: QuestionAdvisorProps) {
     const t = useTranslations('QuestionAdvisor')
-    const tCommon = useTranslations('Common')
     const router = useRouter()
     const [question, setQuestion] = useState('')
     const [context, setContext] = useState('')
@@ -59,7 +58,6 @@ export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: Qu
     const [result, setResult] = useState<AnalysisResult | null>(null)
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
     const [remainingUses, setRemainingUses] = useState(usageLimits?.daily_remaining ?? 10)
-    const [history, setHistory] = useState(initialHistory)
     const { showToast } = useToast()
 
     const refreshHistory = () => {
@@ -124,18 +122,6 @@ export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: Qu
         setQuestion(text)
         setResult(null)
         showToast(t('questionUpdated'), 'success')
-    }
-
-    const getScoreColor = (score: number) => {
-        if (score >= 80) return 'text-emerald-500'
-        if (score >= 60) return 'text-amber-500'
-        return 'text-red-500'
-    }
-
-    const getScoreBg = (score: number) => {
-        if (score >= 80) return 'bg-emerald-100 dark:bg-emerald-900/30'
-        if (score >= 60) return 'bg-amber-100 dark:bg-amber-900/30'
-        return 'bg-red-100 dark:bg-red-900/30'
     }
 
     return (

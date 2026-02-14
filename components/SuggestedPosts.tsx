@@ -4,10 +4,8 @@ import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { UserAvatar } from '@/components/ui/UserAvatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MagazineCard } from '@/components/MagazineCard'
-import { Clock, Quote } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface SuggestedPost {
@@ -41,7 +39,7 @@ export function SuggestedPostsCarousel({
     const t = useTranslations('Post')
     const [posts, setPosts] = useState<SuggestedPost[]>([])
     const [loading, setLoading] = useState(true)
-    const scrollRef = useRef<HTMLDivElement>(null)
+    const _scrollRef = useRef<HTMLDivElement>(null)
     const supabase = createClient()
 
     // Use proper translation key only if title prop is not provided or matches default
