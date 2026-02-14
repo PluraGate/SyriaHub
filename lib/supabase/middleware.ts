@@ -8,6 +8,18 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     },
   })
 
+  // Check the "stay signed in" preference. When absent or '0',
+  // downgrade Supabase cookies to session cookies (no maxAge) so
+  // they are cleared automatically when the browser closes.
+  const rememberMe = request.cookies.get('syriahub_remember_me')?.value === '1'
+
+  function applyCookieOptions(options: CookieOptions): CookieOptions {
+    if (rememberMe) return options
+    // Strip maxAge / expires so the cookie becomes a session cookie
+    const { maxAge, expires, ...rest } = options as CookieOptions & { maxAge?: number; expires?: Date }
+    return rest
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -17,10 +29,11 @@ export async function updateSession(request: NextRequest, response?: NextRespons
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
+          const opts = applyCookieOptions(options)
           request.cookies.set({
             name,
             value,
-            ...options,
+            ...opts,
           })
           finalResponse = NextResponse.next({
             request: {
@@ -30,7 +43,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
           finalResponse.cookies.set({
             name,
             value,
-            ...options,
+            ...opts,
           })
         },
         remove(name: string, options: CookieOptions) {
@@ -54,7 +67,22 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
   )
 
-  await supabase.auth.getUser()
+  // Refresh the session — if the refresh token has expired this will
+  // trigger the `remove` callbacks above, clearing stale cookies.
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  // If auth failed (expired/corrupt session), ensure all stale auth
+  // cookies are explicitly removed so downstream code (login page,
+  // protected-route check) doesn't see ghost sessions.
+  if (error || !user) {
+    const allCookies = request.cookies.getAll()
+    for (const cookie of allCookies) {
+      if (cookie.name.startsWith('sb-') && cookie.name.includes('-auth-')) {
+        request.cookies.set({ name: cookie.name, value: '' })
+        finalResponse.cookies.set({ name: cookie.name, value: '', path: '/', maxAge: 0 })
+      }
+    }
+  }
 
   return finalResponse
 }
