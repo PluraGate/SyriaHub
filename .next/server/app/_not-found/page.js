@@ -1,0 +1,13 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_not-found/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__c1aee3a1._.js")
+R.c("server/chunks/ssr/e3ffb_next_dist_060b936c._.js")
+R.c("server/chunks/ssr/e3ffb_next_dist_745daad5._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__5177c6dd._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__8e75ef2c._.js")
+R.c("server/chunks/ssr/e3ffb_next_dist_66bb903c._.js")
+R.c("server/chunks/ssr/e3ffb_67905356._.js")
+R.c("server/chunks/ssr/e3ffb_next_dist_client_components_3647a359._.js")
+R.c("server/chunks/ssr/e3ffb_next_dist_client_components_builtin_forbidden_34c95f49.js")
+R.c("server/chunks/ssr/81e3f_SyriaHub__next-internal_server_app__not-found_page_actions_e707e2aa.js")
+R.m(927299)
+module.exports=R.m(927299).exports

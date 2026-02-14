@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/AvArc/RiderProjects/SyriaHub/app/%5Blocale%5D/questions/%5Bid%5D/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation'\r\n\r\nexport default async function QuestionDetailsPage({ params }: { params: Promise<{ id: string }> }) {\r\n    const { id } = await params\r\n    redirect(`/post/${id}`)\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;AAAA;;AAEe,eAAe,oBAAoB,EAAE,MAAM,EAAuC;IAC7F,MAAM,EAAE,EAAE,EAAE,GAAG,MAAM;IACrB,IAAA,8NAAQ,EAAC,CAAC,MAAM,EAAE,IAAI;AAC1B","debugId":null}}]
+}

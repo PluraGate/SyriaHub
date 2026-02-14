@@ -1,0 +1,20 @@
+{
+  "node": {
+    "4003b0e6751d4b48f27b7b0d8043b3de95f24febd7": {
+      "workers": {
+        "app/[locale]/auth/signup/page": {
+          "moduleId": "[project]/RiderProjects/SyriaHub/.next-internal/server/app/[locale]/auth/signup/page/actions.js { ACTIONS_MODULE0 => \"[project]/RiderProjects/SyriaHub/app/[locale]/auth/signup/page.tsx [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "RiderProjects/SyriaHub/app/[locale]/auth/signup/page.tsx"
+        }
+      },
+      "layer": {
+        "app/[locale]/auth/signup/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "RiderProjects/SyriaHub/app/[locale]/auth/signup/page.tsx"
+    }
+  },
+  "edge": {}
+}

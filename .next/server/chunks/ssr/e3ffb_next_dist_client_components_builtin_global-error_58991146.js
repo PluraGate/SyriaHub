@@ -1,0 +1,3 @@
+module.exports=[660534,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(56874);a.n(d("[project]/RiderProjects/SyriaHub/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},147509,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(56874);a.n(d("[project]/RiderProjects/SyriaHub/node_modules/next/dist/client/components/builtin/global-error.js"))},153152,a=>{"use strict";a.i(660534);var b=a.i(147509);a.n(b)}];
+
+//# sourceMappingURL=e3ffb_next_dist_client_components_builtin_global-error_58991146.js.map

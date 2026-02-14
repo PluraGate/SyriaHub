@@ -1,0 +1,20 @@
+{
+  "node": {
+    "409ce6d786a340afb6e4850b80a1a9357abacc5370": {
+      "workers": {
+        "app/[locale]/auth/login/page": {
+          "moduleId": 66404,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "RiderProjects/SyriaHub/app/[locale]/auth/login/page.tsx"
+        }
+      },
+      "layer": {
+        "app/[locale]/auth/login/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "RiderProjects/SyriaHub/app/[locale]/auth/login/page.tsx"
+    }
+  },
+  "edge": {}
+}
