@@ -9,7 +9,7 @@ export default async function JuryPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     // Check if user is eligible for jury duty
