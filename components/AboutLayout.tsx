@@ -44,7 +44,7 @@ const navigationItems = [
     { href: '/about/terms', icon: FileText, key: 'terms' },
 ]
 
-export function AboutLayout({ children, user }: AboutLayoutProps) {
+export function AboutLayout({ children, user: _user }: AboutLayoutProps) {
     const t = useTranslations('About')
     const pathname = usePathname()
 

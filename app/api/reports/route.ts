@@ -22,7 +22,7 @@ import type { CreateReportInput } from '@/types'
  */
 async function handleGetReports(request: Request): Promise<NextResponse> {
   // Verify user is moderator or admin
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   if (!(await isModerator())) {
     return forbiddenResponse('Only moderators and admins can view reports')

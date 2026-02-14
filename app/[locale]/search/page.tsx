@@ -44,7 +44,6 @@ export default async function SearchPage({
 }) {
     const { q, type, date, tag, sort } = await searchParams
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
 
     let results: SearchResult[] = []
     const t = await getTranslations('Search')

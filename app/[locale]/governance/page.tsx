@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server'
-import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Shield, Users, Bot, Scale, AlertTriangle, Lock, Eye, Coins, CheckCircle2 } from 'lucide-react'
@@ -16,8 +15,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function GovernancePage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'Governance' })
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
 
     const isArabic = locale === 'ar'
 

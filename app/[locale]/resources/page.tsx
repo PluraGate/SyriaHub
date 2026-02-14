@@ -24,7 +24,6 @@ export default async function ResourcesPage({
 }) {
     const params = await searchParams
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
     const t = await getTranslations('Resources')
 
     // Build the query based on filters
