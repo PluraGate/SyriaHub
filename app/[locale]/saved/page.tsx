@@ -66,7 +66,7 @@ export default async function SavedPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     const { bookmarks, references, events } = await getSavedContent(user.id, supabase)

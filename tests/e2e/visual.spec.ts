@@ -16,7 +16,7 @@ test.describe('Visual Regression', () => {
     });
 
     test('login page matches snapshot', async ({ page }) => {
-        await page.goto('/login');
+        await page.goto('/en/auth/login');
         await expect(page).toHaveScreenshot('login-page.png', {
             fullPage: true
         });
@@ -24,7 +24,7 @@ test.describe('Visual Regression', () => {
 
     // We can add more specific component tests here
     test('auth form component matches snapshot', async ({ page }) => {
-        await page.goto('/login');
+        await page.goto('/en/auth/login');
         const authForm = page.locator('.auth-form-container').first();
         // Fallback if specific class not found, just take viewport
         if (await authForm.isVisible()) {

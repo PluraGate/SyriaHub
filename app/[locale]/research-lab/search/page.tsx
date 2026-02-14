@@ -10,7 +10,7 @@ export default async function ResearchSearchPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/auth/login')
     }
 
     return (

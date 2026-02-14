@@ -44,68 +44,30 @@ status_*.json
 playwright-report/
 test-results/
 
-# Archived migrations (squashed)
-supabase/migrations/_archive/
-supabase/baseline_dump.sql
-
-# ==============================================
-# Dev/debug artifacts (added during Phase 1 cleanup)
-# ==============================================
-
-# Lint & typecheck output dumps
+# Debug/output files
+*-output.txt
+*_output.txt
+*.output.txt
 lint_*.txt
-lint-*.txt
-final_lint*.txt
-final_verification*.txt
-fresh_lint*.txt
-direct_eslint*.txt
-unix_lint.txt
 lint_*.json
-lint_result.json
-
-# DB push / migration debug output
-db-push-output*.txt
-push_error.txt
-push-output.txt
-rls-fix-output.txt
-
-# Test result dumps
-test_output.txt
-test_results.txt
-test-output.txt
-vitest_results*.txt
-typecheck_errors*.txt
-
-# Status / diagnostic dumps
-current_status.txt
-status_full.txt
-status_utf8.txt
-supabase_status.txt
-smtp_diag.txt
-repo_contents.txt
-orphan_keys.txt
-temp_tags.txt
-ddd_readme.txt
-verify_output.txt
-
-# One-off utility scripts at root (moved to scripts/oneoff/)
-check_*.js
-verify_*.js
-get_key_values.js
-read_keys.js
-find_duplicates.js
-fix_json_tail.js
-sanitize-json.js
-test-node.js
-
-# Root-level SQL artifacts
-apply_*.sql
-schema_dump.sql
-
-# Root-level shell/PS scripts
-temp_extract.ps1
-test-api.ps1
-test-api.sh
-
-# Diagnostic JSON
+lint-*.txt
+vitest_*.txt
+test_*.txt
+test-*.txt
+typecheck_*.txt
+db-push-*.txt
+push-*.txt
+push_*.txt
+rls-*.txt
+final_*.txt
+fresh_*.txt
+direct_*.txt
+verify_*.txt
+orphan_*.txt
+smtp_*.txt
+temp_*.txt
+temp_*.ps1
+ddd_*.txt
+repo_*.txt
 translation_issues.json
+schema_dump.sql
