@@ -18,24 +18,30 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '54321',
-        pathname: '/storage/v1/object/public/**',
-      },
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '55331',
-        pathname: '/storage/v1/object/public/**',
-      },
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
+      // Local Supabase (dev only — harmless no-ops in production)
+      ...(process.env.NODE_ENV === 'development'
+        ? [
+            {
+              protocol: 'http',
+              hostname: '127.0.0.1',
+              port: '54321',
+              pathname: '/storage/v1/object/public/**',
+            },
+            {
+              protocol: 'http',
+              hostname: '127.0.0.1',
+              port: '55331',
+              pathname: '/storage/v1/object/public/**',
+            },
+            {
+              protocol: 'http',
+              hostname: '127.0.0.1',
+              port: '',
+              pathname: '/storage/v1/object/public/**',
+            },
+          ]
+        : []),
+      // Production Supabase storage
       {
         protocol: 'https',
         hostname: '**.supabase.co',
