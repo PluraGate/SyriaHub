@@ -64,7 +64,7 @@ async function handleUpdatePost(
   const postId = extractIdFromParams({ id })
   
   // Verify authentication
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   const supabase = await createServerClient()
 
@@ -145,7 +145,7 @@ async function handleDeletePost(
   const postId = extractIdFromParams({ id })
   
   // Verify authentication
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   const supabase = await createServerClient()
 

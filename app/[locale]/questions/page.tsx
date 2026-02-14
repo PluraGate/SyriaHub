@@ -8,7 +8,6 @@ import { getTranslations } from 'next-intl/server'
 
 export default async function QuestionsPage() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
     const t = await getTranslations('Questions')
 
     const { data: questions } = await supabase

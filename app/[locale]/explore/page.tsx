@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { MagazineCard } from '@/components/MagazineCard'
@@ -35,7 +34,6 @@ function ExplorePageContent() {
   const searchParams = useSearchParams()
   const initialTag = searchParams.get('tag')
 
-  const [user, setUser] = useState<User | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag)
@@ -53,12 +51,6 @@ function ExplorePageContent() {
   const [disciplinesExpanded, setDisciplinesExpanded] = useState(false)
   // Get theme-aware hero cover image
   const heroCover = useDefaultCover('large')
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-  }, [supabase])
 
   useEffect(() => {
     const loadTags = async () => {

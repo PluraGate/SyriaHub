@@ -53,7 +53,6 @@ interface TopPost {
 }
 
 export default function ResearcherAnalyticsDashboard() {
-    const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [stats, setStats] = useState<ResearcherStats | null>(null)
     const [topPosts, setTopPosts] = useState<TopPost[]>([])
@@ -75,7 +74,6 @@ export default function ResearcherAnalyticsDashboard() {
                 router.push('/auth/login')
                 return
             }
-            setUser(user)
 
             // Fetch user's posts for top posts table
             const { data: posts } = await supabase
