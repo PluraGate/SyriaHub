@@ -108,6 +108,8 @@ export async function proxy(request: NextRequest) {
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.includes(route));
 
     if (isProtectedRoute && !isTestBypass) {
+        // After updateSession, stale cookies have already been cleared.
+        // Re-read from the request cookies which were patched in updateSession.
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -125,7 +127,19 @@ export async function proxy(request: NextRequest) {
             // Get locale from pathname (en or ar)
             const localeMatch = pathname.match(/^\/(en|ar)/);
             const locale = localeMatch ? localeMatch[1] : 'ar';
-            return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));
+            const loginUrl = new URL(`/${locale}/auth/login`, request.url);
+            const loginResponse = NextResponse.redirect(loginUrl);
+
+            // Clear any stale Supabase auth cookies on the redirect response
+            // so the login page doesn't see a ghost session and redirect back
+            const allCookies = request.cookies.getAll();
+            for (const cookie of allCookies) {
+                if (cookie.name.startsWith('sb-') && cookie.name.includes('-auth-')) {
+                    loginResponse.cookies.set(cookie.name, '', { path: '/', maxAge: 0 });
+                }
+            }
+
+            return loginResponse;
         }
     }
 

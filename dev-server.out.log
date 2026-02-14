@@ -1,0 +1,23 @@
+
+> syriahub@0.9.0 dev
+> next dev --turbo
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.103:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+     · serverActions
+
+ ✓ Starting...
+ ✓ Ready in 5.5s
+ ○ Compiling /[locale]/post/[id] ...
+ GET /en/post/fb6b1bc3-45a9-4510-b541-49d6397eeaec 500 in 14.9s (compile: 14.5s, proxy.ts: 124ms, render: 248ms)
+ GET /en/insights 200 in 14.9s (compile: 12.6s, proxy.ts: 213ms, render: 2.0s)
+ GET /en/post/fb6b1bc3-45a9-4510-b541-49d6397eeaec 500 in 289ms (compile: 135ms, proxy.ts: 131ms, render: 23ms)
+ GET /en/insights 200 in 597ms (compile: 21ms, proxy.ts: 250ms, render: 326ms)
+ GET /en/insights 200 in 603ms (compile: 19ms, proxy.ts: 238ms, render: 346ms)
+[?25h
+
+c:\Users\AvArc\RiderProjects\SyriaHub>
