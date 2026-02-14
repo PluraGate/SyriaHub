@@ -21,7 +21,8 @@ import { CollaboratorAvatars } from '@/components/CollaboratorAvatars'
 import { AddCitationDialog } from '@/components/AddCitationDialog'
 import { SpatialEditor } from '@/components/spatial'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
-import { ChartBlock, ChartConfig } from '@/components/ChartBlock'
+import type { ChartConfig } from '@/components/ChartBlock'
+import { LazyChartBlock } from '@/components/lazy'
 import {
   Select,
   SelectContent,
@@ -1145,7 +1146,7 @@ export default function EditorPage() {
               >
                 <div className="space-y-4">
                   {chartBlocks.map((chart, index) => (
-                    <ChartBlock
+                    <LazyChartBlock
                       key={`chart-${index}`}
                       config={chart}
                       linkedResources={linkedResources}

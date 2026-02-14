@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { ResearchLabNav } from '@/components/research-lab/ResearchLabNav'
-import { StatisticsTools } from '@/components/research-lab/StatisticsTools'
+import { LazyStatisticsTools } from '@/components/lazy'
 
 export default async function StatisticsPage() {
     const supabase = await createClient()
@@ -63,7 +63,7 @@ export default async function StatisticsPage() {
 
                 {/* Main Content */}
                 <main className="flex-1 container-custom py-8">
-                    <StatisticsTools
+                    <LazyStatisticsTools
                         userId={user?.id}
                         savedAnalyses={analyses || []}
                         availableDatasets={datasets || []}

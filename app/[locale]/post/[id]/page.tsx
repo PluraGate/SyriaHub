@@ -15,7 +15,7 @@ import { AnswerList } from '@/components/AnswerList'
 import { AnswerForm } from '@/components/AnswerForm'
 import { ForkButton } from '@/components/ForkButton'
 import { SuggestionDialog } from '@/components/SuggestionDialog'
-import { KnowledgeGraph } from '@/components/KnowledgeGraph'
+import { LazyKnowledgeGraph } from '@/components/lazy'
 import { CitationContextBar } from '@/components/CitationContextBar'
 import { PostMoreOptions } from '@/components/PostMoreOptions'
 import { TextSelectionHandler } from '@/components/TextSelectionHandler'
@@ -28,7 +28,7 @@ import { CiteButton } from '@/components/CiteButton'
 import { SessionContextBar } from '@/components/SessionContextBar'
 import { PostSessionTracker } from '@/components/PostSessionTracker'
 import { SpatialContextCard } from '@/components/spatial'
-import { PostCharts } from '@/components/PostCharts'
+import { LazyPostCharts } from '@/components/lazy'
 import { GitFork } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -612,7 +612,7 @@ export default async function PostPage(props: PostPageProps) {
 
               {/* Data Visualizations */}
               {post.metadata?.chartBlocks && post.metadata.chartBlocks.length > 0 && (
-                <PostCharts
+                <LazyPostCharts
                   chartBlocks={post.metadata.chartBlocks}
                   linkedResources={linkedResources}
                 />
@@ -769,7 +769,7 @@ export default async function PostPage(props: PostPageProps) {
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-text-light dark:text-dark-text-muted mb-4">
                   {t('knowledgeGraph')}
                 </h3>
-                <KnowledgeGraph centerPostId={post.id} />
+                <LazyKnowledgeGraph centerPostId={post.id} />
               </div>
 
               {/* Dynamic Schema Fields (Research Metadata) */}
