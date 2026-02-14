@@ -10,12 +10,16 @@ interface LoginFormProps {
 export function LoginForm({ action }: LoginFormProps) {
     const [turnstileToken, setTurnstileToken] = useState<string>('')
     const [captchaError, setCaptchaError] = useState(false)
+    const [rememberMe, setRememberMe] = useState(true)
 
     const handleSubmit = async (formData: FormData) => {
         // Add turnstile token to form data
         if (turnstileToken) {
             formData.append('cf-turnstile-response', turnstileToken)
         }
+
+        // Add remember-me preference
+        formData.append('rememberMe', rememberMe ? 'true' : 'false')
 
         // Check if CAPTCHA is required (only if env var is set)
         const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
@@ -57,6 +61,23 @@ export function LoginForm({ action }: LoginFormProps) {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg text-text dark:text-dark-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-dark-surface transition-all"
                     placeholder="Enter your password"
                 />
+            </div>
+
+            {/* Stay signed in */}
+            <div className="flex items-center gap-2">
+                <input
+                    id="rememberMe"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 dark:border-dark-border text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                />
+                <label
+                    htmlFor="rememberMe"
+                    className="text-sm text-text-light dark:text-dark-text-muted select-none cursor-pointer"
+                >
+                    Stay signed in
+                </label>
             </div>
 
             {/* Turnstile CAPTCHA */}

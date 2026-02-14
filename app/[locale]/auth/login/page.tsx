@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { LoginForm } from '@/components/auth/LoginForm'
@@ -10,16 +11,41 @@ import Image from 'next/image'
 import { logAuthEvent } from '@/lib/auditLog'
 
 export default async function LoginPage({
+  params: routeParams,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ error?: string }>
 }) {
-  const params = await searchParams
+  const { locale } = await routeParams
+  const query = await searchParams
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: { user }, error: userError }, { data: { session } }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.auth.getSession(),
+  ])
+  const hasActiveSession = Boolean(
+    session?.access_token &&
+    session?.user?.id &&
+    (!user || session.user.id === user.id),
+  )
 
-  if (user) {
+  // Only redirect when a valid, non-expired session exists.
+  if (user && !userError && hasActiveSession) {
     redirect('/insights')
+  }
+
+  // If getUser failed but stale auth cookies remain, clear them to break
+  // the redirect loop (expired session → login page thinks user exists → redirect to insights → middleware redirects back)
+  if (userError || !user || !hasActiveSession) {
+    const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
+    const staleAuthCookies = allCookies.filter(c => c.name.startsWith('sb-') && c.name.includes('-auth-'))
+    if (staleAuthCookies.length > 0) {
+      for (const cookie of staleAuthCookies) {
+        cookieStore.set(cookie.name, '', { maxAge: 0, path: '/' })
+      }
+    }
   }
 
   async function handleLogin(formData: FormData) {
@@ -28,15 +54,16 @@ export default async function LoginPage({
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const turnstileToken = formData.get('cf-turnstile-response') as string
+    const rememberMe = formData.get('rememberMe') === 'true'
 
     // Verify CAPTCHA if configured
     const captchaValid = await verifyTurnstileToken(turnstileToken)
     if (!captchaValid) {
-      redirect('/auth/login?error=Security verification failed. Please try again.')
+      redirect(`/${locale}/auth/login?error=Security verification failed. Please try again.`)
     }
 
     if (!email || !password) {
-      redirect('/auth/login?error=Email and password are required')
+      redirect(`/${locale}/auth/login?error=Email and password are required`)
     }
 
     const supabase = await createClient()
@@ -50,8 +77,20 @@ export default async function LoginPage({
       console.error('Login error:', error)
       // Log failed login attempt
       await logAuthEvent('login_failed', null, { email, error: error.message })
-      redirect(`/auth/login?error=${error.message}`)
+      redirect(`/${locale}/auth/login?error=${error.message}`)
     }
+
+    // Set the remember-me preference cookie so the middleware
+    // can decide whether to persist session cookies across browser restarts
+    const cookieStore = await cookies()
+    cookieStore.set('syriahub_remember_me', rememberMe ? '1' : '0', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      // Long-lived cookie — only tracks the *preference*, not the session
+      maxAge: 60 * 60 * 24 * 400, // ~13 months
+    })
 
     // Log successful login
     await logAuthEvent('login_success', data.user?.id, { email })
@@ -139,13 +178,13 @@ export default async function LoginPage({
             </div>
 
             {/* Error Message */}
-            {params.error && (
+            {query.error && (
               <div className="mb-6 p-4 rounded-2xl bg-accent/10 border border-accent/20">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-accent mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-text dark:text-dark-text">Error</h3>
-                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{params.error}</p>
+                    <p className="text-sm text-text-light dark:text-dark-text-muted mt-1">{query.error}</p>
                   </div>
                 </div>
               </div>

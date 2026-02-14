@@ -23,7 +23,12 @@ async function handleLogout(request: Request): Promise<NextResponse> {
     return errorResponse(error.message, 500)
   }
 
-  return successResponse({ message: 'Logged out successfully' })
+  const response = successResponse({ message: 'Logged out successfully' })
+
+  // Clear the stay-signed-in preference on logout
+  response.cookies.set('syriahub_remember_me', '', { path: '/', maxAge: 0 })
+
+  return response
 }
 
 export const POST = withRateLimit('auth')(withErrorHandling(handleLogout))
