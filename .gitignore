@@ -46,6 +46,7 @@ test-results/
 
 # Archived migrations (squashed)
 supabase/migrations/_archive/
+supabase/baseline_dump.sql
 
 # ==============================================
 # Dev/debug artifacts (added during Phase 1 cleanup)
