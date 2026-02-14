@@ -31,7 +31,7 @@ export default function AskQuestionPage() {
 
             if (!user) {
                 showToast('Please sign in to ask a question.', 'error')
-                router.push('/login')
+                router.push('/auth/login')
                 return
             }
 

@@ -300,7 +300,7 @@ export default function UploadResourcePage() {
 
             if (!user) {
                 showToast('Please sign in to upload resources.', 'error')
-                router.push('/login')
+                router.push('/auth/login')
                 return
             }
 

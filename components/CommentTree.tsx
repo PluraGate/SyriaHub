@@ -234,7 +234,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
 
     const handleAddComment = async (parentId: string | null, content: string) => {
         if (!user) {
-            router.push('/login')
+            router.push('/auth/login')
             return
         }
 
@@ -306,7 +306,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                     </div>
                 ) : (
                     <div className="text-center py-4 text-sm text-text-light dark:text-dark-text-muted">
-                        <Link href="/login" className="text-primary dark:text-accent-light hover:underline">
+                        <Link href="/auth/login" className="text-primary dark:text-accent-light hover:underline">
                             Sign in
                         </Link>{' '}
                         to join the discussion.
