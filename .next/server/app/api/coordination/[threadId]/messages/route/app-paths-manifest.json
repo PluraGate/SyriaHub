@@ -1,0 +1,3 @@
+{
+  "/api/coordination/[threadId]/messages/route": "app/api/coordination/[threadId]/messages/route.js"
+}

@@ -1,0 +1,54 @@
+{
+  "sorted_middleware": [
+    "/api/og/route"
+  ],
+  "middleware": {},
+  "instrumentation": null,
+  "functions": {
+    "/api/og/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/server-reference-manifest.js",
+        "server/app/api/og/route_client-reference-manifest.js",
+        "server/edge/chunks/RiderProjects_SyriaHub__next-internal_server_app_api_og_route_actions_b64d9918.js",
+        "server/edge/chunks/[root-of-the-server]__6654f1e6._.js",
+        "server/edge/chunks/e3ffb_next_dist_e8674cac._.js",
+        "server/edge/chunks/e3ffb_next_dist_compiled_@vercel_og_5e43c9d7._.js",
+        "server/edge/chunks/RiderProjects_SyriaHub_b69df5b8._.js",
+        "server/edge/chunks/turbopack-RiderProjects_SyriaHub_edge-wrapper_ca011486.js"
+      ],
+      "name": "app/api/og/route",
+      "page": "/api/og/route",
+      "matchers": [
+        {
+          "regexp": "^/api/og(?:/)?$",
+          "originalSource": "/api/og"
+        }
+      ],
+      "wasm": [
+        {
+          "name": "wasm_fdb56e4cc5936d29",
+          "filePath": "server/edge/chunks/e3ffb_next_dist_compiled_@vercel_og_resvg_23ace1ce.wasm"
+        },
+        {
+          "name": "wasm_1ccdc983b1fd9f87",
+          "filePath": "server/edge/chunks/e3ffb_next_dist_compiled_@vercel_og_yoga_23ace1ce.wasm"
+        }
+      ],
+      "assets": [
+        {
+          "name": "server/edge/assets/noto-sans-v27-latin-regular.bdfa676c.ttf",
+          "filePath": "server/edge/assets/noto-sans-v27-latin-regular.bdfa676c.ttf"
+        }
+      ],
+      "env": {
+        "__NEXT_BUILD_ID": "MMiAqYg8Ne9NhBH08rwym",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "sfHgqb0iSXl2Z5VIf4nqBDdGUwEIIejJQw60uEW1sq0=",
+        "__NEXT_PREVIEW_MODE_ID": "2550ad7c540c2bb40bb2dbf2419dcfd8",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "85c06d3b963e710d5b287d4333901ba733421883b4074b98affd3e900651ea0a",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c375095d1695560c72baa5b43f86c2a26d43d43015f1434050088d557c30a935"
+      }
+    }
+  }
+}
