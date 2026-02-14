@@ -17,5 +17,11 @@ export default defineConfig({
                 inline: ['next', 'next-intl'],
             },
         },
+        coverage: {
+            provider: 'v8',
+            reporter: ['text-summary', 'lcov'],
+            include: ['lib/**', 'components/**', 'hooks/**', 'contexts/**', 'domain/**'],
+            exclude: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/index.ts'],
+        },
     },
 })

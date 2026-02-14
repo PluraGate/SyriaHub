@@ -40,3 +40,17 @@ jobs:
             echo "Health check failed" >&2
             exit 1
           fi
+
+      - name: Smoke test /api/posts
+        run: |
+          response=$(curl --fail --silent --show-error \
+            "${{ steps.prepare.outputs.url }}/api/posts?limit=1")
+          echo "$response" | jq '.' | head -20
+          echo "Posts endpoint OK"
+
+      - name: Smoke test /api/tags
+        run: |
+          response=$(curl --fail --silent --show-error \
+            "${{ steps.prepare.outputs.url }}/api/tags")
+          echo "$response" | jq '.' | head -20
+          echo "Tags endpoint OK"
