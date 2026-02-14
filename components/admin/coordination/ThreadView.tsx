@@ -11,15 +11,10 @@ import {
     AlertTriangle,
     MessageSquareWarning,
     Calendar,
-    Clock,
     Archive,
-    ChevronDown,
-    Send,
     Loader2,
-    Shield,
     Flag,
     CheckCircle,
-    XCircle,
     HelpCircle,
     ArrowUpRight
 } from 'lucide-react'
@@ -115,7 +110,7 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
     const [showArchiveDialog, setShowArchiveDialog] = useState(false)
     const [archiveReason, setArchiveReason] = useState('')
 
-    const supabase = useMemo(() => createClient(), [])
+    const _supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
     const t = useTranslations('Coordination')
 
@@ -261,7 +256,7 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
                 </div>
 
                 <div className="divide-y divide-gray-100 dark:divide-dark-border">
-                    {messages.map((message, index) => {
+                    {messages.map((message, _index) => {
                         const config = messageTypeConfig[message.message_type] || messageTypeConfig.NOTE
                         const TypeIcon = config.icon
 

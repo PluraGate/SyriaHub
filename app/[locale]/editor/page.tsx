@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import { SchemaFieldRenderer } from '@/components/editor/SchemaFieldRenderer'
 import { SchemaFieldVersion } from '@/types'
-import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Image as ImageIcon, Calendar, MapPin, Camera, Clock, AlertCircle, Table, Link2, Quote, BarChart3, Plus } from 'lucide-react'
+import { FileText, Save, HelpCircle, BookOpen, Users, ArrowLeft, Sparkles, Type, Calendar, MapPin, Camera, Clock, Link2, BarChart3, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -31,7 +31,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from '@/lib/utils'
-import { useDateFormatter } from '@/hooks/useDateFormatter'
 import { useTranslations } from 'next-intl'
 import { FirstTimeContributorPrompt } from '@/components/FirstTimeContributorPrompt'
 import { usePreferences } from '@/contexts/PreferencesContext'
@@ -75,7 +74,6 @@ export default function EditorPage() {
   const typeParam = searchParams.get('type')
   const { showToast } = useToast()
   const t = useTranslations('Editor')
-  const tCommon = useTranslations('Common')
   const { preferences } = usePreferences()
 
   const [user, setUser] = useState<User | null>(null)
@@ -131,7 +129,7 @@ export default function EditorPage() {
   const [schemaFields, setSchemaFields] = useState<SchemaFieldVersion[]>([])
   const [schemaValues, setSchemaValues] = useState<Record<string, any>>({})
   const [schemaErrors, setSchemaErrors] = useState<Record<string, string>>({})
-  const [loadingSchema, setLoadingSchema] = useState(false)
+  const [_loadingSchema, setLoadingSchema] = useState(false)
 
   // ... existing code ...
 

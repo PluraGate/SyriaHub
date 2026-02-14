@@ -4,17 +4,10 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import {
-    AlertTriangle,
-    Clock,
     CheckCircle2,
     XCircle,
-    Filter,
     ArrowUpDown,
-    Eye,
-    MessageSquare,
-    Flag,
-    ChevronDown,
-    ExternalLink
+    Eye
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
