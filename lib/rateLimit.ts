@@ -158,13 +158,14 @@ export function getClientIP(headers: Headers): string {
  * Rate limit middleware wrapper for API routes.
  */
 export function withRateLimit(type: RateLimitType = 'read') {
-  return function <T extends (req: NextRequest | Request, context?: unknown) => Promise<NextResponse>>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function <T extends (...args: any[]) => Promise<NextResponse>>(
     handler: T,
   ) {
     return async function rateLimitedHandler(
-      req: NextRequest | Request,
-      context?: unknown,
+      ...args: Parameters<T>
     ): Promise<NextResponse> {
+      const req = args[0] as NextRequest | Request
       const ipAddress = getClientIP(req.headers)
       const result = await checkRateLimit(null, ipAddress, type)
 
@@ -178,7 +179,7 @@ export function withRateLimit(type: RateLimitType = 'read') {
         )
       }
 
-      const response = await handler(req, context)
+      const response = await handler(...args)
       const rlHeaders = createRateLimitHeaders(result)
       for (const [k, v] of Object.entries(rlHeaders)) {
         response.headers.set(k, v)
