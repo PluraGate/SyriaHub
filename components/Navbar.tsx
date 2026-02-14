@@ -43,7 +43,7 @@ export function Navbar() {
 
   // Prevent hydration mismatch
   useEffect(() => {
-    setMounted(true)
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect -- standard hydration guard
   }, [])
 
   // Derive display values from AuthContext

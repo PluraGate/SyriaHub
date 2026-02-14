@@ -183,8 +183,12 @@ const eslintConfig = [
             ...reactPlugin.configs.flat.recommended.rules,
             ...reactPlugin.configs.flat['jsx-runtime'].rules,
             ...reactHooksPlugin.configs['recommended-latest'].rules,
-            '@typescript-eslint/no-unused-vars': 'off',
-            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unused-vars': ['warn', {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_',
+            }],
+            '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-require-imports': 'off',
             'no-unused-vars': 'off',
             'no-undef': 'off', // TypeScript handles this
@@ -195,7 +199,7 @@ const eslintConfig = [
 
             // Boundaries rules - enforce architectural layers
             'boundaries/element-types': [
-                'warn', // Start with warn to identify violations without breaking build
+                'error', // Enforce clean architecture boundaries
                 {
                     default: 'allow',
                     rules: [
