@@ -1,0 +1,16 @@
+# Default owners for everything
+* @lAvArt
+
+# CI/CD and GitHub config
+.github/ @lAvArt
+
+# Database migrations require explicit review
+supabase/migrations/ @lAvArt
+
+# Security-sensitive files
+lib/supabaseClient.ts @lAvArt
+lib/rateLimit.ts @lAvArt
+lib/apiUtils.ts @lAvArt
+proxy.ts @lAvArt
+next.config.js @lAvArt
+vercel.json @lAvArt

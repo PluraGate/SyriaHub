@@ -66,7 +66,7 @@ export function RejectionBanner({
                 .limit(1)
                 .single()
 
-            console.log('RejectionBanner - Appeal fetch:', { postId, data, error })
+
             setExistingAppeal(data)
 
             // Get total appeal count for this post

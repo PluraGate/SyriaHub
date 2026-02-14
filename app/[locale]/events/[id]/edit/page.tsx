@@ -55,7 +55,7 @@ export default function EditEventPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
                 showToast('Please sign in to edit this event.', 'error')
-                router.push('/login')
+                router.push('/auth/login')
                 return
             }
 

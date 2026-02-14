@@ -587,7 +587,7 @@ export default function EditorPage() {
           }
         }
 
-        console.log('Saving post with data:', postData)
+
 
         let result;
         if (postIdParam) {

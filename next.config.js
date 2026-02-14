@@ -7,6 +7,21 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
   // Enable React Strict Mode for better development warnings
   reactStrictMode: true,
+  // Redirect legacy /login and /signup paths to /auth/*
+  async redirects() {
+    return [
+      {
+        source: '/:locale(en|ar)/login',
+        destination: '/:locale/auth/login',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|ar)/signup',
+        destination: '/:locale/auth/signup',
+        permanent: true,
+      },
+    ];
+  },
   // Explicitly set turbopack root to prevent lockfile detection issues
   turbopack: {
     root: __dirname,
