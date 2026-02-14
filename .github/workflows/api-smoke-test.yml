@@ -42,15 +42,33 @@ jobs:
           fi
 
       - name: Smoke test /api/posts
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
-          response=$(curl --fail --silent --show-error \
-            "${{ steps.prepare.outputs.url }}/api/posts?limit=1")
+          if [ -n "$API_TOKEN" ]; then
+            response=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $API_TOKEN" \
+              -H "x-vercel-protection-bypass: $API_TOKEN" \
+              "${{ steps.prepare.outputs.url }}/api/posts?limit=1")
+          else
+            response=$(curl --fail --silent --show-error \
+              "${{ steps.prepare.outputs.url }}/api/posts?limit=1")
+          fi
           echo "$response" | jq '.' | head -20
           echo "Posts endpoint OK"
 
       - name: Smoke test /api/tags
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
-          response=$(curl --fail --silent --show-error \
-            "${{ steps.prepare.outputs.url }}/api/tags")
+          if [ -n "$API_TOKEN" ]; then
+            response=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $API_TOKEN" \
+              -H "x-vercel-protection-bypass: $API_TOKEN" \
+              "${{ steps.prepare.outputs.url }}/api/tags")
+          else
+            response=$(curl --fail --silent --show-error \
+              "${{ steps.prepare.outputs.url }}/api/tags")
+          fi
           echo "$response" | jq '.' | head -20
           echo "Tags endpoint OK"
