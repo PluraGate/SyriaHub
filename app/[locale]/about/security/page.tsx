@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { AboutLayout } from '@/components/AboutLayout'
-import { Link } from '@/navigation'
 import {
     Shield,
     Mail,

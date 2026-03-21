@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Settings, Users, Lock, Globe, Plus } from 'lucide-react'
+import { Users, Lock, Globe, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { GroupActions } from '@/components/GroupActions'
@@ -50,7 +50,10 @@ export default async function GroupPage(props: GroupPageProps) {
         .order('created_at', { ascending: false })
 
     // Check if current user is a member
-    const membership = members?.find((m: any) => m.user.id === user?.id)
+    const membership = members?.find((m: { user: { id: string }[] | { id: string }; role: string }) => {
+        const u = Array.isArray(m.user) ? m.user[0] : m.user
+        return u?.id === user?.id
+    })
     const isMember = !!membership
     const isAdmin = membership?.role === 'owner' || membership?.role === 'moderator'
 
@@ -118,6 +121,7 @@ export default async function GroupPage(props: GroupPageProps) {
                         {/* Group Posts */}
                         <div className="space-y-6">
                             {posts && posts.length > 0 ? (
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 posts.map((post: any) => (
                                     <PostCard key={post.id} post={post} />
                                 ))
@@ -145,14 +149,16 @@ export default async function GroupPage(props: GroupPageProps) {
                             </div>
 
                             <div className="space-y-4">
-                                {members?.slice(0, 5).map((member: any) => (
-                                    <div key={member.user.id} className="flex items-center gap-3">
+                                {members?.slice(0, 5).map((member: { user: { id: string; name?: string; email?: string }[] | { id: string; name?: string; email?: string }; role: string }) => {
+                                    const u = Array.isArray(member.user) ? member.user[0] : member.user
+                                    return (
+                                    <div key={u.id} className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                                            {(member.user.name?.[0] || member.user.email?.[0] || '?').toUpperCase()}
+                                            {(u.name?.[0] || u.email?.[0] || '?').toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-medium text-text dark:text-dark-text truncate">
-                                                {member.user.name || 'Anonymous'}
+                                                {u.name || 'Anonymous'}
                                             </p>
                                             {member.role !== 'member' && (
                                                 <p className="text-xs text-primary dark:text-accent-light capitalize">
@@ -161,7 +167,8 @@ export default async function GroupPage(props: GroupPageProps) {
                                             )}
                                         </div>
                                     </div>
-                                ))}
+                                    )
+                                })}
 
                                 {members && members.length > 5 && (
                                     <button className="text-sm text-primary hover:underline w-full text-center">

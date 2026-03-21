@@ -1,4 +1,3 @@
-import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { AboutLayout } from '@/components/AboutLayout'
 import { Link } from '@/navigation'
@@ -11,11 +10,10 @@ import {
     Shield,
     BarChart3,
     ArrowRight,
-    ExternalLink
 } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params
+    const { locale: _locale } = await params
     return {
         title: `User Guide | SyriaHub`,
         description: 'Complete guide to using SyriaHub - content creation, licensing, research tools, and more.'

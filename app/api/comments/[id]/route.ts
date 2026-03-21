@@ -30,7 +30,7 @@ async function handleUpdateComment(
   const commentId = extractIdFromParams({ id })
   
   // Verify authentication
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   const supabase = await createServerClient()
 
@@ -94,7 +94,7 @@ async function handleDeleteComment(
   const commentId = extractIdFromParams({ id })
   
   // Verify authentication
-  const user = await verifyAuth()
+  const _user = await verifyAuth()
   
   const supabase = await createServerClient()
 

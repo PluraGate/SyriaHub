@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, Tag as TagIcon, Clock, Users, FileText, Globe, ArrowUpDown, Calendar } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { X, SlidersHorizontal, ChevronDown, ChevronUp, Tag as TagIcon, Clock, Users, FileText, Globe, ArrowUpDown, Calendar } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Tag {

@@ -65,7 +65,9 @@ export default async function Home({
     user ? Promise.resolve({ data: null }) : supabase.rpc('get_platform_stats')
   ])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let recentPosts: any[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let featuredPosts: any[] = []
 
   if (allPosts) {
@@ -156,6 +158,7 @@ export default async function Home({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {latestResources.map((resource: any) => (
                       <MagazineCard
                         key={resource.id}

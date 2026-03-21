@@ -1,6 +1,6 @@
 // Reports API - Update report status (moderators only)
 import { NextResponse } from 'next/server'
-import { createServerClient, verifyRole, getCurrentUser } from '@/lib/supabaseClient'
+import { createServerClient, verifyRole } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,

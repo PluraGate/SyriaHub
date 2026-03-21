@@ -1,6 +1,6 @@
 // Tags API - List and manage tags
 import { NextResponse } from 'next/server'
-import { createServerClient, verifyRole, isModerator } from '@/lib/supabaseClient'
+import { createServerClient, isModerator } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,

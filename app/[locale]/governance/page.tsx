@@ -16,7 +16,7 @@ export default async function GovernancePage({ params }: { params: Promise<{ loc
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'Governance' })
 
-    const isArabic = locale === 'ar'
+    const _isArabic = locale === 'ar'
 
     return (
         <div className="min-h-screen flex flex-col bg-background dark:bg-dark-bg">

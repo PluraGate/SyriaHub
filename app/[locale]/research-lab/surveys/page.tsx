@@ -8,10 +8,8 @@ import {
     ClipboardList,
     Users,
     Calendar,
-    MoreVertical,
     Eye,
     Edit,
-    Trash2,
     ExternalLink,
     CheckCircle2
 } from 'lucide-react'
@@ -97,6 +95,7 @@ export default async function SurveysPage() {
 
                             {mySurveys && mySurveys.length > 0 ? (
                                 <div className="grid gap-4">
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {mySurveys.map((survey: any) => (
                                         <div
                                             key={survey.id}
@@ -180,6 +179,7 @@ export default async function SurveysPage() {
 
                         {activeSurveys && activeSurveys.length > 0 ? (
                             <div className="grid gap-4">
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {activeSurveys.map((survey: any) => (
                                     <Link
                                         key={survey.id}
