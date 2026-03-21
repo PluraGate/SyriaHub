@@ -28,6 +28,9 @@ export const RATE_LIMIT_CONFIGS = {
   upload: { windowMs: 60_000, maxRequests: 5, identifier: 'upload' },
   report: { windowMs: 60 * 60_000, maxRequests: 10, identifier: 'report' },
   ai: { windowMs: 60 * 60_000, maxRequests: 50, identifier: 'ai' },
+  // Strict limit for invite code validation — prevents brute-force enumeration.
+  // Admins bypass this at the creation level (POST), not validation (GET).
+  invite: { windowMs: 15 * 60_000, maxRequests: 10, identifier: 'invite' },
 } as const satisfies Record<string, RateLimitConfig>
 
 export type RateLimitType = keyof typeof RATE_LIMIT_CONFIGS
