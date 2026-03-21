@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit, applyRateLimit } from '@/lib/rateLimit'
 import { validateOrigin } from '@/lib/apiUtils'
 
 // GET /api/polls - Get all active polls
 export async function GET(request: NextRequest) {
+    const rateLimit = await applyRateLimit(request, 'read')
+    if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
     const supabase = await createClient()
 
     const { data: polls, error } = await supabase
         .from('polls')
         .select(`
             *,
-            author:users!author_id(name, email)
+            author:users!author_id(name)
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
@@ -54,12 +57,17 @@ async function handlePost(request: NextRequest) {
             )
         }
 
-        // Format options with IDs and vote counts
-        const formattedOptions = options.map((opt: any, index: number) => ({
-            id: opt.id || `opt_${index}`,
-            text: typeof opt === 'string' ? opt : opt.text,
-            vote_count: 0
-        }))
+        // Validate and format options
+        const formattedOptions = options.map((opt: any, index: number) => {
+            const text: string = (typeof opt === 'string' ? opt : opt.text) || ''
+            if (!text.trim()) {
+                throw Object.assign(new Error('Option text cannot be empty'), { status: 400 })
+            }
+            if (text.length > 500) {
+                throw Object.assign(new Error(`Option ${index + 1} text exceeds 500 characters`), { status: 400 })
+            }
+            return { id: opt.id || `opt_${index}`, text: text.trim(), vote_count: 0 }
+        })
 
         const { data: poll, error } = await supabase
             .from('polls')
@@ -73,7 +81,7 @@ async function handlePost(request: NextRequest) {
             })
             .select(`
                 *,
-                author:users!author_id(name, email)
+                author:users!author_id(name)
             `)
             .single()
 
@@ -88,11 +96,9 @@ async function handlePost(request: NextRequest) {
         return NextResponse.json(poll, { status: 201 })
 
     } catch (error) {
-        console.error('Poll creation error:', error)
-        return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
-        )
+        const msg = error instanceof Error ? error.message : 'Invalid request'
+        const status = (error as any)?.status === 400 ? 400 : 400
+        return NextResponse.json({ error: msg }, { status })
     }
 }
 

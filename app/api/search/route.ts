@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { applyRateLimit } from '@/lib/rateLimit'
 
 // Helper to log search analytics (non-blocking)
 async function logSearchAnalytics(
@@ -35,6 +36,9 @@ async function logSearchAnalytics(
 
 // GET: Fuzzy search for the main search page
 export async function GET(request: NextRequest) {
+    const rateLimit = await applyRateLimit(request, 'read')
+    if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
     const startTime = Date.now()
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q')

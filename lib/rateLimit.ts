@@ -144,14 +144,32 @@ export function createRateLimitHeaders(result: RateLimitResult): Record<string, 
   return headers
 }
 
+// Basic IPv4 / IPv6 format check — prevents header injection attacks.
+function isValidIP(ip: string): boolean {
+  return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip) || /^[a-f0-9:]{3,39}$/i.test(ip)
+}
+
 /**
  * Extract IP address from headers.
+ *
+ * Trust order:
+ *  1. cf-connecting-ip  — set by Cloudflare, not spoofable by clients
+ *  2. x-real-ip         — set by Vercel/nginx to the actual connecting IP
+ *  3. x-forwarded-for   — client-controllable; validate format before trusting
  */
 export function getClientIP(headers: Headers): string {
-  const xff = headers.get('x-forwarded-for')
-  if (xff) return xff.split(',')[0].trim()
+  const cfIP = headers.get('cf-connecting-ip')
+  if (cfIP && isValidIP(cfIP.trim())) return cfIP.trim()
+
   const realIP = headers.get('x-real-ip')
-  if (realIP) return realIP
+  if (realIP && isValidIP(realIP.trim())) return realIP.trim()
+
+  const xff = headers.get('x-forwarded-for')
+  if (xff) {
+    const ip = xff.split(',')[0].trim()
+    if (isValidIP(ip)) return ip
+  }
+
   return 'unknown'
 }
 

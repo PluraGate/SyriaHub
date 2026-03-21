@@ -4,21 +4,23 @@ import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 import type { SendCorrespondenceInput, SendCorrespondenceResponse } from '@/types'
 
-// Strip/limit URLs for anti-chat (max 1 URL allowed)
+// Strip/limit URLs for anti-chat (max 1 URL allowed) and block dangerous URI schemes
 function sanitizeBody(body: string): string {
+    // Remove dangerous URI schemes that could enable XSS if rendered
+    let sanitized = body
+        .replace(/javascript\s*:/gi, '[removed]')
+        .replace(/data\s*:/gi, '[removed]')
+        .replace(/vbscript\s*:/gi, '[removed]')
+
+    // Keep only the first http(s) URL, strip the rest
     const urlRegex = /https?:\/\/[^\s]+/g
-    const urls = body.match(urlRegex) || []
+    let count = 0
+    sanitized = sanitized.replace(urlRegex, (match) => {
+        count++
+        return count === 1 ? match : '[link removed]'
+    })
 
-    if (urls.length > 1) {
-        // Keep only the first URL, strip others
-        let count = 0
-        return body.replace(urlRegex, (match) => {
-            count++
-            return count === 1 ? match : '[link removed]'
-        })
-    }
-
-    return body
+    return sanitized
 }
 
 async function handlePost(request: NextRequest) {
