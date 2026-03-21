@@ -200,6 +200,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
     const [newComment, setNewComment] = useState('')
     const [submitting, setSubmitting] = useState(false)
     const t = useTranslations('Comments')
+    const tAuth = useTranslations('Auth')
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -307,9 +308,9 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 ) : (
                     <div className="text-center py-4 text-sm text-text-light dark:text-dark-text-muted">
                         <Link href="/auth/login" className="text-primary dark:text-accent-light hover:underline">
-                            Sign in
+                            {tAuth('login')}
                         </Link>{' '}
-                        to join the discussion.
+                        {t('joinDiscussion')}
                     </div>
                 )}
             </div>
