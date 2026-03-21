@@ -3,7 +3,7 @@
 
 import { Link, usePathname, useRouter } from '@/navigation'
 import Image from 'next/image'
-import { Github, Mail, Linkedin, Youtube, Rss } from 'lucide-react'
+import { Github, Mail, Linkedin, Rss } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
 import {
   Tooltip,

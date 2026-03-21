@@ -16,7 +16,6 @@ import {
     RotateCcw,
     Ticket,
     MessageSquarePlus,
-    X,
     Shield,
     Trash2,
     Loader2
@@ -55,12 +54,13 @@ export function SettingsPage({ user }: SettingsPageProps) {
     const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
     const [isDeleting, setIsDeleting] = useState(false)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
         try {
             // @ts-expect-error - Dynamic key access for settings
             await updateNestedPreference(section, key, value)
             showToast(t('saved'), 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast(t('saveFailed') || 'Failed to save settings', 'error')
         }
     }

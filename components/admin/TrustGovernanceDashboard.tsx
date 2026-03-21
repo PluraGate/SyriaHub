@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import {
-    Users, GitBranch, Shield, AlertTriangle,
+    GitBranch, Shield, AlertTriangle,
     RefreshCw, ChevronRight, CheckCircle, XCircle,
     Clock, Loader2
 } from 'lucide-react'
@@ -37,7 +37,7 @@ export function TrustGovernanceDashboard() {
     const [promotions, setPromotions] = useState<PromotionRequest[]>([])
     const [loading, setLoading] = useState(true)
     const [processingQueue, setProcessingQueue] = useState(false)
-    const supabase = createClient()
+    const _supabase = createClient()
 
     useEffect(() => {
         loadData()

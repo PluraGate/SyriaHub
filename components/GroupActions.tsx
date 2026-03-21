@@ -15,7 +15,7 @@ interface GroupActionsProps {
     visibility: 'public' | 'private'
 }
 
-export function GroupActions({ groupId, isMember, isAdmin, visibility }: GroupActionsProps) {
+export function GroupActions({ groupId, isMember, isAdmin, visibility: _visibility }: GroupActionsProps) {
     const [isInviteOpen, setIsInviteOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const { showToast } = useToast()
@@ -43,6 +43,7 @@ export function GroupActions({ groupId, isMember, isAdmin, visibility }: GroupAc
 
             showToast('Joined group successfully', 'success')
             router.refresh()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Error joining group:', error)
             // If already a member (duplicate key), just refresh

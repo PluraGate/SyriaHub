@@ -80,6 +80,7 @@ export function SuggestedPostsCarousel({
 
                 const { data } = await query
                 if (data) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const formatPost = (post: any): SuggestedPost => ({
                         ...post,
                         author: Array.isArray(post.author) ? post.author[0] : post.author
@@ -210,6 +211,7 @@ export function SuggestedPostsList({
 
                 const { data } = await query
                 if (data) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     setPosts(data as any[])
                 }
             } catch (error) {

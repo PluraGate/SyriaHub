@@ -15,12 +15,12 @@ interface JuryPanelProps {
     userId: string
 }
 
-export function JuryPanel({ userId }: JuryPanelProps) {
+export function JuryPanel({ userId: _userId }: JuryPanelProps) {
     const [cases, setCases] = useState<JuryCase[]>([])
     const [loading, setLoading] = useState(true)
     const [selectedCase, setSelectedCase] = useState<JuryCase | null>(null)
     const [voteDialogOpen, setVoteDialogOpen] = useState(false)
-    const supabase = useMemo(() => createClient(), [])
+    const _supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
 
 
@@ -206,8 +206,8 @@ function VoteDialog({ open, onClose, juryCase, onVoteSubmitted }: VoteDialogProp
 
             showToast(data.message || 'Vote submitted successfully', 'success')
             onVoteSubmitted()
-        } catch (error: any) {
-            showToast(error.message || 'Failed to submit vote', 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to submit vote', 'error')
         } finally {
             setSubmitting(false)
         }

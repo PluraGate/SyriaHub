@@ -171,7 +171,7 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
         setSubmitting(false)
     }
 
-    const typeConfig = contributionTypeConfig[formType]
+    const _typeConfig = contributionTypeConfig[formType]
 
     return (
         <div className={cn('rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden', className)}>

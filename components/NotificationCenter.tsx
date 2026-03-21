@@ -24,24 +24,10 @@ import { useNotifications } from '@/components/NotificationsProvider'
 
 const CLEARED_NOTIFICATIONS_KEY = 'syriahub_cleared_notifications'
 
-interface Notification {
-    id: string
-    type: 'mention' | 'reply' | 'follow' | 'fork' | 'citation' | 'like' | 'system' | 'moderation'
-    title: string
-    message: string
-    url?: string
-    is_read: boolean
-    created_at: string
-    metadata?: {
-        actor_name?: string
-        actor_avatar?: string
-        post_title?: string
-        [key: string]: any
-    }
-}
 
 type NotificationFilter = 'all' | 'unread' | 'mentions' | 'social' | 'system'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const notificationIcons: Record<string, any> = {
     mention: AtSign,
     reply: MessageSquare,
@@ -88,7 +74,7 @@ function saveClearedIds(ids: Set<string>) {
     }
 }
 
-export function NotificationCenter({ userId }: { userId: string }) {
+export function NotificationCenter({ userId: _userId }: { userId: string }) {
     const [isOpen, setIsOpen] = useState(false)
     const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications()
     const [filter, setFilter] = useState<NotificationFilter>('all')
@@ -114,6 +100,7 @@ export function NotificationCenter({ userId }: { userId: string }) {
 
     const filteredNotifications = useMemo(() => {
         // Filter out cleared notifications
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const visibleList = (notifications as any[]).filter(n => !clearedIds.has(n.id))
         
         switch (filter) {
@@ -254,6 +241,7 @@ export function NotificationCenter({ userId }: { userId: string }) {
 }
 
 interface NotificationItemProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     notification: any
     onRead: (id: string) => void
     onDelete: (id: string) => void

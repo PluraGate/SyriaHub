@@ -24,7 +24,7 @@ const categoryColors: Record<string, string> = {
 }
 
 export function SkillBadge({
-    skillId,
+    skillId: _skillId,
     name,
     category,
     isRecognized,

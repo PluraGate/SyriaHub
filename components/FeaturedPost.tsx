@@ -77,7 +77,7 @@ const accentClasses = {
 }
 
 // Format event date
-function formatEventDate(dateString?: string, locale: string = 'en'): string {
+function _formatEventDate(dateString?: string, _locale: string = 'en'): string {
     if (!dateString) return 'Date TBD'
     const date = new Date(dateString)
     return date.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -91,7 +91,7 @@ export function FeaturedPost({
     className,
 }: FeaturedPostProps) {
     const t = useTranslations('Landing')
-    const { formatDate, locale } = useDateFormatter()
+    const { formatDate, locale: _locale } = useDateFormatter()
     const readingTime = getReadingTime(post.content)
     const colors = accentClasses[accentColor]
     const isEvent = post.content_type === 'event'

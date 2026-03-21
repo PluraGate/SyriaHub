@@ -8,7 +8,6 @@ import {
     FolderKanban,
     Users,
     FileText,
-    Calendar,
     Eye,
     Lock,
     Globe,
@@ -41,7 +40,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, variant = 'default' }: ProjectCardProps) {
-    const creatorName = project.created_by?.name ||
+    const _creatorName = project.created_by?.name ||
         project.created_by?.email?.split('@')[0] ||
         'Unknown'
 

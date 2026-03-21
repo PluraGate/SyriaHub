@@ -18,7 +18,6 @@ import {
     User,
     BookOpen,
     ArrowRight,
-    Upload,
     Check
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
