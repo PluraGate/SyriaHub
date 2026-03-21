@@ -48,13 +48,22 @@ async function handlePost(request: NextRequest) {
 
     try {
         const body = await request.json()
-        const { question, description, options, is_multiple_choice, end_date } = body
+        const { question, description, options, is_multiple_choice, end_date, data_source_type, data_source_label } = body
 
         if (!question || !options || !Array.isArray(options) || options.length < 2) {
             return NextResponse.json(
                 { error: 'Question and at least 2 options are required' },
                 { status: 400 }
             )
+        }
+
+        const validSourceTypes = ['community', 'external', 'mixed']
+        if (data_source_type && !validSourceTypes.includes(data_source_type)) {
+            return NextResponse.json({ error: 'Invalid data_source_type' }, { status: 400 })
+        }
+        const sourceLabel = (data_source_label as string | undefined)?.trim() || null
+        if (sourceLabel && sourceLabel.length > 200) {
+            return NextResponse.json({ error: 'data_source_label exceeds 200 characters' }, { status: 400 })
         }
 
         // Validate and format options
@@ -77,7 +86,9 @@ async function handlePost(request: NextRequest) {
                 options: formattedOptions,
                 is_multiple_choice: is_multiple_choice || false,
                 end_date: end_date || null,
-                author_id: user.id
+                author_id: user.id,
+                data_source_type: data_source_type || null,
+                data_source_label: sourceLabel
             })
             .select(`
                 *,
