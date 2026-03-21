@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 
 interface RouteParams {
     params: Promise<{ id: string }>
@@ -20,10 +21,10 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
     // Get current user (optional for anonymous surveys)
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Fetch survey to check if it's active and anonymous settings
+    // Fetch survey to check if it's active and anonymous settings (include Turnstile flag)
     const { data: survey, error: surveyError } = await supabase
         .from('surveys')
-        .select('id, status, is_anonymous, allow_multiple_responses')
+        .select('id, status, is_anonymous, allow_multiple_responses, require_turnstile')
         .eq('id', id)
         .single()
 
@@ -60,7 +61,20 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
 
     try {
         const body = await request.json()
-        const { answers } = body
+        const { answers, turnstile_token } = body
+
+        // SECURITY: Verify Turnstile when the survey requires it.
+        // Applies to authenticated respondents: a verified account alone does
+        // not prevent coordinated survey manipulation.
+        if (survey.require_turnstile) {
+            const isValid = await verifyTurnstileToken(turnstile_token ?? null)
+            if (!isValid) {
+                return NextResponse.json(
+                    { error: 'Bot verification failed. Please complete the CAPTCHA.' },
+                    { status: 403 }
+                )
+            }
+        }
 
         if (!answers || typeof answers !== 'object') {
             return NextResponse.json(

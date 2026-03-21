@@ -8,23 +8,30 @@ interface RouteParams {
     params: Promise<{ token: string }>
 }
 
-// Generate or retrieve fingerprint from request
-// Prioritizes client-side fingerprint (more robust) over server-side fallback
+// Resolve the true client IP using the same trusted header order as rateLimit.ts:
+// cf-connecting-ip (Cloudflare, unspoofahle) → x-real-ip (Vercel) → x-forwarded-for
+function getTrustedIP(request: NextRequest): string {
+    const h = request.headers
+    return (
+        h.get('cf-connecting-ip') ||
+        h.get('x-real-ip') ||
+        h.get('x-forwarded-for')?.split(',')[0].trim() ||
+        'unknown'
+    )
+}
+
+// Build a stable fingerprint for this browser/client.
+// Client-side fingerprint (Canvas/WebGL) is preferred when present and long enough.
+// Falls back to a server-side hash of trusted IP + User-Agent.
 function getFingerprint(request: NextRequest): string {
-    // Try to get client-side fingerprint first (Canvas, WebGL, etc.)
     const clientFingerprint = request.headers.get('x-browser-fingerprint')
     if (clientFingerprint && clientFingerprint.length >= 16) {
         return clientFingerprint
     }
 
-    // Fallback to server-side fingerprint (IP + User Agent)
-    const ip = request.headers.get('x-forwarded-for') ||
-        request.headers.get('x-real-ip') ||
-        'unknown'
+    const ip = getTrustedIP(request)
     const userAgent = request.headers.get('user-agent') || 'unknown'
-
-    const data = `${ip}|${userAgent}`
-    return crypto.createHash('sha256').update(data).digest('hex').slice(0, 32)
+    return crypto.createHash('sha256').update(`${ip}|${userAgent}`).digest('hex').slice(0, 32)
 }
 
 // GET /api/public/poll/[token] - Fetch poll by public token
@@ -78,7 +85,7 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
     const { token } = await params
     const supabase = await createClient()
     const fingerprint = getFingerprint(request)
-    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    const ip = getTrustedIP(request)
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
     // Fetch poll with Turnstile requirement setting
