@@ -31,7 +31,7 @@ vi.mock('@/lib/supabase/server', () => ({
 
 // ── Rate-limit mock (always allow) ──────────────────────────────────────────
 vi.mock('@/lib/rateLimit', () => ({
-    withRateLimit: (_type: string) => (handler: Function) => handler,
+    withRateLimit: (_type: string) => (handler: (...args: unknown[]) => unknown) => handler,
 }))
 
 // ── Turnstile mock ───────────────────────────────────────────────────────────

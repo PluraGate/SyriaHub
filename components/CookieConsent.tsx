@@ -9,16 +9,22 @@ export function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     try {
       const consent = localStorage.getItem('syriahub-cookie-consent')
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (!consent) setVisible(true)
-    } catch {}
+    } catch {
+      // localStorage unavailable (e.g. private browsing restrictions) — show banner
+    }
   }, [])
 
   const handleConsent = (type: 'all' | 'essential') => {
     try {
       localStorage.setItem('syriahub-cookie-consent', type)
-    } catch {}
+    } catch {
+      // localStorage unavailable — proceed without persisting consent
+    }
     setVisible(false)
   }
 
@@ -52,7 +58,7 @@ export function CookieConsent() {
           </button>
           <button
             onClick={() => handleConsent('all')}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
           >
             {t('acceptAll')}
           </button>
