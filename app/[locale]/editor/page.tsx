@@ -46,7 +46,7 @@ type EditorErrors = {
 interface Citation {
   type: 'internal' | 'external'
   target_post_id?: string
-  target_post?: { id: string; title: string; author?: { name?: string | null; email?: string | null } | null; created_at: string }
+  target_post?: { id: string; title: string; author?: { name?: string | null } | null; created_at: string }
   quote_content?: string
   external_url?: string
   external_doi?: string
@@ -286,7 +286,7 @@ export default function EditorPage() {
   // Handle critique_of param and quote param
   useEffect(() => {
     if (critiqueOfParam) {
-      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name, email)').eq('id', critiqueOfParam).single().then(({ data }) => {
+      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name)').eq('id', critiqueOfParam).single().then(({ data }) => {
         if (data) {
           // Add as internal citation - author may be array from join, extract first
           const authorData = Array.isArray(data.author) ? data.author[0] : data.author
@@ -408,7 +408,7 @@ export default function EditorPage() {
                 id,
                 title,
                 created_at,
-                author:users!posts_author_id_fkey(name, email)
+                author:users!posts_author_id_fkey(name)
               )
             `)
             .eq('source_post_id', postIdParam)
