@@ -5,6 +5,7 @@ import Cropper from 'react-easy-crop'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { ZoomIn, ZoomOut, RotateCw, Check, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface Point {
     x: number
@@ -88,6 +89,7 @@ export function ImageCropModal({
     aspectRatio = 1,
     cropShape = 'round'
 }: ImageCropModalProps) {
+    const t = useTranslations('Common')
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
     const [rotation, setRotation] = useState(0)
@@ -203,7 +205,7 @@ export function ImageCropModal({
                         disabled={processing || !croppedAreaPixels}
                     >
                         <Check className="w-4 h-4 mr-2" />
-                        {processing ? 'Processing...' : 'Apply'}
+                        {processing ? t('processing') : t('apply')}
                     </Button>
                 </DialogFooter>
             </DialogContent>
