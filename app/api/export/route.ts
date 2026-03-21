@@ -26,7 +26,7 @@ async function handleGet(request: NextRequest) {
         updated_at,
         content_type,
         license,
-        author:users!posts_author_id_fkey(name, email)
+        author:users!posts_author_id_fkey(name)
       `)
       .eq('id', postId)
       .single()
@@ -35,7 +35,7 @@ async function handleGet(request: NextRequest) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
+    const authorName = (post.author as any)?.name || 'Anonymous'
     const publishedDate = new Date(post.created_at).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

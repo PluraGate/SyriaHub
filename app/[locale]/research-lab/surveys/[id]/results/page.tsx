@@ -61,8 +61,8 @@ export default async function SurveyResultsPage({ params }: PageProps) {
     const { data: responses } = await supabase
         .from('survey_responses')
         .select(`
-            *,
-            respondent:users!respondent_id(name, email)
+            id, survey_id, respondent_id, answers, is_complete, completed_at, created_at,
+            respondent:users!respondent_id(id, name)
         `)
         .eq('survey_id', id)
         .order('completed_at', { ascending: false })

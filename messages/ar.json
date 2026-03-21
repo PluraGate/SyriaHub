@@ -73,7 +73,9 @@
             "adminOnly": "فقط المشرفون يمكنهم القيام بهذا الإجراء"
         },
         "pageNotFound": "الصفحة غير موجودة",
-        "backToHome": "العودة للرئيسية"
+        "backToHome": "العودة للرئيسية",
+        "apply": "تطبيق",
+        "updating": "جاري التحديث..."
     },
     "Licenses": {
         "CC-BY-4_0": "CC BY 4.0 (الإسناد)",
@@ -134,7 +136,9 @@
         "welcomeBack": "مرحباً بعودتك",
         "loginSubtitle": "سجّل دخولك للمتابعة إلى حسابك",
         "signupSubtitle": "أنشئ حسابك لتبدأ المساهمة",
+        "loginTitle": "تسجيل الدخول إلى حسابك",
         "termsAgree": "بإنشاء حساب، أنت توافق على",
+        "acceptTermsRequired": "يجب الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.",
         "termsOfService": "شروط الخدمة",
         "privacyPolicy": "سياسة الخصوصية",
         "verifyEmail": "تأكيد بريدك الإلكتروني",
@@ -568,7 +572,10 @@
             "question2": "ما الذي لا أعرفه أو لا أستطيع التحقق منه؟",
             "question3": "من يجب أن أذكره أو أشكره؟",
             "dismiss": "تجاهل"
-        }
+        },
+        "searchItems": "البحث عن عناصر...",
+        "selectOption": "اختر خياراً",
+        "writeAnswer": "اكتب إجابتك هنا..."
     },
     "Profile": {
         "myProfile": "ملفي الشخصي",
@@ -899,7 +906,13 @@
             "publishSuccess": "تم نشر فعاليتك بنجاح.",
             "draftSuccess": "تم حفظ المسودة بنجاح.",
             "signInRequired": "يرجى تسجيل الدخول لإنشاء فعالية."
-        }
+        },
+        "statuses": {
+            "scheduled": "مجدول",
+            "postponed": "مؤجل",
+            "cancelled": "ملغى"
+        },
+        "updateStatusHint": "حدِّث الحالة إذا كانت الفعالية قد أُلغيت أو تأجّلت."
     },
     "ResearchGaps": {
         "title": "سوق الفجوات البحثية",
@@ -1146,7 +1159,8 @@
         "replyTo": "رد على {name}",
         "cancelReply": "إلغاء الرد",
         "signInToComment": "سجّل الدخول للمشاركة في الحوار",
-        "anonymous": "مجهول"
+        "anonymous": "مجهول",
+        "joinDiscussion": "للمشاركة في النقاش."
     },
     "Settings": {
         "title": "الإعدادات",
@@ -1306,7 +1320,11 @@
         "securityDescription": "عزز أمان حسابك بإضافة ميزات حماية إضافية.",
         "feedbackSection": {
             "title": "الملاحظات"
-        }
+        },
+        "deleteAccountWarning": "سيتم حذف جميع محتوياتك وتصويتاتك وبيانات ملفك الشخصي بشكل دائم. لا يمكن التراجع عن هذا الإجراء.",
+        "deleteAccountConfirmPrompt": "اكتب DELETE للتأكيد",
+        "deleteAccountButton": "حذف حسابي نهائياً",
+        "deleteAccountSuccess": "تم حذف حسابك."
     },
     "Analytics": {
         "title": "تحليلات البحث",
@@ -2033,7 +2051,11 @@
                 "event": "فعالية",
                 "trace": "تتبع"
             }
-        }
+        },
+        "editRegistry": "تعديل السجل",
+        "deleteRegistry": "حذف السجل",
+        "editField": "تعديل الحقل",
+        "deleteField": "حذف الحقل"
     },
     "UserManagement": {
         "title": "إدارة المستخدمين",
@@ -3759,5 +3781,12 @@
             "noMessages": "لا توجد مراسلات بعد",
             "description": "ستظهر المراسلات التي تتلقاها هنا"
         }
+    },
+    "CookieConsent": {
+        "title": "تفضيلات ملفات تعريف الارتباط",
+        "description": "نستخدم ملفات تعريف الارتباط الأساسية لإبقائك مسجّلاً للدخول، وملفات تعريف الارتباط التحليلية الاختيارية لتحسين المنصة. لا يتم إنشاء أي ملفات تعريف سلوكية.",
+        "acceptAll": "قبول الكل",
+        "essentialOnly": "الأساسية فقط",
+        "learnMore": "سياسة الخصوصية"
     }
 }

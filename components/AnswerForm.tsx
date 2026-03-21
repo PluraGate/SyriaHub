@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from './ui/toast'
 import { Save } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface AnswerFormProps {
     questionId: string
 }
 
 export function AnswerForm({ questionId }: AnswerFormProps) {
+    const t = useTranslations('Editor')
     const [content, setContent] = useState('')
     const [submitting, setSubmitting] = useState(false)
     const { showToast } = useToast()
@@ -55,7 +57,7 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
             <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Write your answer here..."
+                placeholder={t('writeAnswer')}
                 className="w-full min-h-[150px] p-4 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-y"
                 required
             />
