@@ -44,9 +44,9 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
             setContent('')
             showToast('Answer posted successfully', 'success')
             router.refresh()
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to post answer:', error)
-            showToast(error.message || 'Failed to post answer', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to post answer', 'error')
         } finally {
             setSubmitting(false)
         }

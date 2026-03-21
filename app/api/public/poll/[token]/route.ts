@@ -217,4 +217,5 @@ async function handlePost(request: NextRequest, { params }: RouteParams) {
 }
 
 // SECURITY: Apply rate limiting to anonymous voting (write rate - stricter)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = withRateLimit('write')(handlePost as any)

@@ -7,7 +7,7 @@ import {
   withErrorHandling,
 } from '@/lib/apiUtils'
 
-async function handleGetUser(request: Request): Promise<NextResponse> {
+async function handleGetUser(_request: Request): Promise<NextResponse> {
   const { user, error } = await getCurrentUser()
 
   if (error || !user) {

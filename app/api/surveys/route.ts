@@ -118,7 +118,7 @@ async function handlePost(request: NextRequest) {
 
         // Create questions if provided
         if (questions && Array.isArray(questions) && questions.length > 0) {
-            const questionsToInsert = questions.map((q: any, index: number) => ({
+            const questionsToInsert = questions.map((q: { question_text: string; question_type?: string; options?: unknown; required?: boolean; description?: string; validation_rules?: unknown; conditional_logic?: unknown }, index: number) => ({
                 survey_id: survey.id,
                 question_text: q.question_text,
                 question_type: q.question_type || 'text',

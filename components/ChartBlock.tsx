@@ -9,7 +9,6 @@ import {
     Database,
     Loader2,
     X,
-    ChevronDown,
     Settings,
     RefreshCw,
     AlertCircle
@@ -519,7 +518,7 @@ export function ChartBlockDisplay({ config, resourceUrl }: { config: ChartConfig
                 }
 
                 setChartData(data)
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load chart data')
             } finally {
                 setLoading(false)
@@ -532,7 +531,7 @@ export function ChartBlockDisplay({ config, resourceUrl }: { config: ChartConfig
     const renderChart = () => {
         if (chartData.length === 0) return null
 
-        const ChartComponent = {
+        const _ChartComponent = {
             line: RechartsLine,
             pie: RechartsPie,
             area: RechartsArea,

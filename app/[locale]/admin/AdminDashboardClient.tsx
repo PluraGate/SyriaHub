@@ -47,7 +47,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
     initialUserId ? { id: initialUserId } : null
   )
   const [loading, setLoading] = useState(true)
-  const [reports, setReports] = useState<Report[]>([])
+  const [_reports, setReports] = useState<Report[]>([])
   const [appeals, setAppeals] = useState<Appeal[]>([])
   const [activeTab, setActiveTab] = useState<ActiveTab>('reports')
   const [stats, setStats] = useState({
@@ -130,7 +130,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
         // If approved, also update the post status
         loadData()
       }
-    } catch (error) {
+    } catch (_error) {
       showToast(tCommon('errors.general'), 'error')
     }
   }

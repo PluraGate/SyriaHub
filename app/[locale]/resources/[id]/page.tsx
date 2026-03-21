@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
 
     return buildResourceMetadata({
         ...resource,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         author: resource.author as any
     })
 }
@@ -142,6 +143,7 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
     // Build JSON-LD structured data
     const jsonLdData = buildDatasetSchema({
         ...resource,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         author: resource.author as any
     })
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Save, Trash2, UserPlus, Shield, UserX } from 'lucide-react'
+import { ArrowLeft, Save, Trash2, UserPlus, UserX } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { useToast } from '@/components/ui/toast'
@@ -22,7 +22,9 @@ export default function GroupSettingsPage(props: GroupSettingsPageProps) {
 
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [group, setGroup] = useState<any>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [members, setMembers] = useState<any[]>([])
     const [showInviteDialog, setShowInviteDialog] = useState(false)
 
@@ -115,7 +117,7 @@ export default function GroupSettingsPage(props: GroupSettingsPageProps) {
             if (error) throw error
 
             showToast('Group settings updated', 'success')
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating group:', error)
             showToast('Failed to update group', 'error')
         } finally {
@@ -137,7 +139,7 @@ export default function GroupSettingsPage(props: GroupSettingsPageProps) {
 
             setMembers(members.filter(m => m.user_id !== memberId))
             showToast('Member removed', 'success')
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error removing member:', error)
             showToast('Failed to remove member', 'error')
         }
@@ -156,7 +158,7 @@ export default function GroupSettingsPage(props: GroupSettingsPageProps) {
 
             showToast('Group deleted', 'success')
             router.push('/groups')
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error deleting group:', error)
             showToast('Failed to delete group', 'error')
         }

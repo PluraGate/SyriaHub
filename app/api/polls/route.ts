@@ -67,7 +67,7 @@ async function handlePost(request: NextRequest) {
         }
 
         // Validate and format options
-        const formattedOptions = options.map((opt: any, index: number) => {
+        const formattedOptions = options.map((opt: { text?: string; label?: string; id?: string }, index: number) => {
             const text: string = (typeof opt === 'string' ? opt : opt.text) || ''
             if (!text.trim()) {
                 throw Object.assign(new Error('Option text cannot be empty'), { status: 400 })
@@ -108,6 +108,7 @@ async function handlePost(request: NextRequest) {
 
     } catch (error) {
         const msg = error instanceof Error ? error.message : 'Invalid request'
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const status = (error as any)?.status === 400 ? 400 : 400
         return NextResponse.json({ error: msg }, { status })
     }

@@ -79,7 +79,7 @@ async function handlePost(
         }
 
         // Validate option_ids
-        const validOptionIds = poll.options.map((opt: any) => opt.id)
+        const validOptionIds = poll.options.map((opt: { id: string }) => opt.id)
         const invalidOptions = option_ids.filter(id => !validOptionIds.includes(id))
         if (invalidOptions.length > 0) {
             return NextResponse.json(
@@ -135,4 +135,5 @@ async function handlePost(
 }
 
 // SECURITY: Apply rate limiting to vote endpoint (write rate)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = withRateLimit('write')(handlePost as any)

@@ -152,7 +152,7 @@ ${context ? `Additional context: ${context}` : ''}`
             } else {
                 throw new Error('No JSON found in response')
             }
-        } catch (parseError) {
+        } catch (_parseError) {
             console.error('Failed to parse AI response:', content)
             // Return mock data as fallback
             analysisResult = generateMockAnalysis(question)
@@ -181,10 +181,10 @@ ${context ? `Additional context: ${context}` : ''}`
 
         return NextResponse.json(analysisResult)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Question advisor error:', error)
         return NextResponse.json(
-            { error: 'Failed to analyze question', message: error.message },
+            { error: 'Failed to analyze question', message: error instanceof Error ? error.message : String(error) },
             { status: 500 }
         )
     }
@@ -193,8 +193,9 @@ ${context ? `Additional context: ${context}` : ''}`
 export const POST = withRateLimit('ai')(handleRequest)
 
 // Generate mock analysis for testing without API key
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateMockAnalysis(question: string): any {
-    const questionLower = question.toLowerCase()
+    const _questionLower = question.toLowerCase()
 
     // Basic heuristics for mock scoring
     const hasSpecificTerms = /how|what|why|when|where|which|who/i.test(question)

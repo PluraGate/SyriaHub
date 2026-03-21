@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { withRateLimit } from '@/lib/rateLimit'
-import { SchemaRegistry, SchemaItem, SchemaField, SchemaFieldVersion } from '@/types'
 
 // Helper to check admin access
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function checkAdmin(supabase: any) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return false
@@ -57,9 +57,9 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Schema API Error:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
 }
 
@@ -223,9 +223,9 @@ async function handlePost(request: NextRequest) {
 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Schema API Error:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
 }
 
@@ -277,9 +277,9 @@ async function handleDelete(request: NextRequest) {
 
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Schema Delete Error:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
 }
 

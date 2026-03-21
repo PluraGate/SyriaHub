@@ -91,8 +91,8 @@ export function AppealButton({ postId, postTitle, onAppealSubmitted }: AppealBut
                 setReason('')
             }, 2000)
 
-        } catch (err: any) {
-            setError(err.message || 'Failed to submit appeal. Please try again.')
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Failed to submit appeal. Please try again.')
         } finally {
             setSubmitting(false)
         }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Users, Lock, Globe, Info } from 'lucide-react'
+import { ArrowLeft, Users, Lock, Globe } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/Navbar'
 import { useToast } from '@/components/ui/toast'
@@ -78,9 +78,9 @@ export default function CreateGroupPage() {
             showToast('Group created successfully!', 'success')
             router.push(`/groups/${group.id}`)
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating group:', error)
-            showToast(error.message || 'Failed to create group', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to create group', 'error')
         } finally {
             setLoading(false)
         }
@@ -162,7 +162,7 @@ export default function CreateGroupPage() {
                                     name="visibility"
                                     value="private"
                                     checked={formData.visibility === 'private'}
-                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as any })}
+                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as 'private' | 'restricted' | 'public' })}
                                     className="sr-only"
                                 />
                                 <Lock className={`w-6 h-6 ${formData.visibility === 'private' ? 'text-primary dark:text-accent' : 'text-gray-400'}`} />
@@ -183,7 +183,7 @@ export default function CreateGroupPage() {
                                     name="visibility"
                                     value="restricted"
                                     checked={formData.visibility === 'restricted'}
-                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as any })}
+                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as 'private' | 'restricted' | 'public' })}
                                     className="sr-only"
                                 />
                                 <Users className={`w-6 h-6 ${formData.visibility === 'restricted' ? 'text-primary dark:text-accent' : 'text-gray-400'}`} />
@@ -204,7 +204,7 @@ export default function CreateGroupPage() {
                                     name="visibility"
                                     value="public"
                                     checked={formData.visibility === 'public'}
-                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as any })}
+                                    onChange={(e) => setFormData({ ...formData, visibility: e.target.value as 'private' | 'restricted' | 'public' })}
                                     className="sr-only"
                                 />
                                 <Globe className={`w-6 h-6 ${formData.visibility === 'public' ? 'text-primary dark:text-accent' : 'text-gray-400'}`} />

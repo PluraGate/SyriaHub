@@ -31,13 +31,13 @@ export function AnswerList({ answers: initialAnswers, isQuestionAuthor }: Answer
             setAnswers(prev => prev.map(a => ({
                 ...a,
                 is_accepted: a.id === answerId
-            })).sort((a, b) => (a.id === answerId ? -1 : 1))) // Move accepted to top
+            })).sort((a, _b) => (a.id === answerId ? -1 : 1))) // Move accepted to top
 
             showToast('Answer marked as accepted', 'success')
             router.refresh() // Refresh server data to ensure consistency
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Accept error:', error)
-            showToast(error.message, 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to accept answer', 'error')
         }
     }
 
