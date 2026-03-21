@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Search, Filter, Loader2, ChevronDown, X, Info, AlertTriangle, Link2, Quote, FileDown, Bookmark, ExternalLink, MoreHorizontal, Globe, Database, History, Copy, Plus, GitBranch, Check, Clock, FileText, Users, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TrustBadge } from '@/components/TrustProfileCard'
+import { TrustDimensions } from '@/components/TrustProfileCard'
 import { InlineConflictBadge } from '@/components/ConflictWarning'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -963,16 +963,6 @@ interface SearchResultCardProps {
 }
 
 function SearchResultCard({ result, expanded, onToggleExpand }: SearchResultCardProps) {
-    const avgTrustScore = result.trust_profile
-        ? Math.round((
-            result.trust_profile.t1_source_score +
-            result.trust_profile.t2_method_score +
-            result.trust_profile.t3_proximity_score +
-            result.trust_profile.t4_temporal_score +
-            result.trust_profile.t5_validation_score
-        ) / 5)
-        : null
-
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden hover:shadow-md transition-shadow">
             <div className="p-5">
@@ -984,7 +974,9 @@ function SearchResultCard({ result, expanded, onToggleExpand }: SearchResultCard
                         </h3>
                     </Link>
                     <div className="flex items-center gap-2 shrink-0">
-                        {avgTrustScore !== null && <TrustBadge score={avgTrustScore} size="sm" />}
+                        {result.trust_profile && (
+                            <TrustDimensions profile={result.trust_profile} size="sm" />
+                        )}
                         <span className="text-xs px-2.5 py-1 rounded-md bg-gray-100 dark:bg-dark-border text-gray-600 dark:text-gray-300 font-medium capitalize">
                             {result.evidence_tier}
                         </span>
