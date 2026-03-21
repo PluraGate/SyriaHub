@@ -219,10 +219,10 @@ function RegistryCard({ registry, onEdit, onDelete, onAddItem, onEditItem, onDel
                     </p>
                 </div>
                 <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="sm" onClick={onEdit} title="Edit registry" className="text-text-light dark:text-gray-400 hover:text-primary dark:hover:text-white">
+                    <Button variant="ghost" size="sm" onClick={onEdit} title={t('editRegistry')} className="text-text-light dark:text-gray-400 hover:text-primary dark:hover:text-white">
                         <Edit2 className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onDelete} title="Delete registry" className="text-text-light dark:text-gray-400 hover:text-accent dark:hover:text-red-400">
+                    <Button variant="ghost" size="sm" onClick={onDelete} title={t('deleteRegistry')} className="text-text-light dark:text-gray-400 hover:text-accent dark:hover:text-red-400">
                         <Trash2 className="w-4 h-4" />
                     </Button>
                 </div>
@@ -314,10 +314,10 @@ function FieldCard({ field, onEdit, onDelete }: FieldCardProps) {
                     )}
                 </div>
                 <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="sm" onClick={onEdit} title="Edit field" className="text-text-light dark:text-gray-400 hover:text-primary dark:hover:text-white">
+                    <Button variant="ghost" size="sm" onClick={onEdit} title={t('editField')} className="text-text-light dark:text-gray-400 hover:text-primary dark:hover:text-white">
                         <Edit2 className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onDelete} title="Delete field" className="text-text-light dark:text-gray-400 hover:text-accent dark:hover:text-red-400">
+                    <Button variant="ghost" size="sm" onClick={onDelete} title={t('deleteField')} className="text-text-light dark:text-gray-400 hover:text-accent dark:hover:text-red-400">
                         <Trash2 className="w-4 h-4" />
                     </Button>
                 </div>

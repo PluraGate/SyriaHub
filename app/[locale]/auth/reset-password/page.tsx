@@ -12,12 +12,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AlertCircle, CheckCircle, Lock, Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 const initialState = { error: null, success: false }
 
 export default function ResetPasswordPage() {
     const router = useRouter()
     const [state, formAction, isPending] = useActionState(handlePasswordReset, initialState)
+    const t = useTranslations('Auth')
+    const tCommon = useTranslations('Common')
 
     useEffect(() => {
         if (state.success) {
@@ -103,26 +106,26 @@ export default function ResetPasswordPage() {
                                     id="password"
                                     name="password"
                                     type="password"
-                                    placeholder="At least 8 characters"
+                                    placeholder={t('passwordRequirements')}
                                     required
                                     minLength={8}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="confirmPassword">Confirm password</Label>
+                                <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                                 <Input
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     type="password"
-                                    placeholder="Re-enter your password"
+                                    placeholder={t('confirmPassword')}
                                     required
                                 />
                             </div>
 
                             <Button type="submit" className="w-full" disabled={isPending}>
                                 {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                                {isPending ? 'Updating...' : 'Update password'}
+                                {isPending ? tCommon('updating') : t('updatePassword')}
                             </Button>
                         </form>
                     </div>

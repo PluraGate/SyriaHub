@@ -19,7 +19,7 @@ interface SurveyResultsActionsProps {
         id: string
         answers: Record<string, unknown>
         completed_at: string
-        respondent?: { name?: string; email?: string } | null
+        respondent?: { name?: string } | null
     }>
 }
 
@@ -58,7 +58,7 @@ export function SurveyResultsActions({
             return {
                 responseId: response.id,
                 submittedAt: response.completed_at,
-                respondent: response.respondent?.name || response.respondent?.email || 'Anonymous',
+                respondent: response.respondent?.name || 'Anonymous',
                 answers: processedAnswers
             }
         })
@@ -103,7 +103,7 @@ export function SurveyResultsActions({
                 const row: string[] = [
                     response.id,
                     new Date(response.completed_at).toLocaleString(),
-                    response.respondent?.name || response.respondent?.email || 'Anonymous'
+                    response.respondent?.name || 'Anonymous'
                 ]
 
                 questions.forEach(q => {
