@@ -8,7 +8,7 @@ interface Response {
     id: string
     answers: Record<string, unknown>
     completed_at: string
-    respondent?: { name?: string; email?: string } | null
+    respondent?: { name?: string } | null
 }
 
 interface Question {
@@ -103,9 +103,7 @@ export function SurveyResponsesList({
                                     <div className="flex items-center gap-2 text-sm">
                                         <User className="w-4 h-4 text-text-light dark:text-dark-text-muted" />
                                         <span className="text-text dark:text-dark-text">
-                                            {response.respondent?.name ||
-                                                response.respondent?.email?.split('@')[0] ||
-                                                'Anonymous'}
+                                            {response.respondent?.name || 'Anonymous'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted mt-1">

@@ -30,7 +30,7 @@ async function handleGetUsers(request: Request): Promise<NextResponse> {
   // Build query
   let query = supabase
     .from('users')
-    .select('*')
+    .select('id, name, email, role, bio, affiliation, avatar_url, created_at, suspended_at, suspended_by, suspension_reason, verified')
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
