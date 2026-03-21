@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Plus, Edit2, Trash2, Layers, Database, ChevronRight, Loader2, X, Save, AlertCircle } from 'lucide-react'
-import { SchemaRegistry, SchemaField, SchemaItem, ContentType } from '@/types'
+import { Plus, Edit2, Trash2, Layers, Database, Loader2, X, Save, AlertCircle } from 'lucide-react'
+import { SchemaRegistry, SchemaField, ContentType } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -74,7 +74,7 @@ export function SchemaDashboard() {
                 const { error } = await res.json()
                 showToast(error || t('schemaRegistry.actions.deleteFailed'), 'error')
             }
-        } catch (err) {
+        } catch (_err) {
             showToast(t('schemaRegistry.actions.deleteFailed'), 'error')
         }
     }
@@ -339,6 +339,7 @@ interface EditModalProps {
 function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }: EditModalProps) {
     const t = useTranslations('Admin')
     const [saving, setSaving] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [formData, setFormData] = useState<Record<string, any>>({})
     const { showToast } = useToast()
     const isNew = !id
@@ -402,6 +403,7 @@ function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }:
                 : `update_${mode}`
 
             // Build payload, moving options into constraints for fields
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const payload: any = { action, data: { ...formData } }
             if (mode === 'field') {
                 // Move options into constraints object
@@ -426,7 +428,7 @@ function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }:
                 const { error } = await res.json()
                 showToast(error || t('schemaRegistry.actions.saveFailed'), 'error')
             }
-        } catch (err) {
+        } catch (_err) {
             showToast(t('schemaRegistry.actions.saveFailed'), 'error')
         } finally {
             setSaving(false)
@@ -621,6 +623,7 @@ function EditModal({ mode, id, parentId, registries, fields, onClose, onSaved }:
                                                     variant="ghost"
                                                     size="sm"
                                                     onClick={() => {
+                                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                         const opts = (formData.options || []).filter((_: any, i: number) => i !== idx)
                                                         setFormData(p => ({ ...p, options: opts }))
                                                     }}

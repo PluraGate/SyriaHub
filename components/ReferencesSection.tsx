@@ -96,6 +96,7 @@ export function ReferencesSection({ postId }: ReferencesSectionProps) {
                 }
 
                 setCitations(data as Citation[])
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 console.error('ReferencesSection: Caught exception', {
                     message: err.message || 'Unknown error',

@@ -50,7 +50,7 @@ export function EventActions({ eventId, isAuthor }: EventActionsProps) {
                 router.push('/events')
                 router.refresh()
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error:', error)
             alert('An error occurred: ' + (error.message || 'Unknown error'))
             setIsDeleting(false)

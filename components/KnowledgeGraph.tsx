@@ -597,6 +597,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             const newEdges: GraphEdge[] = []
             const nodeIds = new Set<string>()
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const addNode = (post: any, group: GraphNode['group'], contentType: 'post' | 'resource' = 'post') => {
                 if (nodeIds.has(post.id)) return
                 nodeIds.add(post.id)
@@ -613,7 +614,9 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
             }
 
             // Center node - detect content type
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const centerContentType = (centerPost as any).content_type === 'resource' ? 'resource' : 'post'
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             addNode({ ...centerPost, users: (centerPost as any).users }, 'center', centerContentType)
 
             // Parent fork
@@ -649,6 +652,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                 .eq('target_post_id', centerPostId)
                 .limit(4)
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             citations?.forEach((citation: any) => {
                 if (citation.posts) {
                     addNode(citation.posts, 'citation')

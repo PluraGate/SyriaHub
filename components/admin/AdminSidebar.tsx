@@ -23,8 +23,7 @@ import {
     Database, // Added Database icon
     Settings, // Added Settings icon
     Award, // Added Award icon for Skills
-    Menu,
-    X
+    Menu
 } from 'lucide-react'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { cn } from '@/lib/utils'
@@ -192,7 +191,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
 
     // On mobile: mobileOpen controls expanded vs collapsed (icons only)
     // On desktop: collapsed controls expanded vs collapsed
-    const isExpanded = mobileOpen // for mobile
+    const _isExpanded = mobileOpen // for mobile
     const isCollapsedDesktop = collapsed // for desktop
 
     return (

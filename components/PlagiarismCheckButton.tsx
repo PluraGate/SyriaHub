@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ShieldAlert, ShieldCheck, Loader2, Info } from 'lucide-react'
+import { ShieldAlert, ShieldCheck, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
@@ -13,6 +13,7 @@ interface PlagiarismCheckButtonProps {
 
 export function PlagiarismCheckButton({ postVersionId }: PlagiarismCheckButtonProps) {
     const [loading, setLoading] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [result, setResult] = useState<any>(null)
     const { showToast } = useToast()
     const supabase = createClient()
@@ -46,7 +47,7 @@ export function PlagiarismCheckButton({ postVersionId }: PlagiarismCheckButtonPr
 
             setResult(data)
             showToast('Plagiarism check completed', 'success')
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Plagiarism check error:', error)
             showToast(error.message, 'error')
         } finally {

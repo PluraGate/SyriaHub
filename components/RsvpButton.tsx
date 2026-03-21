@@ -65,8 +65,8 @@ export function RsvpButton({ eventId, initialStatus, onRsvpChange, eventDate }: 
                 onRsvpChange?.(newStatus)
             }
 
-        } catch (error: any) {
-            console.error('RSVP error:', error.message || error)
+        } catch (error: unknown) {
+            console.error('RSVP error:', error instanceof Error ? error.message : error)
             showToast('Failed to update RSVP. ' + (error.message || ''), 'error')
         } finally {
             setLoading(false)
