@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AlertCircle, CheckCircle, Lock, Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState('')
@@ -19,6 +20,8 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const supabase = createClient()
+    const t = useTranslations('Auth')
+    const tCommon = useTranslations('Common')
 
     async function handleResetPassword(e: React.FormEvent) {
         e.preventDefault()
@@ -127,28 +130,28 @@ export default function ResetPasswordPage() {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="At least 8 characters"
+                                    placeholder={t('passwordRequirements')}
                                     required
                                     minLength={8}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="confirmPassword">Confirm password</Label>
+                                <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                                 <Input
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     type="password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Re-enter your password"
+                                    placeholder={t('confirmPassword')}
                                     required
                                 />
                             </div>
 
                             <Button type="submit" className="w-full" disabled={loading}>
                                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                                {loading ? 'Updating...' : 'Update password'}
+                                {loading ? tCommon('updating') : t('updatePassword')}
                             </Button>
                         </form>
                     </div>
