@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { MapPin, ChevronDown, ChevronUp, Info } from 'lucide-react'
 import { SpatialMap } from './SpatialMap'
@@ -39,6 +39,7 @@ export function SpatialContextCard({
     const [asyncPatterns, setAsyncPatterns] = useState<DetectedPattern[]>([])
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
+    const asyncDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     // Fetch nearby posts for P5 detection (uses spatialCoverage text as initial governorate hint)
     const { postCount, hasHumanitarianPosts } = useNearbyPosts(spatialGeometry ?? null, spatialCoverage || undefined)
@@ -106,20 +107,24 @@ export function SpatialContextCard({
         const hasValidGeo = spatialGeometry.coordinates && spatialGeometry.coordinates.length > 0
 
         if (hasValidGeo) {
-            setIsAnalyzing(true)
-            detectPatternsAsync(
-                spatialGeometry,
-                postCount,
-                hasHumanitarianPosts,
-                temporalStart || temporalEnd
-            ).then(asyncDetected => {
-                setAsyncPatterns(asyncDetected)
-            }).catch(err => {
-                console.error('Async pattern detection failed:', err)
-            }).finally(() => {
-                setIsAnalyzing(false)
-            })
+            if (asyncDebounceRef.current) clearTimeout(asyncDebounceRef.current)
+            asyncDebounceRef.current = setTimeout(() => {
+                setIsAnalyzing(true)
+                detectPatternsAsync(
+                    spatialGeometry,
+                    postCount,
+                    hasHumanitarianPosts,
+                    temporalStart || temporalEnd
+                ).then(asyncDetected => {
+                    setAsyncPatterns(asyncDetected)
+                }).catch(err => {
+                    console.error('Async pattern detection failed:', err)
+                }).finally(() => {
+                    setIsAnalyzing(false)
+                })
+            }, 300)
         } else {
+            if (asyncDebounceRef.current) clearTimeout(asyncDebounceRef.current)
             setAsyncPatterns([])
         }
     }, [spatialGeometry, governorates, temporalStart, temporalEnd, postCount, hasHumanitarianPosts])
