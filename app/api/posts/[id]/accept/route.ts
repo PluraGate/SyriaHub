@@ -39,6 +39,24 @@ async function handlePost(
             return NextResponse.json({ error: 'This post is not an answer' }, { status: 400 })
         }
 
+        // Verify the caller is the question author
+        const { data: question, error: questionError } = await supabase
+            .from('posts')
+            .select('author_id')
+            .eq('id', answer.parent_id)
+            .single()
+
+        if (questionError || !question) {
+            return NextResponse.json({ error: 'Question not found' }, { status: 404 })
+        }
+
+        if (question.author_id !== user.id) {
+            return NextResponse.json(
+                { error: 'Only the question author can mark a solution' },
+                { status: 403 }
+            )
+        }
+
         // Call RPC to mark solution
         const { error: rpcError } = await supabase.rpc('mark_solution', {
             question_id: answer.parent_id,

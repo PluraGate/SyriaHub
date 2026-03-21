@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
                     tags,
                     status,
                     created_at,
-                    author:users!posts_author_id_fkey(id, name, email)
+                    author:users!posts_author_id_fkey(id, name)
                 )
             `)
             .eq('user_id', user.id)

@@ -48,9 +48,9 @@ async function handleUpdateComment(
     return handleSupabaseError(fetchError)
   }
 
-  // Only the comment owner can edit (not moderators)
-  if (comment.user_id !== user.id) {
-    return forbiddenResponse('You can only edit your own comments')
+  // Owner or moderator/admin can edit (consistent with delete behaviour)
+  if (!(await canModify(comment.user_id))) {
+    return forbiddenResponse('You do not have permission to edit this comment')
   }
 
   // Parse request body
@@ -71,7 +71,7 @@ async function handleUpdateComment(
     .eq('id', commentId)
     .select(`
       *,
-      user:users!comments_user_id_fkey(id, name, email, role)
+      user:users!comments_user_id_fkey(id, name, avatar_url)
     `)
     .single()
 
