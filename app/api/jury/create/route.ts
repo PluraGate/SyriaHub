@@ -117,10 +117,11 @@ async function handlePost(request: NextRequest) {
         }
 
         // Select random jurors using a cryptographically secure shuffle
-        const selectedJurors = secureShuffle(eligibleJurors).slice(0, required_votes)
+        const jurors = eligibleJurors as { user_id: string }[]
+        const selectedJurors = secureShuffle(jurors).slice(0, required_votes)
 
         // Create assignments
-        const assignments = selectedJurors.map((juror: { user_id: string }) => ({
+        const assignments = selectedJurors.map((juror) => ({
             deliberation_id: deliberation.id,
             juror_id: juror.user_id
         }))
@@ -143,7 +144,7 @@ async function handlePost(request: NextRequest) {
             .eq('id', appeal_id)
 
         // Create notifications for assigned jurors
-        const notifications = selectedJurors.map((juror: { user_id: string }) => ({
+        const notifications = selectedJurors.map((juror) => ({
             user_id: juror.user_id,
             type: 'jury_assignment',
             title: 'Jury Duty Assignment',
