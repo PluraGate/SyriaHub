@@ -5,7 +5,9 @@ import { afterAll, describe, expect, it } from 'vitest'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-const hasDbConfig = Boolean(supabaseUrl && serviceRoleKey)
+// These are integration tests that require a live Supabase instance.
+// Run with: RUN_INTEGRATION_TESTS=true npm test
+const hasDbConfig = Boolean(supabaseUrl && serviceRoleKey && process.env.RUN_INTEGRATION_TESTS)
 
 function createAdminClient() {
   if (!supabaseUrl || !serviceRoleKey) {
