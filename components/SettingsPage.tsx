@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
     Settings,
     Bell,
@@ -16,7 +17,9 @@ import {
     Ticket,
     MessageSquarePlus,
     X,
-    Shield
+    Shield,
+    Trash2,
+    Loader2
 } from 'lucide-react'
 import {
     Select,
@@ -33,6 +36,7 @@ import { InviteManager } from '@/components/InviteManager'
 import { FeedbackSection } from '@/components/feedback'
 import { useTranslations } from 'next-intl'
 import { TwoFactorSetup } from '@/components/auth/TwoFactorSetup'
+import { createClient } from '@/lib/supabase/client'
 
 interface SettingsPageProps {
     user: {
@@ -45,7 +49,11 @@ export function SettingsPage({ user }: SettingsPageProps) {
     const { preferences, updatePreference, updateNestedPreference, resetToDefaults, loading } = usePreferences()
     const { showToast } = useToast()
     const t = useTranslations('Settings')
-    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'security' | 'editor' | 'invites' | 'feedback'>('appearance')
+    const tCommon = useTranslations('Common')
+    const router = useRouter()
+    const [activeSection, setActiveSection] = useState<'notifications' | 'appearance' | 'display' | 'privacy' | 'security' | 'editor' | 'invites' | 'feedback' | 'danger'>('appearance')
+    const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
+    const [isDeleting, setIsDeleting] = useState(false)
 
     const handleUpdate = async (section: keyof UserPreferences, key: string, value: any) => {
         try {
@@ -70,6 +78,31 @@ export function SettingsPage({ user }: SettingsPageProps) {
         }
     }
 
+    const handleDeleteAccount = async () => {
+        if (deleteConfirmInput !== 'DELETE') return
+        setIsDeleting(true)
+        try {
+            const res = await fetch('/api/users/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ confirm: 'DELETE' }),
+            })
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}))
+                showToast(data.error || 'Failed to delete account', 'error')
+                setIsDeleting(false)
+                return
+            }
+            showToast(t('deleteAccountSuccess'), 'success')
+            const supabase = createClient()
+            await supabase.auth.signOut()
+            router.push('/')
+        } catch {
+            showToast('An unexpected error occurred', 'error')
+            setIsDeleting(false)
+        }
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -87,6 +120,7 @@ export function SettingsPage({ user }: SettingsPageProps) {
         { id: 'editor', label: t('editorSettings.title'), icon: FileEdit },
         { id: 'invites', label: t('invitesSection.title'), icon: Ticket },
         { id: 'feedback', label: t('feedbackSection.title'), icon: MessageSquarePlus },
+        { id: 'danger', label: t('deleteAccount'), icon: Trash2 },
     ] as const
 
     return (
@@ -495,6 +529,53 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     {/* Feedback */}
                     {activeSection === 'feedback' && (
                         <FeedbackSection />
+                    )}
+
+                    {/* Danger Zone - Account Deletion */}
+                    {activeSection === 'danger' && (
+                        <div className="space-y-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-destructive dark:text-red-400 mb-4">
+                                {t('deleteAccount')}
+                            </h2>
+
+                            <div className="p-4 rounded-lg border border-destructive/30 bg-destructive/5 dark:bg-red-900/10">
+                                <p className="text-sm text-text dark:text-dark-text mb-4">
+                                    {t('deleteAccountWarning')}
+                                </p>
+
+                                <div className="space-y-3">
+                                    <label className="block text-sm font-medium text-text dark:text-dark-text">
+                                        {t('deleteAccountConfirmPrompt')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={deleteConfirmInput}
+                                        onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                                        placeholder="DELETE"
+                                        className="input w-full font-mono"
+                                        disabled={isDeleting}
+                                    />
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDeleteAccount}
+                                        disabled={deleteConfirmInput !== 'DELETE' || isDeleting}
+                                        className="w-full gap-2"
+                                    >
+                                        {isDeleting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                {tCommon('updating')}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Trash2 className="w-4 h-4" />
+                                                {t('deleteAccountButton')}
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
