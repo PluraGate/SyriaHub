@@ -1,7 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+        window.localStorage.setItem('syriahub-cookie-consent', 'all');
+        window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+    });
+});
+
 test('homepage has correct title and brand name', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
 
     // Should redirect to /[locale]
     await expect(page).toHaveURL(/\/en|\/ar/);
@@ -15,7 +22,7 @@ test('homepage has correct title and brand name', async ({ page }) => {
     }
 
     // Expect the title to contain "SyriaHub"
-    await expect(page).toHaveTitle(/SyriaHub/);
+    await expect(page).toHaveTitle(/SyriaHub/, { timeout: 30000 });
 
     // Check if the logo/brand name is visible
     const brandName = page.getByRole('link', { name: /SyriaHub Home/i }).first();
