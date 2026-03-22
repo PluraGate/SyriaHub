@@ -154,9 +154,9 @@ export default function EditEventPage() {
             showToast('Event updated and submitted for review.', 'success')
             router.refresh()
             router.push(`/events/${eventId}`)
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating event:', error)
-            showToast(error?.message || 'Failed to update event.', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to update event.', 'error')
         } finally {
             setSaving(false)
         }

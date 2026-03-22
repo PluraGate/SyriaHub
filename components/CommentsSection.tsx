@@ -45,6 +45,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
       }
 
       // Transform the API response to match CommentTree's expected format
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const transformedComments = (payload.data?.comments || []).map((c: any) => ({
         id: c.id,
         content: c.content,

@@ -196,7 +196,7 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
 export function CommentTree({ postId, comments, onCommentAdded }: CommentTreeProps) {
     const router = useRouter()
     const supabase = createClient()
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: Record<string, string> } | null>(null)
     const [newComment, setNewComment] = useState('')
     const [submitting, setSubmitting] = useState(false)
     const t = useTranslations('Comments')
@@ -252,6 +252,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 throw error
             }
             onCommentAdded?.()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Error adding comment:', error?.message || error?.code || JSON.stringify(error))
         }

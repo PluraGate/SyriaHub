@@ -8,6 +8,7 @@ import {
   withErrorHandling,
   sanitizePaginationParams,
 } from '@/lib/apiUtils'
+import { applyRateLimit } from '@/lib/rateLimit'
 
 /**
  * GET /api/users
@@ -15,6 +16,9 @@ import {
  * Query params: role, search, limit, offset
  */
 async function handleGetUsers(request: Request): Promise<NextResponse> {
+  const rateLimit = await applyRateLimit(request, 'read')
+  if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
   // Verify user is admin
   await verifyRole('admin')
 

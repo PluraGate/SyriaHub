@@ -105,7 +105,7 @@ export function ProfileCompletionCard({ userId, compact = false }: ProfileComple
 
     // Calculate progress ring
     const circumference = 2 * Math.PI * 28
-    const strokeDashoffset = circumference - (percentage / 100) * circumference
+    const _strokeDashoffset = circumference - (percentage / 100) * circumference
 
 
 

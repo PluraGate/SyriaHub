@@ -6,7 +6,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { AdminSidebar } from '@/components/admin'
 import { Button } from '@/components/ui/button'
-import { Loader2, Award, Search, Pencil, Trash2, GitMerge, Check, X } from 'lucide-react'
+import { Loader2, Award, Search, Pencil, Trash2, GitMerge } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import {
     Dialog,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Zap, Trophy, Target, ChevronRight, Loader2 } from 'lucide-react'
+import { Zap, Trophy, ChevronRight, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { UserLevelBadge, getTierFromLevel } from './UserLevelBadge'
 import { cn } from '@/lib/utils'

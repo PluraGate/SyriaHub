@@ -198,6 +198,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
     .select('group_id')
     .eq('user_id', params.id)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let groups: any[] = []
   if (groupMembers && groupMembers.length > 0) {
     const groupIds = groupMembers.map(gm => gm.group_id)

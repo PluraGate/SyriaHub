@@ -17,6 +17,7 @@ type Notification = {
     resource_type?: string
     is_read: boolean
     created_at: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata?: any
 }
 

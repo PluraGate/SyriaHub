@@ -126,9 +126,8 @@ export function buildArticleSchema(
 export function buildQAPageSchema(
     question: PostForSEO,
     answers: AnswerForSEO[],
-    options: { siteUrl?: string } = {}
+    _options: { siteUrl?: string } = {}
 ): object {
-    const { siteUrl = getSiteUrl() } = options
     const authorName = getAuthorName(question.author)
 
     const acceptedAnswer = answers.find(a => a.is_accepted)

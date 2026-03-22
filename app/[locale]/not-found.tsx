@@ -16,6 +16,7 @@ export default async function NotFound() {
                 </div>
 
                 <h1 className="text-4xl font-bold text-text dark:text-dark-text mb-4">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     404 - {t('pageNotFound' as any) || 'Page Not Found'}
                 </h1>
 
@@ -28,6 +29,7 @@ export default async function NotFound() {
                     className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
                 >
                     <ArrowLeft className="w-4 h-4" />
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {t('backToHome' as any) || 'Back to Home'}
                 </Link>
             </main>

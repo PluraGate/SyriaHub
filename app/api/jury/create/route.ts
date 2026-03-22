@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomBytes } from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
+
+// Cryptographically secure Fisher-Yates shuffle
+function secureShuffle<T>(arr: T[]): T[] {
+    const result = [...arr]
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = randomBytes(4).readUInt32BE(0) % (i + 1)
+        ;[result[i], result[j]] = [result[j], result[i]]
+    }
+    return result
+}
 
 // ============================================
 // POST: Create jury deliberation for an appeal (Admin only)
@@ -105,12 +116,12 @@ async function handlePost(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to create deliberation' }, { status: 500 })
         }
 
-        // Select random jurors
-        const shuffled = eligibleJurors.sort(() => 0.5 - Math.random())
-        const selectedJurors = shuffled.slice(0, required_votes)
+        // Select random jurors using a cryptographically secure shuffle
+        const jurors = eligibleJurors as { user_id: string }[]
+        const selectedJurors = secureShuffle(jurors).slice(0, required_votes)
 
         // Create assignments
-        const assignments = selectedJurors.map((juror: { user_id: string }) => ({
+        const assignments = selectedJurors.map((juror) => ({
             deliberation_id: deliberation.id,
             juror_id: juror.user_id
         }))
@@ -133,7 +144,7 @@ async function handlePost(request: NextRequest) {
             .eq('id', appeal_id)
 
         // Create notifications for assigned jurors
-        const notifications = selectedJurors.map((juror: { user_id: string }) => ({
+        const notifications = selectedJurors.map((juror) => ({
             user_id: juror.user_id,
             type: 'jury_assignment',
             title: 'Jury Duty Assignment',

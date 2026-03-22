@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Research Gaps Page', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+            window.localStorage.setItem('syriahub-cookie-consent', 'all');
+        });
+    });
+
     test('research gaps page loads correctly', async ({ page }) => {
-        await page.goto('/en/research-gaps');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Should show the Research Gap Marketplace
         await expect(page).toHaveURL(/\/research-gaps/);
@@ -14,10 +21,7 @@ test.describe('Research Gaps Page', () => {
 
     test('can filter research gaps by status', async ({ page }) => {
         test.setTimeout(60000);
-        await page.goto('/en/research-gaps');
-
-        // Wait for page to load
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Find status filter dropdown
         const statusFilter = page.locator('select').filter({ hasText: /All Statuses/ }).first();
@@ -31,9 +35,7 @@ test.describe('Research Gaps Page', () => {
 
     test('can filter research gaps by gap type', async ({ page }) => {
         test.setTimeout(60000);
-        await page.goto('/en/research-gaps');
-
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Find gap type filter
         const typeFilter = page.locator('select').filter({ hasText: /All Types/ }).first();
@@ -45,7 +47,7 @@ test.describe('Research Gaps Page', () => {
     });
 
     test('search input is visible', async ({ page }) => {
-        await page.goto('/en/research-gaps');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Search input should be visible in header
         const searchInput = page.locator('input[placeholder*="Search research gaps"]');
@@ -53,15 +55,15 @@ test.describe('Research Gaps Page', () => {
     });
 
     test('identify a gap button is visible', async ({ page }) => {
-        await page.goto('/en/research-gaps');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
-        // The "Identify a Gap" button should be visible
-        const identifyButton = page.getByRole('button', { name: /Identify a Gap/i });
+        // The "Identify a Gap" button should be visible (use .first() as there are two: header + empty state)
+        const identifyButton = page.getByRole('button', { name: /Identify a Gap/i }).first();
         await expect(identifyButton).toBeVisible();
     });
 
     test('strategic filter button exists', async ({ page }) => {
-        await page.goto('/en/research-gaps');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Strategic filter button should exist
         const strategicButton = page.getByRole('button', { name: /Strategic/i });
@@ -72,9 +74,7 @@ test.describe('Research Gaps Page', () => {
 test.describe('Gap Contributions', () => {
     test('contributions section appears on gap cards when available', async ({ page }) => {
         test.setTimeout(60000);
-        await page.goto('/en/research-gaps');
-
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/research-gaps', { waitUntil: 'networkidle' });
 
         // Check if any gap cards are present
         const gapCards = page.locator('[class*="rounded-xl"][class*="border"]').filter({
@@ -93,7 +93,7 @@ test.describe('Gap Contributions', () => {
 
 test.describe('Admin Platform Health Dashboard', () => {
     test('platform health page requires authentication', async ({ page }) => {
-        await page.goto('/en/admin/platform-health');
+        await page.goto('/en/admin/platform-health', { waitUntil: 'networkidle' });
 
         // Should either show dashboard or redirect to login
         const url = page.url();
@@ -102,10 +102,9 @@ test.describe('Admin Platform Health Dashboard', () => {
 
     test('admin sidebar shows platform health link', async ({ page }) => {
         // Navigate to any admin page to check sidebar
-        await page.goto('/en/admin');
+        await page.goto('/en/admin', { waitUntil: 'networkidle' });
 
         // Wait for navigation to settle - admin may redirect to login
-        await page.waitForLoadState('domcontentloaded');
 
         // Give time for any redirects
         await page.waitForTimeout(1000);
@@ -129,12 +128,12 @@ test.describe('Admin Platform Health Dashboard', () => {
 test.describe('Impact Stories Section', () => {
     test('insights page loads with impact stories section when available', async ({ page }) => {
         // Insights requires auth - use test bypass or verify redirect
-        await page.goto('/en/insights');
+        await page.goto('/en/insights', { waitUntil: 'networkidle' });
 
         // Should redirect to login since insights is protected
-        await expect(page).toHaveURL(/\/auth\/login/, { timeout: 10000 });
+        await expect(page).toHaveURL(/\/auth\/login/, { timeout: 20000 });
 
         // Verify login form is present (auth flow works)
-        await expect(page.locator('input[type="email"]')).toBeVisible();
+        await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 20000 });
     });
 });

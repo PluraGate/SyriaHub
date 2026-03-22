@@ -9,22 +9,18 @@ export function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    let consent: string | null = null
     try {
-      const consent = localStorage.getItem('syriahub-cookie-consent')
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (!consent) setVisible(true)
-    } catch {
-      // localStorage unavailable (e.g. private browsing restrictions) — show banner
-    }
+      consent = localStorage.getItem('syriahub-cookie-consent')
+    } catch { /* ignore localStorage errors */ }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setVisible(!consent)
   }, [])
 
   const handleConsent = (type: 'all' | 'essential') => {
     try {
       localStorage.setItem('syriahub-cookie-consent', type)
-    } catch {
-      // localStorage unavailable — proceed without persisting consent
-    }
+    } catch { /* ignore localStorage errors */ }
     setVisible(false)
   }
 

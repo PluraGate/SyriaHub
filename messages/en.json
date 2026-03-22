@@ -171,6 +171,7 @@
             "dontHaveCode": "Don't have a code?",
             "emailAddress": "Email address",
             "atLeast6Chars": "At least 6 characters",
+            "atLeast8Chars": "At least 8 characters",
             "securityCheckError": "Please complete the security check"
         }
     },

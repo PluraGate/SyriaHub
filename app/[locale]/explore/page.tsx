@@ -38,14 +38,16 @@ function ExplorePageContent() {
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag)
   const [sortBy, setSortBy] = useState<SortOption>('recent')
-  const [allTags, setAllTags] = useState<string[]>([])
+  const [_allTags, setAllTags] = useState<string[]>([])
   const supabase = createClient()
   const t = useTranslations('Explore')
   const tInsights = useTranslations('Insights')
   const tCategories = useTranslations('Categories')
 
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [recommendedGroups, setRecommendedGroups] = useState<any[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [profiles, setProfiles] = useState<any[]>([])
   const [comingEvents, setComingEvents] = useState<Post[]>([])
   const [disciplinesExpanded, setDisciplinesExpanded] = useState(false)
@@ -100,7 +102,7 @@ function ExplorePageContent() {
           .limit(6)
 
         if (groupsData && groupsData.length > 0) {
-          const groupIds = groupsData.map((g: any) => g.id)
+          const groupIds = groupsData.map((g: { id: string }) => g.id)
           const { data: counts } = await supabase
             .from('group_members')
             .select('group_id')
@@ -111,7 +113,7 @@ function ExplorePageContent() {
             countMap.set(c.group_id, (countMap.get(c.group_id) || 0) + 1)
           })
 
-          const groupsWithCounts = groupsData.map((g: any) => ({
+          const groupsWithCounts = groupsData.map((g: Record<string, unknown>) => ({
             ...g,
             member_count: countMap.get(g.id) || 0
           }))
@@ -163,7 +165,7 @@ function ExplorePageContent() {
 
         // Client-side filter to ensure only future events are shown
         const now = new Date()
-        const futureEvents = (eventsData || []).filter((event: any) => {
+        const futureEvents = (eventsData || []).filter((event: { metadata?: { start_time?: string } }) => {
           if (event.metadata?.start_time) {
             return new Date(event.metadata.start_time) >= now
           }

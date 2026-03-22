@@ -12,6 +12,7 @@ import { ImageUpload } from '@/components/ImageUpload'
 import { Loader2 } from 'lucide-react'
 
 interface ProfileEditFormProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any
 }
 
@@ -48,7 +49,7 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
             showToast('Profile updated successfully', 'success')
             router.push(`/profile/${profile.id}`)
             router.refresh()
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating profile:', error)
             showToast('Failed to update profile', 'error')
         } finally {

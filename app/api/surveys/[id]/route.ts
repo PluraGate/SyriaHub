@@ -12,12 +12,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params
     const supabase = await createClient()
 
-    // Fetch survey with author info
+    // Fetch survey with author info (no email)
     const { data: survey, error: surveyError } = await supabase
         .from('surveys')
         .select(`
             *,
-            author:users!author_id(id, name, email, avatar_url)
+            author:users!author_id(id, name, avatar_url)
         `)
         .eq('id', id)
         .single()
@@ -106,7 +106,9 @@ async function handlePut(request: NextRequest, { params }: RouteParams) {
             start_date,
             end_date,
             settings,
-            questions
+            questions,
+            data_source_type,
+            data_source_label
         } = body
 
         // Update survey
@@ -119,6 +121,14 @@ async function handlePut(request: NextRequest, { params }: RouteParams) {
         if (start_date !== undefined) updateData.start_date = start_date
         if (end_date !== undefined) updateData.end_date = end_date
         if (settings !== undefined) updateData.settings = settings
+        if (data_source_type !== undefined) updateData.data_source_type = data_source_type || null
+        if (data_source_label !== undefined) {
+            const label = (data_source_label as string)?.trim() || null
+            if (label && label.length > 200) {
+                return NextResponse.json({ error: 'data_source_label exceeds 200 characters' }, { status: 400 })
+            }
+            updateData.data_source_label = label
+        }
 
         const { data: updatedSurvey, error: updateError } = await supabase
             .from('surveys')
