@@ -56,7 +56,7 @@ export default function PublicPollPage() {
                 setPoll(data.poll)
                 setHasVoted(data.hasVoted)
                 setUserVote(data.userVote)
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load poll')
             } finally {
                 setLoading(false)
@@ -115,7 +115,7 @@ export default function PublicPollPage() {
             setHasVoted(true)
             setUserVote(selectedOptions)
             showToast('Vote recorded!', 'success')
-        } catch (err) {
+        } catch (_err) {
             showToast('Failed to submit vote', 'error')
         } finally {
             setIsVoting(false)

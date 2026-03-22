@@ -2,7 +2,7 @@
 
 > Understanding the system you're contributing to.
 
-*Last Updated: December 24, 2024*
+*Last Updated: March 2026*
 
 ---
 
@@ -10,7 +10,7 @@
 
 **SyriaHub is closer to a shared research notebook than a forum.**
 
-Contributions are expected to remain useful even when disagreed with. Unlike social platforms optimized for engagement, SyriaHub is designed for knowledge that accumulates, connects, and persists. Your work here becomes part of a collective record—referenced, extended, and sometimes challenged by others.
+Contributions are expected to remain useful even when disagreed with. Unlike social platforms optimised for engagement, SyriaHub is designed for knowledge that accumulates, connects, and persists. Your work here becomes part of a collective record — referenced, extended, and sometimes challenged by others.
 
 ---
 
@@ -39,14 +39,31 @@ Community Q&A with voting and accepted answers.
 | **Best for** | Factual queries, seeking sources, methodological advice |
 
 ### Trace
-Collective memory artefacts—primary sources preserved for the record.
+Collective memory artefacts — primary sources preserved for the record.
 
 | Property | Description |
 |----------|-------------|
 | **Purpose** | Preserving evidence, testimony, documentation |
 | **Structure** | Minimal analysis; focus on source material |
 | **Handling** | Treated as archival material |
-| **Best for** | Photographs, documents, oral testimonies, maps |
+| **Best for** | Photographs, documents, oral testimonies, maps, handwritten records |
+
+**Trace artefact types**: photo, audio, document, video, handwritten.
+
+**Preservation status**: Whether the submitted item is an original, a copy, or a transcription. This is epistemically significant — a transcription of a handwritten document is two steps from the original.
+
+**Chain of custody**: Traces include an optional custody chain — an ordered record of who held the artefact and how it moved from its origin to SyriaHub. Each step in the chain (digitisation, translation, donation) is epistemically relevant. A photograph scanned directly from its original negative carries different weight than one photographed from a photocopy of a print.
+
+Example custody record:
+```
+1. Original photographer (2014)
+2. Family member — physical custody (2014–2019)
+3. Archive — donated and digitised (2019)
+4. SyriaHub contributor — uploaded from archive scan (2026)
+```
+
+### Resource
+Datasets, maps, GIS layers, and structured data.
 
 ### Research Gap
 Identified absences in current knowledge.
@@ -60,9 +77,47 @@ Identified absences in current knowledge.
 
 ---
 
+## Positionality
+
+Every contribution comes from a specific position. SyriaHub asks authors to optionally declare their structural standpoint relative to the events they document:
+
+| Perspective | Meaning |
+|-------------|---------|
+| **Insider — affected** | Directly experienced or affected by the events |
+| **Insider — professional** | Syrian professional working in-country |
+| **Outsider — researcher** | External academic or researcher |
+| **Institutional** | Organisational voice (UN, NGO, government) |
+| **Diaspora** | Syrian diaspora perspective |
+
+This is not a quality ranking. Insider-affected testimony is not inferior to outsider-researcher analysis — they capture fundamentally different things. Positionality is information that helps readers interpret what they are reading, not a credential system.
+
+Declaring positionality is optional. It is set by the author and is not overridden by moderators.
+
+---
+
+## The Five Trust Dimensions (T1–T5)
+
+Each piece of content carries five independent trust dimensions. These are always shown as five separate values — never averaged into a single score. Collapsing them hides the information that matters.
+
+| Dimension | What it measures |
+|-----------|-----------------|
+| **T1** Source | Who is speaking and what is their track record? |
+| **T2** Method | Is the methodology documented and reproducible? |
+| **T3** Proximity | How close is the evidence to the original phenomenon? |
+| **T4** Temporal | Is this data still current? |
+| **T5** Validation | Do independent sources corroborate or contradict this? |
+
+**T4 decays over time.** A field survey from active-conflict conditions has a half-life of roughly 200 days. Pre-conflict archival material essentially never expires. The displayed T4 score reflects actual data age, not just the score assigned at publication.
+
+**T5 warns of circular corroboration.** Five documents citing the same single source appear corroborated but are not. When corroborating sources have been verified as genuinely independent, this is noted. When there is a circular-citation risk, a warning is shown.
+
+See [GOVERNANCE_AND_TRUST.md](./GOVERNANCE_AND_TRUST.md) for full dimension descriptions.
+
+---
+
 ## Forking & Attribution
 
-Content on SyriaHub can be forked—creating a new version that builds on the original while maintaining attribution.
+Content on SyriaHub can be forked — creating a new version that builds on the original while maintaining attribution.
 
 ### How Forking Works
 1. Click "Fork" on any post
@@ -91,7 +146,16 @@ Authors choose licenses when publishing. Forks inherit license obligations:
 When you cite another SyriaHub post:
 - A citation link appears in your references section
 - A backlink appears on the cited post ("Cited by...")
-- The citation relationship is typed (supports, extends, challenges)
+- The citation relationship is typed:
+
+| Type | Meaning | Impact weight |
+|------|---------|--------------|
+| **extends** | Builds upon, applies elsewhere | Highest (2×) |
+| **supports** | Corroborating evidence | Standard (1×) |
+| **disputes** | Contradiction or refutation | Positive (0.5×) — disagreement is engagement |
+| **mentions** | Incidental reference | Minimal (0.25×) |
+
+Disputes have *positive* impact weight. Scholarly disagreement is more valuable than silence.
 
 ### Version History
 - **24-hour edit window**: After publishing, you have 24 hours to make corrections without creating a new version
@@ -162,9 +226,32 @@ Research gaps map what we don't know, helping coordinate effort and avoid duplic
 | **Temporal** | Certain time periods lack coverage |
 
 ### Collaboration
-- Multiple researchers can work on the same gap
-- Gaps can be addressed by multiple posts
-- Partial resolutions are valid
+On any gap, researchers can contribute:
+
+| Contribution type | Use |
+|------------------|-----|
+| **Reading suggestion** | Suggest a relevant resource or paper |
+| **Collaboration offer** | Offer to work on addressing the gap |
+| **Methodological note** | Note on approach or methodology |
+| **Data pointer** | Point to an available dataset or evidence |
+| **Challenge framing** | Dispute the framing or existence of the gap |
+
+**Challenge framing** is important: gaps themselves can be wrong. If you believe a gap is mischaracterised, doesn't exist, or is pointing in the wrong direction, you can formally challenge it. This challenge is attributed to you and visible to the community — it is part of the knowledge record, not a complaint system.
+
+Multiple researchers can work on the same gap. Partial resolutions are valid. A gap can be addressed by multiple posts.
+
+---
+
+## Data Conflicts (Field vs. External Sources)
+
+SyriaHub integrates external data from sources like OpenStreetMap, Sentinel satellite imagery, HDX, and the World Bank. When external data contradicts field evidence:
+
+1. The conflict is **logged and displayed** — not silently resolved
+2. **Field evidence wins by default**: primary observation outweighs remote inference
+3. Conflicts are visible in search results and on post pages
+4. Users can see what the conflict is, which sources disagree, and how it was resolved
+
+This is honest about disagreement. External APIs describe the world from a distance; they are not ground truth.
 
 ---
 
@@ -174,7 +261,7 @@ When you contribute to SyriaHub, you're participating in:
 - **A persistent record**: Content is versioned and preserved
 - **A citation network**: Your work connects to and is connected by others
 - **A gap-mapping effort**: Collective identification of what needs research
-- **A trust system**: Quality over time builds reputation
+- **A five-dimension trust system**: Quality over time, not popularity
 - **An epistemic community**: Standards matter more than engagement
 
 Welcome.

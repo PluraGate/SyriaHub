@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { MapPin, Layers, X, Maximize2, Minimize2 } from 'lucide-react'
+import { MapPin, Layers, Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 // Dynamic import for Leaflet (SSR-safe)
 import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
 
 const MapContainer = dynamic(
     () => import('react-leaflet').then((mod) => mod.MapContainer),
@@ -20,10 +19,6 @@ const TileLayer = dynamic(
 )
 const Marker = dynamic(
     () => import('react-leaflet').then((mod) => mod.Marker),
-    { ssr: false }
-)
-const Popup = dynamic(
-    () => import('react-leaflet').then((mod) => mod.Popup),
     { ssr: false }
 )
 const Circle = dynamic(
@@ -174,6 +169,8 @@ export function SpatialMap({
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        updateWhenIdle={true}
+                        keepBuffer={4}
                     />
                 )}
 
@@ -183,7 +180,7 @@ export function SpatialMap({
                     zoom={matchedLocation ? 10 : 6}
                     bounds={(() => {
                         if (spatialGeometry?.type === 'Polygon' && spatialGeometry.coordinates) {
-                            const coords = spatialGeometry.coordinates as any[]
+                            const coords = spatialGeometry.coordinates as number[] | number[][] | number[][][]
                             let points: number[][] = []
 
                             // Handle standard GeoJSON number[][][] and simple number[][]
@@ -217,7 +214,7 @@ export function SpatialMap({
                             const lat = spatialGeometry.coordinates[1] as number
                             const lng = spatialGeometry.coordinates[0] as number
                             // Rough approximation: 1 degree approx 111km
-                            const radiusDeg = ((spatialGeometry as any).radius || 5000) / 111000
+                            const radiusDeg = ((spatialGeometry as unknown as { radius?: number }).radius || 5000) / 111000
                             const pad = radiusDeg * 1.5
                             return [
                                 [lat - pad, lng - pad],
@@ -243,6 +240,8 @@ export function SpatialMap({
                     <TileLayer
                         attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                        updateWhenIdle={true}
+                        keepBuffer={4}
                     />
                 )}
 
@@ -267,7 +266,7 @@ export function SpatialMap({
                 {spatialGeometry && spatialGeometry.type === 'Polygon' && spatialGeometry.coordinates && (
                     <Polygon
                         positions={(() => {
-                            const coords = spatialGeometry.coordinates as any[]
+                            const coords = spatialGeometry.coordinates as number[] | number[][] | number[][][]
                             if (!coords || coords.length === 0) return []
 
                             // Check for standard GeoJSON (number[][][]) - Array of rings
@@ -289,10 +288,10 @@ export function SpatialMap({
                         }}
                     />
                 )}
-                {spatialGeometry && (spatialGeometry as any).radius && spatialGeometry.coordinates && spatialGeometry.coordinates.length >= 2 && (
+                {spatialGeometry && (spatialGeometry as unknown as { radius?: number }).radius && spatialGeometry.coordinates && spatialGeometry.coordinates.length >= 2 && (
                     <Circle
                         center={[spatialGeometry.coordinates[1] as number, spatialGeometry.coordinates[0] as number]}
-                        radius={(spatialGeometry as any).radius}
+                        radius={(spatialGeometry as unknown as { radius?: number }).radius}
                         pathOptions={{
                             color: '#1A3D40',
                             fillColor: '#4AA3A5',

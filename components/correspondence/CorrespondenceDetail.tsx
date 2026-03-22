@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, FileText, Calendar, User, Archive, Mail, MailOpen, Reply, Loader2 } from 'lucide-react'
+import { ArrowLeft, FileText, Calendar, User, Archive, MailOpen, Reply, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CorrespondenceForm } from './CorrespondenceForm'
@@ -70,7 +70,7 @@ export function CorrespondenceDetail({ correspondenceId, locale, currentUserId }
             } else {
                 showToast(result.error || 'Failed to archive', 'error')
             }
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to archive', 'error')
         } finally {
             setArchiving(false)
@@ -147,7 +147,7 @@ export function CorrespondenceDetail({ correspondenceId, locale, currentUserId }
             <div className="space-y-6">
                 {thread.map((message, index) => {
                     const isSender = message.sender_id === currentUserId
-                    const person = isSender ? message.recipient : message.sender
+                    const _person = isSender ? message.recipient : message.sender
 
                     return (
                         <article

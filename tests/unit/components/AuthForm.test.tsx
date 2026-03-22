@@ -8,6 +8,7 @@ import { AuthForm } from '@/components/AuthForm'
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
+  useLocale: () => 'en',
   useTranslations: (namespace: string) => (key: string) => {
     const translations: Record<string, Record<string, string>> = {
       Auth: {
@@ -19,12 +20,17 @@ vi.mock('next-intl', () => ({
         password: 'Password',
         signIn: 'Sign In',
         signUp: 'Sign Up',
+        login: 'Sign In',
         createAccount: 'Create Account',
         forgotPassword: 'Forgot Password?',
         noAccount: "Don't have an account?",
         hasAccount: 'Already have an account?',
         signingIn: 'Signing in...',
         creatingAccount: 'Creating account...',
+        termsAgree: 'By creating an account, you agree to our',
+        termsOfService: 'Terms of Service',
+        privacyPolicy: 'Privacy Policy',
+        acceptTermsRequired: 'You must accept the Terms of Service and Privacy Policy to continue.',
       },
       Forms: {
         showPassword: 'Show password',

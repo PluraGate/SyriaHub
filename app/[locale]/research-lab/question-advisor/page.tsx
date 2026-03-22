@@ -10,6 +10,7 @@ export default async function QuestionAdvisorPage() {
 
     // Check AI usage limits
     let usageLimits = null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let questionHistory: any[] = []
 
     if (user) {

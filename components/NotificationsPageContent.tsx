@@ -12,7 +12,6 @@ import {
     UserPlus,
     Award,
     CheckCircle,
-    Trash2,
     Loader2,
     ArrowLeft,
     Reply
@@ -36,6 +35,7 @@ const filterKeys: { value: FilterType; labelKey: string }[] = [
     { value: 'system', labelKey: 'types.system' },
 ]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const typeIcons: Record<string, any> = {
     badge: Award,
     solution: CheckCircle,
@@ -54,7 +54,7 @@ const typeColors: Record<string, string> = {
     system: 'text-gray-500 bg-gray-50 dark:bg-gray-900/20',
 }
 
-export function NotificationsPageContent({ userId }: { userId: string }) {
+export function NotificationsPageContent({ userId: _userId }: { userId: string }) {
     const t = useTranslations('Notifications')
     const { formatSaved } = useDateFormatter()
     const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
@@ -75,12 +75,14 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
     }
 
     const filteredNotifications = useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const list = notifications as any[]
         if (filter === 'all') return list
         if (filter === 'unread') return list.filter(n => !n.is_read)
         return list.filter(n => n.type === filter)
     }, [notifications, filter])
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleNotificationClick = (notification: any) => {
         if (!notification.is_read) {
             markAsRead(notification.id)
@@ -91,6 +93,7 @@ export function NotificationsPageContent({ userId }: { userId: string }) {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleReply = async (notification: any) => {
         if (!replyContent.trim() || !notification.post_id) return
 

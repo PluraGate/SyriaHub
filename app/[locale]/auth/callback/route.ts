@@ -19,8 +19,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if this is a new user (just verified their email for the first time)
-    if (data.user) {
+    // Check if this is a new user (just verified their email for the first time).
+    // Skip onboarding redirect for password-reset flow — the user already exists.
+    const isPasswordReset = next === '/auth/reset-password'
+    if (data.user && !isPasswordReset) {
       const { data: userData } = await supabase
         .from('users')
         .select('bio, affiliation')

@@ -6,9 +6,10 @@ test.describe('Full System Verification', () => {
         // Set a standard viewport
         await page.setViewportSize({ width: 1280, height: 800 });
 
-        // Disable Epistemic Onboarding by setting localStorage key
+        // Disable Epistemic Onboarding and Cookie Consent by setting localStorage keys
         await page.addInitScript(() => {
             window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+            window.localStorage.setItem('syriahub-cookie-consent', 'all');
         });
     });
 
@@ -19,8 +20,7 @@ test.describe('Full System Verification', () => {
             await expect(page).toHaveURL(/\/(en|ar)/);
 
             // 2. English Check - dir may be 'ltr' or not present (ltr is default)
-            await page.goto('/en');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en', { waitUntil: 'networkidle' });
             const dirAttr = await page.locator('html').getAttribute('dir');
             expect(dirAttr === 'ltr' || dirAttr === null).toBeTruthy();
 
@@ -52,15 +52,14 @@ test.describe('Full System Verification', () => {
         };
 
         test('onboarding modal can be dismissed', async ({ page }) => {
-            await page.goto('/en');
+            await page.goto('/en', { waitUntil: 'networkidle' });
             await dismissOnboarding(page);
         });
     });
 
     test.describe('Feature Discovery', () => {
         test('explore page features tags and publications', async ({ page }) => {
-            await page.goto('/en/explore');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en/explore', { waitUntil: 'networkidle' });
 
             // Check for search input with broader selector
             const searchInput = page.locator('input[type="search"], [placeholder*="search" i], [placeholder*="بحث" i]').first();
@@ -72,32 +71,28 @@ test.describe('Full System Verification', () => {
 
         test('research lab sections: polls accessibility', async ({ page }) => {
             test.setTimeout(60000);
-            await page.goto('/en/research-lab/polls');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en/research-lab/polls', { waitUntil: 'networkidle' });
             const url = page.url();
             expect(url).toMatch(/polls|auth\/login|login/i);
         });
 
         test('research lab sections: surveys accessibility', async ({ page }) => {
             test.setTimeout(60000);
-            await page.goto('/en/research-lab/surveys');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en/research-lab/surveys', { waitUntil: 'networkidle' });
             const url = page.url();
             expect(url).toMatch(/surveys|auth\/login|login/i);
         });
 
         test('research lab sections: statistics accessibility', async ({ page }) => {
             test.setTimeout(60000);
-            await page.goto('/en/research-lab/statistics');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en/research-lab/statistics', { waitUntil: 'networkidle' });
             const url = page.url();
             expect(url).toMatch(/statistics|auth\/login|login/i);
         });
 
         test('research lab sections: search accessibility', async ({ page }) => {
             test.setTimeout(60000);
-            await page.goto('/en/research-lab/search');
-            await page.waitForLoadState('domcontentloaded');
+            await page.goto('/en/research-lab/search', { waitUntil: 'networkidle' });
             const url = page.url();
             // The search page might redirect to /search directly or have a different path structure
             // Just checking if we are not on a 404 or completely different domain
@@ -109,7 +104,7 @@ test.describe('Full System Verification', () => {
         test('dark mode preference is respected', async ({ page }) => {
             // Force dark mode
             await page.emulateMedia({ colorScheme: 'dark' });
-            await page.goto('/en');
+            await page.goto('/en', { waitUntil: 'networkidle' });
 
             // Check for dark class on html or body
             const isDark = await page.evaluate(() => {
@@ -121,7 +116,7 @@ test.describe('Full System Verification', () => {
         });
 
         test('offline page displays premium design (glows and animations)', async ({ page }) => {
-            await page.goto('/en/offline');
+            await page.goto('/en/offline', { waitUntil: 'networkidle' });
 
             // Verify Title
             await expect(page.locator('h1')).toBeVisible();

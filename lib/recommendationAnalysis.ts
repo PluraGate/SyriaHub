@@ -69,9 +69,12 @@ const getSupabase = () => {
 // ==================== Main Analysis Function ====================
 
 export interface AnalysisResult {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trustProfile: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     relationships: any[]
     disciplines: string[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     evidence: any
 }
 
@@ -222,6 +225,7 @@ export async function analyzePostForRecommendations(
         }
 
         if (analysis.relationships?.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const relationshipInserts = analysis.relationships.map((r: any) => ({
                 source_id: postId,
                 source_type: 'post',

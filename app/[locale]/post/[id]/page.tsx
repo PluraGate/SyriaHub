@@ -89,6 +89,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
   const description = post.content.replace(/[#*_`\[\]]/g, '').substring(0, 155) + '...'
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
@@ -140,7 +141,9 @@ export default async function PostPage(props: PostPageProps) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let post: any = null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any = null
 
   // Determine if id is a UUID or a slug
@@ -198,6 +201,7 @@ export default async function PostPage(props: PostPageProps) {
     redirect(`/events/${id}`)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let relatedPosts: any[] = []
   if (post.tags && post.tags.length > 0) {
     const { data } = await supabase
@@ -236,9 +240,11 @@ export default async function PostPage(props: PostPageProps) {
 
 
   const citationBacklinks =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     citationData?.map((c: any) => ({
       ...c.posts,
       quote_content: c.quote_content
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })).filter((c: any) => c.id) || []
 
   const authorDisplay =
@@ -247,6 +253,7 @@ export default async function PostPage(props: PostPageProps) {
   const readingTime = getReadingTime(post.content || '')
 
   // Fetch answers if it's a question
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let answers: any[] = []
   if (post.content_type === 'question') {
     const { data: answersData } = await supabase
@@ -265,6 +272,7 @@ export default async function PostPage(props: PostPageProps) {
   }
 
   // Fetch linked resources
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let linkedResources: any[] = []
   const { data: resourceLinksData } = await supabase
     .from('resource_post_links')
@@ -291,6 +299,7 @@ export default async function PostPage(props: PostPageProps) {
     .eq('post_id', id)
     .eq('is_current', true)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const schemaValues: SchemaFieldValue[] = (schemaValuesData || []).map((item: any) => {
     const field = Array.isArray(item.field) ? item.field[0] : item.field
     const version = Array.isArray(item.version) ? item.version[0] : item.version
@@ -306,7 +315,9 @@ export default async function PostPage(props: PostPageProps) {
 
   if (resourceLinksData) {
     linkedResources = resourceLinksData
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((link: any) => link.posts)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .filter((r: any) => r !== null)
   }
 
@@ -325,11 +336,14 @@ export default async function PostPage(props: PostPageProps) {
 
   const jsonLdData = post.content_type === 'question' && hasAnswers
     ? buildQAPageSchema(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { ...post, author: post.author as any },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       answers.map((a: any) => ({ ...a, author: a.author as any })),
       { siteUrl }
     )
     : buildArticleSchema(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { ...post, author: post.author as any },
       { type: isScholarly ? 'ScholarlyArticle' : 'Article', siteUrl }
     )
@@ -712,7 +726,7 @@ export default async function PostPage(props: PostPageProps) {
                     {t('relatedResearch')}
                   </h3>
                   <div className="space-y-4">
-                    {relatedPosts.slice(0, 4).map((relPost: any) => (
+                    {relatedPosts.slice(0, 4).map((relPost: { id: string; title?: string; created_at?: string }) => (
                       <Link
                         key={relPost.id}
                         href={`/post/${relPost.id}`}
@@ -722,7 +736,7 @@ export default async function PostPage(props: PostPageProps) {
                           {relPost.title}
                         </h4>
                         <p className="text-xs text-text-light dark:text-dark-text-muted mt-1">
-                          {new Date(relPost.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {relPost.created_at ? new Date(relPost.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
                         </p>
                       </Link>
                     ))}
@@ -737,7 +751,7 @@ export default async function PostPage(props: PostPageProps) {
                     {t('citedBy')}
                   </h3>
                   <div className="space-y-4">
-                    {citationBacklinks.slice(0, 4).map((citation: any) => (
+                    {citationBacklinks.slice(0, 4).map((citation: { id: string; title?: string; quote_content?: string }) => (
                       <Link
                         key={citation.id}
                         href={`/post/${citation.id}`}

@@ -3,7 +3,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { QuestionCard } from '@/components/QuestionCard'
 import Link from 'next/link'
-import { PlusCircle, Search } from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
 export default async function QuestionsPage() {

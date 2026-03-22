@@ -73,7 +73,9 @@
             "adminOnly": "Only administrators can perform this action"
         },
         "pageNotFound": "Page Not Found",
-        "backToHome": "Back to Home"
+        "backToHome": "Back to Home",
+        "apply": "Apply",
+        "updating": "Updating..."
     },
     "Licenses": {
         "CC-BY-4_0": "CC BY 4.0 (Attribution)",
@@ -134,7 +136,9 @@
         "welcomeBack": "Welcome back",
         "loginSubtitle": "Sign in to continue to your account",
         "signupSubtitle": "Create your account to start contributing",
-        "termsAgree": "By signing up, you agree to our",
+        "loginTitle": "Sign in to your account",
+        "termsAgree": "By creating an account, you agree to our",
+        "acceptTermsRequired": "You must accept the Terms of Service and Privacy Policy to continue.",
         "termsOfService": "Terms of Service",
         "privacyPolicy": "Privacy Policy",
         "verifyEmail": "Verify your email",
@@ -167,6 +171,7 @@
             "dontHaveCode": "Don't have a code?",
             "emailAddress": "Email address",
             "atLeast6Chars": "At least 6 characters",
+            "atLeast8Chars": "At least 8 characters",
             "securityCheckError": "Please complete the security check"
         }
     },
@@ -567,7 +572,10 @@
             "question2": "What do I not know, or cannot verify?",
             "question3": "Who should I reference or acknowledge?",
             "dismiss": "Dismiss"
-        }
+        },
+        "searchItems": "Search items...",
+        "selectOption": "Select an option",
+        "writeAnswer": "Write your answer here..."
     },
     "Profile": {
         "myProfile": "My Profile",
@@ -898,7 +906,13 @@
             "publishSuccess": "Your event has been successfully published.",
             "draftSuccess": "Draft saved successfully.",
             "signInRequired": "Please sign in to create an event."
-        }
+        },
+        "statuses": {
+            "scheduled": "Scheduled",
+            "postponed": "Postponed",
+            "cancelled": "Cancelled"
+        },
+        "updateStatusHint": "Update the status if the event has been cancelled or postponed."
     },
     "ResearchGaps": {
         "title": "Research Gap Marketplace",
@@ -1145,7 +1159,8 @@
         "replyTo": "Replying to {name}",
         "cancelReply": "Cancel reply",
         "signInToComment": "Sign in to join the discussion",
-        "anonymous": "Anonymous"
+        "anonymous": "Anonymous",
+        "joinDiscussion": "to join the discussion."
     },
     "Settings": {
         "title": "Settings",
@@ -1305,7 +1320,11 @@
         "securityDescription": "Enhance your account security with additional protection.",
         "feedbackSection": {
             "title": "Feedback"
-        }
+        },
+        "deleteAccountWarning": "All your content, votes, and profile data will be permanently deleted. This cannot be undone.",
+        "deleteAccountConfirmPrompt": "Type DELETE to confirm",
+        "deleteAccountButton": "Permanently Delete My Account",
+        "deleteAccountSuccess": "Your account has been deleted."
     },
     "Analytics": {
         "title": "Research Analytics",
@@ -2032,7 +2051,11 @@
                 "event": "Event",
                 "trace": "Trace"
             }
-        }
+        },
+        "editRegistry": "Edit registry",
+        "deleteRegistry": "Delete registry",
+        "editField": "Edit field",
+        "deleteField": "Delete field"
     },
     "UserManagement": {
         "title": "User Management",
@@ -3758,5 +3781,12 @@
             "noMessages": "No correspondence yet",
             "description": "Messages you receive will appear here"
         }
+    },
+    "CookieConsent": {
+        "title": "Cookie Preferences",
+        "description": "We use essential cookies to keep you signed in, and optional analytics cookies to improve the platform. No behavioral profiles are built.",
+        "acceptAll": "Accept All",
+        "essentialOnly": "Essential Only",
+        "learnMore": "Privacy Policy"
     }
 }

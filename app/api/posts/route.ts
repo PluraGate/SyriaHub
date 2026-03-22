@@ -1,6 +1,6 @@
 // Posts API - List and Create posts
 import { NextResponse } from 'next/server'
-import { createServerClient, getCurrentUser, verifyAuth } from '@/lib/supabaseClient'
+import { createServerClient, verifyAuth } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,
@@ -9,7 +9,6 @@ import {
   validateRequiredFields,
   getQueryParams,
   withErrorHandling,
-  unauthorizedResponse,
   sanitizePaginationParams,
   withOriginValidation,
 } from '@/lib/apiUtils'

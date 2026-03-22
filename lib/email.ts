@@ -66,7 +66,7 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
   try {
     // Only use Supabase Edge Functions if explicitly requested
     if (process.env.USE_EDGE_FUNCTIONS === 'true') {
-      const { data, error } = await supabase.functions.invoke('send-email', {
+      const { error } = await supabase.functions.invoke('send-email', {
         body: { to, subject, html, text },
       })
 
@@ -124,8 +124,8 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     // Verify transporter connection before sending
     try {
       await transporter.verify()
-    } catch (verifyError: any) {
-      console.error('❌ SMTP Connection Verification Failed:', verifyError.message)
+    } catch (verifyError) {
+      console.error('❌ SMTP Connection Verification Failed:', verifyError instanceof Error ? verifyError.message : String(verifyError))
       throw verifyError
     }
 
@@ -151,10 +151,12 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     })
 
     return true
-  } catch (error: any) {
+  } catch (error) {
     // Careful with logging to avoid triggering RangeError if the error object is circular or too large
     // Just log the message and code
-    console.error(`❌ Email send error [${error.code || 'UNKNOWN'}]:`, error.message)
+    const errCode = (error as { code?: string })?.code || 'UNKNOWN'
+    const errMessage = error instanceof Error ? error.message : String(error)
+    console.error(`❌ Email send error [${errCode}]:`, errMessage)
 
     // Log failure to database
     try {
@@ -162,9 +164,9 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
         recipient_email: to,
         subject,
         status: 'failed',
-        error_message: error.message,
+        error_message: errMessage,
       })
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Failed to log email failure to database')
     }
 
@@ -215,8 +217,10 @@ export async function sendInvitationEmail({ to, subject, html, text }: EmailOpti
     console.error('❌ Resend API key not configured. Cannot send invitation email.')
     throw new Error('Email service not configured')
 
-  } catch (error: any) {
-    console.error(`❌ Invitation email send error [${error.code || 'UNKNOWN'}]:`, error.message)
+  } catch (error) {
+    const errCode = (error as { code?: string })?.code || 'UNKNOWN'
+    const errMessage = error instanceof Error ? error.message : String(error)
+    console.error(`❌ Invitation email send error [${errCode}]:`, errMessage)
 
     // Log failure to database
     try {
@@ -224,9 +228,9 @@ export async function sendInvitationEmail({ to, subject, html, text }: EmailOpti
         recipient_email: to,
         subject,
         status: 'failed',
-        error_message: error.message,
+        error_message: errMessage,
       })
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Failed to log email failure to database')
     }
 
@@ -526,19 +530,6 @@ export const emailTemplates = {
  */
 function wrapEmailLayout(content: string): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syriahub.org'
-
-  // SVG Logo (inline for better email compatibility)
-  const logoSvg = `<svg width="48" height="48" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="256" cy="256" r="240" fill="url(#grad1)" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
-    <path d="M256 120C180.144 120 118 182.144 118 258C118 333.856 180.144 396 256 396C331.856 396 394 333.856 394 258" stroke="white" stroke-width="32" stroke-linecap="round"/>
-    <circle cx="360" cy="180" r="24" fill="#4ade80"/>
-    <defs>
-      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#1e7a6e"/>
-        <stop offset="100%" style="stop-color:#0d4d44"/>
-      </linearGradient>
-    </defs>
-  </svg>`
 
   return `
     <!DOCTYPE html>

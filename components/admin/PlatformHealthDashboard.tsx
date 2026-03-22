@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
     Activity,
-    Clock,
     FileText,
     TrendingUp,
     Target,
@@ -15,8 +14,7 @@ import {
     Loader2,
     RefreshCw,
     MessageSquare,
-    Timer,
-    Users
+    Timer
 } from 'lucide-react'
 import {
     Tooltip,

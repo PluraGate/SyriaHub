@@ -45,7 +45,7 @@ export function TwoFactorVerify({ factorId, onVerified, onCancel }: TwoFactorVer
             }
 
             // Verify the challenge with the code
-            const { data, error: verifyError } = await supabase.auth.mfa.verify({
+            const { data: _data, error: verifyError } = await supabase.auth.mfa.verify({
                 factorId,
                 challengeId: challengeData.id,
                 code
@@ -59,7 +59,7 @@ export function TwoFactorVerify({ factorId, onVerified, onCancel }: TwoFactorVer
 
             showToast('Verification successful!', 'success')
             onVerified()
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to verify code')
         }
         setVerifying(false)

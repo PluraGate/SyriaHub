@@ -1,12 +1,12 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
-// SMTP Configuration from Supabase Secrets
-const SMTP_HOST = Deno.env.get('SMTP_HOST') || 'smtp.gmail.com'
-const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
-const SMTP_USER = Deno.env.get('SMTP_USER') || 'admin@pluragate.org'
-const SMTP_PASS = Deno.env.get('SMTP_PASS')!
-const FROM_NAME = Deno.env.get('FROM_NAME') || 'SyriaHub via PluraGate'
+// SMTP Configuration from Supabase Secrets (reserved for future use)
+const _SMTP_HOST = Deno.env.get('SMTP_HOST') || 'smtp.gmail.com'
+const _SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
+const _SMTP_USER = Deno.env.get('SMTP_USER') || 'admin@pluragate.org'
+const _SMTP_PASS = Deno.env.get('SMTP_PASS')!
+const _FROM_NAME = Deno.env.get('FROM_NAME') || 'SyriaHub via PluraGate'
 
 // SECURITY: Get allowed origin - MUST be set in production, no fallback to '*'
 const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN')

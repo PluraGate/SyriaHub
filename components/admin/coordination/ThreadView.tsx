@@ -32,9 +32,11 @@ interface ThreadMessage {
     message_type: string
     content: string
     action_type: string | null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     action_data: any
     action_executed: boolean
     action_executed_at: string | null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     action_result: any
     decision_confidence: string | null
     review_pending: boolean
@@ -126,8 +128,8 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
 
             setThread(data.thread)
             setMessages(data.messages || [])
-        } catch (error: any) {
-            showToast(error.message, 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'An error occurred', 'error')
         } finally {
             setLoading(false)
         }
@@ -156,8 +158,8 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
 
             showToast(t('archiveSuccess'), 'success')
             onBack()
-        } catch (error: any) {
-            showToast(error.message, 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'An error occurred', 'error')
         } finally {
             setArchiving(false)
             setShowArchiveDialog(false)
@@ -289,10 +291,12 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
                                                 {message.author_name || t('unknown')}
                                             </span>
                                             <span className={cn('px-1.5 py-0.5 rounded text-xs', config.color)}>
+                                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                 {t(config.labelKey as any)}
                                             </span>
                                             {message.decision_confidence && (
                                                 <span className={cn('text-xs font-medium', confidenceColors[message.decision_confidence])}>
+                                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                     ({t(`confidences.${message.decision_confidence}` as any)})
                                                 </span>
                                             )}
@@ -357,6 +361,7 @@ export function ThreadView({ threadId, isAdmin, onBack }: ThreadViewProps) {
                         />
                         <div className="flex gap-2 justify-end">
                             <Button variant="ghost" onClick={() => setShowArchiveDialog(false)}>
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {t('Common.cancel' as any)}
                             </Button>
                             <Button onClick={handleArchive} disabled={archiving}>

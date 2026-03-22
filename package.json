@@ -109,7 +109,7 @@
     "lodash-es": "4.17.23"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.56.0",
     "@swc/helpers": "^0.5.18",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",

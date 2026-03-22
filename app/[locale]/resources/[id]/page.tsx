@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
     if (isUUID(id)) {
         const { data } = await supabase
             .from('posts')
-            .select('id, slug, title, content, created_at, updated_at, tags, metadata, author:users!author_id(name, email)')
+            .select('id, slug, title, content, created_at, updated_at, tags, metadata, author:users!author_id(name)')
             .eq('id', id)
             .eq('content_type', 'resource')
             .single()
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
     } else {
         const { data } = await supabase
             .from('posts')
-            .select('id, slug, title, content, created_at, updated_at, tags, metadata, author:users!author_id(name, email)')
+            .select('id, slug, title, content, created_at, updated_at, tags, metadata, author:users!author_id(name)')
             .eq('slug', id)
             .eq('content_type', 'resource')
             .single()
@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
 
     return buildResourceMetadata({
         ...resource,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         author: resource.author as any
     })
 }
@@ -76,7 +77,7 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
             .from('posts')
             .select(`
         *,
-        author:users!author_id(name, email, avatar_url)
+        author:users!author_id(name, avatar_url)
       `)
             .eq('id', id)
             .eq('content_type', 'resource')
@@ -100,7 +101,7 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
                     .from('posts')
                     .select(`
             *,
-            author:users!author_id(name, email, avatar_url)
+            author:users!author_id(name, avatar_url)
           `)
                     .eq('id', id)
                     .single()
@@ -117,7 +118,7 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
             .from('posts')
             .select(`
         *,
-        author:users!author_id(name, email, avatar_url)
+        author:users!author_id(name, avatar_url)
       `)
             .eq('slug', id)
             .eq('content_type', 'resource')
@@ -136,12 +137,13 @@ export default async function ResourceDetailsPage({ params }: ResourcePageProps)
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
     }
 
-    const displayAuthor = resource.author?.name || resource.author?.email?.split('@')[0] || 'Anonymous'
+    const displayAuthor = resource.author?.name || 'Anonymous'
     const metadata = resource.metadata || {}
 
     // Build JSON-LD structured data
     const jsonLdData = buildDatasetSchema({
         ...resource,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         author: resource.author as any
     })
 

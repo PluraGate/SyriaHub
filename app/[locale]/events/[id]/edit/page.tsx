@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Loader2, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface EventData {
     id: string
@@ -46,6 +47,7 @@ export default function EditEventPage() {
     const params = useParams()
     const { showToast } = useToast()
     const eventId = params?.id as string
+    const t = useTranslations('Events')
 
     // Load event data
     useEffect(() => {
@@ -152,9 +154,9 @@ export default function EditEventPage() {
             showToast('Event updated and submitted for review.', 'success')
             router.refresh()
             router.push(`/events/${eventId}`)
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating event:', error)
-            showToast(error?.message || 'Failed to update event.', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to update event.', 'error')
         } finally {
             setSaving(false)
         }
@@ -296,12 +298,12 @@ export default function EditEventPage() {
                             onChange={(e) => setStatus(e.target.value)}
                             className="select-input"
                         >
-                            <option value="scheduled">Scheduled</option>
-                            <option value="postponed">Postponed</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="scheduled">{t('statuses.scheduled')}</option>
+                            <option value="postponed">{t('statuses.postponed')}</option>
+                            <option value="cancelled">{t('statuses.cancelled')}</option>
                         </select>
                         <p className="text-sm text-text-light dark:text-dark-text-muted">
-                            Update the status if the event has been cancelled or postponed.
+                            {t('updateStatusHint')}
                         </p>
                     </div>
 

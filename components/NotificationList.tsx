@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { Bell, Check, MessageSquare, Award, CheckCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { NotificationSkeleton } from '@/components/ui/skeleton'
 import { NoNotificationsIllustration } from '@/components/ui/EmptyState'
 import { useTranslations } from 'next-intl'
 import { useNotifications } from '@/components/NotificationsProvider'
@@ -18,10 +17,11 @@ interface NotificationListProps {
 export function NotificationList({ onClose }: NotificationListProps) {
     const { notifications, markAsRead, markAllAsRead } = useNotifications()
     const [hoveredId, setHoveredId] = useState<string | null>(null)
-    const [loading] = useState(false) // loading is handled in provider or initial fetch
+    const [_loading] = useState(false) // loading is handled in provider or initial fetch
     const router = useRouter()
     const t = useTranslations('Notifications')
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleNotificationClick = async (notification: any) => {
         if (!notification.is_read) {
             await markAsRead(notification.id)

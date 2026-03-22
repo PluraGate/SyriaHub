@@ -160,7 +160,7 @@ export default function ResearcherAnalyticsDashboard() {
 
             // Use REAL trend data from API, or empty array
             const avgDailyViews = analyticsData.totalViews / Math.max(daysBack, 1)
-            const trends: TrendDataPoint[] = (analyticsData.viewsOverTime || []).map((item: any) => ({
+            const trends: TrendDataPoint[] = (analyticsData.viewsOverTime || []).map((item: { date: string; views?: number; comments?: number; polls?: number; citations?: number; contributions?: number }) => ({
                 date: item.date,
                 views: item.views || 0,
                 comments: item.comments || 0,
@@ -663,7 +663,8 @@ interface StatCardProps {
     tooltip: string
     gradient: string
     iconColor: string
-    t: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    t: (key: string, values?: Record<string, any>) => string
 }
 
 function StatCard({ icon: Icon, label, value, suffix = '', trend, tooltip, gradient, iconColor, t }: StatCardProps) {

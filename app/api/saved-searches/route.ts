@@ -4,7 +4,7 @@ import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Fetch user's saved searches
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -145,7 +145,7 @@ async function handlePatch(request: NextRequest) {
             return NextResponse.json({ error: 'Search ID is required' }, { status: 400 })
         }
 
-        const updates: Record<string, any> = {}
+        const updates: Record<string, unknown> = {}
         if (title !== undefined) updates.title = title
         if (notes !== undefined) updates.notes = notes
         if (is_pinned !== undefined) updates.is_pinned = is_pinned
