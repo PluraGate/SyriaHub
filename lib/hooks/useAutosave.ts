@@ -14,7 +14,7 @@ export interface DraftData {
     temporalCoverageStart?: string
     temporalCoverageEnd?: string
     spatialCoverage?: string
-    spatialGeometry?: any // GeoJSON geometry object
+    spatialGeometry?: Record<string, unknown> // GeoJSON geometry object
 }
 
 interface UseAutosaveOptions {
@@ -32,7 +32,6 @@ interface UseAutosaveResult {
     saveDraft: (data: Omit<DraftData, 'lastSaved'>) => void
 }
 
-const AUTOSAVE_INTERVAL = 30000 // 30 seconds
 const DRAFT_EXPIRY_HOURS = 72 // Keep drafts for 72 hours
 
 export function useAutosave({

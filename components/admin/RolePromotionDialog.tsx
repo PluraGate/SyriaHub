@@ -115,7 +115,7 @@ export function RolePromotionDialog({
             onSuccess()
             onOpenChange(false)
             setReason('')
-        } catch (err) {
+        } catch (_err) {
             setError(tCommon('errors.unknown'))
         } finally {
             setLoading(false)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { AlertTriangle, CheckCircle, ExternalLink, FileSearch, X, Eye } from 'lucide-react'
+import { AlertTriangle, ExternalLink, FileSearch, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 

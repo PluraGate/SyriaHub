@@ -121,8 +121,8 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
             setThreads(data.threads || [])
             setTotalPages(data.total_pages || 1)
             setTotal(data.total || 0)
-        } catch (error: any) {
-            showToast(error.message, 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to load threads', 'error')
         } finally {
             setLoading(false)
         }
@@ -303,10 +303,12 @@ export function CoordinationCenter({ isAdmin }: CoordinationCenterProps) {
                                                     'px-2 py-0.5 rounded-full text-xs font-medium capitalize',
                                                     priorityColors[thread.priority]
                                                 )}>
+                                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                     {t(thread.priority as any)}
                                                 </span>
                                                 {thread.trigger_event !== 'manual' && (
                                                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                         {t(`triggers.${thread.trigger_event}` as any)}
                                                     </span>
                                                 )}

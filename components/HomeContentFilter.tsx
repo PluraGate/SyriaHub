@@ -30,6 +30,7 @@ interface Post {
     email?: string
     avatar_url?: string
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
 
@@ -43,7 +44,7 @@ interface HomeContentFilterProps {
 export function HomeContentFilter({ featuredPosts, recentPosts, userId, latestResources }: HomeContentFilterProps) {
   const t = useTranslations('Landing')
   const tForms = useTranslations('Forms')
-  const tResources = useTranslations('Resources')
+  const _tResources = useTranslations('Resources')
   const locale = useLocale()
   const [filterQuery, setFilterQuery] = useState('')
 
@@ -210,7 +211,8 @@ export function HomeContentFilter({ featuredPosts, recentPosts, userId, latestRe
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
-                {filteredRecent.map((post: any) => (
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {filteredRecent.map((post: any) => (
                   <MagazineCard key={post.id} post={post} variant="standard" />
                 ))}
               </div>

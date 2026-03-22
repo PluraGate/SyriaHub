@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -35,7 +37,7 @@ export default async function ForgotPasswordPage({
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${siteUrl}/auth/reset-password`,
+            redirectTo: `${siteUrl}/auth/callback?next=/auth/reset-password`,
         })
 
         // Log the password reset request

@@ -106,6 +106,7 @@ function ToolbarButton({ icon: Icon, title, onClick, disabled }: ToolbarButtonPr
 // Inner editor component with ref for inserting content
 interface MilkdownEditorHandle {
   insertMarkdown: (markdown: string) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runCommand: (command: any, payload?: any) => void
   setContent: (markdown: string) => void
 }
@@ -144,6 +145,7 @@ const MilkdownEditorInner = forwardRef<MilkdownEditorHandle, RichEditorProps & {
           editor.action(insert(markdown))
         }
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       runCommand: (command: any, payload?: any) => {
         const editor = get()
         if (editor) {

@@ -34,7 +34,7 @@ interface ActivityItem {
         name?: string
     }
     created_at: string
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ElementType> = {
@@ -57,7 +57,7 @@ const ACTIVITY_COLORS: Record<ActivityType, string> = {
     group_join: 'bg-gray-100 text-gray-600 dark:bg-dark-surface dark:text-dark-text-muted',
 }
 
-function ActivityItemComponent({ activity, t, formatDate }: { activity: ActivityItem; t: any; formatDate: (date: Date | string | number, formatType?: 'short' | 'medium' | 'long' | 'relative' | 'distance') => string }) {
+function ActivityItemComponent({ activity, t, formatDate }: { activity: ActivityItem; t: (key: string) => string; formatDate: (date: Date | string | number, formatType?: 'short' | 'medium' | 'long' | 'relative' | 'distance') => string }) {
     const Icon = ACTIVITY_ICONS[activity.type]
     const colorClass = ACTIVITY_COLORS[activity.type]
 
@@ -101,7 +101,7 @@ function ActivityItemComponent({ activity, t, formatDate }: { activity: Activity
                     <>
                         {userName} {t('earnedBadge')}{' '}
                         <span className="font-medium text-yellow-600 dark:text-yellow-400">
-                            {activity.metadata?.badge_name || 'badge'}
+                            {String(activity.metadata?.badge_name || 'badge')}
                         </span>
                     </>
                 )
@@ -218,37 +218,42 @@ export function ActivityInsights({ limit = 10 }: { limit?: number }) {
                     .limit(limit)
 
                 // Combine and format activities
-                const postActivities: ActivityItem[] = (posts || []).map((post: any) => ({
+                const postActivities: ActivityItem[] = (posts || []).map((post: { id: string; title: string; created_at: string; author?: { id: string; name?: string; email?: string; avatar_url?: string }[] | { id: string; name?: string; email?: string; avatar_url?: string } }) => {
+                    const author = Array.isArray(post.author) ? post.author[0] : post.author
+                    return ({
                     id: `post-${post.id}`,
                     type: 'post' as ActivityType,
                     user: {
-                        id: post.author?.id || '',
-                        name: post.author?.name || 'Anonymous',
-                        email: post.author?.email || '',
-                        avatar_url: post.author?.avatar_url,
+                        id: author?.id || '',
+                        name: author?.name || 'Anonymous',
+                        email: author?.email || '',
+                        avatar_url: author?.avatar_url,
                     },
                     target: {
                         id: post.id,
                         title: post.title,
                     },
                     created_at: post.created_at,
-                }))
+                })})
 
-                const commentActivities: ActivityItem[] = (comments || []).map((comment: any) => ({
+                const commentActivities: ActivityItem[] = (comments || []).map((comment: { id: string; post?: { id: string; title: string }[] | { id: string; title: string }; user?: { id: string; name?: string; email?: string; avatar_url?: string }[] | { id: string; name?: string; email?: string; avatar_url?: string }; created_at: string }) => {
+                    const commentUser = Array.isArray(comment.user) ? comment.user[0] : comment.user
+                    const commentPost = Array.isArray(comment.post) ? comment.post[0] : comment.post
+                    return ({
                     id: `comment-${comment.id}`,
                     type: 'comment' as ActivityType,
                     user: {
-                        id: comment.user?.id || '',
-                        name: comment.user?.name || 'Anonymous',
-                        email: comment.user?.email || '',
-                        avatar_url: comment.user?.avatar_url,
+                        id: commentUser?.id || '',
+                        name: commentUser?.name || 'Anonymous',
+                        email: commentUser?.email || '',
+                        avatar_url: commentUser?.avatar_url,
                     },
                     target: {
-                        id: comment.post?.id || '',
-                        title: comment.post?.title || '',
+                        id: commentPost?.id || '',
+                        title: commentPost?.title || '',
                     },
                     created_at: comment.created_at,
-                }))
+                })})
 
                 // Merge, sort by date, and limit
                 const allActivities = [...postActivities, ...commentActivities]

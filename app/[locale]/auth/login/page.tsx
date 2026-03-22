@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -9,6 +11,7 @@ import { verifyTurnstileToken } from '@/lib/turnstile'
 import { AlertCircle, BookOpen, Users, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import { logAuthEvent } from '@/lib/auditLog'
+import { getTranslations } from 'next-intl/server'
 
 export default async function LoginPage({
   params: routeParams,
@@ -19,6 +22,7 @@ export default async function LoginPage({
 }) {
   const { locale } = await routeParams
   const query = await searchParams
+  const t = await getTranslations({ locale, namespace: 'Auth' })
   const supabase = await createClient()
   const [{ data: { user }, error: userError }, { data: { session } }] = await Promise.all([
     supabase.auth.getUser(),
@@ -193,12 +197,12 @@ export default async function LoginPage({
             {/* Form Card */}
             <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-8">
               <h2 className="text-2xl font-bold text-text dark:text-dark-text mb-2">
-                Sign in to your account
+                {t('loginTitle')}
               </h2>
               <p className="text-text-light dark:text-dark-text-muted mb-8">
-                Don&apos;t have an account?{' '}
+                {t('noAccount')}{' '}
                 <Link href="/auth/signup" className="font-semibold text-primary hover:text-primary-dark transition-colors">
-                  Sign up
+                  {t('signup')}
                 </Link>
               </p>
 
@@ -206,7 +210,7 @@ export default async function LoginPage({
 
               <div className="mt-6 text-center">
                 <Link href="/auth/forgot-password" className="text-sm text-text-light dark:text-dark-text-muted hover:text-primary transition-colors">
-                  Forgot your password?
+                  {t('forgotPassword')}
                 </Link>
               </div>
             </div>

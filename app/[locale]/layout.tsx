@@ -14,6 +14,7 @@ import { InstallPWA } from '@/components/InstallPWA'
 import { OfflineIndicator } from '@/components/OfflineIndicator'
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { Analytics } from '@vercel/analytics/react'
+import { CookieConsent } from '@/components/CookieConsent'
 import { createClient } from '@/lib/supabase/server'
 import '../globals.css'
 
@@ -127,6 +128,7 @@ export default async function RootLayout({
                   {user && <FloatingActionButton />}
                   <InstallPWA />
                   <OfflineIndicator />
+                  <CookieConsent />
                   <Analytics />
                 </NotificationsProvider>
               </PreferencesProvider>

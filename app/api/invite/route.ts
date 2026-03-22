@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomBytes } from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit } from '@/lib/rateLimit'
 import { validateOrigin } from '@/lib/apiUtils'
 
-// Generate a random invite code in XXXX-XXXX format
+// Generate a cryptographically secure invite code in XXXX-XXXX format
 function generateInviteCode(): string {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // Avoiding confusing chars
+    const bytes = randomBytes(8)
     let result = ''
     for (let i = 0; i < 8; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length))
+        result += chars[bytes[i] % chars.length]
     }
     return `${result.slice(0, 4)}-${result.slice(4, 8)}`
 }
-// Validate an invite code
-export async function GET(request: NextRequest) {
+
+// Validate an invite code (rate-limited to prevent brute-force enumeration)
+async function handleGet(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const code = searchParams.get('code')
@@ -40,6 +43,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
 }
+
+export const GET = withRateLimit('invite')(handleGet)
 
 // Create a new invite code (for authenticated users)
 async function handlePost(request: NextRequest) {

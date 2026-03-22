@@ -15,7 +15,6 @@ import { useToast } from '@/components/ui/toast'
 import {
     generateCitation,
     downloadCitation,
-    getCitationFileExtension,
     type CitationFormat,
     type CitationData
 } from '@/lib/citations'

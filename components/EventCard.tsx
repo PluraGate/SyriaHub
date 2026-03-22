@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, MapPin, Users, Clock, AlertTriangle, Trash2, X } from 'lucide-react'
+import { MapPin, Users, Clock, AlertTriangle, Trash2, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { TagChip } from './TagChip'
 import { BookmarkButton } from './BookmarkButton'
@@ -92,9 +92,9 @@ export function EventCard({ event, currentUser, isPast = false }: EventCardProps
             } else {
                 router.refresh()
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error:', error)
-            alert('An error occurred: ' + (error.message || 'Unknown error'))
+            alert('An error occurred: ' + (error instanceof Error ? error.message : 'Unknown error'))
         } finally {
             setIsDeleting(false)
             setShowConfirmation(false)

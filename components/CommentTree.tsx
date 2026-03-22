@@ -196,10 +196,11 @@ function CommentNode({ comment, depth, postId, onReply }: CommentNodeProps) {
 export function CommentTree({ postId, comments, onCommentAdded }: CommentTreeProps) {
     const router = useRouter()
     const supabase = createClient()
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: Record<string, string> } | null>(null)
     const [newComment, setNewComment] = useState('')
     const [submitting, setSubmitting] = useState(false)
     const t = useTranslations('Comments')
+    const tAuth = useTranslations('Auth')
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -251,6 +252,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 throw error
             }
             onCommentAdded?.()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Error adding comment:', error?.message || error?.code || JSON.stringify(error))
         }
@@ -307,9 +309,9 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
                 ) : (
                     <div className="text-center py-4 text-sm text-text-light dark:text-dark-text-muted">
                         <Link href="/auth/login" className="text-primary dark:text-accent-light hover:underline">
-                            Sign in
+                            {tAuth('login')}
                         </Link>{' '}
-                        to join the discussion.
+                        {t('joinDiscussion')}
                     </div>
                 )}
             </div>

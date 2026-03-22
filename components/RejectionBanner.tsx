@@ -58,7 +58,7 @@ export function RejectionBanner({
 
         const fetchAppealData = async () => {
             // Get most recent appeal
-            const { data, error } = await supabase
+            const { data, error: _error } = await supabase
                 .from('moderation_appeals')
                 .select('id, status, dispute_reason, admin_response, created_at')
                 .eq('post_id', postId)
@@ -128,9 +128,9 @@ export function RejectionBanner({
                 .limit(1)
                 .single()
             setExistingAppeal(data)
-        } catch (error: any) {
-            console.error('Error submitting appeal:', error.message || error)
-            showToast(error.message || 'Failed to submit appeal. Please try again.', 'error')
+        } catch (error) {
+            console.error('Error submitting appeal:', error instanceof Error ? error.message : error)
+            showToast(error instanceof Error ? error.message : 'Failed to submit appeal. Please try again.', 'error')
         } finally {
             setSubmitting(false)
         }

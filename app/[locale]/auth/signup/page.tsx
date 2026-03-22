@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -92,8 +94,8 @@ export default async function SignupPage({
       redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Invite code is required')}`)
     }
 
-    if (password.length < 6) {
-      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Password must be at least 6 characters')}`)
+    if (password.length < 8) {
+      redirect(`/${locale}/auth/signup?error=${encodeURIComponent('Password must be at least 8 characters')}`)
     }
 
     const supabase = await createClient()

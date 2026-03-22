@@ -90,6 +90,7 @@ async function handleUpdatePost(
   // Parse request body
   const body = await parseRequestBody<UpdatePostInput>(request)
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData: any = {}
   
   if (body.title !== undefined) {

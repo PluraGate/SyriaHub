@@ -1,0 +1,4133 @@
+﻿[dotenv@17.2.3] injecting env (9) from .env.local -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+{
+  "config": {
+    "configFile": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\playwright.config.ts",
+    "rootDir": "C:/Users/AvArc/RiderProjects/SyriaHub/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 8
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/AvArc/RiderProjects/SyriaHub/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/AvArc/RiderProjects/SyriaHub/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "C:/Users/AvArc/RiderProjects/SyriaHub/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/AvArc/RiderProjects/SyriaHub/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/AvArc/RiderProjects/SyriaHub/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/AvArc/RiderProjects/SyriaHub/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 8,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "api.spec.ts",
+      "file": "api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "API Endpoints",
+          "file": "api.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Health Check API",
+              "file": "api.spec.ts",
+              "line": 4,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "GET /api/health returns 200",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 1074,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.392Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-ddb2a026fc0ff7ec1f87",
+                  "file": "api.spec.ts",
+                  "line": 5,
+                  "column": 13
+                },
+                {
+                  "title": "health check includes timestamp",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "passed",
+                          "duration": 898,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.509Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-0aa2354559989e20cb76",
+                  "file": "api.spec.ts",
+                  "line": 14,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Posts API",
+              "file": "api.spec.ts",
+              "line": 23,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "GET /api/posts returns posts list",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 2,
+                          "status": "passed",
+                          "duration": 2799,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.320Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-37a58f80f1c6e8a96cbf",
+                  "file": "api.spec.ts",
+                  "line": 24,
+                  "column": 13
+                },
+                {
+                  "title": "GET /api/posts supports pagination",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 2369,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.771Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-cc650f9e0d1b71ba1490",
+                  "file": "api.spec.ts",
+                  "line": 39,
+                  "column": 13
+                },
+                {
+                  "title": "GET /api/posts sanitizes pagination params",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 4,
+                          "status": "passed",
+                          "duration": 2583,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.551Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-0077dda1dc183307d05b",
+                  "file": "api.spec.ts",
+                  "line": 52,
+                  "column": 13
+                },
+                {
+                  "title": "POST /api/posts requires authentication",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 1593,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.724Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-037730b84c9d63090b3f",
+                  "file": "api.spec.ts",
+                  "line": 65,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Tags API",
+              "file": "api.spec.ts",
+              "line": 78,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "GET /api/tags returns tags list",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "passed",
+                          "duration": 2288,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.744Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-b17c32775d596c5110bb",
+                  "file": "api.spec.ts",
+                  "line": 79,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Search API",
+              "file": "api.spec.ts",
+              "line": 92,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "GET /api/search requires query parameter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 7,
+                          "status": "passed",
+                          "duration": 1991,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:25.539Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-d32a7197d293099619af",
+                  "file": "api.spec.ts",
+                  "line": 93,
+                  "column": 13
+                },
+                {
+                  "title": "GET /api/search returns results structure for valid query",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "passed",
+                          "duration": 1436,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:26.519Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-7228fa407a955cb1ac12",
+                  "file": "api.spec.ts",
+                  "line": 102,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Public Users API",
+              "file": "api.spec.ts",
+              "line": 116,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "GET /api/public/users returns public user list",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 1728,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:26.533Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-3fe4a5d308bd3c190345",
+                  "file": "api.spec.ts",
+                  "line": 117,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Rate Limiting",
+              "file": "api.spec.ts",
+              "line": 130,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "API returns appropriate headers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 224,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:27.377Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-b07be66e1484413ea32f",
+                  "file": "api.spec.ts",
+                  "line": 131,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Error Handling",
+              "file": "api.spec.ts",
+              "line": 141,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "returns 404 for non-existent API routes",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 7,
+                          "status": "passed",
+                          "duration": 900,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:27.602Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-47922fed8c68254d9784",
+                  "file": "api.spec.ts",
+                  "line": 142,
+                  "column": 13
+                },
+                {
+                  "title": "handles malformed JSON gracefully",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 346,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:27.626Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "1ea1b1599cbc08f16936-3423448b81691fb40b0a",
+                  "file": "api.spec.ts",
+                  "line": 147,
+                  "column": 13
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "comprehensive-system.spec.ts",
+      "file": "comprehensive-system.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Full System Verification",
+          "file": "comprehensive-system.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Landing & Localization",
+              "file": "comprehensive-system.spec.ts",
+              "line": 16,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "homepage redirects, navbar/footer, and bilingual layouts",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 41747,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.004Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-c8f22d2d443cc9197422",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 17,
+                  "column": 13
+                },
+                {
+                  "title": "onboarding modal can be dismissed",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "passed",
+                          "duration": 8439,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.066Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-fdf4b1c2c09e350c2c15",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 54,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Feature Discovery",
+              "file": "comprehensive-system.spec.ts",
+              "line": 60,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "explore page features tags and publications",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "passed",
+                          "duration": 21065,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.106Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-cf2d037e7907936895cf",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 61,
+                  "column": 13
+                },
+                {
+                  "title": "research lab sections: polls accessibility",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 2,
+                          "status": "passed",
+                          "duration": 13622,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.189Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-930250a21b78560d878d",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 72,
+                  "column": 13
+                },
+                {
+                  "title": "research lab sections: surveys accessibility",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 13420,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.223Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-7f2f469660f9bf04c8e8",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 79,
+                  "column": 13
+                },
+                {
+                  "title": "research lab sections: statistics accessibility",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 4,
+                          "status": "passed",
+                          "duration": 13706,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.235Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-2a6d2fc78f51aa40733f",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 86,
+                  "column": 13
+                },
+                {
+                  "title": "research lab sections: search accessibility",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 13619,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.335Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-0cea8e34e2d4e5c23618",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 93,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Premium UI/UX Standards",
+              "file": "comprehensive-system.spec.ts",
+              "line": 103,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "dark mode preference is respected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 7,
+                          "status": "passed",
+                          "duration": 8859,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:28.544Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-1e2cf626b7a5f9a8610b",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 104,
+                  "column": 13
+                },
+                {
+                  "title": "offline page displays premium design (glows and animations)",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "passed",
+                          "duration": 13817,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:37.039Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-41e20eb5a0a6b346b63d",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 118,
+                  "column": 13
+                }
+              ]
+            },
+            {
+              "title": "Authentication Vitals",
+              "file": "comprehensive-system.spec.ts",
+              "line": 137,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "login and signup forms have correct structure",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 120000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 7,
+                          "status": "passed",
+                          "duration": 33081,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-03-22T15:50:38.645Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "32206696c85d4cd00352-770f38a36b1f13927a6c",
+                  "file": "comprehensive-system.spec.ts",
+                  "line": 138,
+                  "column": 13
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "editor.spec.ts",
+      "file": "editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Editor Page",
+          "file": "editor.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "editor page requires authentication",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 13937,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:50:43.186Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d2f56d7d370f0ba02e91-706d92389ffed7f06471",
+              "file": "editor.spec.ts",
+              "line": 4,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "functional-creation.spec.ts",
+      "file": "functional-creation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Functional Regression: Content Creation",
+          "file": "functional-creation.spec.ts",
+          "line": 21,
+          "column": 6,
+          "specs": [
+            {
+              "title": "authenticated user can access editor and create a post",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 39047,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co\n"
+                        },
+                        {
+                          "text": "[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js\n"
+                        },
+                        {
+                          "text": "[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [HMR] connected\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 318ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Offline] Database initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Offline storage initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type\n"
+                        },
+                        {
+                          "text": "[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 1013ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 280ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 1643ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 308ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Content cached for offline use\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 513ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 337ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 198ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] warning: The resource http://localhost:3000/icons/Pluragate_512x512_NoDot.svg was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.\n"
+                        },
+                        {
+                          "text": "[BROWSER] error: %c%s%c Error fetching post: background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   {code: PGRST116, details: The result contains 0 rows, hint: null, message: Cannot coerce the result to a single JSON object}\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:50:43.344Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e575604fff1328aca6b7-6e99e0aae772d4a1ada0",
+              "file": "functional-creation.spec.ts",
+              "line": 161,
+              "column": 9
+            },
+            {
+              "title": "authenticated user can save a draft",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 25828,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co\n"
+                        },
+                        {
+                          "text": "[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js\n"
+                        },
+                        {
+                          "text": "[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [HMR] connected\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 312ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Offline] Database initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Offline storage initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type\n"
+                        },
+                        {
+                          "text": "[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 838ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:50:43.346Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e575604fff1328aca6b7-11c487bf12e6a3b95cd3",
+              "file": "functional-creation.spec.ts",
+              "line": 221,
+              "column": 9
+            },
+            {
+              "title": "authenticated user triggers autosave when typing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 24120,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co\n"
+                        },
+                        {
+                          "text": "[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js\n"
+                        },
+                        {
+                          "text": "[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [HMR] connected\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 320ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Offline] Database initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Offline storage initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type\n"
+                        },
+                        {
+                          "text": "[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 836ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:50:43.367Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e575604fff1328aca6b7-7015fb9312a61faab029",
+              "file": "functional-creation.spec.ts",
+              "line": 271,
+              "column": 9
+            },
+            {
+              "title": "authenticated user can upload a cover image",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 15811,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co\n"
+                        },
+                        {
+                          "text": "[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js\n"
+                        },
+                        {
+                          "text": "[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [HMR] connected\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Offline] Database initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Offline storage initialized\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] rebuilding\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Fast Refresh] done in 988ms\n"
+                        },
+                        {
+                          "text": "[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type\n"
+                        },
+                        {
+                          "text": "[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published\n"
+                        },
+                        {
+                          "text": "[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/storage/v1/object/post_images/covers/00000000-0000-0000-0000-000000000000/1774194665904.png\n"
+                        },
+                        {
+                          "text": "[DEBUG] Storage Request: POST https://bwrdwbmhxtrghyrrfofb.supabase.co/storage/v1/object/post_images/covers/00000000-0000-0000-0000-000000000000/1774194665904.png\n"
+                        },
+                        {
+                          "text": "[NETWORK] GET http://localhost:3000/_next/image?url=https%3A%2F%2Fbwrdwbmhxtrghyrrfofb.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fpost_images%2Fcovers%2F00000000-0000-0000-0000-000000000000%2F1774194665904.png&w=1920&q=75\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:50:50.396Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e575604fff1328aca6b7-ad738ae6c5a6919124ac",
+              "file": "functional-creation.spec.ts",
+              "line": 308,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "home.spec.ts",
+      "file": "home.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "homepage has correct title and brand name",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 22681,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-22T15:50:50.908Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d318381359a9b96acb1e-b2547ab60cfee3da1e8b",
+          "file": "home.spec.ts",
+          "line": 3,
+          "column": 5
+        },
+        {
+          "title": "can navigate to login page",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 25086,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-22T15:50:57.171Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d318381359a9b96acb1e-355e2136cdde5802255f",
+          "file": "home.spec.ts",
+          "line": 25,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "jury-tie-breaker.spec.ts",
+      "file": "jury-tie-breaker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Jury Tie-Breaker Logic",
+          "file": "jury-tie-breaker.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI displays correct status for rejected (split) appeal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 429,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:06.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d88b5fd4a293211ea36f-11c701ce65958e41fb79",
+              "file": "jury-tie-breaker.spec.ts",
+              "line": 5,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "research-impact.spec.ts",
+      "file": "research-impact.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Research Gaps Page",
+          "file": "research-impact.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "research gaps page loads correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 28597,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:06.768Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-ca02f21b6e242caa127e",
+              "file": "research-impact.spec.ts",
+              "line": 11,
+              "column": 9
+            },
+            {
+              "title": "can filter research gaps by status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 27575,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:07.533Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-6c1be52eb7360eba32fe",
+              "file": "research-impact.spec.ts",
+              "line": 22,
+              "column": 9
+            },
+            {
+              "title": "can filter research gaps by gap type",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 25724,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:09.233Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-1dabca852fc84b08dc11",
+              "file": "research-impact.spec.ts",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "search input is visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 24290,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:10.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-b46c807a2e8aa44bf0b7",
+              "file": "research-impact.spec.ts",
+              "line": 49,
+              "column": 9
+            },
+            {
+              "title": "identify a gap button is visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 24680,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:11.867Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-9a093ea4c11751a6ac4c",
+              "file": "research-impact.spec.ts",
+              "line": 57,
+              "column": 9
+            },
+            {
+              "title": "strategic filter button exists",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 21846,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:13.780Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-8ae2cb53f994a92295c2",
+              "file": "research-impact.spec.ts",
+              "line": 65,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Gap Contributions",
+          "file": "research-impact.spec.ts",
+          "line": 74,
+          "column": 6,
+          "specs": [
+            {
+              "title": "contributions section appears on gap cards when available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 20558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:22.312Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-5b13cb027361e2a7ad0c",
+              "file": "research-impact.spec.ts",
+              "line": 75,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Admin Platform Health Dashboard",
+          "file": "research-impact.spec.ts",
+          "line": 94,
+          "column": 6,
+          "specs": [
+            {
+              "title": "platform health page requires authentication",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19478,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:22.443Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-34c89a387c3bedc4e486",
+              "file": "research-impact.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "admin sidebar shows platform health link",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 14899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:34.992Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-6fa959462d89a4e08156",
+              "file": "research-impact.spec.ts",
+              "line": 103,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Impact Stories Section",
+          "file": "research-impact.spec.ts",
+          "line": 128,
+          "column": 6,
+          "specs": [
+            {
+              "title": "insights page loads with impact stories section when available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 13704,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:35.184Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fe4f99c5560cc474e77-595b0f03ee71be9ac59d",
+              "file": "research-impact.spec.ts",
+              "line": 129,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "rtl.spec.ts",
+      "file": "rtl.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "RTL (Arabic) Mode Support",
+          "file": "rtl.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Arabic page has RTL direction",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 13237,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:35.192Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-7abe84f8c2a2a5549447",
+              "file": "rtl.spec.ts",
+              "line": 12,
+              "column": 9
+            },
+            {
+              "title": "Arabic navigation shows translated menu items",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 13767,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:35.407Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-3d652f00ed8c7f14b704",
+              "file": "rtl.spec.ts",
+              "line": 27,
+              "column": 9
+            },
+            {
+              "title": "Arabic research lab page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 13091,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:35.690Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-8586f7aa54d8b613d91c",
+              "file": "rtl.spec.ts",
+              "line": 45,
+              "column": 9
+            },
+            {
+              "title": "Arabic polls page shows translated content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 12219,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:36.603Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-f97193561f21d12985a7",
+              "file": "rtl.spec.ts",
+              "line": 60,
+              "column": 9
+            },
+            {
+              "title": "Arabic surveys page shows translated content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11113,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:41.954Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-4891e8c1add0d50bd612",
+              "file": "rtl.spec.ts",
+              "line": 70,
+              "column": 9
+            },
+            {
+              "title": "Arabic statistics page shows translated content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 10701,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:42.903Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-7869c93a2d6e3320085b",
+              "file": "rtl.spec.ts",
+              "line": 80,
+              "column": 9
+            },
+            {
+              "title": "Arabic search engine page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 11789,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:48.464Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-0dc991c636877bc5c322",
+              "file": "rtl.spec.ts",
+              "line": 90,
+              "column": 9
+            },
+            {
+              "title": "Arabic events page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 15701,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:48.827Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-b1ad4f9f3a21ad8575d9",
+              "file": "rtl.spec.ts",
+              "line": 98,
+              "column": 9
+            },
+            {
+              "title": "Arabic auth page shows translated labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 12563,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:48.876Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-232b5dbfd878f2fbcf31",
+              "file": "rtl.spec.ts",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "language switcher works from Arabic to English",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 17398,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:48.929Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-d8c230b1b873e52de3e7",
+              "file": "rtl.spec.ts",
+              "line": 122,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Cross-Language Consistency",
+          "file": "rtl.spec.ts",
+          "line": 144,
+          "column": 6,
+          "specs": [
+            {
+              "title": "navigation structure is consistent between languages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 15226,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:49.219Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3dcef92d44c531a36c3b-331b9cb324b74018b481",
+              "file": "rtl.spec.ts",
+              "line": 145,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "security.spec.ts",
+      "file": "security.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Security: Unauthorized Access",
+          "file": "security.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should redirect unauthenticated user from /en/editor to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2779,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:49.933Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-13bfb252f0c9e67ee8b1",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /ar/editor to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1550,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:52.738Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-7dd16daee656a8c4808a",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/insights to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1602,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:53.112Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-d6eccda3f5f7018525c1",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /ar/insights to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3412,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:53.640Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-33d06394484c0ea95fbf",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/research-lab to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3151,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:54.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-5dda831b1120b0133988",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /ar/research-lab to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4822,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:54.743Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-1ac6d248ae3a726142c9",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/settings to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4592,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:57.078Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-10697dc1a1ec4e5f81bf",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/notifications to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 5839,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:57.501Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-60df49e85f18be478e8d",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/admin to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3457,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:51:59.599Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-91fb25f36701b2c96358",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/saved to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2863,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:00.339Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-1945bd9cfe58bfbab318",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should redirect unauthenticated user from /en/correspondence to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2776,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:01.509Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-69e7fa4d3390a551c0f8",
+              "file": "security.spec.ts",
+              "line": 20,
+              "column": 13
+            },
+            {
+              "title": "should allow guest access to public landing page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2105,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:01.696Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-76296ae085dd0ce56963",
+              "file": "security.spec.ts",
+              "line": 32,
+              "column": 9
+            },
+            {
+              "title": "should allow guest access to about page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1396,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:03.093Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-0af79fe229468b7e2da8",
+              "file": "security.spec.ts",
+              "line": 40,
+              "column": 9
+            },
+            {
+              "title": "should allow guest access to explore page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1233,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:03.245Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-16536f8f669801439746",
+              "file": "security.spec.ts",
+              "line": 45,
+              "column": 9
+            },
+            {
+              "title": "should have security headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1071,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:03.371Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-f746e691e3752d4a0640",
+              "file": "security.spec.ts",
+              "line": 50,
+              "column": 9
+            },
+            {
+              "title": "should prevent open redirect in auth callback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 607,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:03.836Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-0f3a31e5b86d33dc636a",
+              "file": "security.spec.ts",
+              "line": 64,
+              "column": 9
+            },
+            {
+              "title": "should honor rate limiting when exceeded",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 344,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.316Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-f209dc7fc8f9878c0855",
+              "file": "security.spec.ts",
+              "line": 77,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "system.spec.ts",
+      "file": "system.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Navigation and Core Pages",
+          "file": "system.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage loads with correct language redirect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1597,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[DEBUG] Unexpected status: 429 for chromium\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.536Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-54763166636a79dedfd1",
+              "file": "system.spec.ts",
+              "line": 15,
+              "column": 9
+            },
+            {
+              "title": "can toggle between English and Arabic",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2150,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.535Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-0d41f76381406428d612",
+              "file": "system.spec.ts",
+              "line": 41,
+              "column": 9
+            },
+            {
+              "title": "navbar is visible and contains main links",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "failed",
+                      "duration": 22170,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('nav, header').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('nav, header').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('nav, header').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('nav, header').first()\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:70:30",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                          "column": 30,
+                          "line": 70
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 68 |\u001b[39m         \u001b[90m// Check navbar elements - allow time for client-side rendering\u001b[39m\n \u001b[90m 69 |\u001b[39m         \u001b[36mconst\u001b[39m navbar \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'nav, header'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m         \u001b[36mawait\u001b[39m expect(navbar)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m         \u001b[90m// Brand should be visible\u001b[39m\n \u001b[90m 73 |\u001b[39m         \u001b[36mconst\u001b[39m brand \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/SyriaHub/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                            "column": 30,
+                            "line": 70
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('nav, header').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('nav, header').first()\u001b[22m\n\n\n  68 |         // Check navbar elements - allow time for client-side rendering\n  69 |         const navbar = page.locator('nav, header').first();\n> 70 |         await expect(navbar).toBeVisible({ timeout: 20000 });\n     |                              ^\n  71 |\n  72 |         // Brand should be visible\n  73 |         const brand = page.getByRole('link', { name: /SyriaHub/i }).first();\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:70:30"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.533Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Navigation-and-Core-58b8c-ble-and-contains-main-links-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                        "column": 30,
+                        "line": 70
+                      }
+                    },
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 18743,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:32.188Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Navigation-and-Core-58b8c-ble-and-contains-main-links-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "19fec53437319cd87246-8741972afd02035eb5de",
+              "file": "system.spec.ts",
+              "line": 56,
+              "column": 9
+            },
+            {
+              "title": "footer is visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 22756,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('footer').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('footer').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer').first()\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:91:30",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                          "column": 30,
+                          "line": 91
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 89 |\u001b[39m         \u001b[90m// Footer should be visible\u001b[39m\n \u001b[90m 90 |\u001b[39m         \u001b[36mconst\u001b[39m footer \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'footer'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m expect(footer)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 92 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                            "column": 30,
+                            "line": 91
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('footer').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer').first()\u001b[22m\n\n\n  89 |         // Footer should be visible\n  90 |         const footer = page.locator('footer').first();\n> 91 |         await expect(footer).toBeVisible({ timeout: 20000 });\n     |                              ^\n  92 |     });\n  93 | });\n  94 |\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:91:30"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.572Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Navigation-and-Core-Pages-footer-is-visible-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                        "column": 30,
+                        "line": 91
+                      }
+                    },
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:39.077Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Navigation-and-Core-Pages-footer-is-visible-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "19fec53437319cd87246-e46c03ffd18d406e8539",
+              "file": "system.spec.ts",
+              "line": 77,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Authentication Flow",
+          "file": "system.spec.ts",
+          "line": 95,
+          "column": 6,
+          "specs": [
+            {
+              "title": "login page loads correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 22130,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /sign in to your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /sign in to your account/i }).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /sign in to your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /sign in to your account/i }).first()\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:110:95",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                          "column": 95,
+                          "line": 110
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 108 |\u001b[39m\n \u001b[90m 109 |\u001b[39m         \u001b[90m// Should show login form with actual heading text (use .first() as there are multiple headings)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/sign in to your account/i\u001b[39m })\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[90m// Email and password fields should exist\u001b[39m\n \u001b[90m 113 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"email\"], input[name=\"email\"]'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                            "column": 95,
+                            "line": 110
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /sign in to your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /sign in to your account/i }).first()\u001b[22m\n\n\n  108 |\n  109 |         // Should show login form with actual heading text (use .first() as there are multiple headings)\n> 110 |         await expect(page.getByRole('heading', { name: /sign in to your account/i }).first()).toBeVisible({ timeout: 20000 });\n      |                                                                                               ^\n  111 |\n  112 |         // Email and password fields should exist\n  113 |         await expect(page.locator('input[type=\"email\"], input[name=\"email\"]')).toBeVisible({ timeout: 10000 });\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:110:95"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.601Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-login-page-loads-correctly-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                        "column": 95,
+                        "line": 110
+                      }
+                    },
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 19353,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:32.647Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-login-page-loads-correctly-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "19fec53437319cd87246-df3e31e923dbb635b767",
+              "file": "system.spec.ts",
+              "line": 103,
+              "column": 9
+            },
+            {
+              "title": "signup page loads correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 22078,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /create your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /create your account/i }).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /create your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /create your account/i }).first()\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:124:91",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                          "column": 91,
+                          "line": 124
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 122 |\u001b[39m\n \u001b[90m 123 |\u001b[39m         \u001b[90m// Should show signup form with actual heading text (use .first() as there are multiple headings)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 124 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/create your account/i\u001b[39m })\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 125 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 126 |\u001b[39m\n \u001b[90m 127 |\u001b[39m     test(\u001b[32m'login page has forgot password and signup links'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page\u001b[33m,\u001b[39m browserName }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                            "column": 91,
+                            "line": 124
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /create your account/i }).first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /create your account/i }).first()\u001b[22m\n\n\n  122 |\n  123 |         // Should show signup form with actual heading text (use .first() as there are multiple headings)\n> 124 |         await expect(page.getByRole('heading', { name: /create your account/i }).first()).toBeVisible({ timeout: 20000 });\n      |                                                                                           ^\n  125 |     });\n  126 |\n  127 |     test('login page has forgot password and signup links', async ({ page, browserName }) => {\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:124:91"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.624Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-signup-page-loads-correctly-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                        "column": 91,
+                        "line": 124
+                      }
+                    },
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 16494,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:34.046Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-signup-page-loads-correctly-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "19fec53437319cd87246-7ac6e40d735e4a935aa3",
+              "file": "system.spec.ts",
+              "line": 117,
+              "column": 9
+            },
+            {
+              "title": "login page has forgot password and signup links",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "failed",
+                      "duration": 22011,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:134:82",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                          "column": 82,
+                          "line": 134
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 132 |\u001b[39m\n \u001b[90m 133 |\u001b[39m         \u001b[90m// Should have forgot password link - use text content matcher for flexibility\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'a:has-text(\"Forgot\"), a:has-text(\"forgot\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m\n \u001b[90m 136 |\u001b[39m         \u001b[90m// Should have signup link\u001b[39m\n \u001b[90m 137 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'a:has-text(\"Sign up\"), a:has-text(\"sign up\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                            "column": 82,
+                            "line": 134
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')\u001b[22m\n\n\n  132 |\n  133 |         // Should have forgot password link - use text content matcher for flexibility\n> 134 |         await expect(page.locator('a:has-text(\"Forgot\"), a:has-text(\"forgot\")')).toBeVisible({ timeout: 20000 });\n      |                                                                                  ^\n  135 |\n  136 |         // Should have signup link\n  137 |         await expect(page.locator('a:has-text(\"Sign up\"), a:has-text(\"sign up\")')).toBeVisible({ timeout: 10000 });\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts:134:82"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:04.729Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-74f47-t-password-and-signup-links-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\system.spec.ts",
+                        "column": 82,
+                        "line": 134
+                      }
+                    },
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 20029,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:33.745Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\system-Authentication-Flow-74f47-t-password-and-signup-links-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "19fec53437319cd87246-69ab70a2832581d60d44",
+              "file": "system.spec.ts",
+              "line": 127,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Research Lab",
+          "file": "system.spec.ts",
+          "line": 141,
+          "column": 6,
+          "specs": [
+            {
+              "title": "research lab main page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 372,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:06.171Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-88fe66a390fc3bb6c45b",
+              "file": "system.spec.ts",
+              "line": 142,
+              "column": 9
+            },
+            {
+              "title": "polls page is accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 445,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:06.413Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-0b54f7b7333ae4d90eab",
+              "file": "system.spec.ts",
+              "line": 150,
+              "column": 9
+            },
+            {
+              "title": "surveys page is accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 406,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:06.572Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-bc63957bad55c0a05863",
+              "file": "system.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "statistics page is accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 320,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:06.729Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-b8b2f2d55aae69e19467",
+              "file": "system.spec.ts",
+              "line": 166,
+              "column": 9
+            },
+            {
+              "title": "search engine page is accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 224,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:06.890Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-360a7b07a5bb379906c4",
+              "file": "system.spec.ts",
+              "line": 174,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Events",
+          "file": "system.spec.ts",
+          "line": 183,
+          "column": 6,
+          "specs": [
+            {
+              "title": "events page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 365,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.005Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-9576be7ae01e5ac75654",
+              "file": "system.spec.ts",
+              "line": 184,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Search Functionality",
+          "file": "system.spec.ts",
+          "line": 192,
+          "column": 6,
+          "specs": [
+            {
+              "title": "search bar is accessible from homepage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 730,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.076Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-bb2a83e05107b846cc55",
+              "file": "system.spec.ts",
+              "line": 193,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Responsive Design",
+          "file": "system.spec.ts",
+          "line": 226,
+          "column": 6,
+          "specs": [
+            {
+              "title": "mobile viewport displays correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 392,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.151Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-0868797300f86b7c216e",
+              "file": "system.spec.ts",
+              "line": 227,
+              "column": 9
+            },
+            {
+              "title": "tablet viewport displays correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2307,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.393Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-dbf7f60cd4b89d9722c6",
+              "file": "system.spec.ts",
+              "line": 240,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Dark Mode",
+          "file": "system.spec.ts",
+          "line": 260,
+          "column": 6,
+          "specs": [
+            {
+              "title": "page respects dark mode preference",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 433,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "19fec53437319cd87246-6bd85fffa9f2d1acbfe4",
+              "file": "system.spec.ts",
+              "line": 261,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "visual.spec.ts",
+      "file": "visual.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Visual Regression",
+          "file": "visual.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "home page matches snapshot",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 20889,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/(en|ar)/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 20000ms\u001b[22m\n\u001b[2m    23 ├ù unexpected value \"http://localhost:3000/\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/(en|ar)/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 20000ms\u001b[22m\n\u001b[2m    23 ├ù unexpected value \"http://localhost:3000/\"\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts:21:28",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                          "column": 28,
+                          "line": 21
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 19 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'networkidle'\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 20 |\u001b[39m         \u001b[90m// Wait for redirect and content to stabilize\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/(en|ar)/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// Allow animations to settle\u001b[39m\n \u001b[90m 23 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'home-page.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m 24 |\u001b[39m             fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                            "column": 28,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/(en|ar)/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 20000ms\u001b[22m\n\u001b[2m    23 ├ù unexpected value \"http://localhost:3000/\"\u001b[22m\n\n\n  19 |         await page.goto('/', { waitUntil: 'networkidle' });\n  20 |         // Wait for redirect and content to stabilize\n> 21 |         await expect(page).toHaveURL(/\\/(en|ar)/);\n     |                            ^\n  22 |         await page.waitForTimeout(1000); // Allow animations to settle\n  23 |         await expect(page).toHaveScreenshot('home-page.png', {\n  24 |             fullPage: true,\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts:21:28"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:07.836Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\visual-Visual-Regression-home-page-matches-snapshot-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                        "column": 28,
+                        "line": 21
+                      }
+                    },
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 11409,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:54.912Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "8324bb52c49185e48ff4-905cc75513a0ec66bbe4",
+              "file": "visual.spec.ts",
+              "line": 18,
+              "column": 9
+            },
+            {
+              "title": "login page matches snapshot",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 20776,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('input[type=\"email\"], input[name=\"email\"]').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"email\"], input[name=\"email\"]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('input[type=\"email\"], input[name=\"email\"]').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"email\"], input[name=\"email\"]').first()\u001b[22m\n\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts:32:88",
+                        "location": {
+                          "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                          "column": 88,
+                          "line": 32
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 30 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/en/auth/login'\u001b[39m\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'networkidle'\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m         \u001b[90m// Ensure the page has actually loaded (not a rate-limit error)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"email\"], input[name=\"email\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// Allow animations to settle\u001b[39m\n \u001b[90m 34 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'login-page.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m 35 |\u001b[39m             fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                            "column": 88,
+                            "line": 32
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('input[type=\"email\"], input[name=\"email\"]').first()\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"email\"], input[name=\"email\"]').first()\u001b[22m\n\n\n  30 |         await page.goto('/en/auth/login', { waitUntil: 'networkidle' });\n  31 |         // Ensure the page has actually loaded (not a rate-limit error)\n> 32 |         await expect(page.locator('input[type=\"email\"], input[name=\"email\"]').first()).toBeVisible({ timeout: 20000 });\n     |                                                                                        ^\n  33 |         await page.waitForTimeout(1000); // Allow animations to settle\n  34 |         await expect(page).toHaveScreenshot('login-page.png', {\n  35 |             fullPage: true,\n    at C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts:32:88"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:08.035Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\visual-Visual-Regression-login-page-matches-snapshot-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\tests\\e2e\\visual.spec.ts",
+                        "column": 88,
+                        "line": 32
+                      }
+                    },
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 7045,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-22T15:52:55.292Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\AvArc\\RiderProjects\\SyriaHub\\test-results\\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "flaky"
+                }
+              ],
+              "id": "8324bb52c49185e48ff4-14e5ece1e8f728e15e95",
+              "file": "visual.spec.ts",
+              "line": 29,
+              "column": 9
+            },
+            {
+              "title": "auth form component matches snapshot",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 182,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-22T15:52:09.727Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8324bb52c49185e48ff4-d25bea34d7afcc9757aa",
+              "file": "visual.spec.ts",
+              "line": 41,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-22T15:50:06.672Z",
+    "duration": 181299.25699999998,
+    "expected": 82,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 7
+  }
+}

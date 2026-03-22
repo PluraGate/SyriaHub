@@ -21,13 +21,17 @@ import {
     Calendar,
     Hash,
     AlignLeft,
-    X
+    X,
+    Database,
+    Globe,
+    GitMerge
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import { useTranslations } from 'next-intl'
 
 interface SurveyBuilderProps {
     userId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     existingSurvey?: any
 }
 
@@ -51,16 +55,20 @@ const QUESTION_TYPES_CONFIG = [
     { id: 'date', labelKey: 'questionTypes.date', icon: Calendar },
 ]
 
-export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
+export function SurveyBuilder({ userId: _userId, existingSurvey }: SurveyBuilderProps) {
     const router = useRouter()
     const { showToast } = useToast()
     const t = useTranslations('Surveys')
     const tPolls = useTranslations('Polls')
 
+    type DataSourceType = 'community' | 'external' | 'mixed'
+
     const [title, setTitle] = useState(existingSurvey?.title || '')
     const [description, setDescription] = useState(existingSurvey?.description || '')
     const [questions, setQuestions] = useState<Question[]>(existingSurvey?.questions || [])
     const [isAnonymous, setIsAnonymous] = useState(existingSurvey?.is_anonymous || false)
+    const [dataSourceType, setDataSourceType] = useState<DataSourceType | ''>(existingSurvey?.data_source_type || '')
+    const [dataSourceLabel, setDataSourceLabel] = useState<string>(existingSurvey?.data_source_label || '')
     const [saving, setSaving] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
     const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null)
@@ -177,7 +185,9 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                     description,
                     questions,
                     is_anonymous: isAnonymous,
-                    status: publish ? 'active' : 'draft'
+                    status: publish ? 'active' : 'draft',
+                    data_source_type: dataSourceType || null,
+                    data_source_label: dataSourceLabel.trim() || null
                 })
             })
 
@@ -188,7 +198,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
             const survey = await response.json()
             showToast(publish ? 'Survey published!' : 'Survey saved!', 'success')
             router.push(`/research-lab/surveys/${survey.id || existingSurvey.id}`)
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to save survey', 'error')
         } finally {
             setSaving(false)
@@ -262,6 +272,49 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
                                 </p>
                             </div>
                         </label>
+
+                        {/* Data provenance */}
+                        <div className="pt-3 border-t border-gray-100 dark:border-dark-border space-y-3">
+                            <div>
+                                <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                    Data source <span className="font-normal text-text-light dark:text-dark-text-muted">(optional — shown publicly)</span>
+                                </label>
+                                <select
+                                    value={dataSourceType}
+                                    onChange={(e) => setDataSourceType(e.target.value as DataSourceType | '')}
+                                    className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                                >
+                                    <option value="">Not specified</option>
+                                    <option value="community">Community — collected from SyriaHub members</option>
+                                    <option value="external">External — imported from outside source</option>
+                                    <option value="mixed">Mixed — combination of both</option>
+                                </select>
+                            </div>
+                            {dataSourceType && (
+                                <div>
+                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                        Source description <span className="font-normal text-text-light dark:text-dark-text-muted">(optional, max 200 chars)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={dataSourceLabel}
+                                        onChange={(e) => setDataSourceLabel(e.target.value.slice(0, 200))}
+                                        placeholder={dataSourceType === 'external' ? 'e.g. UN OCHA field survey 2024' : 'e.g. SyriaHub researcher self-report'}
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                                    />
+                                </div>
+                            )}
+                            {dataSourceType && (
+                                <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">
+                                    {dataSourceType === 'community' && <Database className="w-3 h-3 flex-shrink-0" />}
+                                    {dataSourceType === 'external' && <Globe className="w-3 h-3 flex-shrink-0" />}
+                                    {dataSourceType === 'mixed' && <GitMerge className="w-3 h-3 flex-shrink-0" />}
+                                    <span>
+                                        This will be displayed publicly on your survey to help readers evaluate the data.
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

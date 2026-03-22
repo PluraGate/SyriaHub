@@ -97,7 +97,7 @@ const categoryColors: Record<string, { bg: string, text: string, border: string 
 }
 
 export default function AchievementsPage() {
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<{ id: string } | null>(null)
     const [achievements, setAchievements] = useState<AchievementsData | null>(null)
     const [loading, setLoading] = useState(true)
     const [checking, setChecking] = useState(false)

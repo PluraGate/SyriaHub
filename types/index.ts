@@ -13,6 +13,32 @@ export type ResearchGapSource = 'manual' | 'ai_suggested' | 'failed_query'
 export type TraceArtifactType = 'photo' | 'audio' | 'document' | 'video' | 'handwritten'
 export type TracePreservationStatus = 'original' | 'copy' | 'transcription'
 
+// Perspective type: structural position of the author relative to the documented events.
+// Distinct from institutional affiliation (T1). Set voluntarily by the author at submission.
+export type PerspectiveType =
+  | 'insider_affected'     // Directly experienced or affected by the events
+  | 'insider_professional' // Syrian professional working in-country
+  | 'outsider_researcher'  // External academic or researcher
+  | 'institutional'        // Institutional / organisational voice (UN, NGO, government)
+  | 'diaspora'             // Syrian diaspora perspective
+
+// Gap contribution types
+export type GapContributionType =
+  | 'reading_suggestion'  // Suggest a relevant resource or paper
+  | 'collaboration_offer' // Offer to work on addressing the gap
+  | 'methodological_note' // Note on approach or methodology
+  | 'data_pointer'        // Point to an available dataset or evidence
+  | 'challenge_framing'   // Dispute the framing or existence of the gap itself
+
+// Trace: one record in the chain of custody (who held the artefact, when, and how)
+export interface TraceCustodyRecord {
+  holder: string           // Name or description of the custodian
+  role: string             // Role: 'photographer', 'family_member', 'archive', 'translator', etc.
+  period?: string          // Time period of custody, e.g. '2015–2020'
+  transfer_method?: string // How the artefact moved on: 'physical_handover', 'digitised', 'donated'
+  notes?: string           // Any relevant notes on condition or circumstances
+}
+
 // Metadata interfaces for specialized content types
 export interface TraceMetadata {
   artifact_type: TraceArtifactType
@@ -22,6 +48,10 @@ export interface TraceMetadata {
   language?: string
   file_url?: string
   thumbnail_url?: string
+  // Chain of custody: ordered list from origin to current holder.
+  // Each transformation (digitisation, translation, transcription) degrades epistemic
+  // proximity — a custody chain of length > 1 is itself epistemically meaningful.
+  custody_chain?: TraceCustodyRecord[]
 }
 
 export interface EventMetadata {
@@ -92,6 +122,23 @@ export interface ResearchGapSuggestion {
   post?: Post
 }
 
+export interface GapContribution {
+  id: string
+  gap_id: string
+  user_id: string
+  contribution_type: GapContributionType
+  content: string
+  resource_url?: string
+  resource_title?: string
+  // Collaboration-offer specific
+  expertise_offered?: string
+  availability_notes?: string
+  status: 'active' | 'archived' | 'accepted'
+  created_at: string
+  updated_at: string
+  user?: User
+}
+
 export interface User {
   id: string
   name: string
@@ -124,6 +171,10 @@ export interface Post {
   accepted_answer_id?: string | null
   license?: string | null
 
+  // Perspective: structural standpoint of the author relative to the events.
+  // Optional. Set by author at submission. See PerspectiveType.
+  perspective_type?: PerspectiveType | null
+
   // Epistemic fields (temporal & spatial coverage)
   temporal_coverage_start?: string | null
   temporal_coverage_end?: string | null
@@ -134,7 +185,7 @@ export interface Post {
   reuse_count?: number
 
   // Metadata (structure varies by content_type: TraceMetadata | EventMetadata | generic)
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   // Stats
   view_count?: number
@@ -157,7 +208,7 @@ export interface PostVersion {
   tags: string[]
   author_id: string | null
   editor_id: string | null
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   created_at: string
 }
 
@@ -185,8 +236,8 @@ export interface Report {
   reason: string
   status: ReportStatus
   content_type: 'post' | 'comment'
-  content_snapshot?: Record<string, any>
-  moderation_data?: Record<string, any>
+  content_snapshot?: Record<string, unknown>
+  moderation_data?: Record<string, unknown>
   reviewed_by?: string
   reviewed_at?: string
   created_at: string
@@ -195,7 +246,7 @@ export interface Report {
 export interface Role {
   id: string
   name: string
-  permissions: Record<string, any>
+  permissions: Record<string, unknown>
 }
 
 export interface Citation {
@@ -219,7 +270,7 @@ export interface Badge {
   name: string
   description: string
   icon_url: string
-  criteria: Record<string, any>
+  criteria: Record<string, unknown>
   created_at: string
 }
 

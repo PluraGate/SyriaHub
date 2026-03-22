@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl'
 import { hasSeenOnboarding, markOnboardingShown } from '@/lib/sessionContext'
 import {
     X,
-    BookOpen,
     Scale,
     Lightbulb,
     Search,

@@ -258,6 +258,10 @@ const eslintConfig = [
             '**/*.md',
             '**/*.sql',
             '**/*.json',
+            // Dev-only scripts — not deployed, different quality standards
+            'scripts/**',
+            // Test files — legitimately use `any` for mocks and test helpers
+            'tests/**',
         ],
     },
 ]

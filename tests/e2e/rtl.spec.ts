@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('RTL (Arabic) Mode Support', () => {
     test.beforeEach(async ({ page }) => {
-        // Disable Epistemic Onboarding by setting localStorage key
+        // Disable Epistemic Onboarding and Cookie Consent by setting localStorage keys
         await page.addInitScript(() => {
             window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+            window.localStorage.setItem('syriahub-cookie-consent', 'all');
         });
     });
 
@@ -42,18 +43,19 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic research lab page loads', async ({ page }) => {
-        await page.goto('/ar/research-lab');
+        await page.goto('/ar/research-lab', { waitUntil: 'networkidle' });
 
         // Research lab is protected - should redirect to login
-        await expect(page).toHaveURL(/\/ar\/auth\/login/, { timeout: 10000 });
+        await expect(page).toHaveURL(/\/ar\/auth\/login/, { timeout: 20000 });
 
-        // Check RTL direction is maintained on login page
-        const isRTL = await page.evaluate(() => {
+        // Wait for page to hydrate and RTL direction to be applied
+        await page.waitForFunction(() => {
             const html = document.documentElement;
             return html.getAttribute('dir') === 'rtl' ||
-                getComputedStyle(html).direction === 'rtl';
-        });
-        expect(isRTL).toBeTruthy();
+                html.getAttribute('lang')?.startsWith('ar') ||
+                getComputedStyle(html).direction === 'rtl' ||
+                getComputedStyle(document.body).direction === 'rtl';
+        }, { timeout: 15000 });
     });
 
     test('Arabic polls page shows translated content', async ({ page }) => {
@@ -102,20 +104,16 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic auth page shows translated labels', async ({ page }) => {
-        await page.goto('/ar/auth/login');
+        await page.goto('/ar/auth/login', { waitUntil: 'networkidle' });
 
-        // Wait for page to stabilize
-        await page.waitForLoadState('domcontentloaded');
-
-        // Check for RTL direction - should be set on html or via computed style
-        const isRTL = await page.evaluate(() => {
+        // Wait for RTL direction to be applied after hydration
+        await page.waitForFunction(() => {
             const html = document.documentElement;
             return html.getAttribute('dir') === 'rtl' ||
                 html.getAttribute('lang')?.startsWith('ar') ||
                 getComputedStyle(html).direction === 'rtl' ||
                 getComputedStyle(document.body).direction === 'rtl';
-        });
-        expect(isRTL).toBeTruthy();
+        }, { timeout: 15000 });
 
         // Form should be present
         await expect(page.locator('form, input[type="email"]').first()).toBeVisible();

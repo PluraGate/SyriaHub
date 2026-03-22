@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabaseClient'
 import { withErrorHandling } from '@/lib/apiUtils'
 
 export const runtime = 'edge'
