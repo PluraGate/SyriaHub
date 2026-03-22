@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { Search, Filter, Loader2, ChevronDown, X, Info, AlertTriangle, Link2, Quote, FileDown, Bookmark, ExternalLink, MoreHorizontal, Globe, Database, History, Copy, Plus, GitBranch, Check, Clock, FileText, Users, Calendar } from 'lucide-react'
+import { Search, Filter, Loader2, ChevronDown, X, Info, AlertTriangle, Link2, Quote, FileDown, Bookmark, ExternalLink, Globe, Database, Copy, Plus, GitBranch, Check, Clock, FileText, Users, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TrustDimensions } from '@/components/TrustProfileCard'
 import { InlineConflictBadge } from '@/components/ConflictWarning'
@@ -284,7 +284,7 @@ export function ResearchSearchEngine() {
 
         // Restore cached results if available
         if (search.cached_results) {
-            const cached = search.cached_results as { internal?: any[], web?: any[] }
+            const cached = search.cached_results as { internal?: unknown[], web?: unknown[] }
             if (cached.internal) {
                 setResults(cached.internal)
             }

@@ -8,7 +8,6 @@ import {
     FolderKanban,
     Users,
     FileText,
-    Eye,
     Lock,
     Globe,
     ChevronRight,

@@ -118,9 +118,9 @@ export async function saveDraft(draft: Omit<DraftPost, 'syncStatus' | 'retryCoun
             resolve(draft.id)
 
             // Trigger background sync if available
-            if ('serviceWorker' in navigator && 'sync' in (window as any).registration) {
+            if ('serviceWorker' in navigator && 'sync' in (window as unknown as { registration: unknown }).registration) {
                 ; (navigator.serviceWorker.ready as Promise<ServiceWorkerRegistration>)
-                    .then((reg) => (reg as any).sync.register('sync-drafts'))
+                    .then((reg) => (reg as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-drafts'))
                     .catch(console.error)
             }
         }

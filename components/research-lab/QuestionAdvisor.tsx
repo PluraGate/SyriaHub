@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     Sparkles,
@@ -28,7 +28,7 @@ interface QuestionAdvisorProps {
         monthly_remaining: number
         reset_at: string
     }
-    initialHistory?: any[]
+    initialHistory?: Record<string, unknown>[]
 }
 
 interface AnalysisResult {
@@ -104,8 +104,8 @@ export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: Qu
             setResult(data)
             setRemainingUses(prev => Math.max(0, prev - 1))
             refreshHistory() // Refresh to show new history item
-        } catch (error: any) {
-            showToast(error.message || 'Failed to analyze question', 'error')
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : 'Failed to analyze question', 'error')
         } finally {
             setAnalyzing(false)
         }
@@ -362,7 +362,7 @@ export function QuestionAdvisor({ userId, usageLimits, initialHistory = [] }: Qu
     )
 }
 
-function ScoreCard({ label, score, icon: Icon }: { label: string; score: number; icon: any }) {
+function ScoreCard({ label, score, icon: Icon }: { label: string; score: number; icon: React.ElementType }) {
     const getScoreColor = (score: number) => {
         if (score >= 80) return 'text-emerald-500'
         if (score >= 60) return 'text-amber-500'

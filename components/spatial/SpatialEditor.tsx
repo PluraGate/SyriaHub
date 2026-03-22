@@ -14,7 +14,7 @@ const fixLeafletIcons = async () => {
     if (typeof window === 'undefined') return
 
     const L = (await import('leaflet')).default
-    delete (L.Icon.Default.prototype as any)._getIconUrl
+    delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
     L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
         iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
@@ -77,7 +77,7 @@ const MapClickHandler = dynamic(
     () => Promise.resolve(function MapClickHandlerInner({
         onClick,
         enabled,
-        drawMode
+        drawMode: _drawMode
     }: {
         onClick: (lat: number, lng: number) => void
         enabled: boolean
@@ -86,7 +86,7 @@ const MapClickHandler = dynamic(
         const { useMapEvents: useMapEventsHook } = require('react-leaflet')
 
         useMapEventsHook({
-            click: (e: any) => {
+            click: (e: { latlng?: { lat: number; lng: number } }) => {
                 if (enabled && e.latlng) {
                     onClick(e.latlng.lat, e.latlng.lng)
                 }
@@ -151,7 +151,6 @@ export function SpatialEditor({
     // Pattern detection preview state
     const [governorates, setGovernorates] = useState<GovernorateFeature[]>([])
     const [detectedPatterns, setDetectedPatterns] = useState<DetectedPattern[]>([])
-    const [dismissedPatterns, setDismissedPatterns] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         setMounted(true)
@@ -212,7 +211,7 @@ export function SpatialEditor({
 
                 if (rawCoords.length > 0) {
                     // Check nesting level and extract points
-                    if (Array.isArray(rawCoords[0]) && Array.isArray((rawCoords[0] as any)[0])) {
+                    if (Array.isArray(rawCoords[0]) && Array.isArray((rawCoords[0] as unknown[])[0])) {
                         // It's number[][][] (GeoJSON Polygon ring)
                         coords = (rawCoords as number[][][])[0]
                     } else {
@@ -560,7 +559,7 @@ export function SpatialEditor({
                     {currentGeometry?.type === 'Polygon' && (
                         <Polygon
                             positions={(() => {
-                                const coords = currentGeometry.coordinates as any[]
+                                const coords = currentGeometry.coordinates as number[] | number[][] | number[][][]
                                 // Handle both simple and standard GeoJSON (nested)
                                 if (coords.length > 0 && Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
                                     // number[][][] -> Extract first ring

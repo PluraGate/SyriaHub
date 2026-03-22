@@ -58,7 +58,7 @@ export function getSessionContext(): SessionContext {
             return {
                 ...parsed,
                 createdAt: new Date(parsed.createdAt),
-                researchTrail: parsed.researchTrail.map((item: any) => ({
+                researchTrail: parsed.researchTrail.map((item: Record<string, unknown>) => ({
                     ...item,
                     viewedAt: new Date(item.viewedAt)
                 }))

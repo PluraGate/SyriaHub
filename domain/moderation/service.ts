@@ -361,7 +361,7 @@ export async function checkPlagiarism(
     return {
       isPlagiarized: similarityScore > 0.9, // Only consider >90% as definite plagiarism
       similarityScore,
-      sources: matches.map((m: any) => m.content_id),
+      sources: matches.map((m: Record<string, unknown>) => m.content_id as string),
       details: `${Math.round(similarityScore * 100)}% similar to existing research content`
     }
 

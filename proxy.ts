@@ -144,7 +144,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // 4. Rate Limiting
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || (request as any).ip || '127.0.0.1';
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || (request as unknown as { ip?: string }).ip || '127.0.0.1';
     if (isRateLimited(ip)) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }

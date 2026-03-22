@@ -16,7 +16,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
   function applyCookieOptions(options: CookieOptions): CookieOptions {
     if (rememberMe) return options
     // Strip maxAge / expires so the cookie becomes a session cookie
-    const { maxAge, expires, ...rest } = options as CookieOptions & { maxAge?: number; expires?: Date }
+    const { maxAge: _maxAge, expires: _expires, ...rest } = options as CookieOptions & { maxAge?: number; expires?: Date }
     return rest
   }
 

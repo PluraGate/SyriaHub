@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { AlertTriangle, X, Info, ChevronRight } from 'lucide-react'
+import { AlertTriangle, X, Info } from 'lucide-react'
 import type { DetectedPattern } from '@/domain/spatial/patternDetector'
 
 interface AwarenessFlagProps {

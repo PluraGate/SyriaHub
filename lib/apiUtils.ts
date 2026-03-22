@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import type { PostgrestError } from '@supabase/supabase-js'
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string
@@ -174,7 +174,7 @@ export function getQueryParams(request: Request): URLSearchParams {
 /**
  * Validate required fields in an object
  */
-export function validateRequiredFields<T extends Record<string, any>>(
+export function validateRequiredFields<T extends Record<string, unknown>>(
   data: T,
   requiredFields: (keyof T)[]
 ): void {
@@ -189,7 +189,7 @@ export function validateRequiredFields<T extends Record<string, any>>(
  * Wrap async route handler with error handling and request ID tracking
  */
 export function withErrorHandling(
-  handler: (request: Request, context?: any) => Promise<NextResponse>,
+  handler: (request: Request, context?: unknown) => Promise<NextResponse>,
   options?: {
     cache?: {
       enabled?: boolean
@@ -199,7 +199,7 @@ export function withErrorHandling(
     }
   }
 ) {
-  return async (request: Request, context?: any): Promise<NextResponse> => {
+  return async (request: Request, context?: unknown): Promise<NextResponse> => {
     // Generate request ID for correlation
     const requestId = generateRequestId()
 
@@ -256,7 +256,7 @@ export function withErrorHandling(
 /**
  * Extract user ID from path parameters
  */
-export function extractIdFromParams(params: any): string {
+export function extractIdFromParams(params: Record<string, unknown>): string {
   const id = params?.id
 
   if (!id || typeof id !== 'string') {
@@ -325,7 +325,7 @@ export function validateOrigin(request: Request): boolean {
  * SECURITY: Middleware wrapper to validate origin on mutation endpoints
  * Use this on POST, PUT, PATCH, DELETE handlers that use cookie auth
  */
-export function withOriginValidation<T extends any[]>(
+export function withOriginValidation<T extends unknown[]>(
   handler: (request: Request, ...args: T) => Promise<NextResponse>
 ) {
   return async (request: Request, ...args: T): Promise<NextResponse> => {
