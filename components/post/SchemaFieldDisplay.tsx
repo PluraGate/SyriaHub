@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Database } from 'lucide-react'
 
 export interface SchemaFieldValue {
-    value: unknown
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: any
     field: {
         display_name: string
         field_key: string

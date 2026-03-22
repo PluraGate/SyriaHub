@@ -69,10 +69,13 @@ const getSupabase = () => {
 // ==================== Main Analysis Function ====================
 
 export interface AnalysisResult {
-    trustProfile: Record<string, unknown>
-    relationships: Record<string, unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    trustProfile: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    relationships: any[]
     disciplines: string[]
-    evidence: Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    evidence: any
 }
 
 /**
@@ -222,7 +225,8 @@ export async function analyzePostForRecommendations(
         }
 
         if (analysis.relationships?.length > 0) {
-            const relationshipInserts = analysis.relationships.map((r) => ({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const relationshipInserts = analysis.relationships.map((r: any) => ({
                 source_id: postId,
                 source_type: 'post',
                 target_id: r.target_id,

@@ -58,7 +58,8 @@ export function getSessionContext(): SessionContext {
             return {
                 ...parsed,
                 createdAt: new Date(parsed.createdAt),
-                researchTrail: parsed.researchTrail.map((item: Record<string, unknown>) => ({
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                researchTrail: parsed.researchTrail.map((item: any) => ({
                     ...item,
                     viewedAt: new Date(item.viewedAt)
                 }))

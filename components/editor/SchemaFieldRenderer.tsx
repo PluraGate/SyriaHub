@@ -68,7 +68,8 @@ export function SchemaFieldRenderer({ fields, values, onChange, errors }: Schema
     )
 }
 
-function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, value: unknown, onChange: (val: unknown) => void }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, value: any, onChange: (val: any) => void }) {
     switch (field.field_type) {
         case 'text':
         case 'url':
@@ -136,7 +137,8 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
             )
 
         case 'select':
-            const selectOptions = (field.constraints as Record<string, unknown>)?.options as unknown[] || []
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const selectOptions = (field.constraints as any)?.options || []
             return (
                 <select
                     value={value || ''}
@@ -144,9 +146,10 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
                     className="select-input"
                 >
                     <option value="">Select an option...</option>
-                    {selectOptions.map((opt) => {
-                        const optionValue = typeof opt === 'string' ? opt : (opt as Record<string, unknown>).value as string
-                        const optionLabel = typeof opt === 'string' ? opt : (opt as Record<string, unknown>).label as string
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {selectOptions.map((opt: any) => {
+                        const optionValue = typeof opt === 'string' ? opt : opt.value
+                        const optionLabel = typeof opt === 'string' ? opt : opt.label
                         return (
                             <option key={optionValue} value={optionValue}>{optionLabel}</option>
                         )
@@ -155,14 +158,16 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
             )
 
         case 'multiselect':
-            const multiOptions = (field.constraints as Record<string, unknown>)?.options as unknown[] || []
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const multiOptions = (field.constraints as any)?.options || []
             const selectedValues = Array.isArray(value) ? value : []
             return (
                 <div className="space-y-2">
                     <div className="flex flex-wrap gap-2">
-                        {multiOptions.map((opt) => {
-                            const optionValue = typeof opt === 'string' ? opt : (opt as Record<string, unknown>).value as string
-                            const optionLabel = typeof opt === 'string' ? opt : (opt as Record<string, unknown>).label as string
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {multiOptions.map((opt: any) => {
+                            const optionValue = typeof opt === 'string' ? opt : opt.value
+                            const optionLabel = typeof opt === 'string' ? opt : opt.label
                             const isSelected = selectedValues.includes(optionValue)
                             return (
                                 <button

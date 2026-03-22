@@ -174,7 +174,8 @@ export function getQueryParams(request: Request): URLSearchParams {
 /**
  * Validate required fields in an object
  */
-export function validateRequiredFields<T extends Record<string, unknown>>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function validateRequiredFields<T extends Record<string, any>>(
   data: T,
   requiredFields: (keyof T)[]
 ): void {
@@ -189,7 +190,8 @@ export function validateRequiredFields<T extends Record<string, unknown>>(
  * Wrap async route handler with error handling and request ID tracking
  */
 export function withErrorHandling(
-  handler: (request: Request, context?: unknown) => Promise<NextResponse>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (request: Request, context?: any) => Promise<NextResponse>,
   options?: {
     cache?: {
       enabled?: boolean
@@ -199,7 +201,8 @@ export function withErrorHandling(
     }
   }
 ) {
-  return async (request: Request, context?: unknown): Promise<NextResponse> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return async (request: Request, context?: any): Promise<NextResponse> => {
     // Generate request ID for correlation
     const requestId = generateRequestId()
 

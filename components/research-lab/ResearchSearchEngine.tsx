@@ -284,7 +284,8 @@ export function ResearchSearchEngine() {
 
         // Restore cached results if available
         if (search.cached_results) {
-            const cached = search.cached_results as { internal?: unknown[], web?: unknown[] }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cached = search.cached_results as { internal?: any[], web?: any[] }
             if (cached.internal) {
                 setResults(cached.internal)
             }

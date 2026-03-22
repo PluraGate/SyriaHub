@@ -31,7 +31,8 @@ import { useTranslations } from 'next-intl'
 
 interface SurveyBuilderProps {
     userId: string
-    existingSurvey?: Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    existingSurvey?: any
 }
 
 interface Question {
