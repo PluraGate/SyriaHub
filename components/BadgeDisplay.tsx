@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, UserBadge } from '@/types';
+import { UserBadge } from '@/types';
 import { CheckCircle, Star, ShieldCheck, Award } from 'lucide-react';
 
 interface BadgeDisplayProps {

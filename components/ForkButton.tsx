@@ -22,7 +22,7 @@ export function ForkButton({ postId, postTitle, postContent, postTags, iconOnly 
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('Post')
-    const tc = useTranslations('Common')
+    const _tc = useTranslations('Common')
 
     const handleFork = async () => {
         setIsForking(true)

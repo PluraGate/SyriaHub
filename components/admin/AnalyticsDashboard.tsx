@@ -7,7 +7,6 @@ import {
     FileText,
     MessageSquare,
     TrendingUp,
-    TrendingDown,
     BarChart3,
     Activity,
     ThumbsUp,
@@ -32,6 +31,7 @@ import {
 import { format } from 'date-fns'
 import { useTranslations } from 'next-intl'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
@@ -40,6 +40,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     {format(new Date(label), 'MMM d, yyyy')}
                 </p>
                 <div className="space-y-1">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center gap-2.5">
                             <span 

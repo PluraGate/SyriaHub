@@ -8,14 +8,13 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { useTranslations } from 'next-intl'
 import { User, Briefcase, BookOpen, MapPin, Globe, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react'
-import Image from 'next/image'
 
 export default function OnboardingPage() {
     const router = useRouter()
     const t = useTranslations('Onboarding')
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<{ id: string } | null>(null)
     const [formData, setFormData] = useState({
         name: '',
         bio: '',

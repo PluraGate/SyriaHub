@@ -4,7 +4,7 @@ import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 
 // GET: Fetch user's bookmarks
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
                     tags,
                     status,
                     created_at,
-                    author:users!posts_author_id_fkey(id, name, email)
+                    author:users!posts_author_id_fkey(id, name)
                 )
             `)
             .eq('user_id', user.id)

@@ -11,7 +11,6 @@
 
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
-import { type ComponentProps } from 'react'
 
 // ── Shared loading fallback ──────────────────────────────────────
 

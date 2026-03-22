@@ -220,7 +220,7 @@ async function handlePatch(request: NextRequest) {
             public_comments,
             private_comments,
             reviewer_confidence,
-            decline_reason
+            decline_reason: _decline_reason
         } = body
 
         if (!review_id || !action) {

@@ -171,6 +171,7 @@
             "dontHaveCode": "ليس لديك رمز؟",
             "emailAddress": "بريدك الإلكتروني",
             "atLeast6Chars": "6 أحرف على الأقل",
+            "atLeast8Chars": "8 أحرف على الأقل",
             "securityCheckError": "يرجى إكمال الفحص الأمني"
         }
     },

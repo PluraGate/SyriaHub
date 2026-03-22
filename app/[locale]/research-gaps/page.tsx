@@ -672,6 +672,7 @@ export default function ResearchGapsPage() {
                                                 {gap.creator && (
                                                     <span className="flex items-center gap-1">
                                                         <UserIcon className="w-3.5 h-3.5" />
+                                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                         {(gap.creator as any).name || (gap.creator as any).email?.split('@')[0]}
                                                     </span>
                                                 )}
@@ -691,6 +692,7 @@ export default function ResearchGapsPage() {
                                             {gap.status === 'investigating' && gap.claimer && (
                                                 <div className="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
                                                     <TrendingUp className="w-4 h-4" />
+                                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                     Being investigated by {(gap.claimer as any).name || (gap.claimer as any).email?.split('@')[0]}
                                                 </div>
                                             )}

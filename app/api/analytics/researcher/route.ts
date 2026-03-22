@@ -42,10 +42,11 @@ export async function GET(request: NextRequest) {
         }
 
         const startDate = subDays(new Date(), daysBack)
-        const compareStartDate = subDays(new Date(), daysBack * 2)
-        const compareEndDate = startDate
+        const _compareStartDate = subDays(new Date(), daysBack * 2)
+        const _compareEndDate = startDate
 
         // Fetch comprehensive stats using the new RPC if possible, or manual aggregation
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let stats: any = null
 
         try {
@@ -174,9 +175,10 @@ export async function GET(request: NextRequest) {
         })
 
         // Helper to aggregate by day
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const aggregateByDay = (data: any[] | null, dayMap: Record<string, number>) => {
             if (data) {
-                data.forEach((item: any) => {
+                data.forEach((item: { created_at: string }) => {
                     const key = format(new Date(item.created_at), 'yyyy-MM-dd')
                     if (dayMap[key] !== undefined) {
                         dayMap[key]++

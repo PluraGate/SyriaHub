@@ -1,6 +1,6 @@
 'use client'
 
-import { MoreHorizontal, MessageSquareQuote, History, Flag } from 'lucide-react'
+import { MoreHorizontal, MessageSquareQuote } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,7 +21,7 @@ interface PostMoreOptionsProps {
     className?: string
 }
 
-export function PostMoreOptions({ postId, asButton, className }: PostMoreOptionsProps) {
+export function PostMoreOptions({ postId, asButton: _asButton, className }: PostMoreOptionsProps) {
     const t = useTranslations('Post')
 
     return (

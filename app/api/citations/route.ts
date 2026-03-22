@@ -1,6 +1,6 @@
 // Citations API - Create and manage post citations (internal and external)
 import { NextResponse } from 'next/server'
-import { createServerClient, verifyAuth, canModify } from '@/lib/supabaseClient'
+import { createServerClient, verifyAuth } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,
@@ -9,7 +9,6 @@ import {
   validateRequiredFields,
   getQueryParams,
   withErrorHandling,
-  forbiddenResponse,
   validateOrigin,
 } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'

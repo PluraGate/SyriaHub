@@ -31,7 +31,7 @@ export function FaqPageClient({ user }: FaqPageClientProps) {
         )
     }
 
-    const faqItems = [
+    const _faqItems = [
         'whatIsSyriaHub',
         'howToJoin',
         'whatCanIPost',

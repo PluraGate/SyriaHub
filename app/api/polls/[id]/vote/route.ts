@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { validateOrigin } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 
 // POST /api/polls/[id]/vote - Submit a vote
 async function handlePost(
@@ -12,7 +13,7 @@ async function handlePost(
     if (!validateOrigin(request)) {
         return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
     }
-    
+
     const { id: pollId } = await params
     const supabase = await createClient()
 
@@ -25,7 +26,8 @@ async function handlePost(
     }
 
     try {
-        const { option_ids } = await request.json()
+        const body = await request.json()
+        const { option_ids, turnstile_token } = body
 
         if (!option_ids || !Array.isArray(option_ids) || option_ids.length === 0) {
             return NextResponse.json(
@@ -34,10 +36,10 @@ async function handlePost(
             )
         }
 
-        // Check if poll exists and is active
+        // Check if poll exists and is active — include require_turnstile
         const { data: poll, error: pollError } = await supabase
             .from('polls')
-            .select('*')
+            .select('*, require_turnstile')
             .eq('id', pollId)
             .single()
 
@@ -63,8 +65,21 @@ async function handlePost(
             )
         }
 
+        // SECURITY: Verify Turnstile when the poll requires it.
+        // Applies to authenticated votes just as it does to public votes,
+        // because account creation alone does not prevent coordinated ballot stuffing.
+        if (poll.require_turnstile) {
+            const isValid = await verifyTurnstileToken(turnstile_token ?? null)
+            if (!isValid) {
+                return NextResponse.json(
+                    { error: 'Bot verification failed. Please complete the CAPTCHA.' },
+                    { status: 403 }
+                )
+            }
+        }
+
         // Validate option_ids
-        const validOptionIds = poll.options.map((opt: any) => opt.id)
+        const validOptionIds = poll.options.map((opt: { id: string }) => opt.id)
         const invalidOptions = option_ids.filter(id => !validOptionIds.includes(id))
         if (invalidOptions.length > 0) {
             return NextResponse.json(
@@ -120,4 +135,5 @@ async function handlePost(
 }
 
 // SECURITY: Apply rate limiting to vote endpoint (write rate)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = withRateLimit('write')(handlePost as any)

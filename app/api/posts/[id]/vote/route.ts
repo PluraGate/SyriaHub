@@ -49,4 +49,5 @@ async function handlePost(request: Request, { params }: { params: Promise<{ id: 
 }
 
 // SECURITY: Apply rate limiting to vote endpoint (write rate)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = withRateLimit('write')(handlePost as any)

@@ -207,7 +207,7 @@ async function fallbackTextSearch(
     limit: number,
     offset: number,
     startTime: number,
-    userId?: string
+    _userId?: string
 ) {
     // SECURITY: Escape LIKE pattern special characters to prevent pattern injection
     const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&')

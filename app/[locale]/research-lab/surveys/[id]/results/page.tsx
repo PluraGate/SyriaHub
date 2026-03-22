@@ -129,9 +129,9 @@ export default async function SurveyResultsPage({ params }: PageProps) {
                                     })) || []}
                                     responses={responses?.map(r => ({
                                         id: r.id,
-                                        answers: r.answers,
+                                        answers: r.answers as Record<string, unknown>,
                                         completed_at: r.completed_at,
-                                        respondent: Array.isArray(r.respondent) ? r.respondent[0] : r.respondent
+                                        respondent: Array.isArray(r.respondent) ? (r.respondent[0] ?? null) : r.respondent
                                     })) || []}
                                 />
                             </div>
@@ -175,7 +175,7 @@ export default async function SurveyResultsPage({ params }: PageProps) {
                                         id: r.id,
                                         answers: r.answers as Record<string, unknown>,
                                         completed_at: r.completed_at,
-                                        respondent: Array.isArray(r.respondent) ? r.respondent[0] : r.respondent
+                                        respondent: Array.isArray(r.respondent) ? (r.respondent[0] ?? null) : r.respondent
                                     })) || []}
                                     questions={questions?.map(q => ({
                                         id: q.id,

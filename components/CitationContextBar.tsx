@@ -5,7 +5,6 @@ import { Link } from '@/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Link2, ArrowRight, X, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { cn } from '@/lib/utils'
 
 interface RelatedPost {
     id: string
@@ -50,7 +49,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                 const { data: tags } = await supabase.from('tags').select('label, color')
                 if (tags) {
                     const colors: Record<string, string> = {}
-                    tags.forEach((tag: any) => {
+                    tags.forEach((tag: { label: string; color: string }) => {
                         colors[tag.label] = tag.color
                     })
                     setTagColors(colors)
@@ -68,6 +67,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     .eq('source_post_id', postId)
                     .limit(3)
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 citationsOut?.forEach((c: any) => {
                     if (c.posts) {
                         related.push({
@@ -90,6 +90,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     .eq('target_post_id', postId)
                     .limit(3)
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 citationsIn?.forEach((c: any) => {
                     if (c.posts && !related.find(r => r.id === c.posts.id)) {
                         related.push({
@@ -112,6 +113,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                         .overlaps('tags', currentTags)
                         .limit(5)
 
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     tagOverlap?.forEach((post: any) => {
                         if (!related.find(r => r.id === post.id)) {
                             // Find the first tag that's different from the current post's primary tag
@@ -138,6 +140,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
                     .eq('forked_from_id', postId)
                     .limit(2)
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 forks?.forEach((fork: any) => {
                     if (!related.find(r => r.id === fork.id)) {
                         related.push({
@@ -166,7 +169,7 @@ export function CitationContextBar({ postId, currentTags = [] }: CitationContext
         return null
     }
 
-    const getConnectionLabel = (type: string) => {
+    const _getConnectionLabel = (type: string) => {
         switch (type) {
             case 'citation': return t('cites') // Check if 'cites' exists or add it
             case 'tag-overlap': return t('relatedTo')

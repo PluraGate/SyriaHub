@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { validateOrigin } from '@/lib/apiUtils'
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit, applyRateLimit } from '@/lib/rateLimit'
 
 interface RouteParams {
     params: Promise<{ id: string }>
@@ -9,15 +9,18 @@ interface RouteParams {
 
 // GET /api/polls/[id] - Fetch individual poll with vote details
 export async function GET(request: NextRequest, { params }: RouteParams) {
+    const rateLimit = await applyRateLimit(request, 'read')
+    if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
     const { id } = await params
     const supabase = await createClient()
 
-    // Fetch poll with author info
+    // Fetch poll with author info (no email)
     const { data: poll, error: pollError } = await supabase
         .from('polls')
         .select(`
             *,
-            author:users!author_id(id, name, email, avatar_url)
+            author:users!author_id(id, name, avatar_url)
         `)
         .eq('id', id)
         .single()
@@ -101,7 +104,9 @@ async function handlePut(request: NextRequest, { params }: RouteParams) {
             is_anonymous,
             show_results_before_vote,
             end_date,
-            is_active
+            is_active,
+            data_source_type,
+            data_source_label
         } = body
 
         // Build update object
@@ -113,6 +118,14 @@ async function handlePut(request: NextRequest, { params }: RouteParams) {
         if (show_results_before_vote !== undefined) updateData.show_results_before_vote = show_results_before_vote
         if (end_date !== undefined) updateData.end_date = end_date
         if (is_active !== undefined) updateData.is_active = is_active
+        if (data_source_type !== undefined) updateData.data_source_type = data_source_type || null
+        if (data_source_label !== undefined) {
+            const label = (data_source_label as string)?.trim() || null
+            if (label && label.length > 200) {
+                return NextResponse.json({ error: 'data_source_label exceeds 200 characters' }, { status: 400 })
+            }
+            updateData.data_source_label = label
+        }
 
         // Format options if provided
         if (options && Array.isArray(options)) {
@@ -129,7 +142,7 @@ async function handlePut(request: NextRequest, { params }: RouteParams) {
             .eq('id', id)
             .select(`
                 *,
-                author:users!author_id(name, email)
+                author:users!author_id(name)
             `)
             .single()
 

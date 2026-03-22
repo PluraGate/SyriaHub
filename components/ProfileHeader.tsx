@@ -8,7 +8,6 @@ import { UserLevelBadge } from './UserLevelBadge'
 import { getTierFromLevel } from '@/lib/gamification'
 import { MapPin, Link as LinkIcon, Building2, Calendar, CalendarDays, Users, FileText, Quote, Zap, GraduationCap, Mail, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { FollowButton } from './FollowButton'
 import { cn } from '@/lib/utils'
@@ -19,8 +18,11 @@ import { arSA, enUS } from 'date-fns/locale'
 import { useLocale } from 'next-intl'
 
 interface ProfileHeaderProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stats: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     badges: any[]
     isOwnProfile: boolean
     privacySettings?: {
@@ -83,7 +85,7 @@ function StatItem({
     )
 }
 
-export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySettings }: ProfileHeaderProps) {
+export function ProfileHeader({ profile, stats, badges, isOwnProfile, privacySettings: _privacySettings }: ProfileHeaderProps) {
     const [mounted, setMounted] = useState(false)
     const [statsOpen, setStatsOpen] = useState(false)
     const t = useTranslations('ProfileLabels')

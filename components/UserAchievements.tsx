@@ -142,6 +142,7 @@ export function UserStreakBadge({ userId }: { userId: string }) {
                     .order('created_at', { ascending: false })
 
                 if (posts) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const postDates = posts.map((p: any) => new Date(p.created_at))
                     setStreak(calculateStreak(postDates))
                 }
@@ -193,6 +194,7 @@ export function UserBadgesDisplay({ userId, limit = 5 }: { userId: string; limit
 
                 if (data) {
                     setBadges(
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         data.map((item: any) => ({
                             id: item.badge.id,
                             name: item.badge.name,
@@ -282,6 +284,7 @@ export function StreakEncouragement({ userId }: { userId: string }) {
                 .gte('created_at', thirtyDaysAgo.toISOString())
 
             if (posts) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 setStreak(calculateStreak(posts.map((p: any) => new Date(p.created_at))))
             }
         }

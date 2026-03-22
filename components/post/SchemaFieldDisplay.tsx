@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { FileText, Database, Map, Tag } from 'lucide-react'
+import { Database } from 'lucide-react'
 
 export interface SchemaFieldValue {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any
     field: {
         display_name: string

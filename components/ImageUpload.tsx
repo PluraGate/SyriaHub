@@ -94,7 +94,7 @@ export function ImageUpload({
             setPreview(publicUrl)
             onUploadComplete(publicUrl)
             showToast('Image uploaded successfully', 'success')
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error uploading image:', error)
             showToast('Error uploading image', 'error')
             setPreview(currentImage || null)
