@@ -28,7 +28,8 @@ interface QuestionAdvisorProps {
         monthly_remaining: number
         reset_at: string
     }
-    initialHistory?: Record<string, unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    initialHistory?: any[]
 }
 
 interface AnalysisResult {

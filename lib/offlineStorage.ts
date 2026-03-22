@@ -118,9 +118,11 @@ export async function saveDraft(draft: Omit<DraftPost, 'syncStatus' | 'retryCoun
             resolve(draft.id)
 
             // Trigger background sync if available
-            if ('serviceWorker' in navigator && 'sync' in (window as unknown as { registration: unknown }).registration) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if ('serviceWorker' in navigator && 'sync' in (window as any).registration) {
                 ; (navigator.serviceWorker.ready as Promise<ServiceWorkerRegistration>)
-                    .then((reg) => (reg as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-drafts'))
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .then((reg) => (reg as any).sync.register('sync-drafts'))
                     .catch(console.error)
             }
         }
