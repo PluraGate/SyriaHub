@@ -47,9 +47,9 @@ export function PlagiarismCheckButton({ postVersionId }: PlagiarismCheckButtonPr
 
             setResult(data)
             showToast('Plagiarism check completed', 'success')
-        } catch (error: unknown) {
+        } catch (error) {
             console.error('Plagiarism check error:', error)
-            showToast(error.message, 'error')
+            showToast(error instanceof Error ? error.message : 'Unknown error', 'error')
         } finally {
             setLoading(false)
         }

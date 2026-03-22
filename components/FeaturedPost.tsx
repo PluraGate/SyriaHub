@@ -80,7 +80,7 @@ const accentClasses = {
 function _formatEventDate(dateString?: string, _locale: string = 'en'): string {
     if (!dateString) return 'Date TBD'
     const date = new Date(dateString)
-    return date.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return date.toLocaleDateString(_locale === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function FeaturedPost({

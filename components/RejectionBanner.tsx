@@ -128,9 +128,9 @@ export function RejectionBanner({
                 .limit(1)
                 .single()
             setExistingAppeal(data)
-        } catch (error: unknown) {
+        } catch (error) {
             console.error('Error submitting appeal:', error instanceof Error ? error.message : error)
-            showToast(error.message || 'Failed to submit appeal. Please try again.', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to submit appeal. Please try again.', 'error')
         } finally {
             setSubmitting(false)
         }
