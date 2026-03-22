@@ -92,9 +92,9 @@ export function EventCard({ event, currentUser, isPast = false }: EventCardProps
             } else {
                 router.refresh()
             }
-        } catch (error: unknown) {
+        } catch (error) {
             console.error('Error:', error)
-            alert('An error occurred: ' + (error.message || 'Unknown error'))
+            alert('An error occurred: ' + (error instanceof Error ? error.message : 'Unknown error'))
         } finally {
             setIsDeleting(false)
             setShowConfirmation(false)
