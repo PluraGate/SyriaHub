@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js'
+import type { Session } from '@supabase/supabase-js'
 import type { UserRole } from '@/types'
 
 // ─── Public types ────────────────────────────────────────────────

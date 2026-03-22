@@ -185,7 +185,7 @@ export interface Post {
   reuse_count?: number
 
   // Metadata (structure varies by content_type: TraceMetadata | EventMetadata | generic)
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   // Stats
   view_count?: number
@@ -208,7 +208,7 @@ export interface PostVersion {
   tags: string[]
   author_id: string | null
   editor_id: string | null
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   created_at: string
 }
 
@@ -236,8 +236,8 @@ export interface Report {
   reason: string
   status: ReportStatus
   content_type: 'post' | 'comment'
-  content_snapshot?: Record<string, any>
-  moderation_data?: Record<string, any>
+  content_snapshot?: Record<string, unknown>
+  moderation_data?: Record<string, unknown>
   reviewed_by?: string
   reviewed_at?: string
   created_at: string
@@ -246,7 +246,7 @@ export interface Report {
 export interface Role {
   id: string
   name: string
-  permissions: Record<string, any>
+  permissions: Record<string, unknown>
 }
 
 export interface Citation {
@@ -270,7 +270,7 @@ export interface Badge {
   name: string
   description: string
   icon_url: string
-  criteria: Record<string, any>
+  criteria: Record<string, unknown>
   created_at: string
 }
 

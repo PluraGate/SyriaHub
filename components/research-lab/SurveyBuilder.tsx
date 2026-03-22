@@ -31,7 +31,7 @@ import { useTranslations } from 'next-intl'
 
 interface SurveyBuilderProps {
     userId: string
-    existingSurvey?: any
+    existingSurvey?: Record<string, unknown>
 }
 
 interface Question {
@@ -54,7 +54,7 @@ const QUESTION_TYPES_CONFIG = [
     { id: 'date', labelKey: 'questionTypes.date', icon: Calendar },
 ]
 
-export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
+export function SurveyBuilder({ userId: _userId, existingSurvey }: SurveyBuilderProps) {
     const router = useRouter()
     const { showToast } = useToast()
     const t = useTranslations('Surveys')
@@ -197,7 +197,7 @@ export function SurveyBuilder({ userId, existingSurvey }: SurveyBuilderProps) {
             const survey = await response.json()
             showToast(publish ? 'Survey published!' : 'Survey saved!', 'success')
             router.push(`/research-lab/surveys/${survey.id || existingSurvey.id}`)
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to save survey', 'error')
         } finally {
             setSaving(false)

@@ -69,10 +69,10 @@ const getSupabase = () => {
 // ==================== Main Analysis Function ====================
 
 export interface AnalysisResult {
-    trustProfile: any
-    relationships: any[]
+    trustProfile: Record<string, unknown>
+    relationships: Record<string, unknown>[]
     disciplines: string[]
-    evidence: any
+    evidence: Record<string, unknown>
 }
 
 /**
@@ -222,7 +222,7 @@ export async function analyzePostForRecommendations(
         }
 
         if (analysis.relationships?.length > 0) {
-            const relationshipInserts = analysis.relationships.map((r: any) => ({
+            const relationshipInserts = analysis.relationships.map((r) => ({
                 source_id: postId,
                 source_type: 'post',
                 target_id: r.target_id,

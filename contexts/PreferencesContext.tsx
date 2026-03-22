@@ -142,7 +142,7 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
             }
 
             try {
-                const { data, error } = await supabase
+                const { data } = await supabase
                     .from('user_preferences')
                     .select('preferences')
                     .eq('user_id', userId)
@@ -163,7 +163,7 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
                     // Update local cache with merged values
                     localStorage.setItem('user_preferences', JSON.stringify(merged))
                 }
-            } catch (error) {
+            } catch (_error) {
                 console.log('No database preferences found or sync error')
             } finally {
                 setLoading(false)
@@ -228,7 +228,7 @@ export function PreferencesProvider({ children, userId }: PreferencesProviderPro
                 } else {
                     // Success
                 }
-            } catch (error) {
+            } catch (_error) {
                 // Silent fail for sync
             }
         }

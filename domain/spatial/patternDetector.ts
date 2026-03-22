@@ -175,7 +175,7 @@ export function detectAccessDiscontinuity(
     for (const gov of governorates) {
         if (!gov.geometry) continue
         if (gov.geometry.type === 'Point' && Array.isArray(gov.geometry.coordinates) && gov.geometry.coordinates.length >= 2) {
-            const coords = gov.geometry.coordinates as any[]
+            const coords = gov.geometry.coordinates as number[]
             const govCenter: Point = {
                 lng: coords[0],
                 lat: coords[1]
@@ -200,7 +200,7 @@ export function detectAccessDiscontinuity(
         if (gov.name === containingGov.name) continue
         if (!gov.geometry) continue
         if (gov.geometry.type === 'Point' && Array.isArray(gov.geometry.coordinates) && gov.geometry.coordinates.length >= 2) {
-            const coords = gov.geometry.coordinates as any[]
+            const coords = gov.geometry.coordinates as number[]
             const govCenter: Point = {
                 lng: coords[0],
                 lat: coords[1]
@@ -281,7 +281,7 @@ export function detectServiceCoverageQuestion(
         }
         // Fallback: use centroid distance for point geometries
         if (gov.geometry.type === 'Point' && Array.isArray(gov.geometry.coordinates) && gov.geometry.coordinates.length >= 2) {
-            const coords = gov.geometry.coordinates as any[]
+            const coords = gov.geometry.coordinates as number[]
             const govCenter: Point = {
                 lng: coords[0],
                 lat: coords[1]
@@ -342,7 +342,7 @@ export function detectPatterns(
 
     // P4: Access discontinuity (only for point geometries)
     if (geometry.type === 'Point' && Array.isArray(geometry.coordinates) && geometry.coordinates.length >= 2) {
-        const coords = geometry.coordinates as any[]
+        const coords = geometry.coordinates as number[]
         const point: Point = {
             lng: coords[0],
             lat: coords[1]
@@ -474,7 +474,7 @@ export async function detectPatternsAsync(
 ): Promise<DetectedPattern[]> {
     if (!geometry) return []
     if (geometry.type === 'Point' && Array.isArray(geometry.coordinates) && geometry.coordinates.length >= 2) {
-        const coords = geometry.coordinates as any[]
+        const coords = geometry.coordinates as number[]
         const point: Point = {
             lng: coords[0],
             lat: coords[1]

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { FileText, Database, Map, Tag } from 'lucide-react'
+import { Database } from 'lucide-react'
 
 export interface SchemaFieldValue {
-    value: any
+    value: unknown
     field: {
         display_name: string
         field_key: string

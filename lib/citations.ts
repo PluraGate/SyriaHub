@@ -397,7 +397,7 @@ export function downloadCitation(data: CitationData, format: CitationFormat): vo
  * Generate a query hash for reproducible citations
  * Creates a stable identifier for a specific search query and filters
  */
-export function generateQueryHash(query: string, filters: Record<string, any>, timestamp: number): string {
+export function generateQueryHash(query: string, filters: Record<string, unknown>, timestamp: number): string {
     const data = JSON.stringify({ query, filters, timestamp })
     let hash = 0
     for (let i = 0; i < data.length; i++) {
