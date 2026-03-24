@@ -71,3 +71,6 @@ ddd_*.txt
 repo_*.txt
 translation_issues.json
 schema_dump.sql
+
+# Claude Code worktrees
+.claude/worktrees/
