@@ -1,0 +1,884 @@
+﻿[dotenv@17.2.3] injecting env (9) from .env.local -- tip: ≡ƒôí add observability to secrets: https://dotenvx.com/ops
+
+Running 89 tests using 8 workers
+
+[1A[2K[1/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:14:13 ΓÇ║ API Endpoints ΓÇ║ Health Check API ΓÇ║ health check includes timestamp
+[1A[2K[2/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:52:13 ΓÇ║ API Endpoints ΓÇ║ Posts API ΓÇ║ GET /api/posts sanitizes pagination params
+[1A[2K[3/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:5:13 ΓÇ║ API Endpoints ΓÇ║ Health Check API ΓÇ║ GET /api/health returns 200
+[1A[2K[4/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:65:13 ΓÇ║ API Endpoints ΓÇ║ Posts API ΓÇ║ POST /api/posts requires authentication
+[1A[2K[5/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:24:13 ΓÇ║ API Endpoints ΓÇ║ Posts API ΓÇ║ GET /api/posts returns posts list
+[1A[2K[6/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:39:13 ΓÇ║ API Endpoints ΓÇ║ Posts API ΓÇ║ GET /api/posts supports pagination
+[1A[2K[7/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:93:13 ΓÇ║ API Endpoints ΓÇ║ Search API ΓÇ║ GET /api/search requires query parameter
+[1A[2K[8/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:79:13 ΓÇ║ API Endpoints ΓÇ║ Tags API ΓÇ║ GET /api/tags returns tags list
+[1A[2K[9/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:102:13 ΓÇ║ API Endpoints ΓÇ║ Search API ΓÇ║ GET /api/search returns results structure for valid query
+[1A[2K[10/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:117:13 ΓÇ║ API Endpoints ΓÇ║ Public Users API ΓÇ║ GET /api/public/users returns public user list
+node.exe : [1A[2K[2m[WebServer] [22m[req_mn1x60as_dwg5ggqnb] API Error: 
+Error: Unauthorized
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([1A[2K[2m[We...r: Unauthorized 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[2m[WebServer] [22m    at verifyAuth (lib\supabaseClient.ts:102:11)
+[2m[WebServer] [22m    at async handleCreatePost 
+(app\api\posts\route.ts:85:16)
+[2m[WebServer] [22m    at async (lib\apiUtils.ts:210:24)
+[2m[WebServer] [22m    at async rateLimitedHandler (lib\rateLimit.ts:203:24)
+[2m[WebServer] [22m[0m [90m 100 |[39m
+[2m[WebServer] [22m [90m 101 |[39m   [36mif[39m (error [33m||[39m 
+[33m![39muser) {
+[2m[WebServer] [22m[31m[1m>[22m[39m[90m 102 |[39m     [36mthrow[39m 
+[36mnew[39m [33mError[39m([32m'Unauthorized'[39m)
+[2m[WebServer] [22m [90m     |[39m           [31m[1m^[22m[39m
+[2m[WebServer] [22m [90m 103 |[39m   }
+[2m[WebServer] [22m [90m 104 |[39m
+[2m[WebServer] [22m [90m 105 |[39m   [36mreturn[39m user[0m
+
+[1A[2K[11/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:131:13 ΓÇ║ API Endpoints ΓÇ║ Rate Limiting ΓÇ║ API returns appropriate headers
+[1A[2K[12/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:142:13 ΓÇ║ API Endpoints ΓÇ║ Error Handling ΓÇ║ returns 404 for non-existent API routes
+[1A[2K[13/89] [chromium] ΓÇ║ tests\e2e\api.spec.ts:147:13 ΓÇ║ API Endpoints ΓÇ║ Error Handling ΓÇ║ handles malformed JSON gracefully
+[1A[2K[14/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:16:13 ΓÇ║ Full System Verification ΓÇ║ Landing & Localization ΓÇ║ homepage redirects, navbar/footer, and bilingual layouts
+[1A[2K[15/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:54:13 ΓÇ║ Full System Verification ΓÇ║ Landing & Localization ΓÇ║ onboarding modal can be dismissed
+[1A[2K[16/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:61:13 ΓÇ║ Full System Verification ΓÇ║ Feature Discovery ΓÇ║ explore page features tags and publications
+[1A[2K[2m[WebServer] [22m[req_mn1x60wb_ug8je8zeo] API Error: Error: 
+Unauthorized
+[2m[WebServer] [22m    at verifyAuth (lib\supabaseClient.ts:102:11)
+[2m[WebServer] [22m    at async handleCreatePost 
+(app\api\posts\route.ts:85:16)
+[2m[WebServer] [22m    at async (lib\apiUtils.ts:210:24)
+[2m[WebServer] [22m    at async rateLimitedHandler (lib\rateLimit.ts:203:24)
+[2m[WebServer] [22m[0m [90m 100 |[39m
+[2m[WebServer] [22m [90m 101 |[39m   [36mif[39m (error [33m||[39m 
+[33m![39muser) {
+[2m[WebServer] [22m[31m[1m>[22m[39m[90m 102 |[39m     [36mthrow[39m 
+[36mnew[39m [33mError[39m([32m'Unauthorized'[39m)
+[2m[WebServer] [22m [90m     |[39m           [31m[1m^[22m[39m
+[2m[WebServer] [22m [90m 103 |[39m   }
+[2m[WebServer] [22m [90m 104 |[39m
+[2m[WebServer] [22m [90m 105 |[39m   [36mreturn[39m user[0m
+
+[1A[2K[17/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:73:13 ΓÇ║ Full System Verification ΓÇ║ Feature Discovery ΓÇ║ research lab sections: polls accessibility
+[1A[2K[18/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:81:13 ΓÇ║ Full System Verification ΓÇ║ Feature Discovery ΓÇ║ research lab sections: surveys accessibility
+[1A[2K[19/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:89:13 ΓÇ║ Full System Verification ΓÇ║ Feature Discovery ΓÇ║ research lab sections: statistics accessibility
+[1A[2K[20/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:97:13 ΓÇ║ Full System Verification ΓÇ║ Feature Discovery ΓÇ║ research lab sections: search accessibility
+[1A[2K[21/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:109:13 ΓÇ║ Full System Verification ΓÇ║ Premium UI/UX Standards ΓÇ║ dark mode preference is respected
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[22/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:123:13 ΓÇ║ Full System Verification ΓÇ║ Premium UI/UX Standards ΓÇ║ offline page displays premium design (glows and animations)
+[1A[2K[23/89] [chromium] ΓÇ║ tests\e2e\comprehensive-system.spec.ts:143:13 ΓÇ║ Full System Verification ΓÇ║ Authentication Vitals ΓÇ║ login and signup forms have correct structure
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[24/89] [chromium] ΓÇ║ tests\e2e\editor.spec.ts:4:9 ΓÇ║ Editor Page ΓÇ║ editor page requires authentication
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[1A[2K[25/89] [chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[1A[2K[26/89] [chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+[1A[2K[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[1A[2K[27/89] [chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[1A[2K[28/89] [chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co
+
+[1A[2K[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co
+
+[1A[2K[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co
+
+[1A[2K[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[DEBUG] Supabase URL: https://bwrdwbmhxtrghyrrfofb.supabase.co
+
+[1A[2K[DEBUG] Computed Storage Key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[29/89] [chromium] ΓÇ║ tests\e2e\home.spec.ts:3:5 ΓÇ║ homepage has correct title and brand name
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js
+
+[1A[2K[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js
+
+[1A[2K[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js
+
+[1A[2K[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_realtime-js_dist_module_65527103._.js
+
+[1A[2K[NETWORK] GET http://localhost:3000/_next/static/chunks/node_modules_%40supabase_auth-js_dist_module_e6c70351._.js
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[30/89] [chromium] ΓÇ║ tests\e2e\home.spec.ts:25:5 ΓÇ║ can navigate to login page
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [HMR] connected
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [HMR] connected
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [HMR] connected
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [HMR] connected
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Offline] Database initialized
+
+[1A[2K[BROWSER] log: [SW Hook] Offline storage initialized
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Offline] Database initialized
+
+[1A[2K[BROWSER] log: [SW Hook] Offline storage initialized
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Offline] Database initialized
+
+[1A[2K[BROWSER] log: [SW Hook] Offline storage initialized
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Offline] Database initialized
+
+[1A[2K[BROWSER] log: [SW Hook] Offline storage initialized
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again.
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [SW Hook] Service worker registered: http://localhost:3000/
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Editor] Test Mode Auth Bypass Active (useEffect)
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type
+
+[1A[2K[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type
+
+[1A[2K[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type
+
+[1A[2K[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/rpc/get_fields_for_content_type
+
+[1A[2K[NETWORK] HEAD https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id&author_id=eq.00000000-0000-0000-0000-000000000000&status=eq.published
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/storage/v1/object/post_images/covers/00000000-0000-0000-0000-000000000000/1774193798934.png
+
+[1A[2K[DEBUG] Storage Request: POST https://bwrdwbmhxtrghyrrfofb.supabase.co/storage/v1/object/post_images/covers/00000000-0000-0000-0000-000000000000/1774193798934.png
+
+[1A[2K[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[NETWORK] GET http://localhost:3000/_next/image?url=https%3A%2F%2Fbwrdwbmhxtrghyrrfofb.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fpost_images%2Fcovers%2F00000000-0000-0000-0000-000000000000%2F1774193798934.png&w=1920&q=75
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:308:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can upload a cover image
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[31/89] [chromium] ΓÇ║ tests\e2e\jury-tie-breaker.spec.ts:5:9 ΓÇ║ Jury Tie-Breaker Logic ΓÇ║ UI displays correct status for rejected (split) appeal
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[32/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:4:9 ΓÇ║ Research Gaps Page ΓÇ║ research gaps page loads correctly
+[1A[2K[33/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:15:9 ΓÇ║ Research Gaps Page ΓÇ║ can filter research gaps by status
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] done in 604ms
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Fast Refresh] done in 480ms
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:221:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can save a draft
+[BROWSER] log: [Fast Refresh] done in 609ms
+
+[1A[2K[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id
+
+[1A[2K[34/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:32:9 ΓÇ║ Research Gaps Page ΓÇ║ can filter research gaps by gap type
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[BROWSER] log: [Collab] User joined: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[BROWSER] log: [Fast Refresh] done in 381ms
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] done in 381ms
+
+[1A[2K[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[35/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:47:9 ΓÇ║ Research Gaps Page ΓÇ║ search input is visible
+[1A[2K[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [Fast Refresh] done in 377ms
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [Fast Refresh] done in 475ms
+
+[1A[2K[36/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:55:9 ΓÇ║ Research Gaps Page ΓÇ║ identify a gap button is visible
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:271:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user triggers autosave when typing
+[BROWSER] log: [SW Hook] Content cached for offline use
+
+[1A[2K[chromium] ΓÇ║ tests\e2e\functional-creation.spec.ts:161:9 ΓÇ║ Functional Regression: Content Creation ΓÇ║ authenticated user can access editor and create a post
+[BROWSER] log: [SW Hook] Content cached for offline use
+
+[1A[2K[37/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:63:9 ΓÇ║ Research Gaps Page ΓÇ║ strategic filter button exists
+[1A[2K[BROWSER] log: [Collab] User left: 00000000-0000-0000-0000-000000000000
+
+[1A[2K[NETWORK] POST https://bwrdwbmhxtrghyrrfofb.supabase.co/rest/v1/posts?select=id
+
+[1A[2K[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[BROWSER] log: [Fast Refresh] done in 122ms
+
+[1A[2K[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[BROWSER] log: [Fast Refresh] done in 252ms
+
+[1A[2K[BROWSER] log: [Fast Refresh] rebuilding
+
+[1A[2K[BROWSER] log: [Fast Refresh] done in 317ms
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[BROWSER] error: Failed to load resource: the server responded with a status of 429 (Too Many Requests)
+
+[1A[2K[BROWSER] error: Failed to load resource: the server responded with a status of 429 (Too Many Requests)
+
+[1A[2K[BROWSER] log: [DEBUG] Injecting session into key: sb-bwrdwbmhxtrghyrrfofb-auth-token
+
+[1A[2K[38/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:73:9 ΓÇ║ Gap Contributions ΓÇ║ contributions section appears on gap cards when available
+[1A[2K[39/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:95:9 ΓÇ║ Admin Platform Health Dashboard ΓÇ║ platform health page requires authentication
+[1A[2K[40/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:103:9 ΓÇ║ Admin Platform Health Dashboard ΓÇ║ admin sidebar shows platform health link
+[1A[2K[41/89] [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:130:9 ΓÇ║ Impact Stories Section ΓÇ║ insights page loads with impact stories section when available
+[1A[2K[42/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:12:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic page has RTL direction
+[1A[2K[43/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:27:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic navigation shows translated menu items
+[1A[2K[44/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:45:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic research lab page loads
+[1A[2K[45/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:60:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic polls page shows translated content
+[1A[2K[46/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:70:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic surveys page shows translated content
+[1A[2K[47/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:80:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic statistics page shows translated content
+[1A[2K[48/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:98:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic events page loads
+[1A[2K[49/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:90:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic search engine page loads
+[1A[2K[50/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:105:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic auth page shows translated labels
+[1A[2K[51/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:125:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ language switcher works from Arabic to English
+[1A[2K[52/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:148:9 ΓÇ║ Cross-Language Consistency ΓÇ║ navigation structure is consistent between languages
+[1A[2K[53/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/editor to login
+[1A[2K[54/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /ar/editor to login
+[1A[2K[55/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/insights to login
+[1A[2K[56/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/research-lab to login
+[1A[2K[57/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /ar/insights to login
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[58/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /ar/research-lab to login
+[1A[2K[59/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/settings to login
+[1A[2K[60/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/notifications to login
+[1A[2K[61/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/admin to login
+[1A[2K[62/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/saved to login
+[1A[2K[63/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:20:13 ΓÇ║ Security: Unauthorized Access ΓÇ║ should redirect unauthenticated user from /en/correspondence to login
+[1A[2K[64/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:32:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should allow guest access to public landing page
+[1A[2K[65/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:40:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should allow guest access to about page
+[1A[2K[66/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:50:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should have security headers
+[1A[2K[67/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:45:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should allow guest access to explore page
+[1A[2K[68/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:64:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should prevent open redirect in auth callback
+[1A[2K[69/89] [chromium] ΓÇ║ tests\e2e\security.spec.ts:77:9 ΓÇ║ Security: Unauthorized Access ΓÇ║ should honor rate limiting when exceeded
+[1A[2K[70/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:15:9 ΓÇ║ Navigation and Core Pages ΓÇ║ homepage loads with correct language redirect
+[1A[2K[71/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:41:9 ΓÇ║ Navigation and Core Pages ΓÇ║ can toggle between English and Arabic
+[1A[2K[72/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:56:9 ΓÇ║ Navigation and Core Pages ΓÇ║ navbar is visible and contains main links
+[1A[2K[chromium] ΓÇ║ tests\e2e\system.spec.ts:15:9 ΓÇ║ Navigation and Core Pages ΓÇ║ homepage loads with correct language redirect
+[DEBUG] Unexpected status: 429 for chromium
+
+[1A[2K[73/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:77:9 ΓÇ║ Navigation and Core Pages ΓÇ║ footer is visible
+[1A[2K[74/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:103:9 ΓÇ║ Authentication Flow ΓÇ║ login page loads correctly
+[1A[2K[75/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:117:9 ΓÇ║ Authentication Flow ΓÇ║ signup page loads correctly
+[1A[2K[76/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:45:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic research lab page loads (retry #1)
+[1A[2K[77/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:127:9 ΓÇ║ Authentication Flow ΓÇ║ login page has forgot password and signup links
+[1A[2K[78/89] [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:105:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic auth page shows translated labels (retry #1)
+[1A[2K  1) [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:45:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic research lab page loads 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+      55 |                 getComputedStyle(html).direction === 'rtl';
+      56 |         });
+    > 57 |         expect(isRTL).toBeTruthy();
+         |                       ^
+      58 |     });
+      59 |
+      60 |     test('Arabic polls page shows translated content', async ({ page }) => {
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\rtl.spec.ts:57:23
+
+    Error Context: test-results\rtl-RTL-Arabic-Mode-Support-Arabic-research-lab-page-loads-chromium\error-context.md
+
+    Retry #1 ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+      55 |                 getComputedStyle(html).direction === 'rtl';
+      56 |         });
+    > 57 |         expect(isRTL).toBeTruthy();
+         |                       ^
+      58 |     });
+      59 |
+      60 |     test('Arabic polls page shows translated content', async ({ page }) => {
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\rtl.spec.ts:57:23
+
+    Error Context: test-results\rtl-RTL-Arabic-Mode-Support-Arabic-research-lab-page-loads-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\rtl-RTL-Arabic-Mode-Support-Arabic-research-lab-page-loads-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\rtl-RTL-Arabic-Mode-Support-Arabic-research-lab-page-loads-chromium-retry1\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+[1A[2K  2) [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:105:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic auth page shows translated labels 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+      117 |                 getComputedStyle(document.body).direction === 'rtl';
+      118 |         });
+    > 119 |         expect(isRTL).toBeTruthy();
+          |                       ^
+      120 |
+      121 |         // Form should be present
+      122 |         await expect(page.locator('form, input[type="email"]').first()).toBeVisible();
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\rtl.spec.ts:119:23
+
+    Error Context: test-results\rtl-RTL-Arabic-Mode-Suppor-4dc52-age-shows-translated-labels-chromium\error-context.md
+
+    Retry #1 ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+      117 |                 getComputedStyle(document.body).direction === 'rtl';
+      118 |         });
+    > 119 |         expect(isRTL).toBeTruthy();
+          |                       ^
+      120 |
+      121 |         // Form should be present
+      122 |         await expect(page.locator('form, input[type="email"]').first()).toBeVisible();
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\rtl.spec.ts:119:23
+
+    Error Context: test-results\rtl-RTL-Arabic-Mode-Suppor-4dc52-age-shows-translated-labels-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\rtl-RTL-Arabic-Mode-Suppor-4dc52-age-shows-translated-labels-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\rtl-RTL-Arabic-Mode-Suppor-4dc52-age-shows-translated-labels-chromium-retry1\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+[1A[2K[79/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:142:9 ΓÇ║ Research Lab ΓÇ║ research lab main page loads
+[1A[2K[80/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:150:9 ΓÇ║ Research Lab ΓÇ║ polls page is accessible
+[1A[2K[81/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:158:9 ΓÇ║ Research Lab ΓÇ║ surveys page is accessible
+[1A[2K[82/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:166:9 ΓÇ║ Research Lab ΓÇ║ statistics page is accessible
+[1A[2K[83/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:174:9 ΓÇ║ Research Lab ΓÇ║ search engine page is accessible
+[1A[2K[84/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:184:9 ΓÇ║ Events ΓÇ║ events page loads
+[1A[2K[85/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:193:9 ΓÇ║ Search Functionality ΓÇ║ search bar is accessible from homepage
+[1A[2K[86/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:227:9 ΓÇ║ Responsive Design ΓÇ║ mobile viewport displays correctly
+[1A[2K[87/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:240:9 ΓÇ║ Responsive Design ΓÇ║ tablet viewport displays correctly
+[1A[2K[88/89] [chromium] ΓÇ║ tests\e2e\system.spec.ts:261:9 ΓÇ║ Dark Mode ΓÇ║ page respects dark mode preference
+[1A[2K[89/89] [chromium] ΓÇ║ tests\e2e\visual.spec.ts:18:9 ΓÇ║ Visual Regression ΓÇ║ home page matches snapshot
+[1A[2K[90/89] (retries) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:26:9 ΓÇ║ Visual Regression ΓÇ║ login page matches snapshot
+[1A[2K[91/89] (retries) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:18:9 ΓÇ║ Visual Regression ΓÇ║ home page matches snapshot (retry #1)
+[1A[2K  3) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:18:9 ΓÇ║ Visual Regression ΓÇ║ home page matches snapshot ΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveScreenshot[2m([22m[32mexpected[39m[2m)[22m failed
+
+      Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.
+
+      Snapshot: home-page.png
+
+    Call log:
+    [2m  - Expect "toHaveScreenshot(home-page.png)" with timeout 20000ms[22m
+    [2m    - verifying given screenshot expectation[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.[22m
+    [2m  - waiting 100ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - captured a stable screenshot[22m
+    [2m  - Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.[22m
+
+
+      18 |     test('home page matches snapshot', async ({ page }) => {
+      19 |         await page.goto('/', { waitUntil: 'networkidle' });
+    > 20 |         await expect(page).toHaveScreenshot('home-page.png', {
+         |                            ^
+      21 |             fullPage: true,
+      22 |             maxDiffPixelRatio: 0.1 // Allow small rendering differences
+      23 |         });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\visual.spec.ts:20:28
+
+    attachment #1: home-page (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    Expected: tests\e2e\visual.spec.ts-snapshots\home-page-chromium-win32.png
+    Received: test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium\home-page-actual.png
+    Diff:     test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium\home-page-diff.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium\error-context.md
+
+    Retry #1 ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveScreenshot[2m([22m[32mexpected[39m[2m)[22m failed
+
+      Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.
+
+      Snapshot: home-page.png
+
+    Call log:
+    [2m  - Expect "toHaveScreenshot(home-page.png)" with timeout 20000ms[22m
+    [2m    - verifying given screenshot expectation[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.[22m
+    [2m  - waiting 100ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - captured a stable screenshot[22m
+    [2m  - Expected an image 1280px by 3955px, received 1280px by 720px. 4885753 pixels (ratio 0.97 of all image pixels) are different.[22m
+
+
+      18 |     test('home page matches snapshot', async ({ page }) => {
+      19 |         await page.goto('/', { waitUntil: 'networkidle' });
+    > 20 |         await expect(page).toHaveScreenshot('home-page.png', {
+         |                            ^
+      21 |             fullPage: true,
+      22 |             maxDiffPixelRatio: 0.1 // Allow small rendering differences
+      23 |         });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\visual.spec.ts:20:28
+
+    attachment #1: home-page (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    Expected: tests\e2e\visual.spec.ts-snapshots\home-page-chromium-win32.png
+    Received: test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\home-page-actual.png
+    Diff:     test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\home-page-diff.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\visual-Visual-Regression-home-page-matches-snapshot-chromium-retry1\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+[1A[2K[92/89] (retries) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:36:9 ΓÇ║ Visual Regression ΓÇ║ auth form component matches snapshot
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[93/89] (retries) [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:130:9 ΓÇ║ Impact Stories Section ΓÇ║ insights page loads with impact stories section when available (retry #1)
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K  4) [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:130:9 ΓÇ║ Impact Stories Section ΓÇ║ insights page loads with impact stories section when available 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('input[type="email"]')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for locator('input[type="email"]')[22m
+
+
+      136 |
+      137 |         // Verify login form is present (auth flow works)
+    > 138 |         await expect(page.locator('input[type="email"]')).toBeVisible();
+          |                                                           ^
+      139 |     });
+      140 | });
+      141 |
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\research-impact.spec.ts:138:59
+
+    Error Context: test-results\research-impact-Impact-Sto-d6ade-ries-section-when-available-chromium\error-context.md
+
+
+[1A[2K[94/89] (retries) [chromium] ΓÇ║ tests\e2e\system.spec.ts:56:9 ΓÇ║ Navigation and Core Pages ΓÇ║ navbar is visible and contains main links (retry #1)
+[1A[2K[95/89] (retries) [chromium] ΓÇ║ tests\e2e\system.spec.ts:103:9 ΓÇ║ Authentication Flow ΓÇ║ login page loads correctly (retry #1)
+[1A[2K[96/89] (retries) [chromium] ΓÇ║ tests\e2e\system.spec.ts:117:9 ΓÇ║ Authentication Flow ΓÇ║ signup page loads correctly (retry #1)
+[1A[2K[97/89] (retries) [chromium] ΓÇ║ tests\e2e\system.spec.ts:77:9 ΓÇ║ Navigation and Core Pages ΓÇ║ footer is visible (retry #1)
+[1A[2K[98/89] (retries) [chromium] ΓÇ║ tests\e2e\system.spec.ts:127:9 ΓÇ║ Authentication Flow ΓÇ║ login page has forgot password and signup links (retry #1)
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K  5) [chromium] ΓÇ║ tests\e2e\system.spec.ts:117:9 ΓÇ║ Authentication Flow ΓÇ║ signup page loads correctly 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: /create your account/i }).first()
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('heading', { name: /create your account/i }).first()[22m
+
+
+      122 |
+      123 |         // Should show signup form with actual heading text (use .first() as there are multiple headings)
+    > 124 |         await expect(page.getByRole('heading', { name: /create your account/i }).first()).toBeVisible({ timeout: 20000 });
+          |                                                                                           ^
+      125 |     });
+      126 |
+      127 |     test('login page has forgot password and signup links', async ({ page, browserName }) => {
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\system.spec.ts:124:91
+
+    Error Context: test-results\system-Authentication-Flow-signup-page-loads-correctly-chromium\error-context.md
+
+
+[1A[2K  6) [chromium] ΓÇ║ tests\e2e\system.spec.ts:103:9 ΓÇ║ Authentication Flow ΓÇ║ login page loads correctly 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: /sign in to your account/i }).first()
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('heading', { name: /sign in to your account/i }).first()[22m
+
+
+      108 |
+      109 |         // Should show login form with actual heading text (use .first() as there are multiple headings)
+    > 110 |         await expect(page.getByRole('heading', { name: /sign in to your account/i }).first()).toBeVisible({ timeout: 20000 });
+          |                                                                                               ^
+      111 |
+      112 |         // Email and password fields should exist
+      113 |         await expect(page.locator('input[type="email"], input[name="email"]')).toBeVisible({ timeout: 10000 });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\system.spec.ts:110:95
+
+    Error Context: test-results\system-Authentication-Flow-login-page-loads-correctly-chromium\error-context.md
+
+
+[1A[2K[99/89] (retries) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:26:9 ΓÇ║ Visual Regression ΓÇ║ login page matches snapshot (retry #1)
+[1A[2K  7) [chromium] ΓÇ║ tests\e2e\system.spec.ts:56:9 ΓÇ║ Navigation and Core Pages ΓÇ║ navbar is visible and contains main links 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('nav, header').first()
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for locator('nav, header').first()[22m
+
+
+      68 |         // Check navbar elements - allow time for client-side rendering
+      69 |         const navbar = page.locator('nav, header').first();
+    > 70 |         await expect(navbar).toBeVisible({ timeout: 20000 });
+         |                              ^
+      71 |
+      72 |         // Brand should be visible
+      73 |         const brand = page.getByRole('link', { name: /SyriaHub/i }).first();
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\system.spec.ts:70:30
+
+    Error Context: test-results\system-Navigation-and-Core-58b8c-ble-and-contains-main-links-chromium\error-context.md
+
+
+[1A[2K  8) [chromium] ΓÇ║ tests\e2e\system.spec.ts:127:9 ΓÇ║ Authentication Flow ΓÇ║ login page has forgot password and signup links 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('a:has-text("Forgot"), a:has-text("forgot")')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for locator('a:has-text("Forgot"), a:has-text("forgot")')[22m
+
+
+      132 |
+      133 |         // Should have forgot password link - use text content matcher for flexibility
+    > 134 |         await expect(page.locator('a:has-text("Forgot"), a:has-text("forgot")')).toBeVisible({ timeout: 20000 });
+          |                                                                                  ^
+      135 |
+      136 |         // Should have signup link
+      137 |         await expect(page.locator('a:has-text("Sign up"), a:has-text("sign up")')).toBeVisible({ timeout: 10000 });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\system.spec.ts:134:82
+
+    Error Context: test-results\system-Authentication-Flow-74f47-t-password-and-signup-links-chromium\error-context.md
+
+
+[1A[2K[2m[WebServer] [22mTurnstile: NEXT_PUBLIC_TURNSTILE_SITE_KEY not set
+
+[1A[2K  9) [chromium] ΓÇ║ tests\e2e\system.spec.ts:77:9 ΓÇ║ Navigation and Core Pages ΓÇ║ footer is visible ΓöÇΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('footer').first()
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for locator('footer').first()[22m
+
+
+      89 |         // Footer should be visible
+      90 |         const footer = page.locator('footer').first();
+    > 91 |         await expect(footer).toBeVisible({ timeout: 20000 });
+         |                              ^
+      92 |     });
+      93 | });
+      94 |
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\system.spec.ts:91:30
+
+    Error Context: test-results\system-Navigation-and-Core-Pages-footer-is-visible-chromium\error-context.md
+
+
+[1A[2K  10) [chromium] ΓÇ║ tests\e2e\visual.spec.ts:26:9 ΓÇ║ Visual Regression ΓÇ║ login page matches snapshot ΓöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('input[type="email"], input[name="email"]').first()
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for locator('input[type="email"], input[name="email"]').first()[22m
+
+
+      27 |         await page.goto('/en/auth/login', { waitUntil: 'networkidle' });
+      28 |         // Ensure the page has actually loaded (not a rate-limit error)
+    > 29 |         await expect(page.locator('input[type="email"], input[name="email"]').first()).toBeVisible({ timeout: 20000 });
+         |                                                                                        ^
+      30 |         await expect(page).toHaveScreenshot('login-page.png', {
+      31 |             fullPage: true
+      32 |         });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\visual.spec.ts:29:88
+
+    Error Context: test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium\error-context.md
+
+    Retry #1 ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveScreenshot[2m([22m[32mexpected[39m[2m)[22m failed
+
+      Expected an image 1280px by 720px, received 1280px by 1276px. 1552799 pixels (ratio 0.96 of all image pixels) are different.
+
+      Snapshot: login-page.png
+
+    Call log:
+    [2m  - Expect "toHaveScreenshot(login-page.png)" with timeout 20000ms[22m
+    [2m    - verifying given screenshot expectation[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - Expected an image 1280px by 720px, received 1280px by 1276px. 1552799 pixels (ratio 0.96 of all image pixels) are different.[22m
+    [2m  - waiting 100ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - captured a stable screenshot[22m
+    [2m  - Expected an image 1280px by 720px, received 1280px by 1276px. 1552799 pixels (ratio 0.96 of all image pixels) are different.[22m
+
+
+      28 |         // Ensure the page has actually loaded (not a rate-limit error)
+      29 |         await expect(page.locator('input[type="email"], input[name="email"]').first()).toBeVisible({ timeout: 20000 });
+    > 30 |         await expect(page).toHaveScreenshot('login-page.png', {
+         |                            ^
+      31 |             fullPage: true
+      32 |         });
+      33 |     });
+        at C:\Users\AvArc\RiderProjects\SyriaHub\tests\e2e\visual.spec.ts:30:28
+
+    attachment #1: login-page (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    Expected: tests\e2e\visual.spec.ts-snapshots\login-page-chromium-win32.png
+    Received: test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\login-page-actual.png
+    Diff:     test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\login-page-diff.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\visual-Visual-Regression-login-page-matches-snapshot-chromium-retry1\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+[1A[2K  4 failed
+    [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:45:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic research lab page loads 
+    [chromium] ΓÇ║ tests\e2e\rtl.spec.ts:105:9 ΓÇ║ RTL (Arabic) Mode Support ΓÇ║ Arabic auth page shows translated labels 
+    [chromium] ΓÇ║ tests\e2e\visual.spec.ts:18:9 ΓÇ║ Visual Regression ΓÇ║ home page matches snapshot ΓöÇΓöÇΓöÇΓöÇ
+    [chromium] ΓÇ║ tests\e2e\visual.spec.ts:26:9 ΓÇ║ Visual Regression ΓÇ║ login page matches snapshot ΓöÇΓöÇΓöÇ
+  6 flaky
+    [chromium] ΓÇ║ tests\e2e\research-impact.spec.ts:130:9 ΓÇ║ Impact Stories Section ΓÇ║ insights page loads with impact stories section when available 
+    [chromium] ΓÇ║ tests\e2e\system.spec.ts:56:9 ΓÇ║ Navigation and Core Pages ΓÇ║ navbar is visible and contains main links 
+    [chromium] ΓÇ║ tests\e2e\system.spec.ts:77:9 ΓÇ║ Navigation and Core Pages ΓÇ║ footer is visible ΓöÇΓöÇΓöÇΓöÇΓöÇ
+    [chromium] ΓÇ║ tests\e2e\system.spec.ts:103:9 ΓÇ║ Authentication Flow ΓÇ║ login page loads correctly ΓöÇ
+    [chromium] ΓÇ║ tests\e2e\system.spec.ts:117:9 ΓÇ║ Authentication Flow ΓÇ║ signup page loads correctly 
+    [chromium] ΓÇ║ tests\e2e\system.spec.ts:127:9 ΓÇ║ Authentication Flow ΓÇ║ login page has forgot password and signup links 
+  79 passed (1.4m)
+
+[36m  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.[39m

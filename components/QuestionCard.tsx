@@ -13,7 +13,7 @@ interface QuestionCardProps {
     onVote?: (value: 1 | -1) => void
 }
 
-export function QuestionCard({ post, userVote: initialUserVote, onVote }: QuestionCardProps) {
+export function QuestionCard({ post, userVote: initialUserVote, onVote: _onVote }: QuestionCardProps) {
     const [voteCount, setVoteCount] = useState(post.vote_count || 0)
     const [userVote, setUserVote] = useState<number | undefined>(initialUserVote)
     const [isVoting, setIsVoting] = useState(false)

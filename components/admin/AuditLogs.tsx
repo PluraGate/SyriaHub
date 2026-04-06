@@ -4,12 +4,9 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
     History,
-    Shield,
-    Search,
     Calendar,
     ChevronLeft,
     ChevronRight,
-    ArrowRight,
     ArrowUp,
     ArrowDown,
     Loader2,
@@ -98,6 +95,7 @@ export function AuditLogs() {
 
         // Helper to get role translation with fallback
         const getRoleLabel = (role: string) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const roleKey = `roles.${role}` as any
             return tUser(roleKey) || role
         }
@@ -124,6 +122,7 @@ export function AuditLogs() {
     const exportLogs = () => {
         // Helper to get role translation with fallback
         const getRoleLabel = (role: string) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const roleKey = `roles.${role}` as any
             return tUser(roleKey) || role
         }

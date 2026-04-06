@@ -12,7 +12,7 @@ import {
   forbiddenResponse,
   withOriginValidation,
 } from '@/lib/apiUtils'
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit, applyRateLimit } from '@/lib/rateLimit'
 import type { CreateReportInput } from '@/types'
 
 /**
@@ -21,6 +21,9 @@ import type { CreateReportInput } from '@/types'
  * Query params: status, post_id, limit, offset
  */
 async function handleGetReports(request: Request): Promise<NextResponse> {
+  const rateLimit = await applyRateLimit(request, 'read')
+  if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
   // Verify user is moderator or admin
   const _user = await verifyAuth()
   

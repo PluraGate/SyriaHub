@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BookOpen, Clock, Target, Tag, TrendingUp, Calendar, Star } from 'lucide-react'
+import { BookOpen, Clock, Target, TrendingUp, Calendar, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface ReadingStats {
@@ -201,6 +201,7 @@ export function ReadingInsights({ userId, compact = false }: ReadingInsightsProp
 
 // Stat Card
 interface StatCardProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any
     value: string
     label: string

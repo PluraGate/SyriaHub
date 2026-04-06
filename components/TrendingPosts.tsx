@@ -90,7 +90,9 @@ export function TrendingPosts() {
                     return {
                         id: post.id,
                         title: post.title,
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         author_name: (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous',
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         author_id: (post.author as any)?.id,
                         created_at: post.created_at,
                         vote_count: post.vote_count || 0,

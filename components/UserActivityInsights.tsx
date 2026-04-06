@@ -9,7 +9,9 @@ import { FileText, Users, BookOpen, Calendar, FolderOpen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface UserActivityInsightsProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     posts: any[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groups: any[]
 }
 
@@ -17,7 +19,7 @@ type TabType = 'posts' | 'resources' | 'events' | 'groups'
 
 export function UserActivityInsights({ posts, groups }: UserActivityInsightsProps) {
     const t = useTranslations('Gamification')
-    const tNav = useTranslations('Navigation')
+    const _tNav = useTranslations('Navigation')
     const tLabels = useTranslations('ProfileLabels')
     const researchPosts = posts.filter(p => !p.content_type || p.content_type === 'article' || p.content_type === 'question' || p.content_type === 'answer')
     const resourcePosts = posts.filter(p => p.content_type === 'resource')

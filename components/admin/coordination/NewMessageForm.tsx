@@ -113,14 +113,16 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
 
             onSuccess()
             showToast(t('form.messageAddedSuccess'), 'success')
-        } catch (error: any) {
-            showToast(error.message, 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to send message', 'error')
         } finally {
             setSubmitting(false)
         }
     }
 
     const selectedType = messageTypes.find(t => t.value === messageType)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const selectedTypePlaceholder = selectedType ? t(selectedType.descriptionKey as any) : t('form.enterMessage')
 
     return (
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
@@ -141,6 +143,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                             )}
                         >
                             <Icon className="w-4 h-4" />
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {t(type.labelKey as any)}
                         </button>
                     )
@@ -149,7 +152,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
 
             {/* Content */}
             <textarea
-                placeholder={selectedType ? t(selectedType.descriptionKey as any) : t('form.enterMessage')}
+                placeholder={selectedTypePlaceholder}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="w-full p-3 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
@@ -183,6 +186,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                 .filter(a => isAdmin || !a.adminOnly)
                                 .map(action => (
                                     <option key={action.value} value={action.value}>
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         {t(action.labelKey as any)}
                                     </option>
                                 ))
@@ -206,6 +210,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                     value={state.value}
                                     disabled={state.value === currentState}
                                 >
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {t(state.labelKey as any)} {state.value === currentState ? t('states.current') : ''}
                                 </option>
                             ))}
@@ -226,6 +231,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                                 >
                                     {confidenceLevels.map(level => (
                                         <option key={level.value} value={level.value}>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             {t(level.labelKey as any)}
                                         </option>
                                     ))}
@@ -275,6 +281,7 @@ export function NewMessageForm({ threadId, isAdmin, currentState, onSuccess }: N
                     ) : (
                         <Send className="w-4 h-4 mr-2" />
                     )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {t('form.addMessage', { type: selectedType ? t(selectedType.labelKey as any) : t('types.post') })}
                 </Button>
             </div>

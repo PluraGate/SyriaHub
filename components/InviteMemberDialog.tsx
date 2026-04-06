@@ -59,9 +59,9 @@ export function InviteMemberDialog({ groupId, isOpen, onClose }: InviteMemberDia
             setEmail('')
             onClose()
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error sending invite:', error)
-            showToast(error.message || 'Failed to send invitation', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to send invitation', 'error')
         } finally {
             setLoading(false)
         }

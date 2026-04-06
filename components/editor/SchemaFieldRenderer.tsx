@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { SchemaFieldVersion } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,7 +10,9 @@ import { cn } from '@/lib/utils'
 
 interface SchemaFieldRendererProps {
     fields: SchemaFieldVersion[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (fieldId: string, value: any) => void
     errors?: Record<string, string>
 }
@@ -67,6 +68,7 @@ export function SchemaFieldRenderer({ fields, values, onChange, errors }: Schema
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, value: any, onChange: (val: any) => void }) {
     switch (field.field_type) {
         case 'text':
@@ -135,6 +137,7 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
             )
 
         case 'select':
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const selectOptions = (field.constraints as any)?.options || []
             return (
                 <select
@@ -143,6 +146,7 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
                     className="select-input"
                 >
                     <option value="">Select an option...</option>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {selectOptions.map((opt: any) => {
                         const optionValue = typeof opt === 'string' ? opt : opt.value
                         const optionLabel = typeof opt === 'string' ? opt : opt.label
@@ -154,11 +158,13 @@ function FieldInput({ field, value, onChange }: { field: SchemaFieldVersion, val
             )
 
         case 'multiselect':
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const multiOptions = (field.constraints as any)?.options || []
             const selectedValues = Array.isArray(value) ? value : []
             return (
                 <div className="space-y-2">
                     <div className="flex flex-wrap gap-2">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {multiOptions.map((opt: any) => {
                             const optionValue = typeof opt === 'string' ? opt : opt.value
                             const optionLabel = typeof opt === 'string' ? opt : opt.label

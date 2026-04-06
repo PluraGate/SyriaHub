@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { Link, usePathname } from '@/navigation'
-import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, ChevronDown, Bookmark, Shield, FlaskConical, BarChart3, Trophy, Mail } from 'lucide-react'
+import { Menu, X, Moon, Sun, PenSquare, User, Settings, LogOut, Bookmark, Shield, FlaskConical, BarChart3, Trophy, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -35,7 +35,7 @@ const NavLink = ({ href, children }: { href: string, children: React.ReactNode }
 export function Navbar() {
   const t = useTranslations('Navigation')
   const tCommon = useTranslations('Common')
-  const pathname = usePathname()
+  const _pathname = usePathname()
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)

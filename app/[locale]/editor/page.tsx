@@ -46,7 +46,7 @@ type EditorErrors = {
 interface Citation {
   type: 'internal' | 'external'
   target_post_id?: string
-  target_post?: { id: string; title: string; author?: { name?: string | null; email?: string | null } | null; created_at: string }
+  target_post?: { id: string; title: string; author?: { name?: string | null } | null; created_at: string }
   quote_content?: string
   external_url?: string
   external_doi?: string
@@ -88,10 +88,12 @@ export default function EditorPage() {
   const [contentType, setContentType] = useState<'article' | 'question' | 'trace'>(initialContentType)
   const [license, setLicense] = useState('CC-BY-4.0')
   const [errors, setErrors] = useState<EditorErrors>({})
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [group, setGroup] = useState<any>(null)
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [useRichEditor, setUseRichEditor] = useState(true)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [linkedResources, setLinkedResources] = useState<any[]>([])
   const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false)
   const [editorKey, setEditorKey] = useState(0) // Key to force RichEditor remount
@@ -123,10 +125,12 @@ export default function EditorPage() {
   const [temporalCoverageStart, setTemporalCoverageStart] = useState('')
   const [temporalCoverageEnd, setTemporalCoverageEnd] = useState('')
   const [spatialCoverage, setSpatialCoverage] = useState('')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [spatialGeometry, setSpatialGeometry] = useState<any>(null)
 
   // SCHEMA REGISTRY STATE
   const [schemaFields, setSchemaFields] = useState<SchemaFieldVersion[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [schemaValues, setSchemaValues] = useState<Record<string, any>>({})
   const [schemaErrors, setSchemaErrors] = useState<Record<string, string>>({})
   const [_loadingSchema, setLoadingSchema] = useState(false)
@@ -174,6 +178,7 @@ export default function EditorPage() {
       }
 
       if (data) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const values: Record<string, any> = {}
         data.forEach(item => {
           values[item.field_id] = item.value
@@ -286,7 +291,7 @@ export default function EditorPage() {
   // Handle critique_of param and quote param
   useEffect(() => {
     if (critiqueOfParam) {
-      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name, email)').eq('id', critiqueOfParam).single().then(({ data }) => {
+      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name)').eq('id', critiqueOfParam).single().then(({ data }) => {
         if (data) {
           // Add as internal citation - author may be array from join, extract first
           const authorData = Array.isArray(data.author) ? data.author[0] : data.author
@@ -408,7 +413,7 @@ export default function EditorPage() {
                 id,
                 title,
                 created_at,
-                author:users!posts_author_id_fkey(name, email)
+                author:users!posts_author_id_fkey(name)
               )
             `)
             .eq('source_post_id', postIdParam)
@@ -420,9 +425,13 @@ export default function EditorPage() {
               type: cit.type as 'internal' | 'external',
               target_post_id: cit.target_post_id || undefined,
               target_post: cit.target_post ? {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 id: (cit.target_post as any).id,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 title: (cit.target_post as any).title,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 created_at: (cit.target_post as any).created_at,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 author: (cit.target_post as any).author
               } : undefined,
               quote_content: cit.quote_content || undefined,
@@ -703,6 +712,7 @@ export default function EditorPage() {
         await new Promise(resolve => setTimeout(resolve, 1500))
         // Drafts go to the post view page (so user can continue editing), published posts to group or post page
         router.push(group ? `/groups/${group.id}` : `/post/${data.id}`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         // Log detailed error for debugging
         console.error('Failed to store post', error)

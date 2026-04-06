@@ -32,7 +32,7 @@ vi.mock('next-intl', () => ({
 
 // Mock @/navigation
 vi.mock('@/navigation', () => ({
-    Link: ({ children, href, ...props }: any) => React.createElement('a', { href, ...props }, children),
+    Link: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) => React.createElement('a', { href, ...props }, children),
     redirect: vi.fn(),
     usePathname: () => '',
     useRouter: () => ({
@@ -55,7 +55,7 @@ vi.mock('next-themes', () => ({
 // Mock next/image
 vi.mock('next/image', () => ({
     __esModule: true,
-    default: (props: any) => {
+    default: (props: { src: string; alt?: string; [key: string]: unknown }) => {
         return React.createElement('img', { ...props, src: props.src });
     },
 }))

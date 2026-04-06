@@ -73,17 +73,27 @@ export interface TrustProfile {
     t3_firsthand: boolean
 
     // T4: Temporal Relevance
+    // t4_temporal_score is the baseline set by a human or system.
+    // Use calculate_t4_decay_score() for the live (decayed) value.
     t4_temporal_score: number
     t4_conflict_phase?: ConflictPhase
     t4_data_timestamp?: string
     t4_is_time_sensitive: boolean
+    // Decay metadata — populated when refresh_t4_score() has been called
+    t4_decay_rate?: number   // Exponential decay rate per day (phase-aware)
+    t4_computed_at?: string  // When the decayed score was last computed
 
     // T5: Cross-Validation
     t5_validation_score: number
     t5_corroborating_count: number
     t5_contradicting_count: number
     t5_contradictions?: { content_id: string; content_type: string; detail: string }[]
+    // Source independence — null = unknown, true = verified independent, false = citogenesis risk
+    t5_sources_independent?: boolean | null
 
+    // Human-readable summary, e.g. "Strong source, medium proximity, time-sensitive"
+    // Always displayed as five separate dimension scores in the UI — never collapsed
+    // into a single composite number. This summary is for quick scanning only.
     trust_summary?: string
     updated_at: string
 }
@@ -336,6 +346,16 @@ export interface SearchFilters {
     conflict_phase?: ConflictPhase
     date_range?: { start: string; end: string }
     location?: { lat: number; lng: number; radius_km: number }
+    // Dimension-specific trust minimums (0–100).
+    // These map directly to T1–T5 — filter on the dimensions that matter for your query.
+    // For example, field-verification work should filter on min_t3_score, not a composite.
+    min_t1_score?: number  // Source credibility minimum
+    min_t2_score?: number  // Method clarity minimum
+    min_t3_score?: number  // Evidence proximity minimum
+    min_t4_score?: number  // Temporal relevance minimum
+    min_t5_score?: number  // Cross-validation minimum
+    // Legacy composite filter — used internally for search ranking only.
+    // Not displayed in the UI. Prefer dimension-specific filters above.
     min_trust_score?: number
     primary_evidence_only?: boolean
 }
@@ -373,6 +393,10 @@ export interface CredibilityBreakdown {
 export interface SearchResultExplanation {
     match_reasons: MatchReason[]
     supporting_evidence: SupportingEvidence[]
+    // credibility_score is used for internal search ranking only.
+    // The UI must always display the five T1–T5 dimension scores from trust_profile
+    // instead of this composite — a single number collapses epistemically distinct
+    // dimensions and should never be the primary trust signal shown to users.
     credibility_score: number
     credibility_breakdown: CredibilityBreakdown
     data_gaps: DataGap[]

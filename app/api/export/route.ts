@@ -26,7 +26,7 @@ async function handleGet(request: NextRequest) {
         updated_at,
         content_type,
         license,
-        author:users!posts_author_id_fkey(name, email)
+        author:users!posts_author_id_fkey(name)
       `)
       .eq('id', postId)
       .single()
@@ -35,7 +35,8 @@ async function handleGet(request: NextRequest) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    const authorName = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const authorName = (post.author as any)?.name || 'Anonymous'
     const publishedDate = new Date(post.created_at).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -123,6 +124,7 @@ function sanitizeFilename(title: string): string {
     .substring(0, 50)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateMarkdown(post: any, authorName: string, publishedDate: string): string {
   const tags = post.tags?.length ? post.tags.map((t: string) => `#${t}`).join(' ') : ''
 
@@ -151,6 +153,7 @@ ${post.content}
 `
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateHTML(post: any, authorName: string, publishedDate: string): string {
   // SECURITY: Escape all user content to prevent XSS
   const safeTitle = escapeHtml(post.title)
@@ -330,6 +333,7 @@ function convertMarkdownToBasicHTML(markdown: string): string {
  * Generate BibTeX format for academic citation managers
  * Uses stable citation ID: syriahub:{post_id} to prevent duplicates on re-import
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateBibTeX(post: any, authorName: string, postId: string): string {
   const date = new Date(post.created_at)
   const year = date.getFullYear()
@@ -374,6 +378,7 @@ function generateBibTeX(post: any, authorName: string, postId: string): string {
  * Generate RIS format for reference managers (Zotero, Mendeley, EndNote)
  * Uses stable ID format for deduplication
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateRIS(post: any, authorName: string, postId: string): string {
   const date = new Date(post.created_at)
   const year = date.getFullYear()

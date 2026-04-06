@@ -48,6 +48,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
     const [expandedSkill, setExpandedSkill] = useState<string | null>(null)
     const [newSkillName, setNewSkillName] = useState('')
     const [newSkillCategory, setNewSkillCategory] = useState(SKILL_CATEGORIES[0])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [availableSkills, setAvailableSkills] = useState<any[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [addingSkill, setAddingSkill] = useState(false)
@@ -96,6 +97,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                         .eq('user_id', userId)
 
                     if (fallbackSkills) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         setSkills(fallbackSkills.map((us: any) => ({
                             skill_id: us.skill_id,
                             skill_name: us.skills?.name || 'Unknown',
@@ -198,8 +200,8 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                 ))
                 showToast('Skill endorsed!', 'success')
             }
-        } catch (error: any) {
-            showToast(error.message || 'Failed to update endorsement', 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to update endorsement', 'error')
         }
     }
 
@@ -234,8 +236,8 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
 
             // Notify ProfileCompletionCard to refresh
             window.dispatchEvent(new CustomEvent('profile-updated'))
-        } catch (error: any) {
-            showToast(error.message || 'Failed to add skill', 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to add skill', 'error')
         } finally {
             setAddingSkill(false)
         }
@@ -279,8 +281,8 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
 
             // Notify ProfileCompletionCard to refresh
             window.dispatchEvent(new CustomEvent('profile-updated'))
-        } catch (error: any) {
-            showToast(error.message || 'Failed to create skill', 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to create skill', 'error')
         } finally {
             setAddingSkill(false)
         }
@@ -298,8 +300,8 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
 
             setSkills(prev => prev.filter(s => s.skill_id !== skillId))
             showToast('Skill removed', 'success')
-        } catch (error: any) {
-            showToast(error.message || 'Failed to remove skill', 'error')
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'Failed to remove skill', 'error')
         }
     }
 
@@ -528,6 +530,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                         {Object.entries(skillsByCategory).map(([category, catSkills]) => (
                             <div key={category}>
                                 <h4 className="text-xs font-medium text-text-light dark:text-dark-text-muted uppercase tracking-wide mb-2">
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {t(category.toLowerCase().replace(' ', '') as any) || category}
                                 </h4>
                                 <div className="flex flex-wrap gap-2">

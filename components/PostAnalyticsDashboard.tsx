@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Eye, Users, Clock, TrendingUp, ArrowUp, ArrowDown, BarChart3, Percent } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { Eye, Users, Clock, ArrowUp, ArrowDown, BarChart3, Percent } from 'lucide-react'
 
 interface Analytics {
     total_views: number
@@ -34,7 +33,7 @@ export function PostAnalyticsDashboard({ postId, postTitle }: PostAnalyticsDashb
                 }
                 const data = await response.json()
                 setAnalytics(data)
-            } catch (err) {
+            } catch (_err) {
                 setError('Unable to load analytics')
             } finally {
                 setLoading(false)
@@ -142,6 +141,7 @@ export function PostAnalyticsDashboard({ postId, postTitle }: PostAnalyticsDashb
 
 // Stat Card Component
 interface StatCardProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any
     label: string
     value: string
@@ -207,7 +207,7 @@ function MiniChart({ data }: MiniChartProps) {
         <div className="bg-gray-50 dark:bg-dark-bg rounded-xl p-4">
             <h4 className="text-sm font-medium text-text dark:text-dark-text mb-3">Views (Last 30 Days)</h4>
             <div className="flex items-end gap-1 h-20">
-                {data.slice(-30).map((day, i) => (
+                {data.slice(-30).map((day, _i) => (
                     <div
                         key={day.date}
                         className="flex-1 bg-primary/20 hover:bg-primary/40 rounded-t transition-colors cursor-pointer group relative"

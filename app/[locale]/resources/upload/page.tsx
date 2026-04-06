@@ -18,7 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, Check, AlertCircle, PenTool, Search } from 'lucide-react'
+import { Loader2, UploadCloud, FileText, Database, FileType, Wrench, Film, FileSpreadsheet, X, Link2, Sparkles, AlertCircle, PenTool, Search } from 'lucide-react'
 import { generateShortTitle, sanitizeForSlug, generateResourceSlug } from '@/lib/utils/slug-generator'
 
 const RESOURCE_TYPES = [
@@ -68,7 +68,7 @@ export default function UploadResourcePage() {
 
 
     const [isEditing, setIsEditing] = useState(false)
-    const [originalSlug, setOriginalSlug] = useState<string | null>(null)
+    const [_originalSlug, setOriginalSlug] = useState<string | null>(null)
     const [originalFileUrl, setOriginalFileUrl] = useState<string | null>(null)
 
     const supabase = createClient()
@@ -448,9 +448,9 @@ export default function UploadResourcePage() {
                 // Navigate to the new slug-based URL
                 router.push(`/resources/${slugResult.slug}`)
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error uploading/updating resource:', error)
-            showToast(error.message || 'Failed to save resource.', 'error')
+            showToast(error instanceof Error ? error.message : 'Failed to save resource.', 'error')
         } finally {
             setUploading(false)
         }

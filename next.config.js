@@ -22,6 +22,19 @@ const nextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: '/data/syria-governorates-polygons.json',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+    ];
+  },
   // Explicitly set turbopack root to prevent lockfile detection issues
   turbopack: {
     root: __dirname,

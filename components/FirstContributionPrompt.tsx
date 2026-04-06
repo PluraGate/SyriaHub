@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { X, BookOpen, MessageSquare, Quote, PenSquare, ArrowRight, Sparkles, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { X, BookOpen, MessageSquare, Quote, PenSquare, Sparkles, ChevronRight } from 'lucide-react'
 import { hasSeenOnboarding } from '@/lib/sessionContext'
 
 const FIRST_CONTRIBUTION_KEY = 'syriahub_first_contribution_shown'
@@ -125,7 +124,7 @@ export function FirstContributionPrompt() {
 
     if (!isVisible) return null
 
-    const CurrentIcon = steps[currentStepIndex].icon
+    const _CurrentIcon = steps[currentStepIndex].icon
 
     return (
         <div className="fixed bottom-6 end-6 z-40 w-full max-w-sm animate-slide-up">
@@ -156,7 +155,7 @@ export function FirstContributionPrompt() {
 
                     {/* Progress bar */}
                     <div className="flex gap-1.5 mt-4">
-                        {steps.map((step, idx) => (
+                        {steps.map((step, _idx) => (
                             <div
                                 key={step.id}
                                 className={`h-1.5 flex-1 rounded-full transition-colors ${completedSteps.includes(step.id)

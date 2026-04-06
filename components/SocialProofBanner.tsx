@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Users, TrendingUp, Zap } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface SocialProofStats {

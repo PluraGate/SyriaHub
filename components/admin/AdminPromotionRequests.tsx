@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { GraduationCap, Clock, CheckCircle, XCircle, User, Calendar, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { GraduationCap, CheckCircle, XCircle, User, Calendar, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
-import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
 interface PromotionRequest {
@@ -141,8 +140,10 @@ export function AdminPromotionRequests() {
                                             {request.user?.name || tCommon('unknown')}
                                         </p>
                                         <div className="flex items-center gap-2 text-xs text-text-light dark:text-dark-text-muted">
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             <span className="capitalize">{tUser(request.current_role as any)}</span>
                                             <span>→</span>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             <span className="text-primary font-medium capitalize">{tUser(request.requested_role as any)}</span>
                                         </div>
                                     </div>

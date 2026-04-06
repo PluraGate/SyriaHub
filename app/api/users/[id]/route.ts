@@ -99,8 +99,9 @@ async function handleUpdateUser(
   // Parse request body
   const body = await parseRequestBody<UpdateUserInput>(request)
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData: any = {}
-  
+
   // Check if trying to update role
   if (body.role !== undefined) {
     // Only admins can change roles

@@ -1,374 +1,507 @@
-import { getTranslations } from 'next-intl/server'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect, useMemo } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { AboutLayout } from '@/components/AboutLayout'
-import { Link } from '@/navigation'
+import { useTranslations } from 'next-intl'
 import {
     BookOpen,
+    ChevronDown,
+    ChevronRight,
     PenSquare,
-    Scale,
-    FlaskConical,
-    Trophy,
-    Shield,
+    HelpCircle,
+    Archive,
+    Lightbulb,
+    SearchCode,
+    BrainCircuit,
     BarChart3,
-    ArrowRight,
-    ExternalLink
+    Vote,
+    Link2,
+    GitFork,
+    ShieldCheck,
+    Flag,
+    Scale,
+    Trophy,
+    Palette,
+    Lock,
+    ScrollText,
+    ListChecks,
+    Loader2,
+    Telescope
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params
-    return {
-        title: `User Guide | SyriaHub`,
-        description: 'Complete guide to using SyriaHub - content creation, licensing, research tools, and more.'
-    }
+interface GuideSection {
+    id: string
+    titleKey: string
+    icon: typeof BookOpen
+    descKey: string
+    contentKeys: string[]
+    stepsKeys?: string[]
+    stepsLabel?: string
+    category: string
+    researcherOnly?: boolean
 }
 
-const sections = [
+const guideSections: GuideSection[] = [
+    // --- Getting Started ---
     {
+        id: 'platform-overview',
+        titleKey: 'platformOverview.title',
+        icon: BookOpen,
+        descKey: 'platformOverview.desc',
+        contentKeys: ['platformOverview.content1', 'platformOverview.content2'],
+        stepsLabel: 'platformOverview.stepsLabel',
+        stepsKeys: ['platformOverview.step1', 'platformOverview.step2', 'platformOverview.step3', 'platformOverview.step4'],
+        category: 'gettingStarted',
+    },
+    {
+        id: 'roles',
+        titleKey: 'roles.title',
+        icon: ShieldCheck,
+        descKey: 'roles.desc',
+        contentKeys: ['roles.content1', 'roles.content2', 'roles.content3'],
+        category: 'gettingStarted',
+    },
+    // --- Creating Content ---
+    {
+        id: 'writing-articles',
+        titleKey: 'writingArticles.title',
         icon: PenSquare,
-        titleEn: 'Creating Content',
-        titleAr: 'إنشاء المحتوى',
-        descEn: 'Learn how to write articles, ask questions, share resources, and create events.',
-        descAr: 'تعلم كيفية كتابة المقالات وطرح الأسئلة ومشاركة الموارد وإنشاء الفعاليات.',
-        anchor: '#creating-content'
+        descKey: 'writingArticles.desc',
+        contentKeys: ['writingArticles.content1', 'writingArticles.content2'],
+        stepsLabel: 'writingArticles.stepsLabel',
+        stepsKeys: ['writingArticles.step1', 'writingArticles.step2', 'writingArticles.step3', 'writingArticles.step4', 'writingArticles.step5', 'writingArticles.step6'],
+        category: 'creatingContent',
     },
     {
-        icon: Scale,
-        titleEn: 'Understanding Licenses',
-        titleAr: 'فهم التراخيص',
-        descEn: 'Choose the right license for your work - CC BY, CC0, MIT, Apache, and more.',
-        descAr: 'اختر الترخيص المناسب لعملك - CC BY، CC0، MIT، Apache، والمزيد.',
-        anchor: '#licenses'
+        id: 'asking-questions',
+        titleKey: 'askingQuestions.title',
+        icon: HelpCircle,
+        descKey: 'askingQuestions.desc',
+        contentKeys: ['askingQuestions.content1', 'askingQuestions.content2'],
+        stepsLabel: 'askingQuestions.stepsLabel',
+        stepsKeys: ['askingQuestions.step1', 'askingQuestions.step2', 'askingQuestions.step3'],
+        category: 'creatingContent',
     },
     {
-        icon: FlaskConical,
-        titleEn: 'Research Lab Tools',
-        titleAr: 'أدوات مختبر البحث',
-        descEn: 'Multi-source search, AI question advisor, polls, surveys, and statistics.',
-        descAr: 'البحث متعدد المصادر، مستشار الأسئلة الذكي، الاستطلاعات، والإحصائيات.',
-        anchor: '#research-lab'
+        id: 'preserving-traces',
+        titleKey: 'preservingTraces.title',
+        icon: Archive,
+        descKey: 'preservingTraces.desc',
+        contentKeys: ['preservingTraces.content1', 'preservingTraces.content2', 'preservingTraces.content3'],
+        stepsLabel: 'preservingTraces.stepsLabel',
+        stepsKeys: ['preservingTraces.step1', 'preservingTraces.step2', 'preservingTraces.step3', 'preservingTraces.step4'],
+        category: 'creatingContent',
+        researcherOnly: true,
     },
     {
-        icon: Trophy,
-        titleEn: 'Gamification & Levels',
-        titleAr: 'المكافآت والمستويات',
-        descEn: 'Earn XP, level up, and unlock badges for your contributions.',
-        descAr: 'اكسب نقاط الخبرة، ارتقِ بمستواك، واحصل على شارات لمساهماتك.',
-        anchor: '#gamification'
+        id: 'research-gaps',
+        titleKey: 'researchGaps.title',
+        icon: Lightbulb,
+        descKey: 'researchGaps.desc',
+        contentKeys: ['researchGaps.content1', 'researchGaps.content2', 'researchGaps.content3'],
+        stepsLabel: 'researchGaps.stepsLabel',
+        stepsKeys: ['researchGaps.step1', 'researchGaps.step2', 'researchGaps.step3', 'researchGaps.step4'],
+        category: 'creatingContent',
+        researcherOnly: true,
+    },
+    // --- Research Tools ---
+    {
+        id: 'multi-source-search',
+        titleKey: 'multiSourceSearch.title',
+        icon: SearchCode,
+        descKey: 'multiSourceSearch.desc',
+        contentKeys: ['multiSourceSearch.content1', 'multiSourceSearch.content2'],
+        stepsLabel: 'multiSourceSearch.stepsLabel',
+        stepsKeys: ['multiSourceSearch.step1', 'multiSourceSearch.step2', 'multiSourceSearch.step3'],
+        category: 'researchTools',
     },
     {
-        icon: Shield,
-        titleEn: 'Moderation & Community',
-        titleAr: 'الإشراف والمجتمع',
-        descEn: 'How content review works, reporting, and the appeals process.',
-        descAr: 'كيف تعمل مراجعة المحتوى، الإبلاغ، وعملية الاستئناف.',
-        anchor: '#moderation'
+        id: 'ai-advisor',
+        titleKey: 'aiAdvisor.title',
+        icon: BrainCircuit,
+        descKey: 'aiAdvisor.desc',
+        contentKeys: ['aiAdvisor.content1', 'aiAdvisor.content2'],
+        stepsLabel: 'aiAdvisor.stepsLabel',
+        stepsKeys: ['aiAdvisor.step1', 'aiAdvisor.step2', 'aiAdvisor.step3'],
+        category: 'researchTools',
     },
     {
+        id: 'polls-surveys',
+        titleKey: 'pollsSurveys.title',
+        icon: Vote,
+        descKey: 'pollsSurveys.desc',
+        contentKeys: ['pollsSurveys.content1', 'pollsSurveys.content2'],
+        stepsLabel: 'pollsSurveys.stepsLabel',
+        stepsKeys: ['pollsSurveys.step1', 'pollsSurveys.step2', 'pollsSurveys.step3'],
+        category: 'researchTools',
+    },
+    {
+        id: 'statistics',
+        titleKey: 'statistics.title',
         icon: BarChart3,
-        titleEn: 'Analytics & Insights',
-        titleAr: 'التحليلات والرؤى',
-        descEn: 'Track your content performance, views, engagement, and impact.',
-        descAr: 'تتبع أداء محتواك، المشاهدات، التفاعل، والتأثير.',
-        anchor: '#analytics'
+        descKey: 'statistics.desc',
+        contentKeys: ['statistics.content1', 'statistics.content2'],
+        category: 'researchTools',
+    },
+    // --- Trust & Quality ---
+    {
+        id: 'trust-dimensions',
+        titleKey: 'trustDimensions.title',
+        icon: Telescope,
+        descKey: 'trustDimensions.desc',
+        contentKeys: ['trustDimensions.content1', 'trustDimensions.content2', 'trustDimensions.content3'],
+        category: 'trustQuality',
+        researcherOnly: true,
     },
     {
-        icon: Shield,
-        titleEn: 'Settings & Personalization',
-        titleAr: 'الإعدادات والتخصيص',
-        descEn: 'Customize appearance, privacy, notifications, and editor preferences.',
-        descAr: 'تخصيص المظهر، الخصوصية، الإشعارات، وإعدادات المحرر.',
-        anchor: '#settings'
+        id: 'citations-forks',
+        titleKey: 'citationsForks.title',
+        icon: GitFork,
+        descKey: 'citationsForks.desc',
+        contentKeys: ['citationsForks.content1', 'citationsForks.content2', 'citationsForks.content3'],
+        stepsLabel: 'citationsForks.stepsLabel',
+        stepsKeys: ['citationsForks.step1', 'citationsForks.step2', 'citationsForks.step3'],
+        category: 'trustQuality',
+        researcherOnly: true,
+    },
+    {
+        id: 'epistemic-standards',
+        titleKey: 'epistemicStandards.title',
+        icon: Scale,
+        descKey: 'epistemicStandards.desc',
+        contentKeys: ['epistemicStandards.content1', 'epistemicStandards.content2', 'epistemicStandards.content3'],
+        category: 'trustQuality',
+        researcherOnly: true,
+    },
+    // --- Community ---
+    {
+        id: 'content-review',
+        titleKey: 'contentReview.title',
+        icon: ShieldCheck,
+        descKey: 'contentReview.desc',
+        contentKeys: ['contentReview.content1', 'contentReview.content2'],
+        category: 'community',
+    },
+    {
+        id: 'reporting',
+        titleKey: 'reporting.title',
+        icon: Flag,
+        descKey: 'reporting.desc',
+        contentKeys: ['reporting.content1'],
+        stepsLabel: 'reporting.stepsLabel',
+        stepsKeys: ['reporting.step1', 'reporting.step2', 'reporting.step3', 'reporting.step4'],
+        category: 'community',
+    },
+    {
+        id: 'appeals',
+        titleKey: 'appeals.title',
+        icon: Scale,
+        descKey: 'appeals.desc',
+        contentKeys: ['appeals.content1'],
+        stepsLabel: 'appeals.stepsLabel',
+        stepsKeys: ['appeals.step1', 'appeals.step2', 'appeals.step3'],
+        category: 'community',
+    },
+    {
+        id: 'gamification',
+        titleKey: 'gamification.title',
+        icon: Trophy,
+        descKey: 'gamification.desc',
+        contentKeys: ['gamification.content1', 'gamification.content2'],
+        category: 'community',
+    },
+    // --- Settings ---
+    {
+        id: 'appearance',
+        titleKey: 'appearance.title',
+        icon: Palette,
+        descKey: 'appearance.desc',
+        contentKeys: ['appearance.content1', 'appearance.content2'],
+        category: 'settings',
+    },
+    {
+        id: 'privacy-notifications',
+        titleKey: 'privacyNotifications.title',
+        icon: Lock,
+        descKey: 'privacyNotifications.desc',
+        contentKeys: ['privacyNotifications.content1', 'privacyNotifications.content2'],
+        category: 'settings',
+    },
+    {
+        id: 'licenses',
+        titleKey: 'licenses.title',
+        icon: ScrollText,
+        descKey: 'licenses.desc',
+        contentKeys: ['licenses.content1', 'licenses.content2', 'licenses.content3'],
+        category: 'settings',
     },
 ]
 
-const licenses = [
-    { code: 'CC BY 4.0', name: 'Attribution', descEn: 'Others can share and build upon your work with credit', descAr: 'يمكن للآخرين المشاركة والبناء على عملك مع الإسناد' },
-    { code: 'CC BY-SA 4.0', name: 'ShareAlike', descEn: 'Same as CC BY, derivatives must use same license', descAr: 'مثل CC BY، المشتقات يجب أن تستخدم نفس الترخيص' },
-    { code: 'CC BY-NC 4.0', name: 'NonCommercial', descEn: 'Non-commercial use only with credit', descAr: 'استخدام غير تجاري فقط مع الإسناد' },
-    { code: 'CC0 1.0', name: 'Public Domain', descEn: 'No restrictions, full public domain', descAr: 'بدون قيود، ملكية عامة كاملة' },
-    { code: 'MIT', name: 'MIT License', descEn: 'Maximum freedom for code/software', descAr: 'أقصى حرية للأكواد والبرمجيات' },
-    { code: 'Apache 2.0', name: 'Apache License', descEn: 'Includes patent protection', descAr: 'يتضمن حماية براءات الاختراع' },
-]
+const categoryOrder = ['gettingStarted', 'creatingContent', 'researchTools', 'trustQuality', 'community', 'settings']
 
-export default async function UserGuidePage({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    const isArabic = locale === 'ar'
+export default function UserGuidePage() {
+    const t = useTranslations('UserGuide')
+    const [userRole, setUserRole] = useState<string | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+    const [visibleSteps, setVisibleSteps] = useState<Set<string>>(new Set())
+    const supabase = useMemo(() => createClient(), [])
+
+    useEffect(() => {
+        async function fetchRole() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                if (data) {
+                    setUserRole(data.role)
+                }
+            }
+            setLoading(false)
+        }
+        fetchRole()
+    }, [supabase])
+
+    const isResearcher = userRole === 'researcher' || userRole === 'admin' || userRole === 'moderator'
+
+    const filteredSections = guideSections.filter(section => {
+        if (section.researcherOnly && !isResearcher) return false
+        return true
+    })
+
+    const toggleSection = (id: string) => {
+        setExpandedSections(prev => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+        })
+    }
+
+    const toggleSteps = (id: string) => {
+        setVisibleSteps(prev => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+        })
+    }
+
+    const expandAll = () => setExpandedSections(new Set(filteredSections.map(s => s.id)))
+    const collapseAll = () => setExpandedSections(new Set())
+
+    const scrollToSection = (id: string) => {
+        setExpandedSections(prev => new Set(prev).add(id))
+        setTimeout(() => {
+            document.getElementById(`guide-section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+    }
+
+    // TOC rendered below the About sidebar
+    const guideToc = !loading ? (
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-border dark:border-dark-border p-4 mt-4">
+            <h2 className="font-semibold text-sm text-text dark:text-dark-text mb-3">
+                {t('tableOfContents')}
+            </h2>
+            <nav className="space-y-3 max-h-[45vh] overflow-y-auto scrollbar-thin">
+                {categoryOrder.map((cat) => {
+                    const catSections = filteredSections.filter(s => s.category === cat)
+                    if (catSections.length === 0) return null
+                    return (
+                        <div key={cat}>
+                            <p className="text-[11px] font-semibold uppercase tracking-wider text-primary dark:text-secondary px-2.5 mb-1.5">
+                                {t(`categories.${cat}`)}
+                            </p>
+                            <div className="space-y-0.5 ps-2.5">
+                                {catSections.map((section) => {
+                                    const Icon = section.icon
+                                    return (
+                                        <button
+                                            key={section.id}
+                                            onClick={() => scrollToSection(section.id)}
+                                            className={cn(
+                                                'w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-start',
+                                                expandedSections.has(section.id)
+                                                    ? 'bg-primary/10 text-primary dark:text-secondary'
+                                                    : 'text-text-muted dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-border'
+                                            )}
+                                        >
+                                            <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                                            <span className="truncate">{t(section.titleKey)}</span>
+                                            {section.researcherOnly && (
+                                                <span className="ms-auto text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 whitespace-nowrap">
+                                                    {t('researcherBadge')}
+                                                </span>
+                                            )}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )
+                })}
+            </nav>
+            <div className="flex gap-2 mt-3 pt-3 border-t border-border dark:border-dark-border">
+                <button onClick={expandAll} className="flex-1 text-xs text-primary dark:text-secondary hover:underline">
+                    {t('expandAll')}
+                </button>
+                <button onClick={collapseAll} className="flex-1 text-xs text-text-muted dark:text-dark-text-muted hover:underline">
+                    {t('collapseAll')}
+                </button>
+            </div>
+        </div>
+    ) : null
+
+    if (loading) {
+        return (
+            <AboutLayout>
+                <div className="flex items-center justify-center min-h-[40vh]">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+            </AboutLayout>
+        )
+    }
 
     return (
-        <AboutLayout user={user}>
-            <div className="prose prose-lg dark:prose-invert max-w-none">
+        <AboutLayout sidebarExtra={guideToc}>
+            <div className="max-w-none">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-primary/10 dark:bg-secondary/10">
                         <BookOpen className="w-6 h-6 text-primary dark:text-secondary" />
                     </div>
-                    <h1 className="text-3xl font-bold text-primary dark:text-secondary m-0">
-                        {isArabic ? 'دليل المستخدم' : 'User Guide'}
+                    <h1 className="text-2xl sm:text-3xl font-bold text-primary dark:text-secondary">
+                        {t('title')}
                     </h1>
                 </div>
-
-                <p className="text-lg text-text-light dark:text-dark-text-muted mb-8">
-                    {isArabic
-                        ? 'دليل شامل لاستخدام SyriaHub - من إنشاء المحتوى إلى أدوات البحث المتقدمة.'
-                        : 'Everything you need to know to make the most of SyriaHub - from content creation to advanced research tools.'}
+                <p className="text-sm text-text-light dark:text-dark-text-muted mb-6">
+                    {t('subtitle')}
                 </p>
 
-                {/* Quick Navigation */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 not-prose mb-12">
-                    {sections.map((section, i) => {
+                {/* Introduction */}
+                <div className="p-5 rounded-xl bg-primary/5 dark:bg-secondary/5 border border-primary/10 dark:border-secondary/10 mb-4">
+                    <h2 className="text-lg font-semibold text-primary dark:text-secondary mb-2">
+                        {t('introTitle')}
+                    </h2>
+                    <p className="text-sm text-text dark:text-dark-text">
+                        {t('introContent')}
+                    </p>
+                </div>
+
+                {/* Researcher notice */}
+                {isResearcher && (
+                    <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 mb-4">
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                            <Link2 className="w-4 h-4 inline-block me-1.5 -mt-0.5" />
+                            {t('researcherNotice')}
+                        </p>
+                    </div>
+                )}
+
+                {/* Sections */}
+                <div className="space-y-4">
+                    {filteredSections.map((section) => {
                         const Icon = section.icon
+                        const isExpanded = expandedSections.has(section.id)
+
                         return (
-                            <a
-                                key={i}
-                                href={section.anchor}
-                                className="group flex items-start gap-3 p-4 rounded-lg border border-border dark:border-dark-border hover:border-primary dark:hover:border-secondary transition-colors bg-white dark:bg-dark-surface"
+                            <div
+                                key={section.id}
+                                id={`guide-section-${section.id}`}
+                                className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden scroll-mt-24"
                             >
-                                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10 dark:bg-secondary/10 text-primary dark:text-secondary">
-                                    <Icon className="w-4 h-4" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-text dark:text-dark-text group-hover:text-primary dark:group-hover:text-secondary transition-colors text-sm">
-                                        {isArabic ? section.titleAr : section.titleEn}
-                                    </h3>
-                                    <p className="text-xs text-text-muted dark:text-dark-text-muted mt-1">
-                                        {isArabic ? section.descAr : section.descEn}
-                                    </p>
-                                </div>
-                            </a>
+                                <button
+                                    onClick={() => toggleSection(section.id)}
+                                    className="w-full flex items-center gap-2.5 px-3 py-3 sm:px-4 sm:py-3.5 text-start hover:bg-gray-50 dark:hover:bg-dark-bg/50 transition-colors"
+                                >
+                                    <div className="flex-shrink-0 p-1.5 rounded-lg bg-primary/10 dark:bg-secondary/10">
+                                        <Icon className="w-4 h-4 text-primary dark:text-secondary" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-text dark:text-dark-text">
+                                                {t(section.titleKey)}
+                                            </span>
+                                            {section.researcherOnly && (
+                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 font-medium">
+                                                    {t('researcherBadge')}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-text-muted dark:text-dark-text-muted mt-0.5 line-clamp-1">
+                                            {t(section.descKey)}
+                                        </p>
+                                    </div>
+                                    {isExpanded ? (
+                                        <ChevronDown className="w-5 h-5 text-text-muted dark:text-dark-text-muted flex-shrink-0" />
+                                    ) : (
+                                        <ChevronRight className="w-5 h-5 text-text-muted dark:text-dark-text-muted flex-shrink-0 rtl:rotate-180" />
+                                    )}
+                                </button>
+
+                                {isExpanded && (
+                                    <div className="px-4 sm:px-5 pb-5 pt-0 border-t border-gray-100 dark:border-dark-border">
+                                        <div className="mt-4 space-y-3">
+                                            {section.contentKeys.map((key, i) => (
+                                                <p key={i} className="text-sm text-text dark:text-dark-text leading-relaxed">
+                                                    {t(key)}
+                                                </p>
+                                            ))}
+                                        </div>
+
+                                        {section.stepsKeys && section.stepsKeys.length > 0 && (
+                                            <div className="mt-4">
+                                                <button
+                                                    onClick={() => toggleSteps(section.id)}
+                                                    className={cn(
+                                                        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                                                        visibleSteps.has(section.id)
+                                                            ? 'bg-primary/10 text-primary dark:text-secondary'
+                                                            : 'border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:bg-gray-50 dark:hover:bg-dark-bg'
+                                                    )}
+                                                >
+                                                    <ListChecks className="w-3.5 h-3.5" />
+                                                    {t(section.stepsLabel!)}
+                                                    <ChevronDown className={cn(
+                                                        'w-3 h-3 transition-transform',
+                                                        visibleSteps.has(section.id) && 'rotate-180'
+                                                    )} />
+                                                </button>
+
+                                                {visibleSteps.has(section.id) && (
+                                                    <div className="mt-3 p-4 rounded-lg bg-primary/5 dark:bg-secondary/5 border border-primary/10 dark:border-secondary/10">
+                                                        <ol className="space-y-2.5 m-0 p-0 list-none">
+                                                            {section.stepsKeys.map((key, i) => (
+                                                                <li key={i} className="flex gap-3 items-start">
+                                                                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary dark:bg-secondary text-white text-[10px] font-bold flex items-center justify-center mt-0.5">
+                                                                        {i + 1}
+                                                                    </span>
+                                                                    <span className="text-xs text-text dark:text-dark-text leading-relaxed">
+                                                                        {t(key)}
+                                                                    </span>
+                                                                </li>
+                                                            ))}
+                                                        </ol>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         )
                     })}
-                </div>
 
-                {/* Getting Started */}
-                <h2 id="getting-started" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'البداية' : 'Getting Started'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'SyriaHub تستخدم نظام الدعوات فقط للحفاظ على جودة المجتمع. ستحتاج إلى رمز دعوة من عضو موجود لإنشاء حساب.'
-                        : 'SyriaHub uses an invitation-only system to maintain community quality. You\'ll need an invitation code from an existing member to create an account.'}
-                </p>
-                <div className="not-prose my-6">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm border border-border dark:border-dark-border rounded-lg overflow-hidden">
-                            <thead className="bg-gray-50 dark:bg-dark-surface">
-                                <tr>
-                                    <th className="px-4 py-3 text-left font-semibold text-text dark:text-dark-text">{isArabic ? 'الدور' : 'Role'}</th>
-                                    <th className="px-4 py-3 text-left font-semibold text-text dark:text-dark-text">{isArabic ? 'الصلاحيات' : 'Capabilities'}</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border dark:divide-dark-border">
-                                <tr className="bg-white dark:bg-dark-bg">
-                                    <td className="px-4 py-3 font-medium text-text dark:text-dark-text">{isArabic ? 'عضو' : 'Member'}</td>
-                                    <td className="px-4 py-3 text-text-light dark:text-dark-text-muted">{isArabic ? 'أسئلة، تعليقات، متابعة، فعاليات' : 'Ask questions, comment, follow, join events'}</td>
-                                </tr>
-                                <tr className="bg-white dark:bg-dark-bg">
-                                    <td className="px-4 py-3 font-medium text-text dark:text-dark-text">{isArabic ? 'باحث' : 'Researcher'}</td>
-                                    <td className="px-4 py-3 text-text-light dark:text-dark-text-muted">{isArabic ? '+ نشر مقالات، مشاركة موارد، تنظيم فعاليات' : '+ Publish articles, share resources, organize events'}</td>
-                                </tr>
-                                <tr className="bg-white dark:bg-dark-bg">
-                                    <td className="px-4 py-3 font-medium text-text dark:text-dark-text">{isArabic ? 'مشرف' : 'Moderator'}</td>
-                                    <td className="px-4 py-3 text-text-light dark:text-dark-text-muted">{isArabic ? '+ مراجعة محتوى، إدارة تقارير، إدارة وسوم' : '+ Review content, handle reports, manage tags'}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Creating Content */}
-                <h2 id="creating-content" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'إنشاء المحتوى' : 'Creating Content'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'تدعم SyriaHub عدة أنواع من المحتوى: المقالات البحثية، الأسئلة والأجوبة، الموارد (مجموعات البيانات، الأدوات)، والفعاليات.'
-                        : 'SyriaHub supports several content types: Research articles, Questions & Answers, Resources (datasets, tools), and Events.'}
-                </p>
-                <p>
-                    {isArabic
-                        ? 'لإنشاء محتوى، انقر على زر "كتابة" في شريط التنقل، اختر نوع المحتوى، واملأ التفاصيل.'
-                        : 'To create content, click "Write" in the navbar, select your content type, and fill in the details.'}
-                </p>
-
-                {/* Licenses Section */}
-                <h2 id="licenses" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'فهم التراخيص' : 'Understanding Licenses'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'عند نشر محتوى، تختار كيف يمكن للآخرين استخدامه. اختيار الترخيص الصحيح يزيد من تأثير عملك مع حماية حقوقك.'
-                        : 'When you publish content, you choose how others can use it. Choosing the right license maximizes your work\'s impact while protecting your rights.'}
-                </p>
-                <div className="not-prose my-6">
-                    <div className="grid gap-3 md:grid-cols-2">
-                        {licenses.map((license, i) => (
-                            <div key={i} className="p-4 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="px-2 py-0.5 rounded bg-primary/10 dark:bg-secondary/10 text-primary dark:text-secondary text-xs font-mono font-bold">
-                                        {license.code}
-                                    </span>
-                                    <span className="font-medium text-text dark:text-dark-text text-sm">{license.name}</span>
-                                </div>
-                                <p className="text-xs text-text-light dark:text-dark-text-muted">
-                                    {isArabic ? license.descAr : license.descEn}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 not-prose">
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                        <strong>{isArabic ? 'نصيحة:' : 'Tip:'}</strong> {isArabic
-                            ? 'CC BY 4.0 هو الأفضل للأوراق البحثية (يزيد الاستشهادات). CC0 أو CC BY مثالي لمجموعات البيانات.'
-                            : 'CC BY 4.0 is best for research papers (maximizes citations). CC0 or CC BY is ideal for datasets.'}
-                    </p>
-                </div>
-
-                {/* Research Lab */}
-                <h2 id="research-lab" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'مختبر البحث' : 'Research Lab Tools'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'الوصول إلى مختبر البحث عبر زر التنقل أو من خلال /research-lab.'
-                        : 'Access the Research Lab via the navigation button or at /research-lab.'}
-                </p>
-                <ul className="not-prose my-4 space-y-2">
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'البحث متعدد المصادر:' : 'Multi-Source Search:'}</strong> {isArabic ? 'ابحث في SyriaHub + ReliefWeb + HDX + World Bank' : 'Search SyriaHub + ReliefWeb + HDX + World Bank'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'مستشار الأسئلة:' : 'AI Question Advisor:'}</strong> {isArabic ? 'احصل على ملاحظات حول أسئلتك البحثية' : 'Get feedback on your research questions'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الاستطلاعات:' : 'Polls & Surveys:'}</strong> {isArabic ? 'أنشئ أدوات بحث احترافية' : 'Create professional research instruments'}</span>
-                    </li>
-                </ul>
-
-                {/* Gamification */}
-                <h2 id="gamification" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'المكافآت والمستويات' : 'Gamification & Levels'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'اكسب نقاط الخبرة (XP) من خلال المشاركة: نشر مقالات (+50)، الإجابة على الأسئلة (+20)، استلام تصويت (+5)، وأكثر.'
-                        : 'Earn XP through participation: publishing articles (+50), answering questions (+20), receiving upvotes (+5), and more.'}
-                </p>
-                <p>
-                    {isArabic
-                        ? 'ارتقِ بمستواك واحصل على شارات للإنجازات. شاهد تقدمك في صفحة ملفك الشخصي.'
-                        : 'Level up and earn badges for achievements. View your progress on your Profile page.'}
-                </p>
-
-                {/* Moderation */}
-                <h2 id="moderation" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'الإشراف والمجتمع' : 'Moderation & Community'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'يتم مراجعة كل المحتوى المنشور للحفاظ على الجودة. تستخدم المنصة نظام إشراف متعدد الطبقات:'
-                        : 'All published content goes through review to ensure quality. The platform uses a multi-layered moderation system:'}
-                </p>
-                <ul className="not-prose my-4 space-y-2">
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الفلترة الآلية:' : 'AI Pre-Filter:'}</strong> {isArabic ? 'يتم فحص المحتوى تلقائياً للكشف عن خطاب الكراهية والإساءة اللفظية والبريد العشوائي' : 'Content is automatically scanned for hate speech, harassment, and spam'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'بلاغات المجتمع:' : 'Community Reports:'}</strong> {isArabic ? 'يمكن لأي مستخدم الإبلاغ عن محتوى مخالف' : 'Any user can report content that violates guidelines'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المشرفون البشريون:' : 'Human Moderators:'}</strong> {isArabic ? 'مراجعة المحتوى المُبلَّغ عنه واتخاذ القرارات' : 'Review flagged content and make decisions'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'لجنة المحلفين:' : 'Jury Panel:'}</strong> {isArabic ? 'للحالات المعقدة، يتم المراجعة من قبل عدة مشرفين' : 'Complex cases are reviewed by multiple moderators'}</span>
-                    </li>
-                </ul>
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 not-prose my-4">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
-                        <strong>{isArabic ? 'عملية الاستئناف:' : 'Appeals Process:'}</strong>{' '}
-                        {isArabic
-                            ? 'إذا تم رفض محتواك أو تعليقه، يمكنك تقديم استئناف مع شرح. تتم مراجعة الاستئنافات من قبل مشرفين مستقلين عن القرار الأصلي.'
-                            : 'If your content is rejected or suspended, you can submit an appeal with an explanation. Appeals are reviewed by moderators independent of the original decision.'}
-                    </p>
-                </div>
-
-                {/* Analytics */}
-                <h2 id="analytics" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'التحليلات' : 'Analytics & Insights'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'الوصول إلى لوحة التحليلات الخاصة بك عبر القائمة المنسدلة لصورتك الشخصية ← التحليلات. تتبع المشاهدات، التفاعل، المنشورات، الاستشهادات، المتابعين، ونقاط الثقة.'
-                        : 'Access your analytics dashboard via your avatar dropdown → Analytics. Track views, engagement, publications, citations, followers, and trust score.'}
-                </p>
-
-                {/* Settings & Personalization */}
-                <h2 id="settings" className="text-2xl font-bold text-primary dark:text-secondary mt-12 mb-4">
-                    {isArabic ? 'الإعدادات والتخصيص' : 'Settings & Personalization'}
-                </h2>
-                <p>
-                    {isArabic
-                        ? 'قم بتخصيص تجربتك في SyriaHub من خلال صفحة الإعدادات (القائمة المنسدلة للصورة الشخصية ← الإعدادات).'
-                        : 'Customize your SyriaHub experience via the Settings page (avatar dropdown → Settings).'}
-                </p>
-                <ul className="not-prose my-4 space-y-2">
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المظهر:' : 'Appearance:'}</strong> {isArabic ? 'اختر بين الوضع الفاتح أو الداكن أو النظام.' : 'Choose between Light, Dark, or System theme.'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'العرض:' : 'Display:'}</strong> {isArabic ? 'الوضع المضغوط، إظهار الصور الرمزية، عدد المنشورات لكل صفحة، التقويم (هجري/ميلادي).' : 'Compact mode, show avatars, posts per page, calendar (Hijri/Gregorian).'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الخصوصية:' : 'Privacy:'}</strong> {isArabic ? 'التحكم في رؤية ملفك الشخصي، عرض البريد الإلكتروني، والسماح بالرسائل من المستخدمين الآخرين.' : 'Control your profile visibility, email display, and allow messages from other users.'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'المحرر:' : 'Editor:'}</strong> {isArabic ? 'الحفظ التلقائي، التدقيق الإملائي، وأرقام الأسطر.' : 'Auto-save, spellcheck, and line numbers.'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-primary dark:text-secondary">•</span>
-                        <span className="text-text dark:text-dark-text"><strong>{isArabic ? 'الإشعارات:' : 'Notifications:'}</strong> {isArabic ? 'تحكم في إشعارات البريد الإلكتروني للإشارات والردود والمتابعين الجدد.' : 'Control email notifications for mentions, replies, and new followers.'}</span>
-                    </li>
-                </ul>
-                <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 not-prose">
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                        <strong>{isArabic ? 'ملاحظة:' : 'Note:'}</strong>{' '}
-                        {isArabic
-                            ? 'الإعدادات الافتراضية: الوضع الداكن، جميع الإشعارات مفعلة، الملف الشخصي عام، البريد الإلكتروني مخفي، الرسائل معطلة.'
-                            : 'Default settings: Dark mode, all notifications ON, public profile, email hidden, messages OFF.'}
-                    </p>
-                </div>
-
-                {/* Help Links */}
-                <div className="mt-12 p-6 rounded-xl bg-primary/5 dark:bg-secondary/5 border border-primary/10 dark:border-secondary/10 not-prose">
-                    <h3 className="text-lg font-semibold text-primary dark:text-secondary mb-4">
-                        {isArabic ? 'روابط مفيدة' : 'Helpful Links'}
-                    </h3>
-                    <div className="flex flex-wrap gap-3">
-                        <Link href="/about/faq" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-dark-surface border border-border dark:border-dark-border text-sm text-text dark:text-dark-text hover:border-primary dark:hover:border-secondary transition-colors">
-                            {isArabic ? 'الأسئلة الشائعة' : 'FAQ'}
-                            <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                        </Link>
-                        <Link href="/about/roles" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-dark-surface border border-border dark:border-dark-border text-sm text-text dark:text-dark-text hover:border-primary dark:hover:border-secondary transition-colors">
-                            {isArabic ? 'الأدوار والصلاحيات' : 'Roles & Permissions'}
-                            <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                        </Link>
-                        <Link href="/about/ethics" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-dark-surface border border-border dark:border-dark-border text-sm text-text dark:text-dark-text hover:border-primary dark:hover:border-secondary transition-colors">
-                            {isArabic ? 'قواعد المجتمع' : 'Community Guidelines'}
-                            <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                        </Link>
+                    {/* Footer */}
+                    <div className="p-4 rounded-lg bg-gray-50 dark:bg-dark-surface border border-border dark:border-dark-border">
+                        <p className="text-xs text-text-muted dark:text-dark-text-muted">
+                            {t('footerNote')}
+                        </p>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
@@ -15,11 +15,13 @@ interface AuthFormProps {
 export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
   const t = useTranslations('Auth')
   const tForms = useTranslations('Forms')
+  const locale = useLocale()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   const isLogin = mode === 'login'
 
@@ -40,6 +42,11 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters')
+      return
+    }
+
+    if (!isLogin && !termsAccepted) {
+      setError(t('acceptTermsRequired'))
       return
     }
 
@@ -170,10 +177,34 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
             </div>
           )}
 
+          {/* Terms Checkbox (Signup only) */}
+          {!isLogin && (
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="termsAccepted"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                disabled={isLoading}
+              />
+              <label htmlFor="termsAccepted" className="text-sm text-text-light dark:text-dark-text-muted leading-snug">
+                {t('termsAgree')}{' '}
+                <Link href={`/${locale}/about/terms`} className="link" target="_blank" rel="noopener noreferrer">
+                  {t('termsOfService')}
+                </Link>{' '}
+                &amp;{' '}
+                <Link href={`/${locale}/about/privacy`} className="link" target="_blank" rel="noopener noreferrer">
+                  {t('privacyPolicy')}
+                </Link>
+              </label>
+            </div>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || (!isLogin && !termsAccepted)}
             className="btn btn-primary w-full relative"
           >
             {isLoading ? (
@@ -194,7 +225,7 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-4 bg-background-white dark:bg-dark-surface text-text-light dark:text-dark-text-muted">
-              {isLogin ? "Don't have an account?" : 'Already have an account?'}
+              {isLogin ? t('noAccount') : t('hasAccount')}
             </span>
           </div>
         </div>
@@ -205,25 +236,10 @@ export function AuthForm({ mode, onSubmit, className }: AuthFormProps) {
             href={isLogin ? '/auth/signup' : '/auth/login'}
             className="text-primary dark:text-primary-light hover:text-secondary dark:hover:text-secondary-light font-medium transition-colors focus-ring rounded px-2 py-1"
           >
-            {isLogin ? 'Create an account' : 'Sign in instead'}
+            {isLogin ? t('createAccount') : t('login')}
           </Link>
         </div>
       </div>
-
-      {/* Terms Note (Signup only) */}
-      {!isLogin && (
-        <p className="mt-6 text-center text-sm text-text-light dark:text-dark-text-muted max-w-md mx-auto">
-          By creating an account, you agree to our{' '}
-          <Link href="/terms" className="link">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="link">
-            Privacy Policy
-          </Link>
-          .
-        </p>
-      )}
     </div>
   )
 }

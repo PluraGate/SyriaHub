@@ -10,6 +10,7 @@ import {
   getQueryParams,
   withErrorHandling,
   withOriginValidation,
+  sanitizePaginationParams,
 } from '@/lib/apiUtils'
 import { withRateLimit } from '@/lib/rateLimit'
 import { checkContent } from '@/domain/moderation/service'
@@ -27,15 +28,14 @@ async function handleGetComments(request: Request): Promise<NextResponse> {
   // Get query parameters
   const postId = params.get('post_id')
   const userId = params.get('user_id')
-  const limit = parseInt(params.get('limit') || '50', 10)
-  const offset = parseInt(params.get('offset') || '0', 10)
+  const { limit, offset } = sanitizePaginationParams(params, { maxLimit: 100, defaultLimit: 50 })
 
   // Build query
   let query = supabase
     .from('comments')
     .select(`
       *,
-      user:users!comments_user_id_fkey(id, name, email, role, avatar_url),
+      user:users!comments_user_id_fkey(id, name, avatar_url),
       post:posts!comments_post_id_fkey(id, title)
     `)
     .order('created_at', { ascending: true })
@@ -153,7 +153,7 @@ async function handleCreateComment(request: Request): Promise<NextResponse> {
     })
     .select(`
       *,
-      user:users!comments_user_id_fkey(id, name, email, role, avatar_url),
+      user:users!comments_user_id_fkey(id, name, avatar_url),
       post:posts!comments_post_id_fkey(id, title)
     `)
     .single()

@@ -86,7 +86,6 @@ function BarChart({ data }: { data: BarData }) {
 function StatsDisplay({ data, questionType }: { data: StatsData; questionType: string }) {
     const t = useTranslations('Statistics')
     const isRating = questionType === 'rating'
-    const maxValue = isRating ? 5 : 10
 
     return (
         <div className="space-y-4">

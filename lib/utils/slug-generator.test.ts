@@ -44,7 +44,7 @@ describe('slug-generator', () => {
 
         it('handles empty input', () => {
             expect(sanitizeForSlug('')).toBe('')
-            expect(sanitizeForSlug(null as any)).toBe('')
+            expect(sanitizeForSlug(null as unknown as string)).toBe('')
         })
 
         it('removes diacritics', () => {

@@ -3,12 +3,10 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { ResearchLabNav } from '@/components/research-lab/ResearchLabNav'
 import { SurveyAuthorActions } from '@/components/research-lab/SurveyAuthorActions'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import {
     ArrowLeft,
-    Edit,
-    BarChart2,
     Calendar,
     Users,
     Lock,

@@ -15,7 +15,7 @@ interface AnswerCardProps {
     onAccept?: () => void
 }
 
-export function AnswerCard({ answer, userVote: initialUserVote, isQuestionAuthor, onVote, onAccept }: AnswerCardProps) {
+export function AnswerCard({ answer, userVote: initialUserVote, isQuestionAuthor, onVote: _onVote, onAccept }: AnswerCardProps) {
     const [voteCount, setVoteCount] = useState(answer.vote_count || 0)
     const [userVote, setUserVote] = useState<number | undefined>(initialUserVote)
     const [isVoting, setIsVoting] = useState(false)

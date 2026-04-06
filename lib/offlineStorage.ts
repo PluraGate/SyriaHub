@@ -118,8 +118,10 @@ export async function saveDraft(draft: Omit<DraftPost, 'syncStatus' | 'retryCoun
             resolve(draft.id)
 
             // Trigger background sync if available
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if ('serviceWorker' in navigator && 'sync' in (window as any).registration) {
                 ; (navigator.serviceWorker.ready as Promise<ServiceWorkerRegistration>)
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .then((reg) => (reg as any).sync.register('sync-drafts'))
                     .catch(console.error)
             }

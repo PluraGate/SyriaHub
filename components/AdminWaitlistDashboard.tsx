@@ -119,7 +119,7 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
 
             showToast(t('approvalSuccess', { code }), 'success')
             fetchEntries(activeStatus)
-        } catch (error) {
+        } catch (_error) {
             showToast(t('failureApprove'), 'error')
         } finally {
             setProcessingId(null)
@@ -143,7 +143,7 @@ export function AdminWaitlistDashboard({ initialStatus = 'pending' }: AdminWaitl
 
             showToast(t('rejectionSuccess'), 'success')
             fetchEntries(activeStatus)
-        } catch (error) {
+        } catch (_error) {
             showToast(t('failureReject'), 'error')
         } finally {
             setProcessingId(null)
