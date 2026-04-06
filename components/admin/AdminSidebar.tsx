@@ -20,11 +20,11 @@ import {
     Shield,
     BookOpen,
     Activity,
-    Database, // Added Database icon
-    Settings, // Added Settings icon
-    Award, // Added Award icon for Skills
+    Database,
+    Settings,
+    Award,
     Menu,
-    X
+    BookOpenCheck
 } from 'lucide-react'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { cn } from '@/lib/utils'
@@ -133,6 +133,11 @@ const navItems = [
         href: '/admin/precedents',
         icon: BookOpen,
     },
+    {
+        label: 'Guide',
+        href: '/admin/guide',
+        icon: BookOpenCheck,
+    },
 ]
 
 export function AdminSidebar({ className }: AdminSidebarProps) {
@@ -192,7 +197,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
 
     // On mobile: mobileOpen controls expanded vs collapsed (icons only)
     // On desktop: collapsed controls expanded vs collapsed
-    const isExpanded = mobileOpen // for mobile
+    const _isExpanded = mobileOpen // for mobile
     const isCollapsedDesktop = collapsed // for desktop
 
     return (
@@ -297,7 +302,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                                 'Feedback': 'feedback',
                                 'Governance': 'governance',
                                 'Audit Logs': 'auditLog',
-                                'Precedents': 'precedents'
+                                'Precedents': 'precedents',
+                                'Guide': 'guide'
                             }
                             const translationKey = keyMap[item.label] || item.label.toLowerCase().replace(/\s+/g, '')
                             const label = t(translationKey) || item.label

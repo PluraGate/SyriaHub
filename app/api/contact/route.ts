@@ -110,9 +110,9 @@ export async function POST(request: NextRequest) {
                 console.log('[Contact] DB Insert Success')
                 dbSuccess = true
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('[Contact] DB Exception:', err)
-            errors.push(`DB Exception: ${err.message}`)
+            errors.push(`DB Exception: ${err instanceof Error ? err.message : String(err)}`)
         }
 
         // 6. Try Sending Email
@@ -133,9 +133,9 @@ export async function POST(request: NextRequest) {
                 console.log('[Contact] Email Send Success')
                 emailSuccess = true
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('[Contact] Email Exception:', err)
-            errors.push(`Email Exception: ${err.message}`)
+            errors.push(`Email Exception: ${err instanceof Error ? err.message : String(err)}`)
         }
 
         // 7. Determine Response

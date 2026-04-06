@@ -11,7 +11,7 @@ export default async function GroupsPage() {
     const t = await getTranslations('Groups')
 
     // Fetch user's groups
-    const { data: myGroups } = await supabase
+    const { data: _myGroups } = await supabase
         .from('groups')
         .select(`
       *,
@@ -30,10 +30,11 @@ export default async function GroupsPage() {
     // Actually, supabase-js supports !inner on foreign tables to filter parent.
     // .select('*, group_members!inner(*)') .eq('group_members.user_id', user.id)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let myGroupsData: any[] = []
 
     if (user) {
-        const { data } = await supabase
+        const { data: _data } = await supabase
             .from('groups')
             .select(`
         id,
@@ -97,9 +98,10 @@ export default async function GroupsPage() {
         .limit(20)
 
     // Calculate counts for public groups
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let discoverGroupsData: any[] = []
     if (publicGroups) {
-        const publicIds = publicGroups.map(g => g.id)
+        const _publicIds = publicGroups.map(g => g.id)
         // Filter out groups user is already in
         const myGroupIds = new Set(myGroupsData.map(g => g.id))
         const filteredPublic = publicGroups.filter(g => !myGroupIds.has(g.id))

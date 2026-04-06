@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit, applyRateLimit } from '@/lib/rateLimit'
 import { validateOrigin } from '@/lib/apiUtils'
 
 // GET /api/surveys - List surveys
 export async function GET(request: NextRequest) {
+    const rateLimit = await applyRateLimit(request, 'read')
+    if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
     const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
@@ -14,7 +17,7 @@ export async function GET(request: NextRequest) {
         .from('surveys')
         .select(`
             *,
-            author:users!author_id(name, email)
+            author:users!author_id(name)
         `)
         .order('created_at', { ascending: false })
 
@@ -65,7 +68,9 @@ async function handlePost(request: NextRequest) {
             start_date,
             end_date,
             settings,
-            status
+            status,
+            data_source_type,
+            data_source_label
         } = body
 
         if (!title) {
@@ -73,6 +78,15 @@ async function handlePost(request: NextRequest) {
                 { error: 'Title is required' },
                 { status: 400 }
             )
+        }
+
+        const validSourceTypes = ['community', 'external', 'mixed']
+        if (data_source_type && !validSourceTypes.includes(data_source_type)) {
+            return NextResponse.json({ error: 'Invalid data_source_type' }, { status: 400 })
+        }
+        const sourceLabel = (data_source_label as string | undefined)?.trim() || null
+        if (sourceLabel && sourceLabel.length > 200) {
+            return NextResponse.json({ error: 'data_source_label exceeds 200 characters' }, { status: 400 })
         }
 
         // Create survey
@@ -87,7 +101,9 @@ async function handlePost(request: NextRequest) {
                 start_date,
                 end_date,
                 settings: settings || {},
-                status: status || 'draft'
+                status: status || 'draft',
+                data_source_type: data_source_type || null,
+                data_source_label: sourceLabel
             })
             .select()
             .single()
@@ -102,7 +118,7 @@ async function handlePost(request: NextRequest) {
 
         // Create questions if provided
         if (questions && Array.isArray(questions) && questions.length > 0) {
-            const questionsToInsert = questions.map((q: any, index: number) => ({
+            const questionsToInsert = questions.map((q: { question_text: string; question_type?: string; options?: unknown; required?: boolean; description?: string; validation_rules?: unknown; conditional_logic?: unknown }, index: number) => ({
                 survey_id: survey.id,
                 question_text: q.question_text,
                 question_type: q.question_type || 'text',

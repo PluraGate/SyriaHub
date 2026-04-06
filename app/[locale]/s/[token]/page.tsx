@@ -55,7 +55,7 @@ export default function PublicSurveyPage() {
 
                 setSurvey(data.survey)
                 setHasResponded(data.hasResponded)
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load survey')
             } finally {
                 setLoading(false)
@@ -102,7 +102,7 @@ export default function PublicSurveyPage() {
             }
 
             setSubmitted(true)
-        } catch (err) {
+        } catch (_err) {
             showToast('Failed to submit response', 'error')
         } finally {
             setIsSubmitting(false)

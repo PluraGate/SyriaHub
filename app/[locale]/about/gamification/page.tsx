@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params
+    const { locale: _locale } = await params
     const t = await getTranslations('Gamification')
     return {
         title: `${t('title')} | SyriaHub`,
@@ -83,7 +83,7 @@ const achievements: Achievement[] = [
 ]
 
 export default async function GamificationPage({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params
+    const { locale: _locale } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     const t = await getTranslations('Gamification')

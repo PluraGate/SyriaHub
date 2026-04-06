@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils'
 
 interface AboutLayoutProps {
     children: React.ReactNode
+    sidebarExtra?: React.ReactNode
     user?: {
         id: string
         email?: string
@@ -44,7 +45,7 @@ const navigationItems = [
     { href: '/about/terms', icon: FileText, key: 'terms' },
 ]
 
-export function AboutLayout({ children, user: _user }: AboutLayoutProps) {
+export function AboutLayout({ children, sidebarExtra, user: _user }: AboutLayoutProps) {
     const t = useTranslations('About')
     const pathname = usePathname()
 
@@ -67,7 +68,8 @@ export function AboutLayout({ children, user: _user }: AboutLayoutProps) {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Navigation */}
                         <aside className="w-full lg:w-64 flex-shrink-0">
-                            <nav className="bg-white dark:bg-dark-surface rounded-xl border border-border dark:border-dark-border p-4 sticky top-24">
+                            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
+                            <nav className="bg-white dark:bg-dark-surface rounded-xl border border-border dark:border-dark-border p-4">
                                 <ul className="space-y-1">
                                     {navigationItems.map((item) => {
                                         const Icon = item.icon
@@ -99,6 +101,8 @@ export function AboutLayout({ children, user: _user }: AboutLayoutProps) {
                                     })}
                                 </ul>
                             </nav>
+                            {sidebarExtra}
+                            </div>
                         </aside>
 
                         {/* Main Content */}

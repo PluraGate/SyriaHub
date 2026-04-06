@@ -55,7 +55,7 @@ export function MagazineCard({
     post,
     variant = 'standard',
     className,
-    priority = false,
+    priority: _priority = false,
     showImage = true,
 }: MagazineCardProps) {
     const { formatDate, locale } = useDateFormatter()

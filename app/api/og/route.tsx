@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
             if (post) {
                 postTitle = post.title
                 postType = post.content_type || 'article'
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 postAuthor = (post.author as any)?.name || (post.author as any)?.email?.split('@')[0] || 'Anonymous'
             }
         }

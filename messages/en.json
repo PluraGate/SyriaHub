@@ -73,7 +73,9 @@
             "adminOnly": "Only administrators can perform this action"
         },
         "pageNotFound": "Page Not Found",
-        "backToHome": "Back to Home"
+        "backToHome": "Back to Home",
+        "apply": "Apply",
+        "updating": "Updating..."
     },
     "Licenses": {
         "CC-BY-4_0": "CC BY 4.0 (Attribution)",
@@ -134,7 +136,9 @@
         "welcomeBack": "Welcome back",
         "loginSubtitle": "Sign in to continue to your account",
         "signupSubtitle": "Create your account to start contributing",
-        "termsAgree": "By signing up, you agree to our",
+        "loginTitle": "Sign in to your account",
+        "termsAgree": "By creating an account, you agree to our",
+        "acceptTermsRequired": "You must accept the Terms of Service and Privacy Policy to continue.",
         "termsOfService": "Terms of Service",
         "privacyPolicy": "Privacy Policy",
         "verifyEmail": "Verify your email",
@@ -167,6 +171,7 @@
             "dontHaveCode": "Don't have a code?",
             "emailAddress": "Email address",
             "atLeast6Chars": "At least 6 characters",
+            "atLeast8Chars": "At least 8 characters",
             "securityCheckError": "Please complete the security check"
         }
     },
@@ -567,7 +572,10 @@
             "question2": "What do I not know, or cannot verify?",
             "question3": "Who should I reference or acknowledge?",
             "dismiss": "Dismiss"
-        }
+        },
+        "searchItems": "Search items...",
+        "selectOption": "Select an option",
+        "writeAnswer": "Write your answer here..."
     },
     "Profile": {
         "myProfile": "My Profile",
@@ -898,7 +906,13 @@
             "publishSuccess": "Your event has been successfully published.",
             "draftSuccess": "Draft saved successfully.",
             "signInRequired": "Please sign in to create an event."
-        }
+        },
+        "statuses": {
+            "scheduled": "Scheduled",
+            "postponed": "Postponed",
+            "cancelled": "Cancelled"
+        },
+        "updateStatusHint": "Update the status if the event has been cancelled or postponed."
     },
     "ResearchGaps": {
         "title": "Research Gap Marketplace",
@@ -1145,7 +1159,8 @@
         "replyTo": "Replying to {name}",
         "cancelReply": "Cancel reply",
         "signInToComment": "Sign in to join the discussion",
-        "anonymous": "Anonymous"
+        "anonymous": "Anonymous",
+        "joinDiscussion": "to join the discussion."
     },
     "Settings": {
         "title": "Settings",
@@ -1305,7 +1320,11 @@
         "securityDescription": "Enhance your account security with additional protection.",
         "feedbackSection": {
             "title": "Feedback"
-        }
+        },
+        "deleteAccountWarning": "All your content, votes, and profile data will be permanently deleted. This cannot be undone.",
+        "deleteAccountConfirmPrompt": "Type DELETE to confirm",
+        "deleteAccountButton": "Permanently Delete My Account",
+        "deleteAccountSuccess": "Your account has been deleted."
     },
     "Analytics": {
         "title": "Research Analytics",
@@ -1524,6 +1543,7 @@
         "tags": "Tag Management",
         "waitlist": "Waitlist",
         "precedents": "Case Studies",
+        "guide": "Guide",
         "expand": "Expand sidebar",
         "collapse": "Collapse sidebar",
         "backToSite": "Back to site",
@@ -2031,6 +2051,249 @@
                 "resource": "Resource",
                 "event": "Event",
                 "trace": "Trace"
+            }
+        },
+        "editRegistry": "Edit registry",
+        "deleteRegistry": "Delete registry",
+        "editField": "Edit field",
+        "deleteField": "Delete field",
+        "roles": {
+            "admin": "Admin",
+            "moderator": "Moderator"
+        },
+        "guidePage": {
+            "title": "Admin Guide",
+            "subtitle": "Comprehensive guide to managing and moderating SyriaHub.",
+            "tableOfContents": "Table of Contents",
+            "expandAll": "Expand all",
+            "collapseAll": "Collapse all",
+            "categories": {
+                "gettingStarted": "Getting Started",
+                "contentModeration": "Content & Moderation",
+                "platformTools": "Platform Tools",
+                "analyticsMonitoring": "Analytics & Monitoring",
+                "administration": "Administration"
+            },
+            "viewingAs": "Viewing as: {role}",
+            "introTitle": "Welcome to the Admin Guide",
+            "introContent": "This guide covers every section of the admin panel. It explains the tools available to you, how to use them effectively, and the principles that guide moderation and administration on SyriaHub. Sections marked as Admin-only are visible only to administrators.",
+            "adminNotice": "Sections marked with an Admin badge are only visible to administrators. Moderators see a streamlined version of this guide.",
+            "footerNote": "This guide is part of the SyriaHub Epistemic Architecture. If you have questions or suggestions, reach out through the Coordination Centre.",
+            "overview": {
+                "title": "Dashboard Overview",
+                "desc": "Your starting point: stats, quick links, and moderation queue.",
+                "content1": "The Admin Dashboard is the landing page of the admin panel. It provides a real-time snapshot of platform activity, including total users, total posts, pending reports, and users active today.",
+                "content2": "The Quick Links section provides direct access to frequently used pages such as Analytics, Audit Logs, and the Moderation Queue. The Moderation Queue shows content awaiting review: AI-flagged items, community reports, and pending submissions.",
+                "content3": "The Content Appeals section lists appeals from authors whose content was rejected. Appeals should be reviewed promptly as they are time-sensitive. Each appeal shows the original rejection reason, the author's counter-argument, and action buttons.",
+                "stepsLabel": "How to navigate the dashboard",
+                "step1": "Open the Admin panel from the sidebar - the Overview page loads by default.",
+                "step2": "Check the stats grid at the top for a quick health check (users, posts, reports, active today).",
+                "step3": "Use Quick Links to jump to the section you need (Analytics, Audit Logs, etc.).",
+                "step4": "Review the Moderation Queue and Content Appeals sections for items requiring your attention."
+            },
+            "contentModeration": {
+                "title": "Content Management",
+                "desc": "Review, approve, reject, or request revisions on platform content.",
+                "content1": "The Content Management page lists all posts on the platform. You can filter by approval status (Pending, Approved, Rejected) and by content type (Articles, Questions, Discussions, Resources, Events).",
+                "content2": "When reviewing content, evaluate whether it meets SyriaHub's epistemic standards: Are claims sourced? Are trust dimensions honestly declared? Is the content citable and attributable? Low quality is not the same as wrong - request revision for quality issues rather than rejecting.",
+                "content3": "To reject a post, you must provide a clear reason. The author will be notified and can submit an appeal. Be specific about what the problem is and what would make the content acceptable.",
+                "content4": "Bulk actions are available but should be used sparingly. Each piece of content deserves individual consideration for anything beyond obvious spam.",
+                "content5": "The status workflow is: Pending -> Review -> Approve/Reject/Request Revision. If revision is requested, the author receives a notification with your feedback and can resubmit.",
+                "stepsLabel": "How to review a post",
+                "step1": "Go to Content Management and filter by 'Pending' status to see items awaiting review.",
+                "step2": "Click 'View' on a post to read the full content, check sources, and verify trust dimensions.",
+                "step3": "If the content meets standards, click 'Approve'. It will go live immediately.",
+                "step4": "If there are fixable issues, click 'Request Revision' and write specific feedback for the author.",
+                "step5": "If the content violates standards, click 'Reject', provide a clear reason, and the author will be notified."
+            },
+            "reports": {
+                "title": "Reports",
+                "desc": "Handle community reports about content or user behaviour.",
+                "content1": "The Reports page shows community-submitted reports about content that may violate platform standards. Reports are prioritised by severity and recency.",
+                "content2": "When reviewing a report, read both the reported content and the reporter's reason. Consider whether the content actually violates community standards or if the report reflects a disagreement with the content's conclusions - the latter is not grounds for action.",
+                "content3": "After reviewing, you can dismiss the report (with reason), request a revision from the author, or reject the content. All actions are logged in the audit trail.",
+                "stepsLabel": "How to handle a report",
+                "step1": "Open the Reports page and review the list sorted by priority.",
+                "step2": "Click on a report to read the reported content and the reporter's stated reason.",
+                "step3": "Evaluate whether the content actually violates community standards (not just a disagreement).",
+                "step4": "Choose an action: Dismiss (with reason), Request Revision, or Reject the content."
+            },
+            "appeals": {
+                "title": "Appeals",
+                "desc": "Review author appeals against content rejection decisions.",
+                "content1": "When an author appeals a rejection, you should treat it as a fresh review. Read the original rejection reason, then read the author's appeal argument independently.",
+                "content2": "You have three options: Approve the appeal (restores the content), Deny the appeal (content remains rejected), or Request Revision (ask the author to address specific issues).",
+                "content3": "For revision requests, you must provide a written response explaining what changes are needed. The author will receive a notification with your feedback.",
+                "content4": "Appeals should be handled by a different reviewer than the one who made the original rejection decision, when possible. Do not defer to the original moderator - decide on the merits.",
+                "stepsLabel": "How to handle an appeal",
+                "step1": "Open the Appeals page and filter by 'Pending' to see appeals awaiting review.",
+                "step2": "Read the original rejection reason, then read the author's counter-argument independently.",
+                "step3": "Click 'View Post' to review the actual content in context.",
+                "step4": "Click 'Review' and choose: Approve (restores content), Deny (stays rejected), or Request Revision (with written feedback)."
+            },
+            "tags": {
+                "title": "Tag Management",
+                "desc": "Manage, merge, and organise content tags across the platform.",
+                "content1": "The Tag Management page lets you view, edit, and organise all tags used on the platform. Tags help users discover related content and are crucial for the knowledge graph.",
+                "content2": "You can merge duplicate or similar tags to keep the taxonomy clean. When merging, all content tagged with the source tag will be re-tagged with the target tag.",
+                "content3": "Tags support bilingual labels (English and Arabic). Adding translations helps users in both languages discover relevant content.",
+                "stepsLabel": "How to merge duplicate tags",
+                "step1": "Open Tag Management and search for the duplicate tag you want to remove.",
+                "step2": "Click the merge icon on the tag and select the target tag to merge into.",
+                "step3": "Confirm the merge - all content will be re-tagged automatically."
+            },
+            "skills": {
+                "title": "Skills Management",
+                "desc": "Manage user-created skills, mark recognised skills, and merge duplicates.",
+                "content1": "The Skills page shows all skills that users have added to their profiles. Skills can be user-created or marked as recognised (official) by administrators.",
+                "content2": "You can edit skill names and categories, mark skills as recognised, merge duplicate skills, or delete skills that are inappropriate. Deleting a skill removes it from all user profiles.",
+                "content3": "When merging skills, choose the most appropriate target skill. All users with the source skill will have it replaced with the target skill on their profiles.",
+                "stepsLabel": "How to manage a skill",
+                "step1": "Open Skills Management and use search or category filters to find the skill.",
+                "step2": "Click the edit icon to rename, recategorise, or mark it as recognised.",
+                "step3": "To merge or delete, use the respective action buttons and confirm your choice."
+            },
+            "coordination": {
+                "title": "Coordination Centre",
+                "desc": "Internal communication and coordination between moderators and admins.",
+                "content1": "The Coordination Centre is the internal communication hub for the moderation team. Use it to discuss moderation decisions, flag edge cases, and coordinate on policy questions.",
+                "content2": "All messages in the Coordination Centre are visible to administrators and moderators. Use this space for professional discussion about moderation, not for informal chat.",
+                "stepsLabel": "How to use the Coordination Centre",
+                "step1": "Navigate to the Coordination Centre from the admin sidebar.",
+                "step2": "Read existing threads to catch up on ongoing discussions and decisions.",
+                "step3": "Post a new message to raise a moderation question, flag an edge case, or share a decision for team awareness."
+            },
+            "feedback": {
+                "title": "Feedback",
+                "desc": "Review user feedback and suggestions about the platform.",
+                "content1": "The Feedback page collects user suggestions and feedback about the platform. Review these regularly to understand user needs and pain points.",
+                "content2": "Feedback items can be marked as reviewed, actioned, or dismissed. Patterns in feedback can inform platform improvements and policy updates.",
+                "stepsLabel": "How to process feedback",
+                "step1": "Open the Feedback page and review new submissions.",
+                "step2": "Read each item and assess whether it's actionable, a known issue, or not applicable.",
+                "step3": "Mark items as reviewed, actioned, or dismissed with a brief note."
+            },
+            "precedents": {
+                "title": "Case Studies",
+                "desc": "Document and reference past moderation decisions as precedents.",
+                "content1": "Case Studies document significant moderation decisions that can serve as precedents for future decisions. They help maintain consistency across the moderation team.",
+                "content2": "When you encounter a novel or borderline case, consider documenting it as a case study after resolution. Include the context, the decision made, the reasoning, and any applicable policies.",
+                "stepsLabel": "How to create a case study",
+                "step1": "After resolving a novel or borderline moderation case, navigate to the Case Studies page.",
+                "step2": "Click to create a new case study and describe the context and the content involved.",
+                "step3": "Document the decision you made and the reasoning behind it.",
+                "step4": "Reference any applicable policies so future moderators can use it as a precedent."
+            },
+            "analytics": {
+                "title": "Analytics",
+                "desc": "Platform usage statistics, trends, and engagement metrics.",
+                "content1": "The Analytics dashboard provides detailed statistics about platform usage including user growth, content creation trends, engagement metrics, and geographic distribution.",
+                "content2": "Use analytics to identify trends in content creation, understand which content types are most popular, and spot potential issues (e.g., sudden drops in activity or spikes in reports).",
+                "content3": "Analytics data is aggregated and anonymised. Individual user tracking is not part of the analytics system, in line with SyriaHub's no-profiling commitment.",
+                "stepsLabel": "How to read the analytics",
+                "step1": "Open the Analytics page and select your desired time range.",
+                "step2": "Review the summary cards for key metrics (user growth, content volume, engagement).",
+                "step3": "Scroll down for detailed charts and drill into specific content types or time periods."
+            },
+            "platformHealth": {
+                "title": "Platform Health",
+                "desc": "Monitor system performance, error rates, and service status.",
+                "content1": "The Platform Health dashboard shows real-time system metrics including response times, error rates, and service availability. Use this to identify and respond to technical issues.",
+                "content2": "If you notice unusual patterns (high error rates, slow responses), coordinate with the development team through the Coordination Centre.",
+                "stepsLabel": "How to monitor platform health",
+                "step1": "Open the Platform Health dashboard to see real-time metrics.",
+                "step2": "Check response times and error rates for any anomalies.",
+                "step3": "If you spot issues, post in the Coordination Centre with details for the development team."
+            },
+            "searchAnalytics": {
+                "title": "Search Analytics",
+                "desc": "Understand what users are searching for and identify content gaps.",
+                "content1": "Search Analytics shows the most common search terms, click-through rates, and searches that returned no results. Zero-result searches are particularly valuable as they indicate content gaps.",
+                "content2": "Use this data to identify topics that users are interested in but that lack coverage on the platform. This can inform editorial priorities and outreach to researchers.",
+                "stepsLabel": "How to identify content gaps",
+                "step1": "Open Search Analytics and select a time period.",
+                "step2": "Check the 'Zero Results' tab for searches that found no matching content.",
+                "step3": "Use these gaps to prioritise content creation or researcher outreach for underserved topics."
+            },
+            "moderationEthics": {
+                "title": "Moderation Ethics",
+                "desc": "Principles and guidelines for fair, consistent moderation.",
+                "content1": "Independence: You moderate on behalf of the community, not on behalf of any institution, funder, government, or research agenda. If you receive external pressure to moderate specific content, report this to an administrator immediately.",
+                "content2": "Transparency: Every moderation decision must include an explanation. 'Does not meet standards' is not an explanation. Specify what standard is not met and what would need to change.",
+                "content3": "Humility: You are not an expert in every discipline on SyriaHub. For content in fields outside your knowledge, rely on the structured review checklist and be more willing to escalate to jury or request expert review.",
+                "content4": "Consistency: Apply the same standards to content you agree with and content you disagree with. If you find yourself treating similar cases differently based on conclusions, stop and re-examine your reasoning.",
+                "stepsLabel": "How to apply ethical moderation",
+                "step1": "Before each review session, remind yourself: you are a guardian of process, not an arbiter of truth.",
+                "step2": "For each decision, write a specific explanation - never use vague phrases like 'does not meet standards'.",
+                "step3": "If the content is outside your expertise, use the structured checklist and escalate to jury if uncertain.",
+                "step4": "After making several decisions, review them for consistency - are you applying the same standard regardless of whether you agree?",
+                "step5": "If you receive external pressure to act on specific content, report it to an administrator immediately."
+            },
+            "userManagement": {
+                "title": "User Management",
+                "desc": "Manage user accounts, roles, and permissions.",
+                "content1": "The User Management page lets you view all registered users, search by name or email, and filter by role. You can see each user's activity statistics (posts, comments) and account status.",
+                "content2": "Administrators can change user roles (member, researcher, moderator, admin) and suspend or unsuspend accounts. Role changes take effect immediately.",
+                "content3": "Suspending a user prevents them from logging in or creating content. Use suspension for clear policy violations after other interventions have failed. Always document the reason.",
+                "content4": "Moderators can view user information but cannot change roles or suspend admin accounts. Only administrators can perform these elevated actions.",
+                "stepsLabel": "How to change a user's role",
+                "step1": "Open User Management and search for the user by name or email.",
+                "step2": "Click 'Change Role' on the user's row.",
+                "step3": "Select the new role from the dropdown (member, researcher, moderator, admin).",
+                "step4": "Confirm the change - it takes effect immediately."
+            },
+            "governance": {
+                "title": "Governance",
+                "desc": "Trust governance, jury panels, and policy management.",
+                "content1": "The Governance dashboard manages the trust and governance systems including jury panels, trust dimension configurations, and policy settings.",
+                "content2": "Jury panels are convened for contested moderation decisions. A minimum of 3 jurors is required, with a 2/3 majority needed for a decision. Votes are anonymous until the conclusion.",
+                "content3": "Policy changes should be documented and communicated to the moderation team through the Coordination Centre before taking effect.",
+                "stepsLabel": "How to convene a jury panel",
+                "step1": "Navigate to the Governance dashboard and select 'Jury Panels'.",
+                "step2": "Create a new panel, link the contested content, and select at least 3 jurors.",
+                "step3": "The jury has 72 hours to vote. Monitor progress and communicate the outcome once concluded."
+            },
+            "auditLogs": {
+                "title": "Audit Logs",
+                "desc": "Complete audit trail of all administrative actions.",
+                "content1": "The Audit Logs page provides a complete, chronological record of all administrative and moderation actions taken on the platform. Every approval, rejection, role change, and suspension is logged.",
+                "content2": "Use audit logs to review moderation patterns, investigate complaints about moderation decisions, and ensure accountability. Logs cannot be edited or deleted.",
+                "content3": "You can filter logs by action type, actor, and date range. This is useful for reviewing a specific moderator's decisions or tracking the history of a particular piece of content.",
+                "stepsLabel": "How to investigate a moderation decision",
+                "step1": "Open Audit Logs and filter by the relevant action type or moderator name.",
+                "step2": "Narrow the date range to the period in question.",
+                "step3": "Review the log entries to see the full chain of actions and their documented reasons."
+            },
+            "schemaRegistry": {
+                "title": "Schema Registry",
+                "desc": "View and manage the platform's data schema and field definitions.",
+                "content1": "The Schema Registry provides a view of the platform's database schema, including all content types, their fields, and validation rules. This is a technical reference for understanding the data model.",
+                "content2": "Administrators can view field definitions and content type structures. Changes to the schema should be coordinated with the development team.",
+                "stepsLabel": "How to explore the schema",
+                "step1": "Open the Schema Registry and browse content types (Article, Question, Trace, etc.).",
+                "step2": "Click on a content type to see its fields, data types, and validation rules."
+            },
+            "platformSettings": {
+                "title": "Platform Settings",
+                "desc": "Configure platform-wide settings and feature flags.",
+                "content1": "Platform Settings allows administrators to configure global platform behaviour including feature flags, moderation thresholds, and system-wide preferences.",
+                "content2": "Changes to platform settings take effect immediately and affect all users. Review changes carefully and communicate significant changes to the moderation team.",
+                "content3": "Some settings affect the moderation pipeline (e.g., AI moderation thresholds, auto-approval rules). Adjusting these requires understanding their impact on content flow.",
+                "stepsLabel": "How to update a platform setting",
+                "step1": "Open Platform Settings from the admin sidebar.",
+                "step2": "Find the setting you want to change using search or by browsing categories.",
+                "step3": "Update the value and review the change description to understand the impact.",
+                "step4": "Save and notify the moderation team via the Coordination Centre if the change affects their workflow."
+            },
+            "waitlist": {
+                "title": "Waitlist Management",
+                "desc": "Manage the platform waitlist and approve new user registrations.",
+                "content1": "The Waitlist page shows users who have registered but are awaiting approval. Review each application and approve or decline based on the platform's admission criteria.",
+                "content2": "When reviewing waitlist applications, consider the applicant's stated purpose, institutional affiliation, and relevance to the platform's research mission.",
+                "stepsLabel": "How to review a waitlist application",
+                "step1": "Open the Waitlist page and review pending applications.",
+                "step2": "Check the applicant's stated purpose, affiliation, and relevance to SyriaHub's mission.",
+                "step3": "Approve or decline the application. Approved users receive access immediately."
             }
         }
     },
@@ -3757,6 +4020,209 @@
         "empty": {
             "noMessages": "No correspondence yet",
             "description": "Messages you receive will appear here"
+        }
+    },
+    "CookieConsent": {
+        "title": "Cookie Preferences",
+        "description": "We use essential cookies to keep you signed in, and optional analytics cookies to improve the platform. No behavioral profiles are built.",
+        "acceptAll": "Accept All",
+        "essentialOnly": "Essential Only",
+        "learnMore": "Privacy Policy"
+    },
+    "UserGuide": {
+        "title": "User Guide",
+        "subtitle": "Everything you need to know to make the most of SyriaHub — from content creation to advanced research tools.",
+        "tableOfContents": "Table of Contents",
+        "expandAll": "Expand all",
+        "collapseAll": "Collapse all",
+        "researcherBadge": "Researcher",
+        "researcherNotice": "You have researcher access. Sections marked 'Researcher' cover advanced features like Traces, research gaps, and trust dimensions.",
+        "introTitle": "Welcome to SyriaHub",
+        "introContent": "SyriaHub is a collaborative research platform for knowledge sharing on Syria. This guide walks you through the platform's tools, content types, and community features so you can contribute effectively.",
+        "footerNote": "This guide is updated as new features are added. If something is unclear, check the FAQ or reach out through the platform's feedback system.",
+        "categories": {
+            "gettingStarted": "Getting Started",
+            "creatingContent": "Creating Content",
+            "researchTools": "Research Tools",
+            "trustQuality": "Trust & Quality",
+            "community": "Community",
+            "settings": "Settings"
+        },
+        "platformOverview": {
+            "title": "Platform Overview",
+            "desc": "What SyriaHub is and how it works",
+            "content1": "SyriaHub is an invitation-only research platform designed for collaborative knowledge sharing on Syria. It combines academic rigour with community participation.",
+            "content2": "The platform supports multiple content types (articles, questions, traces, resources, events), integrated research tools, a trust-based quality system, and gamified engagement to encourage meaningful contributions.",
+            "stepsLabel": "How to get started",
+            "step1": "Sign up with an invitation code from an existing member at the registration page.",
+            "step2": "Verify your email address via the confirmation link.",
+            "step3": "Complete your profile — add your affiliation, bio, and areas of interest.",
+            "step4": "Explore content on the Insights page or visit the Research Lab to start contributing."
+        },
+        "roles": {
+            "title": "User Roles",
+            "desc": "Understand the different roles and their capabilities",
+            "content1": "Member: Ask questions, comment, join events, follow researchers, and participate in community discussions.",
+            "content2": "Researcher: Everything a member can do, plus publish articles, share resources, organise events, preserve Traces, identify research gaps, and invite new members.",
+            "content3": "Members can apply to become Researchers through the role promotion request system. Moderators and Admins have additional platform management capabilities."
+        },
+        "writingArticles": {
+            "title": "Writing Articles",
+            "desc": "Publish in-depth research papers and analyses",
+            "content1": "Articles are the primary content type for presenting original research, analysis, or argument. Use them to share your findings with the community.",
+            "content2": "Good articles on SyriaHub state claims clearly, cite sources, acknowledge uncertainty, and specify their temporal and spatial scope. Be explicit about what you are claiming and what you are not.",
+            "stepsLabel": "How to write an article",
+            "step1": "Click 'Write' in the navigation bar and select 'Article' as the content type.",
+            "step2": "Enter a descriptive title that clearly conveys the topic.",
+            "step3": "Write your content using the Markdown editor. Use headings, citations, and links.",
+            "step4": "Add relevant tags — both verified platform tags and custom tags.",
+            "step5": "Choose a licence for your work (CC BY 4.0 is recommended for research papers).",
+            "step6": "Click 'Publish' to submit for review, or 'Save Draft' to continue later."
+        },
+        "askingQuestions": {
+            "title": "Asking Questions",
+            "desc": "Engage the community with specific research questions",
+            "content1": "Questions are for seeking knowledge you don't have. Make them specific enough to be answerable — vague questions get vague answers.",
+            "content2": "If you're uncertain whether you have enough for an article, consider posting a question first to gather perspectives from the community.",
+            "stepsLabel": "How to ask a question",
+            "step1": "Click 'Write' and select 'Question' as the content type.",
+            "step2": "Write a clear, specific question. Add context about what you already know and what you're looking for.",
+            "step3": "Add tags to help the right people find your question. Submit and engage with the answers you receive."
+        },
+        "preservingTraces": {
+            "title": "Preserving Traces",
+            "desc": "Archive primary sources with minimal interpretation",
+            "content1": "Traces are archival material — photographs, documents, testimonies, and other primary sources preserved with metadata rather than analysis.",
+            "content2": "Unlike articles, Traces emphasise evidence preservation over interpretation. An incomplete or low-resolution artefact is still valuable as archival evidence.",
+            "content3": "Each Trace requires metadata: artefact type, preservation status (original/copy/transcription), temporal coverage, and provenance information.",
+            "stepsLabel": "How to preserve a Trace",
+            "step1": "Click 'Write' and select 'Trace' as the content type.",
+            "step2": "Upload or describe the primary source material.",
+            "step3": "Fill in the required metadata: artefact type, date, location, and preservation status.",
+            "step4": "Add provenance information — where did this material come from? Include custody chain details if available."
+        },
+        "researchGaps": {
+            "title": "Research Gaps",
+            "desc": "Identify knowledge that doesn't exist yet",
+            "content1": "Research Gaps are knowledge claims — they identify areas where research is needed but doesn't yet exist. Browse gaps in the Research Lab.",
+            "content2": "Gaps are organised by type (data, methodological, interpretive, population, regional, temporal), priority (community upvotes), and status (open, claimed, resolved).",
+            "content3": "Claiming a gap signals your intent to work on it. Multiple researchers can claim the same gap, and claims have no deadline.",
+            "stepsLabel": "How to work with research gaps",
+            "step1": "Browse Research Gaps in the Research Lab. Filter by type, priority, or status.",
+            "step2": "Click 'Claim' on a gap that matches your research interests to signal you're working on it.",
+            "step3": "When you publish work that addresses a gap, link your post to the gap.",
+            "step4": "The community can mark gaps as resolved when adequately addressed by linked publications."
+        },
+        "multiSourceSearch": {
+            "title": "Multi-Source Search",
+            "desc": "Search across SyriaHub and external humanitarian databases",
+            "content1": "The Research Lab's multi-source search lets you query SyriaHub content alongside ReliefWeb, HDX (Humanitarian Data Exchange), and World Bank datasets simultaneously.",
+            "content2": "Results are aggregated and presented by source, making it easy to find both internal research and external data on the same topic.",
+            "stepsLabel": "How to use multi-source search",
+            "step1": "Navigate to the Research Lab via the navigation bar.",
+            "step2": "Enter your search query. Results from all sources are shown in categorised tabs.",
+            "step3": "Click on any result to view details. External results link to their original source."
+        },
+        "aiAdvisor": {
+            "title": "AI Question Advisor",
+            "desc": "Get feedback on your research questions before publishing",
+            "content1": "The AI Question Advisor analyses your research questions and provides feedback on clarity, scope, and methodology.",
+            "content2": "Use it to refine your questions before posting. The advisor suggests improvements and helps you identify gaps in your framing.",
+            "stepsLabel": "How to use the AI advisor",
+            "step1": "Go to the Research Lab and select the AI Question Advisor tool.",
+            "step2": "Enter your research question in the input field.",
+            "step3": "Review the analysis: clarity score, scope assessment, and suggested improvements. Refine your question based on the feedback."
+        },
+        "pollsSurveys": {
+            "title": "Polls & Surveys",
+            "desc": "Create professional research instruments",
+            "content1": "Polls are quick single-question votes for gauging community opinion. Surveys are multi-question instruments for more structured data collection.",
+            "content2": "Both tools are available in the Research Lab and support customisable options, time limits, and result visualisation.",
+            "stepsLabel": "How to create a poll or survey",
+            "step1": "In the Research Lab, select 'Polls' or 'Surveys' from the tools menu.",
+            "step2": "Configure your questions, options, and settings (duration, anonymity, etc.).",
+            "step3": "Publish and share. View real-time results in the Research Lab dashboard."
+        },
+        "statistics": {
+            "title": "Statistics Tools",
+            "desc": "Analyse data with built-in statistical tools",
+            "content1": "The Research Lab includes descriptive statistics tools for data analysis, including visualisations (charts, graphs) and export capabilities.",
+            "content2": "Upload your dataset or use data from SyriaHub to generate statistical summaries, trend analyses, and visual representations."
+        },
+        "trustDimensions": {
+            "title": "Trust Dimensions",
+            "desc": "Understand the five dimensions that measure content trustworthiness",
+            "content1": "SyriaHub uses five trust dimensions to assess content: T1 (Author Credibility), T2 (Source Quality), T3 (Proximity — how close the evidence is to the event), T4 (Temporal Freshness), and T5 (Community Validation).",
+            "content2": "When publishing, you declare your trust dimensions honestly. Moderators check for consistency between your claims and content — for example, if you claim on-site proximity (T3), the content should be plausible as first-hand evidence.",
+            "content3": "Trust scores are not popularity metrics. A well-cited, epistemically sound article with limited views can have a higher trust score than a widely-shared but poorly-sourced one."
+        },
+        "citationsForks": {
+            "title": "Citations & Forks",
+            "desc": "Build the knowledge network through attribution",
+            "content1": "When you cite SyriaHub content, a typed backlink (supports, extends, challenges) appears on the cited post. This builds the knowledge network and contributes to both authors' trust scores.",
+            "content2": "Forking creates a derivative of existing content with automatic attribution. Fork when you're genuinely extending or adapting work — not for trivial changes.",
+            "content3": "Good citation practice: cite primary sources when possible, acknowledge influential work, be accurate about what you're referencing, and ensure every citation does real work in your argument.",
+            "stepsLabel": "How to cite or fork",
+            "step1": "While writing, use the citation tool to search for and link to existing SyriaHub content.",
+            "step2": "Select the citation type: 'supports', 'extends', or 'challenges' to describe the relationship.",
+            "step3": "To fork, click the 'Fork' button on any post. The original is automatically attributed and your derivative is linked."
+        },
+        "epistemicStandards": {
+            "title": "Epistemic Standards",
+            "desc": "What quality means on SyriaHub",
+            "content1": "Quality on SyriaHub is epistemic soundness, not engagement. Clear claims with evidence, appropriate uncertainty, proper attribution, and specific scope define quality — not view counts or virality.",
+            "content2": "Avoid common anti-patterns: overstating certainty, treating awareness flags as conclusions, using gaps to push agendas, forking without adding value, citation padding, and scope creep without acknowledgement.",
+            "content3": "Use hedging language appropriately: 'This suggests...' rather than 'This proves...', 'The evidence indicates...' rather than 'Clearly...', and 'Several sources report...' rather than 'Everyone agrees...'."
+        },
+        "contentReview": {
+            "title": "Content Review",
+            "desc": "How moderation works on SyriaHub",
+            "content1": "All published content goes through a multi-layered review process: AI pre-filtering for hate speech and spam, community reporting, human moderator review, and jury panels for complex cases.",
+            "content2": "Moderators may approve content (goes live immediately), request revisions (you receive specific feedback), or reject content (with explanation). Decisions are always explained."
+        },
+        "reporting": {
+            "title": "Reporting Content",
+            "desc": "Flag content that violates community guidelines",
+            "content1": "If you see content that violates community standards — harassment, plagiarism, deliberately false claims, or content that could endanger individuals — you can report it.",
+            "stepsLabel": "How to report content",
+            "step1": "Click the 'Report' button on the post or comment.",
+            "step2": "Select the reason from the list (harassment, misinformation, plagiarism, etc.).",
+            "step3": "Add additional context to help moderators understand the issue.",
+            "step4": "Submit. A moderator will review within the standard review timeframe."
+        },
+        "appeals": {
+            "title": "Appeals Process",
+            "desc": "Contest a moderation decision on your content",
+            "content1": "If your content is rejected or suspended, you can submit an appeal. Appeals are reviewed by moderators independent of the original decision.",
+            "stepsLabel": "How to appeal",
+            "step1": "Check your notifications for the rejection reason and moderation feedback.",
+            "step2": "Click 'Appeal' and write your explanation, addressing the specific points raised.",
+            "step3": "Submit. An independent moderator reviews your appeal and responds with a final decision."
+        },
+        "gamification": {
+            "title": "Gamification & Levels",
+            "desc": "Earn XP and badges for your contributions",
+            "content1": "SyriaHub rewards participation with XP: publishing articles (+50), answering questions (+20), receiving upvotes (+5), getting answers accepted (+25), posting comments (+5), and completing your profile (+10).",
+            "content2": "As you gain XP you unlock levels and earn badges: Deep Diver (10+ articles), Community Pillar (50+ answers), Verified Author (content verified by moderators), Event Organiser (5+ events). View progress on your Profile page."
+        },
+        "appearance": {
+            "title": "Appearance & Display",
+            "desc": "Customise your visual experience",
+            "content1": "Choose between Light, Dark, or System theme. Enable compact mode for denser layouts, toggle avatar display, and set posts per page.",
+            "content2": "Calendar settings let you switch between Gregorian and Hijri date display across the platform."
+        },
+        "privacyNotifications": {
+            "title": "Privacy & Notifications",
+            "desc": "Control visibility and communication preferences",
+            "content1": "Privacy: Control your profile visibility (public/private), email display, and whether other users can send you direct messages.",
+            "content2": "Notifications: Configure email alerts for mentions, replies, new followers, and moderation updates. Default settings: all notifications ON, public profile, email hidden, messages OFF."
+        },
+        "licenses": {
+            "title": "Choosing a Licence",
+            "desc": "Understand content licensing options",
+            "content1": "Creative Commons: CC BY 4.0 (attribution, maximum reach), CC BY-SA 4.0 (share-alike), CC BY-NC 4.0 (non-commercial), CC0 (public domain). Software: MIT and Apache 2.0.",
+            "content2": "Recommended: CC BY 4.0 for research papers (maximises citations), CC0 or CC BY for datasets (encourages reuse), MIT or Apache 2.0 for code/tools, All Rights Reserved for sensitive content.",
+            "content3": "Once published, your licence choice is attached to that version. You can change it in future edits, but the original licence applies to the original version."
         }
     }
 }

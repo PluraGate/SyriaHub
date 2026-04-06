@@ -162,6 +162,19 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
                             </p>
                         </div>
                     </div>
+
+                    {/* Email Privacy / Data Minimisation */}
+                    <div className="mt-6 p-4 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                        <h4 className="font-semibold text-text dark:text-dark-text text-sm mb-2">
+                            {isArabic ? 'تقليل البيانات وخصوصية البريد الإلكتروني' : 'Data Minimisation &amp; Email Privacy'}
+                        </h4>
+                        <p className="text-xs text-text-muted dark:text-dark-text-muted m-0">
+                            {isArabic
+                                ? 'تُخزَّن عناوين البريد الإلكتروني في نظام المصادقة ولا تُكشف لمستخدمين آخرين أو مشرفين أو في أي تصدير. لا تظهر بريد مستجيبي الاستطلاع لمنشئي الاستطلاع. تحتوي تصديرات المحتوى (Markdown، JSON، BibTeX، RIS) على أسماء المؤلفين فقط، وليس تفاصيل الاتصال.'
+                                : 'Email addresses are stored in our authentication system and are never exposed to other users, moderators, or included in any exports. Survey respondent emails are not visible to survey creators. Content exports (Markdown, JSON, BibTeX, RIS) contain only author names, never contact details.'
+                            }
+                        </p>
+                    </div>
                 </div>
 
                 {/* Data Retention */}
@@ -211,6 +224,12 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
                         : 'You have the right to access, correct, and delete your personal data. You can also request a copy of your data or ask us to restrict processing.'
                     }
                 </p>
+                <p>
+                    {isArabic
+                        ? 'يمكنك حذف حسابك نهائياً من صفحة الإعدادات. يؤدي الحذف إلى إزالة ملفك الشخصي والمحتوى الذي نشرته والأصوات وجميع البيانات المرتبطة من أنظمتنا. هذا الإجراء لا رجعة فيه. قد يتم الاحتفاظ بسجلات الإشراف المرجعية لحسابك لأغراض الامتثال والسلامة.'
+                        : 'You can permanently delete your account from the Settings page. Deletion removes your profile, content you have published, votes, and all associated data from our systems. This action is irreversible. Moderation logs referencing your account may be retained for compliance and safety purposes.'
+                    }
+                </p>
 
                 {/* No Profiling Commitment */}
                 <div className="not-prose my-8 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
@@ -228,11 +247,11 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
                     </p>
                 </div>
 
-                <h3>{isArabic ? 'ملفات تعريف الارتباط' : 'Cookies'}</h3>
+                <h3>{isArabic ? 'ملفات تعريف الارتباط وموافقة ملفات تعريف الارتباط' : 'Cookies &amp; Cookie Consent'}</h3>
                 <p>
                     {isArabic
-                        ? 'نستخدم ملفات تعريف الارتباط الضرورية لتشغيل المنصة. قد نستخدم أيضاً ملفات تعريف ارتباط تحليلية لفهم كيفية استخدام المنصة.'
-                        : 'We use essential cookies to operate the platform. We may also use analytics cookies to understand how the platform is used.'
+                        ? 'نعرض لافتة موافقة على ملفات تعريف الارتباط عند أول زيارة. ملفات تعريف الارتباط الأساسية (جلسة المصادقة) نشطة دائماً. لا تُضبط ملفات تعريف الارتباط التحليلية الاختيارية إلا إذا اخترت "قبول الكل". يمكنك تغيير تفضيلاتك عن طريق مسح التخزين المحلي للمتصفح.'
+                        : 'We display a cookie consent banner on first visit. Essential cookies (authentication session) are always active. Optional analytics cookies are only set if you choose \'Accept All\'. You can change your preference by clearing your browser\'s local storage.'
                     }
                 </p>
 

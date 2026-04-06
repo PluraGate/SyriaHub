@@ -3,11 +3,19 @@ import { test, expect } from '@playwright/test';
 // Skip WebKit for tests that have timing issues with Next.js SSR on Windows
 const skipOnWebKit = (browserName: string) => browserName === 'webkit';
 
+// Warm up the dev server before tests run to avoid cold-start flakiness
+test.beforeAll(async ({ browser }) => {
+    const page = await browser.newPage();
+    await page.goto('/', { waitUntil: 'networkidle', timeout: 120000 }).catch(() => {});
+    await page.close();
+});
+
 test.describe('Navigation and Core Pages', () => {
     test.beforeEach(async ({ page }) => {
-        // Disable Epistemic Onboarding by setting localStorage key
+        // Disable overlays that interfere with tests
         await page.addInitScript(() => {
             window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+            window.localStorage.setItem('syriahub-cookie-consent', 'all');
         });
     });
 
@@ -56,9 +64,7 @@ test.describe('Navigation and Core Pages', () => {
         // Skip on WebKit due to Windows SSR timing issues
         test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
         
-        await page.goto('/en');
-        // Wait for page to be fully interactive
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en', { waitUntil: 'networkidle' });
 
         // Close onboarding if present
         const closeBtn = page.getByRole('button', { name: /close/i });
@@ -79,8 +85,7 @@ test.describe('Navigation and Core Pages', () => {
         // Skip on WebKit due to Windows SSR timing issues
         test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
         
-        await page.goto('/en');
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en', { waitUntil: 'networkidle' });
 
         // Scroll to bottom
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -95,12 +100,18 @@ test.describe('Navigation and Core Pages', () => {
 });
 
 test.describe('Authentication Flow', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            window.localStorage.setItem('syriahub_epistemic_onboarding_shown', 'true');
+            window.localStorage.setItem('syriahub-cookie-consent', 'all');
+        });
+    });
+
     test('login page loads correctly', async ({ page, browserName }) => {
         // Skip on WebKit due to Windows SSR timing issues
         test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
         
-        await page.goto('/en/auth/login');
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/auth/login', { waitUntil: 'networkidle' });
 
         // Should show login form with actual heading text (use .first() as there are multiple headings)
         await expect(page.getByRole('heading', { name: /sign in to your account/i }).first()).toBeVisible({ timeout: 20000 });
@@ -114,8 +125,7 @@ test.describe('Authentication Flow', () => {
         // Skip on WebKit due to Windows SSR timing issues
         test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
         
-        await page.goto('/en/auth/signup');
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/auth/signup', { waitUntil: 'networkidle' });
 
         // Should show signup form with actual heading text (use .first() as there are multiple headings)
         await expect(page.getByRole('heading', { name: /create your account/i }).first()).toBeVisible({ timeout: 20000 });
@@ -125,8 +135,7 @@ test.describe('Authentication Flow', () => {
         // Skip on WebKit due to Windows SSR timing issues
         test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
         
-        await page.goto('/en/auth/login');
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en/auth/login', { waitUntil: 'networkidle' });
 
         // Should have forgot password link - use text content matcher for flexibility
         await expect(page.locator('a:has-text("Forgot"), a:has-text("forgot")')).toBeVisible({ timeout: 20000 });
@@ -189,10 +198,7 @@ test.describe('Events', () => {
 
 test.describe('Search Functionality', () => {
     test('search bar is accessible from homepage', async ({ page }) => {
-        await page.goto('/en');
-
-        // Wait for page to load
-        await page.waitForLoadState('domcontentloaded');
+        await page.goto('/en', { waitUntil: 'networkidle' });
 
         // Close onboarding if present
         const closeBtn = page.getByRole('button', { name: /close/i });

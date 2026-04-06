@@ -82,7 +82,7 @@ export default function ContactPage() {
             showToast("Message sent successfully!", "success")
             form.reset()
             setTurnstileToken('')
-        } catch (error) {
+        } catch (_error) {
             showToast("Failed to send message. Please try again.", "error")
         } finally {
             setIsSubmitting(false)

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useTranslations } from 'next-intl'
 
 interface RegistrySelectProps {
     registryId: string
@@ -19,6 +20,7 @@ interface RegistrySelectProps {
 }
 
 export function RegistrySelect({ registryId, value, onChange, multiple, placeholder }: RegistrySelectProps) {
+    const t = useTranslations('Editor')
     const [items, setItems] = useState<SchemaItem[]>([])
     const [loading, setLoading] = useState(true)
     const [open, setOpen] = useState(false)
@@ -78,7 +80,7 @@ export function RegistrySelect({ registryId, value, onChange, multiple, placehol
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0">
                     <Command>
-                        <CommandInput placeholder="Search items..." />
+                        <CommandInput placeholder={t('searchItems')} />
                         <CommandEmpty>No item found.</CommandEmpty>
                         <CommandGroup className="max-h-64 overflow-auto">
                             {items.map((item) => (
@@ -113,7 +115,7 @@ export function RegistrySelect({ registryId, value, onChange, multiple, placehol
     return (
         <Select value={value as string} onValueChange={onChange}>
             <SelectTrigger>
-                <SelectValue placeholder={placeholder || 'Select an option'} />
+                <SelectValue placeholder={placeholder || t('selectOption')} />
             </SelectTrigger>
             <SelectContent>
                 {items.map((item) => (

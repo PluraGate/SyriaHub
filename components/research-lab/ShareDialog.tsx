@@ -10,7 +10,6 @@ import {
     Globe,
     Lock,
     Loader2,
-    QrCode,
     ExternalLink
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
@@ -80,7 +79,7 @@ export function ShareDialog({
             setPublicToken(newToken)
             setAllowPublic(true)
             showToast('Public link generated!', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to generate link', 'error')
         } finally {
             setIsGenerating(false)
@@ -103,7 +102,7 @@ export function ShareDialog({
 
             setAllowPublic(enabled)
             showToast(enabled ? 'Public sharing enabled' : 'Public sharing disabled', 'success')
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to update sharing settings', 'error')
         } finally {
             setIsSaving(false)
@@ -122,7 +121,7 @@ export function ShareDialog({
             setCopied(true)
             showToast('Link copied!', 'success')
             setTimeout(() => setCopied(false), 2000)
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to copy', 'error')
         }
     }

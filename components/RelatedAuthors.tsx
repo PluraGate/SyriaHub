@@ -13,7 +13,6 @@ import { useTranslations } from 'next-intl'
 interface Author {
     id: string
     name: string
-    email: string
     bio?: string
     affiliation?: string
     avatar_url?: string
@@ -42,7 +41,7 @@ export function RelatedAuthors({
                 // Get users with their post counts
                 const { data: users } = await supabase
                     .from('users')
-                    .select('id, name, email, bio, affiliation, avatar_url')
+                    .select('id, name, bio, affiliation, avatar_url')
                     .neq('id', currentUserId || '')
                     .limit(limit * 2) // Get more to sort/filter
 
@@ -122,7 +121,6 @@ export function RelatedAuthors({
                         <Link href={`/profile/${author.id}`} className="flex-shrink-0">
                             <UserAvatar
                                 name={author.name}
-                                email={author.email}
                                 avatarUrl={author.avatar_url}
                                 size="sm"
                             />
@@ -167,7 +165,7 @@ export function AuthorSpotlight({ authorId }: { authorId: string }) {
             try {
                 const { data } = await supabase
                     .from('users')
-                    .select('id, name, email, bio, affiliation, avatar_url')
+                    .select('id, name, bio, affiliation, avatar_url')
                     .eq('id', authorId)
                     .single()
 
@@ -214,7 +212,6 @@ export function AuthorSpotlight({ authorId }: { authorId: string }) {
             <div className="flex items-center gap-3">
                 <UserAvatar
                     name={author.name}
-                    email={author.email}
                     avatarUrl={author.avatar_url}
                     size="lg"
                 />

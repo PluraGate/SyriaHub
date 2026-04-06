@@ -8,6 +8,7 @@ import {
   withErrorHandling,
   sanitizePaginationParams,
 } from '@/lib/apiUtils'
+import { applyRateLimit } from '@/lib/rateLimit'
 
 /**
  * GET /api/users
@@ -15,6 +16,9 @@ import {
  * Query params: role, search, limit, offset
  */
 async function handleGetUsers(request: Request): Promise<NextResponse> {
+  const rateLimit = await applyRateLimit(request, 'read')
+  if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
   // Verify user is admin
   await verifyRole('admin')
 
@@ -30,7 +34,7 @@ async function handleGetUsers(request: Request): Promise<NextResponse> {
   // Build query
   let query = supabase
     .from('users')
-    .select('*')
+    .select('id, name, email, role, bio, affiliation, avatar_url, created_at, suspended_at, suspended_by, suspension_reason, verified')
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 

@@ -1,7 +1,6 @@
 'use client'
 
-import { formatDistanceToNow, differenceInDays } from 'date-fns'
-import { ar, enUS } from 'date-fns/locale'
+import { differenceInDays } from 'date-fns'
 import Link from 'next/link'
 import {
     Vote,
@@ -9,7 +8,7 @@ import {
     ArrowRight,
     Clock
 } from 'lucide-react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 
 interface UnansweredItem {
     id: string
@@ -26,9 +25,6 @@ interface UnansweredResearchProps {
 
 export function UnansweredResearch({ items, totalCount }: UnansweredResearchProps) {
     const t = useTranslations('ResearchLab')
-    const locale = useLocale()
-    const dateLocale = locale === 'ar' ? ar : enUS
-
     // Hide section entirely if empty
     if (items.length === 0) {
         return null

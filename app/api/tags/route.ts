@@ -1,6 +1,6 @@
 // Tags API - List and manage tags
 import { NextResponse } from 'next/server'
-import { createServerClient, verifyRole, isModerator } from '@/lib/supabaseClient'
+import { createServerClient, isModerator } from '@/lib/supabaseClient'
 import {
   successResponse,
   errorResponse,
@@ -12,7 +12,7 @@ import {
   forbiddenResponse,
   validateOrigin,
 } from '@/lib/apiUtils'
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit, applyRateLimit } from '@/lib/rateLimit'
 
 interface CreateTagInput {
   label: string
@@ -26,6 +26,9 @@ interface CreateTagInput {
  * Query params: discipline, search
  */
 async function handleGetTags(request: Request): Promise<NextResponse> {
+  const rateLimit = await applyRateLimit(request, 'read')
+  if (!rateLimit.allowed && rateLimit.response) return rateLimit.response
+
   const supabase = await createServerClient()
   const params = getQueryParams(request)
   

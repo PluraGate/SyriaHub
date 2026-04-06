@@ -50,7 +50,7 @@ export function CiteButton({
     postTags
 }: CiteButtonProps) {
     const [drafts, setDrafts] = useState<Draft[]>([])
-    const [loadingDrafts, setLoadingDrafts] = useState(false)
+    const [_loadingDrafts, setLoadingDrafts] = useState(false)
     const [showCopyCitation, setShowCopyCitation] = useState(false)
     const [copiedFormat, setCopiedFormat] = useState<string | null>(null)
     const supabase = useMemo(() => createClient(), [])
@@ -115,6 +115,7 @@ export function CiteButton({
 
             showToast(`Added reference to your draft`, 'success')
             router.push(`/editor?id=${draftId}`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Error adding citation:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
             showToast('Failed to add reference', 'error')

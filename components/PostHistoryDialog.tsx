@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { format } from 'date-fns'
-import { History, X, ChevronLeft, ChevronRight, User as UserIcon, FileDiff } from 'lucide-react'
+import { History, User as UserIcon, FileDiff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { PostVersion } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'

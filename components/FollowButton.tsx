@@ -32,7 +32,7 @@ export function FollowButton({ userId, className, variant = 'default' }: FollowB
 
                     setIsFollowing(!!data)
                 }
-            } catch (error) {
+            } catch (_error) {
                 // Not following or not logged in
             } finally {
                 setLoading(false)

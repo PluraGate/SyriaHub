@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { getTierFromLevel, tierConfig } from '@/lib/gamification'
+import { tierConfig } from '@/lib/gamification'
 import { Medal, Award, Crown, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 

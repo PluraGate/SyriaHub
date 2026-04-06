@@ -40,7 +40,7 @@ export default async function PollsPage({
             .eq('user_id', user.id)
 
         if (votes) {
-            votes.forEach((vote: any) => {
+            votes.forEach((vote: { poll_id: string; option_ids: string[] }) => {
                 userVotes[vote.poll_id] = vote.option_ids
             })
         }

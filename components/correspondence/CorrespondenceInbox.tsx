@@ -69,7 +69,7 @@ export function CorrespondenceInbox({ locale }: CorrespondenceInboxProps) {
             } else {
                 showToast(result.error || 'Failed to archive', 'error')
             }
-        } catch (error) {
+        } catch (_error) {
             showToast('Failed to archive', 'error')
         }
     }

@@ -15,7 +15,6 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 interface Recommendation {
     id: string
@@ -107,7 +106,7 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                 } else {
                     setRecommendations(data || [])
                 }
-            } catch (err) {
+            } catch (_err) {
                 await loadFallbackRecommendations()
             } finally {
                 setLoading(false)
@@ -127,6 +126,7 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
 
                 if (fallbackData) {
                     // Filter out resources client-side
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const filteredPosts = fallbackData.filter((p: any) => p.content_type !== 'resource').slice(0, 6)
                     setRecommendations(filteredPosts.map(p => ({
                         id: p.id,

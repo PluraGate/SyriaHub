@@ -82,14 +82,6 @@ async function cacheData(
  */
 export async function searchReliefWeb(query: string, limit: number = 5): Promise<ExternalResult[]> {
     try {
-        const params = new URLSearchParams({
-            appname: 'syriahub',
-            query: {
-                value: query,
-                operator: 'AND'
-            }
-        } as never)
-
         const response = await fetch(
             `https://api.reliefweb.int/v1/reports?appname=syriahub&query[value]=${encodeURIComponent(query)}&limit=${limit}&preset=latest`,
             {

@@ -18,7 +18,10 @@ import {
     CheckCircle2,
     FileJson,
     FileSpreadsheet,
-    Upload
+    Upload,
+    Database,
+    Globe,
+    GitMerge
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ar, enUS } from 'date-fns/locale'
@@ -32,6 +35,8 @@ interface PollOption {
     text: string
     vote_count: number
 }
+
+type DataSourceType = 'community' | 'external' | 'mixed'
 
 interface Poll {
     id: string
@@ -48,7 +53,9 @@ interface Poll {
     author_id?: string
     public_token?: string | null
     allow_public_responses?: boolean
-    author?: { name?: string; email?: string }
+    data_source_type?: DataSourceType | null
+    data_source_label?: string | null
+    author?: { name?: string }
 }
 
 interface PollsListProps {
@@ -76,6 +83,8 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
     const [newDescription, setNewDescription] = useState('')
     const [newOptions, setNewOptions] = useState(['', ''])
     const [isMultiple, setIsMultiple] = useState(false)
+    const [dataSourceType, setDataSourceType] = useState<DataSourceType | ''>('')
+    const [dataSourceLabel, setDataSourceLabel] = useState('')
     const [submitting, setSubmitting] = useState(false)
 
     const handleVote = async (pollId: string, optionIds: string[]) => {
@@ -145,41 +154,35 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
         }
 
         setSubmitting(true)
-        const supabase = createClient()
 
         try {
-            const pollOptions = validOptions.map((text, i) => ({
-                id: `opt_${i}`,
-                text: text.trim(),
-                vote_count: 0
-            }))
-
-            const { data, error } = await supabase
-                .from('polls')
-                .insert({
+            const response = await fetch('/api/polls', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     question: newQuestion.trim(),
                     description: newDescription.trim() || null,
-                    options: pollOptions,
+                    options: validOptions.map(text => text.trim()),
                     is_multiple_choice: isMultiple,
-                    author_id: userId
+                    data_source_type: dataSourceType || null,
+                    data_source_label: dataSourceLabel.trim() || null
                 })
-                .select(`
-                    *,
-                    author:users!author_id(name, email)
-                `)
-                .single()
+            })
 
-            if (error) throw error
+            const data = await response.json()
+            if (!response.ok) throw new Error(data.error || 'Failed to create poll')
 
             setLocalPolls(prev => [data, ...prev])
             setNewQuestion('')
             setNewDescription('')
             setNewOptions(['', ''])
             setIsMultiple(false)
+            setDataSourceType('')
+            setDataSourceLabel('')
             setIsCreating(false)
             showToast('Poll created!', 'success')
-        } catch (_error) {
-            showToast('Failed to create poll', 'error')
+        } catch (err) {
+            showToast(err instanceof Error ? err.message : 'Failed to create poll', 'error')
         } finally {
             setSubmitting(false)
         }
@@ -344,6 +347,39 @@ export function PollsList({ polls, userVotes, userId, showCreate = false }: Poll
                             </span>
                         </label>
 
+                        {/* Data provenance */}
+                        <div className="pt-2 border-t border-gray-100 dark:border-dark-border space-y-3">
+                            <div>
+                                <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                    Data source <span className="font-normal text-text-light dark:text-dark-text-muted">(optional)</span>
+                                </label>
+                                <select
+                                    value={dataSourceType}
+                                    onChange={(e) => setDataSourceType(e.target.value as DataSourceType | '')}
+                                    className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text focus:ring-2 focus:ring-primary focus:border-transparent"
+                                >
+                                    <option value="">Not specified</option>
+                                    <option value="community">Community — collected from SyriaHub members</option>
+                                    <option value="external">External — imported from outside source</option>
+                                    <option value="mixed">Mixed — combination of both</option>
+                                </select>
+                            </div>
+                            {dataSourceType && (
+                                <div>
+                                    <label className="block text-sm font-medium text-text dark:text-dark-text mb-1.5">
+                                        Source description <span className="font-normal text-text-light dark:text-dark-text-muted">(optional, max 200 chars)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={dataSourceLabel}
+                                        onChange={(e) => setDataSourceLabel(e.target.value.slice(0, 200))}
+                                        placeholder={dataSourceType === 'external' ? 'e.g. UN OCHA field survey 2024' : 'e.g. SyriaHub researcher self-report'}
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-text dark:text-dark-text placeholder-text-light dark:placeholder-dark-text-muted focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    />
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex justify-end gap-3 pt-2">
                             <button
                                 onClick={() => setIsCreating(false)}
@@ -435,7 +471,9 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                 totalVotes,
                 createdAt: poll.created_at,
                 endDate: poll.end_date || null,
-                isActive: poll.is_active
+                isActive: poll.is_active,
+                dataSourceType: poll.data_source_type || null,
+                dataSourceLabel: poll.data_source_label || null
             },
             results: poll.options.map(opt => ({
                 option: opt.text,
@@ -464,6 +502,7 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
             const csvContent = [
                 `# Poll: ${poll.question}`,
                 `# Total Votes: ${totalVotes}`,
+                ...(poll.data_source_type ? [`# Data Source: ${poll.data_source_type}${poll.data_source_label ? ` — ${poll.data_source_label}` : ''}`] : []),
                 `# Exported: ${new Date().toISOString()}`,
                 '',
                 headers.join(','),
@@ -595,9 +634,14 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                         </button>
                     </div>
 
-                    <h3 className="font-medium text-text dark:text-dark-text mb-4">
+                    <h3 className="font-medium text-text dark:text-dark-text mb-2">
                         {poll.question}
                     </h3>
+                    {poll.data_source_type && (
+                        <div className="mb-4">
+                            <DataSourceBadge type={poll.data_source_type} label={poll.data_source_label} />
+                        </div>
+                    )}
 
                     <div className="space-y-3">
                         {poll.options
@@ -672,6 +716,39 @@ function PollResultsModal({ poll, onClose }: { poll: Poll; onClose: () => void }
                 </div>
             </div>
         </div>
+    )
+}
+
+// Data source provenance badge
+function DataSourceBadge({ type, label }: { type: DataSourceType; label?: string | null }) {
+    const config = {
+        community: {
+            icon: Database,
+            text: 'Community data',
+            className: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+        },
+        external: {
+            icon: Globe,
+            text: 'External source',
+            className: 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400'
+        },
+        mixed: {
+            icon: GitMerge,
+            text: 'Mixed sources',
+            className: 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
+        }
+    }[type]
+
+    const Icon = config.icon
+
+    return (
+        <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.className}`}
+            title={label || undefined}
+        >
+            <Icon className="w-3 h-3" />
+            {label ? label : config.text}
+        </span>
     )
 }
 
@@ -760,6 +837,11 @@ function PollCard({
                         <p className="text-text-light dark:text-dark-text-muted text-sm">
                             {poll.description}
                         </p>
+                    )}
+                    {poll.data_source_type && (
+                        <div className="mt-2">
+                            <DataSourceBadge type={poll.data_source_type} label={poll.data_source_label} />
+                        </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2">
@@ -951,9 +1033,9 @@ function PollCard({
                         <Users className="w-4 h-4" />
                         {totalVotes} vote{totalVotes !== 1 ? 's' : ''}
                     </span>
-                    {poll.author && (
+                    {poll.author?.name && (
                         <span>
-                            {t('pollsPage.by')} {poll.author.name || poll.author.email?.split('@')[0]}
+                            {t('pollsPage.by')} {poll.author.name}
                         </span>
                     )}
                     <span className="flex items-center gap-1.5">

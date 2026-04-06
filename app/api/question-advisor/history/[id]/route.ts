@@ -37,7 +37,7 @@ async function handleDelete(
         }
 
         return NextResponse.json({ success: true })
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Delete question history error:', error)
         return NextResponse.json(
             { error: 'Failed to delete' },

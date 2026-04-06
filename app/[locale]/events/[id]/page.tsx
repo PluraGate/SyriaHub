@@ -12,7 +12,6 @@ import { RejectionBanner } from '@/components/RejectionBanner'
 import { EventActions } from '@/components/EventActions'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { BookmarkButton } from '@/components/BookmarkButton'
-import Link from 'next/link'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
@@ -42,7 +41,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
         .eq('event_id', id)
 
     const going = rsvps?.filter(r => r.status === 'going') || []
-    const maybe = rsvps?.filter(r => r.status === 'maybe') || []
+    const _maybe = rsvps?.filter(r => r.status === 'maybe') || []
 
     // Get current user's RSVP status
     const userRsvp = rsvps?.find(r => {
@@ -233,14 +232,17 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
                                 {going.length > 0 ? (
                                     <ul className="space-y-3">
-                                        {going.slice(0, 5).map((rsvp: any) => (
-                                            <li key={rsvp.user.id} className="flex items-center gap-2 text-sm text-text dark:text-dark-text">
+                                        {going.slice(0, 5).map((rsvp: { user: { id: string; name?: string; email?: string } | { id: string; name?: string; email?: string }[] }) => {
+                                            const u = Array.isArray(rsvp.user) ? rsvp.user[0] : rsvp.user
+                                            return (
+                                            <li key={u.id} className="flex items-center gap-2 text-sm text-text dark:text-dark-text">
                                                 <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                                                    {rsvp.user.name?.[0] || rsvp.user.email?.[0] || '?'}
+                                                    {u.name?.[0] || u.email?.[0] || '?'}
                                                 </div>
-                                                <span>{rsvp.user.name || rsvp.user.email?.split('@')[0]}</span>
+                                                <span>{u.name || u.email?.split('@')[0]}</span>
                                             </li>
-                                        ))}
+                                            )
+                                        })}
                                         {going.length > 5 && (
                                             <li className="text-xs text-text-light dark:text-dark-text-muted pl-8">
                                                 {t('moreAttendees', { count: going.length - 5 })}

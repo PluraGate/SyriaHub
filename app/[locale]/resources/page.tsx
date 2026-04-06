@@ -67,12 +67,14 @@ export default async function ResourcesPage({
             .eq('discipline', params.discipline)
 
         const disciplineTags = tags?.map(t => t.label) || []
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         filteredResources = resources.filter((r: any) =>
             r.tags?.some((tag: string) => disciplineTags.includes(tag))
         )
     }
 
     // Add linked_posts_count = 0 and infer type for each resource on the server
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const resourcesWithLinks = filteredResources.map((resource: any) => {
         const metadata = resource.metadata || {}
         // Explicitly calculate the resource type on the server to avoid client-side hydration issues
@@ -130,6 +132,7 @@ export default async function ResourcesPage({
                         )}
 
                         {resourcesWithLinks.length > 0 ? (
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             resourcesWithLinks.map((resource: any) => (
                                 <ResourceCard
                                     key={resource.id}

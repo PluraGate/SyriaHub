@@ -14,14 +14,14 @@ import { withRateLimit } from '@/lib/rateLimit'
 
 interface CreateRoleInput {
   name: string
-  permissions: Record<string, any>
+  permissions: Record<string, unknown>
 }
 
 /**
  * GET /api/roles
  * List all roles (public)
  */
-async function handleGetRoles(request: Request): Promise<NextResponse> {
+async function handleGetRoles(_request: Request): Promise<NextResponse> {
   const supabase = await createServerClient()
 
   const { data, error } = await supabase

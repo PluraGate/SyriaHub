@@ -10,6 +10,7 @@ export const metadata = {
     description: 'Your saved posts, events, and web references',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getSavedContent(userId: string, supabase: any) {
     // Get bookmarked posts
     const { data: bookmarks, error: bookmarksError } = await supabase
@@ -51,6 +52,7 @@ async function getSavedContent(userId: string, supabase: any) {
 
     // Get saved events (from event_rsvps with status 'saved' or bookmarks linking to events)
     // For now, keeping events empty - can be extended when events bookmarking is added
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const events: any[] = []
 
     return {
@@ -69,11 +71,13 @@ export default async function SavedPage() {
         redirect('/auth/login')
     }
 
-    const { bookmarks, references, events } = await getSavedContent(user.id, supabase)
+    const { bookmarks, references, events: _events } = await getSavedContent(user.id, supabase)
 
     // Filter and transform bookmarks by content_type
     const savedPosts = bookmarks
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((b: any) => b.post && b.post.content_type !== 'event')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((b: any) => ({
             ...b.post,
             bookmark_id: b.id,
@@ -81,7 +85,9 @@ export default async function SavedPage() {
         }))
 
     const savedEvents = bookmarks
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((b: any) => b.post && b.post.content_type === 'event')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((b: any) => ({
             ...b.post,
             bookmark_id: b.id,

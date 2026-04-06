@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Loader2, Calendar as CalendarIcon, MapPin, Clock, ExternalLink, Image as ImageIcon } from 'lucide-react'
+import { Loader2, Calendar as CalendarIcon, MapPin, Clock, ExternalLink } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { useTranslations } from 'next-intl'
 import {
@@ -36,7 +36,7 @@ export default function CreateEventPage() {
 
     const t = useTranslations('Events.create')
     const tCommon = useTranslations('Common')
-    const tEvents = useTranslations('Events')
+    const _tEvents = useTranslations('Events')
 
     const supabase = createClient()
     const router = useRouter()
@@ -91,9 +91,9 @@ export default function CreateEventPage() {
                 router.refresh()
                 router.push(`/events/${data.id}`)
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating event:', JSON.stringify(error, null, 2))
-            showToast(error?.message || tCommon('error'), 'error')
+            showToast(error instanceof Error ? error.message : tCommon('error'), 'error')
         } finally {
             setLoading(false)
         }

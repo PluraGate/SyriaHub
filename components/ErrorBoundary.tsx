@@ -75,12 +75,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 // Error type detection
 type ErrorType = 'network' | 'auth' | 'notFound' | 'generic'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function detectErrorType(error: Error | null | any): ErrorType {
     if (!error) return 'generic'
 
     // Safeguard against non-standard error objects
     const message = error.message ? String(error.message).toLowerCase() : ''
-    const name = error.name ? String(error.name).toLowerCase() : ''
+    const _name = error.name ? String(error.name).toLowerCase() : ''
 
     if (message.includes('network') || message.includes('fetch') || message.includes('failed to load')) {
         return 'network'
@@ -102,7 +103,7 @@ interface ErrorFallbackProps {
     onGoBack?: () => void
 }
 
-function ErrorFallback({ error, onRetry, onReload, onGoHome, onGoBack }: ErrorFallbackProps) {
+function ErrorFallback({ error, onRetry, onReload: _onReload, onGoHome, onGoBack }: ErrorFallbackProps) {
     const errorType = detectErrorType(error)
 
     const errorConfig = {

@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { AboutLayout } from '@/components/AboutLayout'
-import { Link } from '@/navigation'
 import {
     Shield,
     Mail,
@@ -237,6 +236,34 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
                             }
                         </p>
                     </div>
+                </div>
+
+                {/* Moderation Audit Trail */}
+                <div className="not-prose mb-8 p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                    <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-primary dark:text-secondary" />
+                        {isRTL ? 'سجل تدقيق الإشراف' : 'Moderation Audit Trail'}
+                    </h4>
+                    <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                        {isRTL
+                            ? 'جميع إجراءات الإشراف — بما في ذلك حل البلاغات، والموافقة على المحتوى ورفضه، وتعليق حسابات المستخدمين، وقرارات الاستئناف — تُسجَّل في سجل تدقيق غير قابل للتعديل. يمكن للمشرفين والمسؤولين مراجعة هذا السجل لضمان اتساق القرارات والمساءلة.'
+                            : 'All moderation actions — including report resolutions, content approvals and rejections, user suspensions, and appeal decisions — are recorded in an immutable audit log. Moderators and administrators can review this log to ensure decisions are consistent and accountable.'
+                        }
+                    </p>
+                </div>
+
+                {/* Bot Protection on Polls / Surveys */}
+                <div className="not-prose mb-8 p-5 rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface">
+                    <h4 className="font-semibold text-text dark:text-dark-text mb-3 flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-primary dark:text-secondary" />
+                        {isRTL ? 'حماية الاستطلاعات من الروبوتات' : 'Bot Protection on Polls & Surveys'}
+                    </h4>
+                    <p className="text-sm text-text-muted dark:text-dark-text-muted">
+                        {isRTL
+                            ? 'يمكن للمنشئين تمكين التحقق من Cloudflare Turnstile على الاستطلاعات العامة وتصويتات الاستطلاعات لمنع التصويت الآلي وإساءة الاستخدام من الروبوتات. في بيئة الإنتاج، يعمل التحقق بمبدأ الإغلاق الآمن: أي طلب بدون مفتاح سري صالح مُرفوض تلقائياً.'
+                            : 'Poll and survey creators can enable Cloudflare Turnstile verification on public polls and survey votes to prevent automated voting and bot abuse. In production, verification is fail-closed: any request without a valid secret key is automatically rejected.'
+                        }
+                    </p>
                 </div>
 
                 {/* Protected Endpoints */}
