@@ -3,12 +3,7 @@ import { ArrowRight, Sparkles, Search, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { HomeContentFilter } from '@/components/HomeContentFilter'
-
-import { SocialProofBanner } from '@/components/SocialProofBanner'
-import { OnboardingModal } from '@/components/OnboardingModal'
 import { EpistemicOnboarding } from '@/components/EpistemicOnboarding'
-import { FirstContributionPrompt } from '@/components/FirstContributionPrompt'
 
 // New Editorial Components
 import { HeroEditorial } from '@/components/HeroEditorial'
@@ -17,6 +12,7 @@ import { MagazineCard } from '@/components/MagazineCard'
 import { FeaturedPost } from '@/components/FeaturedPost'
 
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic';
 
@@ -30,6 +26,12 @@ export default async function Home({
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  // Authenticated users go straight to insights — no stale homepage
+  if (user) {
+    redirect(`/${locale}/insights`)
+  }
+
   const t = await getTranslations({ locale, namespace: 'Landing' });
 
   // Fetch all starting data in parallel to avoid waterfalls
@@ -62,7 +64,7 @@ export default async function Home({
       .order('created_at', { ascending: false })
       .limit(4),
 
-    user ? Promise.resolve({ data: null }) : supabase.rpc('get_platform_stats')
+    supabase.rpc('get_platform_stats')
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,38 +88,7 @@ export default async function Home({
         {/* Epistemic Onboarding - shows on every homepage refresh for testing */}
         <EpistemicOnboarding />
 
-        {user ? (
-          <>
-            {/* Onboarding Modal for New Users */}
-            <OnboardingModal
-              userId={user.id}
-              userEmail={user.email || ''}
-              userName={user.user_metadata?.name}
-            />
-
-            {/* First Contribution Path - shows after onboarding */}
-            <FirstContributionPrompt />
-
-            {/* Insights Section for Logged-in Users */}
-            <section className="section pt-20 md:pt-24">
-              <div className="container-custom max-w-7xl">
-                {/* Social Proof Banner */}
-                <div className="mb-8">
-                  <SocialProofBanner />
-                </div>
-
-                {/* Home Content with Filter */}
-                <HomeContentFilter
-                  featuredPosts={featuredPosts}
-                  recentPosts={recentPosts}
-                  userId={user.id}
-                  latestResources={latestResources || []} // Pass latest resources to filter component
-                />
-              </div>
-            </section>
-          </>
-        ) : (
-          <>
+        {/* Landing page for unauthenticated visitors (authenticated users are redirected to /insights) */}
             {/* Hero Section - New Editorial Design */}
             <HeroEditorial
               title={t('heroTitle')}
@@ -302,8 +273,6 @@ export default async function Home({
                 </div>
               </div>
             </section>
-          </>
-        )}
       </main>
 
       <Footer />
