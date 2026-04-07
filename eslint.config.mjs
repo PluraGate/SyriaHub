@@ -198,39 +198,39 @@ const eslintConfig = [
             'react/prop-types': 'off', // TypeScript handles prop validation
 
             // Boundaries rules - enforce architectural layers
-            'boundaries/element-types': [
+            'boundaries/dependencies': [
                 'error', // Enforce clean architecture boundaries
                 {
                     default: 'allow',
                     rules: [
                         // lib layer should NOT import from components, API, or app
                         {
-                            from: 'lib',
-                            disallow: ['components', 'api', 'app', 'app-root'],
+                            from: { type: 'lib' },
+                            disallow: [{ to: { type: 'components' } }, { to: { type: 'api' } }, { to: { type: 'app' } }, { to: { type: 'app-root' } }],
                             message: 'Library code should not depend on UI components or API routes. Move shared logic to lib/ instead.',
                         },
                         // API routes should NOT import from components or app pages
                         {
-                            from: 'api',
-                            disallow: ['components', 'app'],
+                            from: { type: 'api' },
+                            disallow: [{ to: { type: 'components' } }, { to: { type: 'app' } }],
                             message: 'API routes should not import UI components. Extract shared logic to lib/ if needed.',
                         },
                         // Components should NOT import from API routes
                         {
-                            from: 'components',
-                            disallow: ['api'],
+                            from: { type: 'components' },
+                            disallow: [{ to: { type: 'api' } }],
                             message: 'Components should not directly import API route handlers. Use fetch() or a service layer instead.',
                         },
                         // Hooks should NOT import from components or API
                         {
-                            from: 'hooks',
-                            disallow: ['components', 'api', 'app'],
+                            from: { type: 'hooks' },
+                            disallow: [{ to: { type: 'components' } }, { to: { type: 'api' } }, { to: { type: 'app' } }],
                             message: 'Hooks should be reusable and not depend on specific components or API routes.',
                         },
                         // Lib hooks same rules as hooks
                         {
-                            from: 'lib-hooks',
-                            disallow: ['components', 'api', 'app'],
+                            from: { type: 'lib-hooks' },
+                            disallow: [{ to: { type: 'components' } }, { to: { type: 'api' } }, { to: { type: 'app' } }],
                             message: 'Library hooks should not depend on UI components or API routes.',
                         },
                     ],
