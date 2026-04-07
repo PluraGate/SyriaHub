@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
+import { useAuth } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { QuestionCard } from '@/components/QuestionCard'
@@ -32,7 +32,7 @@ import { usePreferences } from '@/contexts/PreferencesContext'
 
 export default function InsightsPage() {
   const { preferences } = usePreferences()
-  const [user, setUser] = useState<User | null>(null)
+  const { user: authUser } = useAuth()
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
@@ -41,7 +41,7 @@ export default function InsightsPage() {
   const [sortBy, setSortBy] = useState<SortOption>('new')
   const [insightTab, setInsightTab] = useState<InsightTab>('all')
   const [followingIds, setFollowingIds] = useState<string[]>([])
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const t = useTranslations('Insights')
 
   // Get theme-aware hero cover image
@@ -50,24 +50,20 @@ export default function InsightsPage() {
   const [officialTags, setOfficialTags] = useState<string[]>([])
 
   useEffect(() => {
-    // Get user and their following list
-    const initUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-
-      if (user) {
-        // Get list of users this user follows
+    // Get following list using auth context user (already resolved from serverUser)
+    if (authUser?.id) {
+      const loadFollowing = async () => {
         const { data: follows } = await supabase
           .from('follows')
           .select('following_id')
-          .eq('follower_id', user.id)
+          .eq('follower_id', authUser.id)
 
         if (follows && follows.length > 0) {
           setFollowingIds(follows.map(f => f.following_id))
         }
       }
+      loadFollowing()
     }
-    initUser()
 
     // Fetch official tags
     const loadTags = async () => {
@@ -77,7 +73,7 @@ export default function InsightsPage() {
       }
     }
     loadTags()
-  }, [supabase])
+  }, [supabase, authUser?.id])
 
   // Fetch posts when filters change
   useEffect(() => {
@@ -197,7 +193,7 @@ export default function InsightsPage() {
                 </p>
               </div>
 
-              {user && (
+              {authUser && (
                 <Link
                   href="/editor"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
@@ -214,7 +210,7 @@ export default function InsightsPage() {
           {/* Insights Tabs + Sort */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             {/* All / Following Tabs */}
-            {user && (
+            {authUser && (
               <div className="flex gap-1 p-1 bg-gray-100 dark:bg-dark-surface rounded-xl">
                 <button
                   onClick={() => setInsightTab('all')}
@@ -372,8 +368,8 @@ export default function InsightsPage() {
                     ? t('noPostsTaggedDesc')
                     : t('noPostsDesc')
               }
-              actionLabel={user ? t('actionLabel') : undefined}
-              actionHref={user ? '/editor' : undefined}
+              actionLabel={authUser ? t('actionLabel') : undefined}
+              actionHref={authUser ? '/editor' : undefined}
             />
           ) : (
             <>
