@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import { UserPlus, UserCheck, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -12,56 +13,58 @@ interface FollowButtonProps {
 }
 
 export function FollowButton({ userId, className, variant = 'default' }: FollowButtonProps) {
+    const { user: authUser } = useAuth()
     const [isFollowing, setIsFollowing] = useState(false)
     const [loading, setLoading] = useState(true)
     const [toggling, setToggling] = useState(false)
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
+
+    // Don't show button for own profile — resolved immediately from auth context
+    const isOwnProfile = authUser?.id === userId
 
     useEffect(() => {
+        if (!authUser?.id || isOwnProfile) {
+            setLoading(false)
+            return
+        }
+
         const checkFollowStatus = async () => {
             try {
-                const { data: { user } } = await supabase.auth.getUser()
+                const { data } = await supabase
+                    .from('follows')
+                    .select('id')
+                    .eq('follower_id', authUser.id)
+                    .eq('following_id', userId)
+                    .maybeSingle()
 
-                if (user && user.id !== userId) {
-                    const { data } = await supabase
-                        .from('follows')
-                        .select('id')
-                        .eq('follower_id', user.id)
-                        .eq('following_id', userId)
-                        .maybeSingle()
-
-                    setIsFollowing(!!data)
-                }
-            } catch (_error) {
-                // Not following or not logged in
+                setIsFollowing(!!data)
+            } catch {
+                // Not following or error
             } finally {
                 setLoading(false)
             }
         }
 
         checkFollowStatus()
-    }, [userId, supabase])
+    }, [userId, supabase, authUser?.id, isOwnProfile])
 
     const toggleFollow = async () => {
+        if (!authUser?.id || isOwnProfile) return
+
         setToggling(true)
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-
-            if (!user) return
-            if (user.id === userId) return // Can't follow yourself
-
             if (isFollowing) {
                 await supabase
                     .from('follows')
                     .delete()
-                    .eq('follower_id', user.id)
+                    .eq('follower_id', authUser.id)
                     .eq('following_id', userId)
 
                 setIsFollowing(false)
             } else {
                 await supabase
                     .from('follows')
-                    .insert({ follower_id: user.id, following_id: userId })
+                    .insert({ follower_id: authUser.id, following_id: userId })
 
                 setIsFollowing(true)
             }
@@ -71,16 +74,6 @@ export function FollowButton({ userId, className, variant = 'default' }: FollowB
             setToggling(false)
         }
     }
-
-    // Don't show button for own profile
-    const [isOwnProfile, setIsOwnProfile] = useState(false)
-    useEffect(() => {
-        const checkOwnProfile = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            setIsOwnProfile(user?.id === userId)
-        }
-        checkOwnProfile()
-    }, [userId, supabase])
 
     if (loading || isOwnProfile) {
         return null
