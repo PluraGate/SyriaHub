@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { FeedbackButton } from "@/components/feedback"
 
 const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
@@ -36,7 +37,7 @@ export function Navbar() {
   const t = useTranslations('Navigation')
   const tCommon = useTranslations('Common')
   const _pathname = usePathname()
-  const { user: authUser, isAuthenticated, signOut } = useAuth()
+  const { user: authUser, isAuthenticated, isLoading, signOut } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, isDark } = useTheme()
@@ -208,6 +209,10 @@ export function Navbar() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
+              ) : isLoading ? (
+                <div className="flex items-center gap-2 ml-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
               ) : (
                 <div className="flex items-center gap-2 ml-2">
                   <Link href="/auth/login">
@@ -400,6 +405,16 @@ export function Navbar() {
                   </button>
                 </div>
               </>
+            ) : isLoading ? (
+              <div className="border-t border-gray-200 dark:border-dark-border mt-3 pt-3 p-4">
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <Skeleton className="w-10 h-10 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-3 w-32" />
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="border-t border-gray-200 dark:border-dark-border mt-3 pt-3 p-4 space-y-3">
                 <Link
