@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import { Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/components/ui/toast'
@@ -15,10 +16,11 @@ interface BookmarkButtonProps {
 
 
 export function BookmarkButton({ postId, className, showCount = false }: BookmarkButtonProps) {
+    const { user: authUser } = useAuth()
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [bookmarkCount, setBookmarkCount] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
     const { showToast } = useToast()
 
     useEffect(() => {
@@ -26,13 +28,11 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
 
         const checkBookmarkStatus = async () => {
             try {
-                const { data: { user } } = await supabase.auth.getUser()
-
-                if (user) {
+                if (authUser?.id) {
                     const { data, error } = await supabase
                         .from('bookmarks')
                         .select('id')
-                        .eq('user_id', user.id)
+                        .eq('user_id', authUser.id)
                         .eq('post_id', postId)
                         .maybeSingle()
 
@@ -63,7 +63,7 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
         return () => {
             isMounted = false
         }
-    }, [postId, supabase, showCount])
+    }, [postId, supabase, showCount, authUser?.id])
 
     const toggleBookmark = async (e: React.MouseEvent) => {
         e.preventDefault()
@@ -80,9 +80,7 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
         }
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-
-            if (!user) {
+            if (!authUser?.id) {
                 // Not logged in, revert
                 setIsBookmarked(previousBookmarked)
                 setBookmarkCount(previousCount)
@@ -95,7 +93,7 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
                 const { error } = await supabase
                     .from('bookmarks')
                     .delete()
-                    .eq('user_id', user.id)
+                    .eq('user_id', authUser.id)
                     .eq('post_id', postId)
 
                 if (error) throw error
@@ -104,7 +102,7 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
                 // Add bookmark
                 const { error } = await supabase
                     .from('bookmarks')
-                    .insert({ user_id: user.id, post_id: postId })
+                    .insert({ user_id: authUser.id, post_id: postId })
 
                 if (error) throw error
                 showToast('Saved for later', 'success')
