@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nextjs-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "vitest-ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test:ui"],
+      "port": 51204
+    }
+  ]
+}
