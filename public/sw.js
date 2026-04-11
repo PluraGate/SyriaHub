@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_VERSION = 'v1.1.0'
+const CACHE_VERSION = 'v1.2.0'
 const STATIC_CACHE = `syriahub-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `syriahub-dynamic-${CACHE_VERSION}`
 const OFFLINE_CACHE = `syriahub-offline-${CACHE_VERSION}`
@@ -14,10 +14,15 @@ const STATIC_ASSETS = [
     '/icons/icon-512x512.png',
 ]
 
+// Auth routes — NEVER cache (contain session-sensitive data)
+const AUTH_ROUTES = [
+    '/api/auth/',
+    '/auth/',
+]
+
 // API routes that should use network-first strategy
 const API_ROUTES = [
     '/api/',
-    '/auth/',
 ]
 
 // Protected routes that must NEVER be served from cache (contain user-specific content)
@@ -92,6 +97,12 @@ self.addEventListener('fetch', (event) => {
 
     // Skip cross-origin requests
     if (url.origin !== self.location.origin) {
+        return
+    }
+
+    // Auth requests: ALWAYS network, NEVER cache (session-sensitive)
+    if (AUTH_ROUTES.some((route) => url.pathname.startsWith(route))) {
+        event.respondWith(fetch(request).catch(() => offlineFallback()))
         return
     }
 
@@ -417,6 +428,22 @@ async function offlineFallback() {
         }
     )
 }
+
+// Clear dynamic cache on logout to prevent stale auth data
+self.addEventListener('message', (event) => {
+    if (event.data?.type === 'CLEAR_AUTH_CACHE') {
+        caches.open(DYNAMIC_CACHE).then((cache) => {
+            cache.keys().then((keys) => {
+                keys.forEach((request) => {
+                    const url = new URL(request.url)
+                    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/auth/')) {
+                        cache.delete(request)
+                    }
+                })
+            })
+        })
+    }
+})
 
 // Background sync for pending submissions
 self.addEventListener('sync', (event) => {

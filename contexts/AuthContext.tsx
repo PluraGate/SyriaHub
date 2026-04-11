@@ -94,6 +94,10 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
 
   // ── Sign out ────────────────────────────────────────────────────
   const signOut = useCallback(async () => {
+    // Tell service worker to purge cached API/auth responses
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_AUTH_CACHE' })
+    }
     await supabase.auth.signOut()
     setSession(null)
     setAuthUser(null)
