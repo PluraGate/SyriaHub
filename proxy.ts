@@ -189,6 +189,11 @@ export async function proxy(request: NextRequest) {
         finalResponse.headers.set(key, value);
     });
 
+    // Prevent caching of protected pages (user-specific content must never be served from cache)
+    if (isProtectedRoute) {
+        finalResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+
     return finalResponse;
 }
 

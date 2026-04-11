@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_VERSION = 'v1.0.0'
+const CACHE_VERSION = 'v1.1.0'
 const STATIC_CACHE = `syriahub-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `syriahub-dynamic-${CACHE_VERSION}`
 const OFFLINE_CACHE = `syriahub-offline-${CACHE_VERSION}`
@@ -20,11 +20,25 @@ const API_ROUTES = [
     '/auth/',
 ]
 
-// Routes that can be cached for offline reading
+// Protected routes that must NEVER be served from cache (contain user-specific content)
+const PROTECTED_ROUTES = [
+    '/editor',
+    '/insights',
+    '/research-lab',
+    '/settings',
+    '/notifications',
+    '/admin',
+    '/saved',
+    '/correspondence',
+    '/onboarding',
+    '/analytics',
+    '/achievements',
+]
+
+// Routes that can be cached for offline reading (public content only)
 const CACHEABLE_ROUTES = [
     '/post/',
     '/profile/',
-    '/feed',
     '/explore',
 ]
 
@@ -87,13 +101,19 @@ self.addEventListener('fetch', (event) => {
         return
     }
 
+    // Protected routes: Always network, never cache (user-specific content)
+    if (PROTECTED_ROUTES.some((route) => url.pathname.includes(route))) {
+        event.respondWith(fetch(request).catch(() => offlineFallback()))
+        return
+    }
+
     // Static assets: Cache first
     if (isStaticAsset(url.pathname)) {
         event.respondWith(cacheFirst(request))
         return
     }
 
-    // Cacheable routes (posts, profiles): Stale-while-revalidate
+    // Cacheable routes (public content): Stale-while-revalidate
     if (CACHEABLE_ROUTES.some((route) => url.pathname.startsWith(route))) {
         event.respondWith(staleWhileRevalidate(request))
         return

@@ -54,8 +54,13 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
   const supabase = useMemo(() => createClient(), [])
 
   const [session, setSession] = useState<Session | null>(null)
-  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  // Initialize from server-provided user to avoid flash of unauthenticated UI
+  const [authUser, setAuthUser] = useState<AuthUser | null>(
+    serverUser
+      ? { id: serverUser.id, email: serverUser.email, role: 'member' as UserRole }
+      : null,
+  )
+  const [isLoading, setIsLoading] = useState(!serverUser)
 
   // ── Fetch profile (role + avatar) from users table ──────────────
   const fetchProfile = useCallback(
@@ -128,6 +133,11 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
 
     init()
 
+    // Safety timeout: force isLoading=false if auth check hangs
+    const timeout = setTimeout(() => {
+      if (mounted) setIsLoading(false)
+    }, 5000)
+
     // 2. Subscribe to auth changes (sign-in, sign-out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
@@ -151,6 +161,7 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
 
     return () => {
       mounted = false
+      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, [supabase, serverUser, fetchProfile])
