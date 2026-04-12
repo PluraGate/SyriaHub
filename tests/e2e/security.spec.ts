@@ -5,8 +5,6 @@ test.describe('Security: Unauthorized Access', () => {
     const PROTECTED_ROUTES = [
         '/en/editor',
         '/ar/editor',
-        '/en/insights',
-        '/ar/insights',
         '/en/research-lab',
         '/ar/research-lab',
         '/en/settings',
@@ -45,6 +43,20 @@ test.describe('Security: Unauthorized Access', () => {
     test('should allow guest access to explore page', async ({ page }) => {
         await page.goto('/en/explore');
         await expect(page).toHaveURL(/\/en\/explore/);
+    });
+
+    test('should allow guest access to insights page (English)', async ({ page }) => {
+        await page.goto('/en/insights', { waitUntil: 'domcontentloaded' });
+        await expect(page).toHaveURL(/\/en\/insights/);
+        // Insights is public for viewing - should not redirect to login
+        await expect(page).not.toHaveURL(/\/auth\/login/);
+    });
+
+    test('should allow guest access to insights page (Arabic)', async ({ page }) => {
+        await page.goto('/ar/insights', { waitUntil: 'domcontentloaded' });
+        await expect(page).toHaveURL(/\/ar\/insights/);
+        // Insights is public for viewing - should not redirect to login
+        await expect(page).not.toHaveURL(/\/auth\/login/);
     });
 
     test('should have security headers', async ({ page }) => {

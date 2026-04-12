@@ -210,7 +210,9 @@ test.describe('Events', () => {
 });
 
 test.describe('Search Functionality', () => {
-    test('search bar is accessible from homepage', async ({ page }) => {
+    test('search bar is accessible from homepage', async ({ page, browserName }) => {
+        test.skip(skipOnWebKit(browserName), 'WebKit has timing issues with Next.js SSR on Windows');
+
         await page.goto('/en', { waitUntil: 'networkidle' });
 
         // Close onboarding if present

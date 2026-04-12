@@ -24,6 +24,19 @@ export function useVersionCheck() {
             }
         }
 
+        async function clearAllCaches() {
+            // Clear all SW caches so the next load fetches fresh assets
+            if ('caches' in window) {
+                const keys = await caches.keys()
+                await Promise.all(keys.map(key => caches.delete(key)))
+            }
+            // Tell the SW to skip waiting if a new one is pending
+            const reg = await navigator.serviceWorker?.getRegistration?.()
+            if (reg?.waiting) {
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+            }
+        }
+
         async function checkForUpdate() {
             if (reloading.current) return
             const currentBuildId = await fetchBuildId()
@@ -35,8 +48,9 @@ export function useVersionCheck() {
             }
 
             if (currentBuildId !== initialBuildId.current) {
-                console.log('[VersionCheck] New version detected, reloading...')
+                console.log('[VersionCheck] New version detected, clearing caches and reloading...')
                 reloading.current = true
+                await clearAllCaches()
                 window.location.reload()
             }
         }

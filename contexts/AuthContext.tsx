@@ -107,11 +107,22 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_AUTH_CACHE' })
     }
-    await supabase.auth.signOut()
+    // Clear all SW caches to prevent stale state on next visit
+    if ('caches' in window) {
+      const keys = await caches.keys()
+      await Promise.all(keys.map(key => caches.delete(key)))
+    }
     setSession(null)
     setAuthUser(null)
-    // Redirect handled by the auth state change listener below —
-    // but also do a hard navigate to clear any stale client state.
+    // Don't let a slow/failing signOut block the redirect
+    try {
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise(resolve => setTimeout(resolve, 3000)),
+      ])
+    } catch {
+      // Ignore — redirect clears client state anyway
+    }
     window.location.href = '/'
   }, [supabase])
 

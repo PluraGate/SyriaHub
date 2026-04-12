@@ -96,7 +96,6 @@ export async function proxy(request: NextRequest) {
 
     const PROTECTED_ROUTES = [
         '/editor',
-        '/insights',
         '/research-lab',
         '/settings',
         '/notifications',
