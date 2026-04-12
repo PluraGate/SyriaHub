@@ -20,7 +20,7 @@ export default async function GovernancePage() {
         .single()
 
     if (!profile || !['admin', 'moderator'].includes(profile.role)) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     return (

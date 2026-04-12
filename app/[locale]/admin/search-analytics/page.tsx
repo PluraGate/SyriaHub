@@ -28,7 +28,7 @@ export default async function SearchAnalyticsPage() {
         .single()
 
     if (!userData || !['admin', 'moderator'].includes(userData.role)) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     return (

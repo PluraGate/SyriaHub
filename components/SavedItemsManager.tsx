@@ -353,7 +353,7 @@ export function SavedItemsManager({ posts, references, events = [] }: SavedItems
                         <p className="text-gray-500 dark:text-gray-400 mb-6">
                             {t(`empty.${activeFilter}Desc`)}
                         </p>
-                        <Link href={activeFilter === 'web' ? '/research-lab/search' : '/feed'} className="btn btn-primary">
+                        <Link href={activeFilter === 'web' ? '/research-lab/search' : '/insights'} className="btn btn-primary">
                             {activeFilter === 'web' ? t('empty.goToSearch') : t('empty.exploreContent')}
                         </Link>
                     </div>

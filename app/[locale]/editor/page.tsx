@@ -1334,7 +1334,7 @@ export default function EditorPage() {
                 {t('page.inspirationDesc')}
               </p>
               <Link
-                href="/feed"
+                href="/insights"
                 className="inline-flex items-center justify-center w-full px-4 py-2.5 text-sm font-semibold rounded-xl border border-primary dark:border-secondary text-primary dark:text-secondary hover:bg-primary/5 dark:hover:bg-secondary/5 transition-all"
               >
                 {t('page.browsePosts')}

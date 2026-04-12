@@ -44,7 +44,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     handleGoHome = () => {
-        window.location.href = '/feed'
+        window.location.href = '/insights'
     }
 
     handleGoBack = () => {

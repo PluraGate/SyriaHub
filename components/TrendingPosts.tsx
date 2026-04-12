@@ -212,7 +212,7 @@ export function TrendingPosts() {
             {/* View All Link */}
             {posts.length > 0 && (
                 <Link
-                    href="/feed?sort=hot"
+                    href="/insights?sort=hot"
                     className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-primary dark:text-secondary hover:bg-primary/5 dark:hover:bg-secondary/5 transition-colors border-t border-gray-100 dark:border-dark-border"
                 >
                     {t('viewAll')}

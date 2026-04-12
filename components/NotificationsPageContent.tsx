@@ -138,7 +138,7 @@ export function NotificationsPageContent({ userId: _userId }: { userId: string }
             <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
                     <Link
-                        href="/feed"
+                        href="/insights"
                         className="p-1 -ml-1 rounded-md hover:bg-gray-100 dark:hover:bg-dark-border transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5 text-text-light dark:text-dark-text-muted" />

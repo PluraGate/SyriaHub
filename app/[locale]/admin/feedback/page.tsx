@@ -32,7 +32,7 @@ export default async function AdminFeedbackPage() {
         .single()
 
     if (!userData || !['admin', 'moderator'].includes(userData.role)) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     const t = await getTranslations('Feedback')
