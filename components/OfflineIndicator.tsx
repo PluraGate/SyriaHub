@@ -1,26 +1,28 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { WifiOff, Cloud } from 'lucide-react'
+import { WifiOff, Cloud, RefreshCw } from 'lucide-react'
 import { useServiceWorker } from '@/hooks/useServiceWorker'
+import { useVersionCheck } from '@/hooks/useVersionCheck'
 import { useTranslations } from 'next-intl'
 
 /**
  * Offline Indicator Component
- * Shows connection status and pending sync count
+ * Shows connection status, pending sync count, and update prompt
  */
 export function OfflineIndicator() {
     const t = useTranslations('PWA')
     const pathname = usePathname()
-    const { isOffline, pendingSync, isReady } = useServiceWorker()
+    const { isOffline, pendingSync, isReady, updateAvailable, updateServiceWorker } = useServiceWorker()
+    useVersionCheck()
 
     // Hide on coming-soon page or when not needed
     if (pathname?.includes('/coming-soon')) {
         return null
     }
 
-    // Don't show anything if service worker isn't ready or we're online with no pending
-    if (!isReady || (!isOffline && pendingSync === 0)) {
+    // Don't show anything if service worker isn't ready or we're online with no pending and no update
+    if (!isReady || (!isOffline && pendingSync === 0 && !updateAvailable)) {
         return null
     }
 
@@ -32,7 +34,16 @@ export function OfflineIndicator() {
     }
 
     return (
-        <div className="fixed bottom-4 right-4 z-40">
+        <div className="fixed bottom-4 right-4 z-40 flex flex-col gap-2 items-end">
+            {updateAvailable && (
+                <button
+                    onClick={updateServiceWorker}
+                    className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary dark:text-primary-light text-sm hover:bg-primary/20 transition-colors cursor-pointer"
+                >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>{t('updateAvailable', { defaultMessage: 'Update available — tap to refresh' })}</span>
+                </button>
+            )}
             {isOffline ? (
                 <div className="flex items-center gap-2 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-sm">
                     <WifiOff className="w-4 h-4" />

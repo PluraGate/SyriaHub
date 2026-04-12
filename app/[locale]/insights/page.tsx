@@ -53,13 +53,21 @@ export default function InsightsPage() {
     // Get following list using auth context user (already resolved from serverUser)
     if (authUser?.id) {
       const loadFollowing = async () => {
-        const { data: follows } = await supabase
-          .from('follows')
-          .select('following_id')
-          .eq('follower_id', authUser.id)
+        try {
+          const { data: follows, error } = await supabase
+            .from('follows')
+            .select('following_id')
+            .eq('follower_id', authUser.id)
 
-        if (follows && follows.length > 0) {
-          setFollowingIds(follows.map(f => f.following_id))
+          if (error) {
+            console.warn('[Insights] Failed to load following:', error.message)
+            return
+          }
+          if (follows && follows.length > 0) {
+            setFollowingIds(follows.map(f => f.following_id))
+          }
+        } catch (err) {
+          console.warn('[Insights] Following fetch error:', err)
         }
       }
       loadFollowing()
@@ -67,9 +75,17 @@ export default function InsightsPage() {
 
     // Fetch official tags
     const loadTags = async () => {
-      const { data } = await supabase.from('tags').select('label').order('label')
-      if (data) {
-        setOfficialTags(data.map(t => t.label))
+      try {
+        const { data, error } = await supabase.from('tags').select('label').order('label')
+        if (error) {
+          console.warn('[Insights] Failed to load tags:', error.message)
+          return
+        }
+        if (data) {
+          setOfficialTags(data.map(t => t.label))
+        }
+      } catch (err) {
+        console.warn('[Insights] Tags fetch error:', err)
       }
     }
     loadTags()

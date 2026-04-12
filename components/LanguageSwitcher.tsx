@@ -40,7 +40,7 @@ export function LanguageSwitcher() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label={t('languageSwitcher')}>
+                <Button variant="ghost" size="icon" aria-label={t('languageSwitcher')} data-testid="language-switcher">
                     <Globe className="h-5 w-5" />
                 </Button>
             </DropdownMenuTrigger>

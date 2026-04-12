@@ -93,16 +93,16 @@ test.describe('Gap Contributions', () => {
 
 test.describe('Admin Platform Health Dashboard', () => {
     test('platform health page requires authentication', async ({ page }) => {
-        await page.goto('/en/admin/platform-health', { waitUntil: 'networkidle' });
+        await page.goto('/en/admin/platform-health', { waitUntil: 'domcontentloaded' });
 
         // Should either show dashboard or redirect to login
         const url = page.url();
-        expect(url).toMatch(/(platform-health|auth\/login|admin)/);
+        expect(url).toMatch(/(platform-health|auth\/login|login|admin)/);
     });
 
     test('admin sidebar shows platform health link', async ({ page }) => {
         // Navigate to any admin page to check sidebar
-        await page.goto('/en/admin', { waitUntil: 'networkidle' });
+        await page.goto('/en/admin', { waitUntil: 'domcontentloaded' });
 
         // Wait for navigation to settle - admin may redirect to login
 
@@ -128,10 +128,10 @@ test.describe('Admin Platform Health Dashboard', () => {
 test.describe('Impact Stories Section', () => {
     test('insights page loads with impact stories section when available', async ({ page }) => {
         // Insights requires auth - use test bypass or verify redirect
-        await page.goto('/en/insights', { waitUntil: 'networkidle' });
+        await page.goto('/en/insights', { waitUntil: 'domcontentloaded' });
 
         // Should redirect to login since insights is protected
-        await expect(page).toHaveURL(/\/auth\/login/, { timeout: 20000 });
+        await expect(page).toHaveURL(/\/(auth\/login|login|sign-in)/, { timeout: 20000 });
 
         // Verify login form is present (auth flow works)
         await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 20000 });

@@ -45,9 +45,11 @@ export function useServiceWorker() {
             .catch(console.error)
 
         // Register service worker
+        let reg: ServiceWorkerRegistration | null = null
         navigator.serviceWorker
             .register('/sw.js', { scope: '/' })
             .then((registration) => {
+                reg = registration
                 console.log('[SW Hook] Service worker registered:', registration.scope)
                 setState((prev) => ({ ...prev, isReady: true }))
 
@@ -59,7 +61,7 @@ export function useServiceWorker() {
                     installingWorker.onstatechange = () => {
                         if (installingWorker.state === 'installed') {
                             if (navigator.serviceWorker.controller) {
-                                // New update available
+                                // New update available — notify the user
                                 console.log('[SW Hook] New content available')
                                 setState((prev) => ({ ...prev, updateAvailable: true }))
                             } else {
@@ -69,10 +71,38 @@ export function useServiceWorker() {
                         }
                     }
                 }
+
+                // Also handle the case where an update was already waiting
+                // (e.g. user opened a stale tab)
+                if (registration.waiting) {
+                    console.log('[SW Hook] Update already waiting')
+                    setState((prev) => ({ ...prev, updateAvailable: true }))
+                }
             })
             .catch((error) => {
                 console.error('[SW Hook] Service worker registration failed:', error)
             })
+
+        // Periodically ask the browser to check for a new sw.js
+        const swPollInterval = setInterval(() => {
+            reg?.update().catch(() => {})
+        }, 60_000)
+
+        // Also check for SW update when the tab regains focus
+        function onVisibilityChange() {
+            if (document.visibilityState === 'visible') {
+                reg?.update().catch(() => {})
+            }
+        }
+        document.addEventListener('visibilitychange', onVisibilityChange)
+
+        // When a new SW takes control, reload to get fresh assets
+        let refreshing = false
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return
+            refreshing = true
+            window.location.reload()
+        })
 
         // Register connectivity listeners
         const cleanup = registerConnectivityListeners(
@@ -88,7 +118,11 @@ export function useServiceWorker() {
             }
         )
 
-        return cleanup
+        return () => {
+            cleanup()
+            clearInterval(swPollInterval)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
+        }
     }, [])
 
     /**
