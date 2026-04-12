@@ -19,7 +19,7 @@ export default async function AdminPage() {
     .single()
 
   if (!profile || !['admin', 'moderator'].includes(profile.role)) {
-    redirect('/feed')
+    redirect('/insights')
   }
 
   return <AdminDashboardClient initialUserId={user.id} />

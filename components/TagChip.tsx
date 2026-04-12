@@ -70,7 +70,7 @@ export function TagChip({
   if (interactive && !onRemove) {
     return (
       <Link
-        href={`/feed?tag=${encodeURIComponent(tag)}`}
+        href={`/insights?tag=${encodeURIComponent(tag)}`}
         className={baseStyles}
       >
         {content}

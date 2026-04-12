@@ -20,7 +20,7 @@ export default async function AdminSchemaPage() {
         .single()
 
     if (profile?.role !== 'admin') {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     return (

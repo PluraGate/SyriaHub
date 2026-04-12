@@ -25,7 +25,7 @@ export default async function NotFound() {
                 </p>
 
                 <Link
-                    href="/feed"
+                    href="/insights"
                     className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
                 >
                     <ArrowLeft className="w-4 h-4" />

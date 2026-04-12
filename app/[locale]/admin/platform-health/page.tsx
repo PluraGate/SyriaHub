@@ -20,7 +20,7 @@ export default async function PlatformHealthPage() {
         .single()
 
     if (!profile || !['admin', 'moderator'].includes(profile.role)) {
-        redirect('/feed')
+        redirect('/insights')
     }
 
     return (

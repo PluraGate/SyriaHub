@@ -546,7 +546,7 @@ export default function ResearcherAnalyticsDashboard() {
                         </div>
                         {topPosts.length > 0 && (
                             <Link
-                                href="/feed"
+                                href="/insights"
                                 className="flex items-center gap-1.5 text-xs font-medium text-text-light dark:text-dark-text-muted hover:text-primary dark:hover:text-primary-light transition-colors"
                             >
                                 {t('viewAll')}

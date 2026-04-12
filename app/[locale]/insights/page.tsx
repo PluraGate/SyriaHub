@@ -106,7 +106,7 @@ export default function InsightsPage() {
           .eq('status', 'published')
           .neq('content_type', 'event')
           .neq('content_type', 'resource') // Exclude resources
-          .neq('approval_status', 'rejected') // Hide rejected posts from feed
+          .neq('approval_status', 'rejected') // Hide rejected posts from insights
 
         // Content type filter
         if (filter !== 'all') {

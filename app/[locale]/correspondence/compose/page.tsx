@@ -53,7 +53,7 @@ export default async function CorrespondenceComposePage({
                                 Correspondence must be linked to a specific post. Please navigate to a post and use the &quot;Request Clarification&quot; button.
                             </p>
                             <Link
-                                href="/feed"
+                                href="/insights"
                                 className="inline-flex items-center gap-2 text-primary hover:underline"
                             >
                                 <ArrowLeft className="w-4 h-4" />
