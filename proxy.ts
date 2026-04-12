@@ -1,7 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { updateSession } from '@/lib/supabase/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 
 /**
  * Generate a cryptographic nonce for CSP
@@ -87,14 +86,15 @@ export async function proxy(request: NextRequest) {
     // 1. Run next-intl middleware to get the localized response (redirects, etc.)
     const response = intlMiddleware(request);
 
-    // 2. Update session and get user
-    const finalResponse = await updateSession(request, response);
+    // 2. Update session and get user (single getUser() call — reused below)
+    const { response: finalResponse, user: sessionUser } = await updateSession(request, response);
 
     // 3. Protected routes check
     // SECURITY: Only allow test bypass in development environment
     const isTestBypass = process.env.NODE_ENV === 'development' && request.headers.get('x-test-bypass') === 'true';
 
     const PROTECTED_ROUTES = [
+        '/onboarding',
         '/editor',
         '/research-lab',
         '/settings',
@@ -106,40 +106,23 @@ export async function proxy(request: NextRequest) {
 
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.includes(route));
 
-    if (isProtectedRoute && !isTestBypass) {
-        // After updateSession, stale cookies have already been cleared.
-        // Re-read from the request cookies which were patched in updateSession.
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            {
-                cookies: {
-                    get(name: string) {
-                        return request.cookies.get(name)?.value
-                    },
-                },
+    if (isProtectedRoute && !isTestBypass && !sessionUser) {
+        // Get locale from pathname (en or ar)
+        const localeMatch = pathname.match(/^\/(en|ar)/);
+        const locale = localeMatch ? localeMatch[1] : 'ar';
+        const loginUrl = new URL(`/${locale}/auth/login`, request.url);
+        const loginResponse = NextResponse.redirect(loginUrl);
+
+        // Clear any stale Supabase auth cookies on the redirect response
+        // so the login page doesn't see a ghost session and redirect back
+        const allCookies = request.cookies.getAll();
+        for (const cookie of allCookies) {
+            if (cookie.name.startsWith('sb-') && cookie.name.includes('-auth-')) {
+                loginResponse.cookies.set(cookie.name, '', { path: '/', maxAge: 0 });
             }
-        );
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (!user) {
-            // Get locale from pathname (en or ar)
-            const localeMatch = pathname.match(/^\/(en|ar)/);
-            const locale = localeMatch ? localeMatch[1] : 'ar';
-            const loginUrl = new URL(`/${locale}/auth/login`, request.url);
-            const loginResponse = NextResponse.redirect(loginUrl);
-
-            // Clear any stale Supabase auth cookies on the redirect response
-            // so the login page doesn't see a ghost session and redirect back
-            const allCookies = request.cookies.getAll();
-            for (const cookie of allCookies) {
-                if (cookie.name.startsWith('sb-') && cookie.name.includes('-auth-')) {
-                    loginResponse.cookies.set(cookie.name, '', { path: '/', maxAge: 0 });
-                }
-            }
-
-            return loginResponse;
         }
+
+        return loginResponse;
     }
 
     // 4. Rate Limiting
@@ -188,8 +171,12 @@ export async function proxy(request: NextRequest) {
         finalResponse.headers.set(key, value);
     });
 
-    // Prevent caching of protected pages (user-specific content must never be served from cache)
-    if (isProtectedRoute) {
+    // Prevent caching of user-specific pages.  Protected routes always get
+    // no-store, but ANY page viewed by an authenticated user also needs it —
+    // the layout embeds the serialised serverUser prop and navbar state, so a
+    // browser-cached copy causes a stale "half signed-in" ghost session on
+    // tab reopen.  Public pages for anonymous visitors remain cacheable.
+    if (isProtectedRoute || sessionUser) {
         finalResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     }
 
