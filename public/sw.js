@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_VERSION = 'v2.0.0'
+const CACHE_VERSION = '7eac87f6-201a-4fd2-b267-ba766e303ed1'
 const STATIC_CACHE = `syriahub-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `syriahub-dynamic-${CACHE_VERSION}`
 const OFFLINE_CACHE = `syriahub-offline-${CACHE_VERSION}`
