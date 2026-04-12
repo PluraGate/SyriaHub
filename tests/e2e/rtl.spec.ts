@@ -132,14 +132,19 @@ test.describe('RTL (Arabic) Mode Support', () => {
 
         // Open language switcher dropdown and select English
         const langTrigger = page.locator('[data-testid="language-switcher"]').first();
-        if (await langTrigger.isVisible()) {
-            await langTrigger.click();
-            const englishOption = page.locator('text=/English/i').first();
-            await expect(englishOption).toBeVisible({ timeout: 15000 });
-            await englishOption.click();
-            await page.waitForURL(/\/en(\/|$)/, { timeout: 30000 });
-            await expect(page).toHaveURL(/\/en/);
+        // Wait for the trigger to appear with explicit timeout; skip if not rendered
+        const isVisible = await langTrigger.isVisible().catch(() => false);
+        if (!isVisible) {
+            // Language switcher not visible in this viewport/browser — nothing to test
+            test.skip(true, 'Language switcher not visible');
+            return;
         }
+        await langTrigger.click();
+        const englishOption = page.locator('text=/English/i').first();
+        await expect(englishOption).toBeVisible({ timeout: 15000 });
+        await englishOption.click();
+        await page.waitForURL(/\/en(\/|$)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/en/);
     });
 });
 

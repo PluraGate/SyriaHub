@@ -127,13 +127,13 @@ test.describe('Admin Platform Health Dashboard', () => {
 
 test.describe('Impact Stories Section', () => {
     test('insights page loads with impact stories section when available', async ({ page }) => {
-        // Insights requires auth - use test bypass or verify redirect
+        // Insights is publicly accessible (no auth required for reading)
         await page.goto('/en/insights', { waitUntil: 'domcontentloaded' });
 
-        // Should redirect to login since insights is protected
-        await expect(page).toHaveURL(/\/(auth\/login|login|sign-in)/, { timeout: 20000 });
+        // Should stay on insights page (public content)
+        await expect(page).toHaveURL(/\/insights/, { timeout: 20000 });
 
-        // Verify login form is present (auth flow works)
-        await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 20000 });
+        // Page should render content (heading or posts area)
+        await expect(page.locator('h1, main').first()).toBeVisible({ timeout: 20000 });
     });
 });

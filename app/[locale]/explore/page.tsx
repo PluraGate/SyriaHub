@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -39,7 +39,7 @@ function ExplorePageContent() {
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag)
   const [sortBy, setSortBy] = useState<SortOption>('recent')
   const [_allTags, setAllTags] = useState<string[]>([])
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const t = useTranslations('Explore')
   const tInsights = useTranslations('Insights')
   const tCategories = useTranslations('Categories')
