@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { useAuth } from '@/contexts/AuthContext'
+import type { RealtimePostgresDeletePayload, RealtimePostgresInsertPayload, RealtimePostgresUpdatePayload } from '@supabase/realtime-js'
 
 type Notification = {
     id: string
@@ -67,7 +68,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
                     table: 'notifications',
                     filter: `user_id=eq.${userId}`
                 },
-                (payload) => {
+                (payload: RealtimePostgresInsertPayload<Notification>) => {
                     const newNotification = payload.new as Notification
                     setNotifications(prev => [newNotification, ...prev])
                     showToast(newNotification.title || newNotification.content, 'info')
@@ -81,7 +82,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
                     table: 'notifications',
                     filter: `user_id=eq.${userId}`
                 },
-                (payload) => {
+                (payload: RealtimePostgresUpdatePayload<Notification>) => {
                     const updated = payload.new as Notification
                     setNotifications(prev => prev.map(n => n.id === updated.id ? updated : n))
                 }
@@ -93,7 +94,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
                     schema: 'public',
                     table: 'notifications'
                 },
-                (payload) => {
+                (payload: RealtimePostgresDeletePayload<{ id: string }>) => {
                     const deletedId = payload.old.id
                     setNotifications(prev => prev.filter(n => n.id !== deletedId))
                 }

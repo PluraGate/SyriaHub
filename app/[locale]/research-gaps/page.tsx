@@ -101,7 +101,7 @@ export default function ResearchGapsPage() {
 
     // Fetch user
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
+        supabase.auth.getUser().then(({ data: { user } }: { data: { user: User | null } }) => {
             setUser(user)
         })
     }, [supabase])
@@ -154,9 +154,9 @@ export default function ResearchGapsPage() {
                 .from('research_gap_upvotes')
                 .select('gap_id')
                 .eq('user_id', user.id)
-                .then(({ data }) => {
+                .then(({ data }: { data: Array<{ gap_id: string }> | null }) => {
                     if (data) {
-                        setUserUpvotes(new Set(data.map(u => u.gap_id)))
+                        setUserUpvotes(new Set(data.map((u: { gap_id: string }) => u.gap_id)))
                     }
                 })
         }

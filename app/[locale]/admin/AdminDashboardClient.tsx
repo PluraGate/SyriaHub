@@ -84,8 +84,8 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
         totalUsers: usersResult.count || 0,
         totalPosts: postsResult.count || 0,
         totalReports: reportsResult.data?.length || 0,
-        pendingReports: reportsResult.data?.filter(r => r.status === 'pending').length || 0,
-        pendingAppeals: appealsResult.data?.filter(a => a.status === 'pending').length || 0,
+        pendingReports: reportsResult.data?.filter((r: Report) => r.status === 'pending').length || 0,
+        pendingAppeals: appealsResult.data?.filter((a: Appeal) => a.status === 'pending').length || 0,
         pendingWaitlist: waitlistResult.count || 0,
       })
 
@@ -102,7 +102,7 @@ export default function AdminDashboardClient({ initialUserId }: AdminDashboardCl
   useEffect(() => {
     loadData()
 
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(({ data }: { data: { user: { id: string; email?: string | null } | null } }) => {
       if (data.user) {
         setNavbarUser({
           id: data.user.id,

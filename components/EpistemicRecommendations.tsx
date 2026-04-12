@@ -127,8 +127,8 @@ export function EpistemicRecommendations({ postId, postTags = [] }: EpistemicRec
                 if (fallbackData) {
                     // Filter out resources client-side
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const filteredPosts = fallbackData.filter((p: any) => p.content_type !== 'resource').slice(0, 6)
-                    setRecommendations(filteredPosts.map(p => ({
+                    const filteredPosts = fallbackData.filter((p: { content_type?: string }) => p.content_type !== 'resource').slice(0, 6)
+                    setRecommendations(filteredPosts.map((p: { id: string; title: string }) => ({
                         id: p.id,
                         title: p.title,
                         recommendation_category: 'contrasting_findings',

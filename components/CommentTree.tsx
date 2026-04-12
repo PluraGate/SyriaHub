@@ -203,7 +203,7 @@ export function CommentTree({ postId, comments, onCommentAdded }: CommentTreePro
     const tAuth = useTranslations('Auth')
 
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
+        supabase.auth.getUser().then(({ data: { user } }: { data: { user: { id: string; email?: string; user_metadata?: Record<string, string> } | null } }) => {
             setUser(user)
         })
     }, [supabase])

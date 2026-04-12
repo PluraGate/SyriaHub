@@ -86,7 +86,7 @@ export default function ResearcherAnalyticsDashboard() {
             setTopPosts(postList.slice(0, 5))
 
             // Fetch citations (posts that reference user's posts)
-            const postIds = postList.map(p => p.id)
+            const postIds = postList.map((p: TopPost) => p.id)
             let citationCount = 0
             if (postIds.length > 0) {
                 const { count } = await supabase
@@ -111,7 +111,7 @@ export default function ResearcherAnalyticsDashboard() {
                     .in('content_id', postIds)
 
                 if (trustProfiles && trustProfiles.length > 0) {
-                    const totalScore = trustProfiles.reduce((sum, tp) =>
+                    const totalScore = trustProfiles.reduce((sum: number, tp: { t1_source_score: number; t2_method_score: number; t3_proximity_score: number }) =>
                         sum + ((tp.t1_source_score + tp.t2_method_score + tp.t3_proximity_score) / 3), 0)
                     avgTrust = Math.round(totalScore / trustProfiles.length)
                 }

@@ -640,7 +640,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                 .eq('status', 'published')
                 .limit(4)
 
-            forks?.forEach(fork => {
+            forks?.forEach((fork: { id: string; title?: string; tags?: string[]; author_id?: string; content_type?: string; users?: { name?: string } }) => {
                 addNode(fork, 'fork')
                 newEdges.push({ source: centerPost.id, target: fork.id, type: 'fork' })
             })
@@ -671,7 +671,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                     .eq('status', 'published')
                     .limit(3)
 
-                shared?.forEach(post => {
+                shared?.forEach((post: { id: string; title?: string; tags?: string[]; author_id?: string; content_type?: string; users?: { name?: string } }) => {
                     if (!nodeIds.has(post.id)) {
                         addNode(post, 'related')
                         newEdges.push({ source: centerPost.id, target: post.id, type: 'shared_tag' })
@@ -689,7 +689,7 @@ export function KnowledgeGraph({ centerPostId }: KnowledgeGraphProps) {
                     .eq('status', 'published')
                     .limit(3)
 
-                authorPosts?.forEach(post => {
+                authorPosts?.forEach((post: { id: string; title?: string; tags?: string[]; author_id?: string; content_type?: string; users?: { name?: string } }) => {
                     if (!nodeIds.has(post.id)) {
                         addNode(post, 'author')
                         newEdges.push({ source: centerPost.id, target: post.id, type: 'shared_author' })

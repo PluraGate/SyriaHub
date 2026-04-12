@@ -58,8 +58,8 @@ export function SocialProofBanner() {
 
                 // Combine all user_ids into a Set to get unique users
                 const uniqueUsers = new Set<string>()
-                postViewData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
-                readingHistoryData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
+                postViewData?.forEach((r: { user_id?: string | null }) => r.user_id && uniqueUsers.add(r.user_id))
+                readingHistoryData?.forEach((r: { user_id?: string | null }) => r.user_id && uniqueUsers.add(r.user_id))
 
                 // If user is authenticated, add them to the set (Set handles duplicates)
                 if (currentUserId) {
@@ -225,8 +225,8 @@ export function OnlineIndicator() {
 
             // Combine all user_ids into a Set to get unique users
             const uniqueUsers = new Set<string>()
-            postViewData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
-            readingHistoryData?.forEach(r => r.user_id && uniqueUsers.add(r.user_id))
+            postViewData?.forEach((r: { user_id?: string | null }) => r.user_id && uniqueUsers.add(r.user_id))
+            readingHistoryData?.forEach((r: { user_id?: string | null }) => r.user_id && uniqueUsers.add(r.user_id))
 
             // If user is authenticated, add them to the set (Set handles duplicates)
             if (currentUserId) {

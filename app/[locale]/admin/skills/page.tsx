@@ -100,23 +100,23 @@ export default function AdminSkillsPage() {
                 .select('skill_id')
 
             const countMap: Record<string, number> = {}
-            userSkillsCounts?.forEach(us => {
+            userSkillsCounts?.forEach((us: { skill_id: string }) => {
                 countMap[us.skill_id] = (countMap[us.skill_id] || 0) + 1
             })
 
             // Get creator names
-            const creatorIds = skillsData?.filter(s => s.created_by).map(s => s.created_by) || []
+            const creatorIds = skillsData?.filter((s: Skill) => s.created_by).map((s: Skill) => s.created_by) || []
             const { data: creators } = await supabase
                 .from('users')
                 .select('id, name')
                 .in('id', creatorIds)
 
             const creatorMap: Record<string, string> = {}
-            creators?.forEach(c => {
+            creators?.forEach((c: { id: string; name: string | null }) => {
                 creatorMap[c.id] = c.name || 'Unknown'
             })
 
-            const enrichedSkills: Skill[] = (skillsData || []).map(s => ({
+            const enrichedSkills: Skill[] = (skillsData || []).map((s: Skill) => ({
                 ...s,
                 user_count: countMap[s.id] || 0,
                 creator_name: s.created_by ? creatorMap[s.created_by] : null
@@ -247,7 +247,7 @@ export default function AdminSkillsPage() {
                 .select('user_id')
                 .eq('skill_id', mergeTargetId)
 
-            const targetUserIds = new Set(usersWithTarget?.map(u => u.user_id) || [])
+            const targetUserIds = new Set(usersWithTarget?.map((u: { user_id: string }) => u.user_id) || [])
 
             // Update user_skills that don't conflict
             const { data: usersWithSource } = await supabase

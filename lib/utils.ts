@@ -5,6 +5,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export async function withTimeout<T>(
+  promise: PromiseLike<T>,
+  timeoutMs: number,
+  message = `Operation timed out after ${timeoutMs}ms`,
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+
+  try {
+    return await new Promise<T>((resolve, reject) => {
+      promise.then(resolve, reject)
+      timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs)
+    })
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+  }
+}
+
 export function stripMarkdown(markdown: string): string {
   if (!markdown) return ''
   return markdown

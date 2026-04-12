@@ -62,10 +62,10 @@ export function SchemaFieldDisplay({ fields }: SchemaFieldDisplayProps) {
 
             if (data) {
                 const map: Record<string, string> = {}
-                data.forEach(item => {
-                    // Create composite key to handle same item_key in different registries
-                    map[`${item.registry_id}:${item.item_key}`] = item.display_name
-                })
+            data.forEach((item: { registry_id: string; item_key: string; display_name: string }) => {
+                // Create composite key to handle same item_key in different registries
+                map[`${item.registry_id}:${item.item_key}`] = item.display_name
+            })
                 setRegistryItems(prev => ({ ...prev, ...map }))
             }
         }

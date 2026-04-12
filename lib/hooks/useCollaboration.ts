@@ -75,13 +75,13 @@ export function useCollaboration({ documentId, userId, userName, userAvatar }: U
 
                 setCollaborators(users)
             })
-            .on('presence', { event: 'join' }, ({ key }) => {
+            .on('presence', { event: 'join' }, ({ key }: { key: string }) => {
                 console.log(`[Collab] User joined: ${key}`)
             })
-            .on('presence', { event: 'leave' }, ({ key }) => {
+            .on('presence', { event: 'leave' }, ({ key }: { key: string }) => {
                 console.log(`[Collab] User left: ${key}`)
             })
-            .subscribe(async (status) => {
+            .subscribe(async (status: string) => {
                 if (status === 'SUBSCRIBED') {
                     setIsConnected(true)
                     // Track our own presence

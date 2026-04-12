@@ -255,13 +255,13 @@ export function StatisticsTools({ userId, savedAnalyses: _savedAnalyses, availab
             // Transform to chart data - aggregate choice questions
             const importedData: Array<{ name: string; value: number; secondary: number }> = []
 
-            questions.forEach(q => {
+            questions.forEach((q: { id: string; question_type: string; options?: Array<{ id: string; text: string }> }) => {
                 if (q.question_type === 'single_choice' || q.question_type === 'multiple_choice') {
                     const options = (q.options as Array<{ id: string; text: string }>) || []
                     const counts: Record<string, number> = {}
                     options.forEach(opt => { counts[opt.id] = 0 })
 
-                    responses.forEach(r => {
+                    responses.forEach((r: { answers: Record<string, unknown> }) => {
                         const answer = r.answers[q.id]
                         if (Array.isArray(answer)) {
                             answer.forEach(id => { if (counts[id] !== undefined) counts[id]++ })

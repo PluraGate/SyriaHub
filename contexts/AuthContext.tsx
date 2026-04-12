@@ -2,8 +2,9 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { Session } from '@supabase/supabase-js'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import type { UserRole } from '@/types'
+import { withTimeout } from '@/lib/utils'
 
 // ─── Public types ────────────────────────────────────────────────
 
@@ -50,6 +51,8 @@ interface AuthProviderProps {
   serverUser?: { id: string; email?: string } | null
 }
 
+const AUTH_REQUEST_TIMEOUT_MS = 6000
+
 export function AuthProvider({ children, serverUser }: AuthProviderProps) {
   const supabase = useMemo(() => createClient(), [])
 
@@ -67,11 +70,17 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
     async (userId: string, email?: string, meta?: Record<string, unknown>) => {
       let data = null
       try {
-        const result = await supabase
+        const profileRequest = supabase
           .from('users')
           .select('name, avatar_url, role')
           .eq('id', userId)
           .maybeSingle()
+
+        const result: Awaited<typeof profileRequest> = await withTimeout(
+          profileRequest,
+          AUTH_REQUEST_TIMEOUT_MS,
+          '[Auth] Profile fetch timed out',
+        )
         data = result.data
         if (result.error) {
           console.warn('[Auth] Profile fetch failed:', result.error.message)
@@ -142,7 +151,12 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
     // 1. Resolve initial session
     async function init() {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession()
+        const sessionRequest = supabase.auth.getSession()
+        const { data: { session: currentSession } }: Awaited<typeof sessionRequest> = await withTimeout(
+          sessionRequest,
+          AUTH_REQUEST_TIMEOUT_MS,
+          '[Auth] Session init timed out',
+        )
 
         if (!mounted) return
 
@@ -179,7 +193,7 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
 
     // 2. Subscribe to auth changes (sign-in, sign-out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
+      async (_event: AuthChangeEvent, newSession: Session | null) => {
         if (!mounted) return
 
         setSession(newSession)
