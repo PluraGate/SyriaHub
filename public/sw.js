@@ -31,13 +31,15 @@ const MAX_CACHE_AGE = 24 * 60 * 60 * 1000
 self.addEventListener('install', (event) => {
     console.log('[SW] Installing service worker...')
 
+    // Don't call skipWaiting() here — the new SW waits until the user
+    // accepts the update via the "Update available" banner, which sends
+    // a SKIP_WAITING message. This prevents disruptive mid-session reloads.
     event.waitUntil(
         caches.open(STATIC_CACHE)
             .then((cache) => {
                 console.log('[SW] Pre-caching static assets')
                 return cache.addAll(STATIC_ASSETS)
             })
-            .then(() => self.skipWaiting())
     )
 })
 

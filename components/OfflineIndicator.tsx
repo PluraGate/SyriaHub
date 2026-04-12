@@ -13,8 +13,18 @@ import { useTranslations } from 'next-intl'
 export function OfflineIndicator() {
     const t = useTranslations('PWA')
     const pathname = usePathname()
-    const { isOffline, pendingSync, isReady, updateAvailable, updateServiceWorker } = useServiceWorker()
-    useVersionCheck()
+    const { isOffline, pendingSync, isReady, updateAvailable: swUpdate, updateServiceWorker } = useServiceWorker()
+    const { updateAvailable: versionUpdate, applyUpdate } = useVersionCheck()
+
+    const hasUpdate = swUpdate || versionUpdate
+
+    const handleUpdate = async () => {
+        if (versionUpdate) {
+            await applyUpdate()
+        } else {
+            await updateServiceWorker()
+        }
+    }
 
     // Hide on coming-soon page or when not needed
     if (pathname?.includes('/coming-soon')) {
@@ -22,7 +32,7 @@ export function OfflineIndicator() {
     }
 
     // Don't show anything if service worker isn't ready or we're online with no pending and no update
-    if (!isReady || (!isOffline && pendingSync === 0 && !updateAvailable)) {
+    if (!isReady || (!isOffline && pendingSync === 0 && !hasUpdate)) {
         return null
     }
 
@@ -35,9 +45,9 @@ export function OfflineIndicator() {
 
     return (
         <div className="fixed bottom-4 right-4 z-40 flex flex-col gap-2 items-end">
-            {updateAvailable && (
+            {hasUpdate && (
                 <button
-                    onClick={updateServiceWorker}
+                    onClick={handleUpdate}
                     className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary dark:text-primary-light text-sm hover:bg-primary/20 transition-colors cursor-pointer"
                 >
                     <RefreshCw className="w-4 h-4" />
@@ -58,4 +68,3 @@ export function OfflineIndicator() {
         </div>
     )
 }
-
