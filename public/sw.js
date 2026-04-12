@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_VERSION = 'v1.2.0'
+const CACHE_VERSION = 'v2.0.0'
 const STATIC_CACHE = `syriahub-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `syriahub-dynamic-${CACHE_VERSION}`
 const OFFLINE_CACHE = `syriahub-offline-${CACHE_VERSION}`
@@ -23,28 +23,6 @@ const AUTH_ROUTES = [
 // API routes that should use network-first strategy
 const API_ROUTES = [
     '/api/',
-]
-
-// Protected routes that must NEVER be served from cache (contain user-specific content)
-const PROTECTED_ROUTES = [
-    '/editor',
-    '/insights',
-    '/research-lab',
-    '/settings',
-    '/notifications',
-    '/admin',
-    '/saved',
-    '/correspondence',
-    '/onboarding',
-    '/analytics',
-    '/achievements',
-]
-
-// Routes that can be cached for offline reading (public content only)
-const CACHEABLE_ROUTES = [
-    '/post/',
-    '/profile/',
-    '/explore',
 ]
 
 // Maximum age for cached responses (24 hours)
@@ -100,6 +78,15 @@ self.addEventListener('fetch', (event) => {
         return
     }
 
+    // HTML navigation requests (page loads): ALWAYS network, NEVER cache.
+    // After a deployment, cached HTML references old JS chunk hashes that no
+    // longer exist — serving stale HTML breaks the entire app silently.
+    // The only exception is the offline fallback when the network is down.
+    if (request.mode === 'navigate') {
+        event.respondWith(fetch(request).catch(() => offlineFallback()))
+        return
+    }
+
     // Auth requests: ALWAYS network, NEVER cache (session-sensitive)
     if (AUTH_ROUTES.some((route) => url.pathname.startsWith(route))) {
         event.respondWith(fetch(request).catch(() => offlineFallback()))
@@ -112,21 +99,17 @@ self.addEventListener('fetch', (event) => {
         return
     }
 
-    // Protected routes: Always network, never cache (user-specific content)
-    if (PROTECTED_ROUTES.some((route) => url.pathname.includes(route))) {
-        event.respondWith(fetch(request).catch(() => offlineFallback()))
-        return
-    }
-
-    // Static assets: Cache first
-    if (isStaticAsset(url.pathname)) {
+    // Next.js hashed static assets (/_next/static/chunks/abc123.js):
+    // These are content-addressed — the hash guarantees immutability,
+    // so cache-first is safe and optimal.
+    if (url.pathname.startsWith('/_next/static/')) {
         event.respondWith(cacheFirst(request))
         return
     }
 
-    // Cacheable routes (public content): Stale-while-revalidate
-    if (CACHEABLE_ROUTES.some((route) => url.pathname.startsWith(route))) {
-        event.respondWith(staleWhileRevalidate(request))
+    // Other static assets (icons, fonts, images): Cache first
+    if (isStaticAsset(url.pathname)) {
+        event.respondWith(cacheFirst(request))
         return
     }
 
@@ -171,34 +154,16 @@ async function networkFirst(request) {
     }
 }
 
-// Stale-while-revalidate for posts/profiles
-async function staleWhileRevalidate(request) {
-    const cache = await caches.open(DYNAMIC_CACHE)
-    const cached = await cache.match(request)
-
-    const networkPromise = fetch(request)
-        .then((response) => {
-            if (response.ok) {
-                cache.put(request, response.clone())
-            }
-            return response
-        })
-        .catch(() => cached || offlineFallback())
-
-    return cached || networkPromise
-}
-
-// Check if URL is a static asset
+// Check if URL is a static asset (icons, images, fonts — NOT JS/CSS pages)
+// Note: /_next/static/ is handled separately above with its own cache-first logic
 function isStaticAsset(pathname) {
     return (
-        pathname.startsWith('/_next/static/') ||
         pathname.startsWith('/icons/') ||
-        pathname.endsWith('.js') ||
-        pathname.endsWith('.css') ||
         pathname.endsWith('.png') ||
         pathname.endsWith('.jpg') ||
         pathname.endsWith('.svg') ||
-        pathname.endsWith('.woff2')
+        pathname.endsWith('.woff2') ||
+        pathname.endsWith('.ico')
     )
 }
 
@@ -248,7 +213,6 @@ async function offlineFallback() {
             position: relative;
             overflow: hidden;
           }
-          /* Ambient background glows */
           .glow-top {
             position: absolute;
             top: -10%;
@@ -429,8 +393,12 @@ async function offlineFallback() {
     )
 }
 
-// Clear dynamic cache on logout to prevent stale auth data
+// Handle messages from the client
 self.addEventListener('message', (event) => {
+    if (event.data?.type === 'SKIP_WAITING') {
+        self.skipWaiting()
+    }
+
     if (event.data?.type === 'CLEAR_AUTH_CACHE') {
         caches.open(DYNAMIC_CACHE).then((cache) => {
             cache.keys().then((keys) => {

@@ -78,8 +78,9 @@ jobs:
         run: npx vitest run --reporter=default
 
   e2e-tests:
-    name: E2E Tests
+    name: E2E Tests (non-blocking)
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: build
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co

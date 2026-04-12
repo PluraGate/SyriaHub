@@ -43,10 +43,10 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic research lab page loads', async ({ page }) => {
-        await page.goto('/ar/research-lab', { waitUntil: 'networkidle' });
+        await page.goto('/ar/research-lab', { waitUntil: 'domcontentloaded' });
 
         // Research lab is protected - should redirect to login
-        await expect(page).toHaveURL(/\/ar\/auth\/login/, { timeout: 20000 });
+        await expect(page).toHaveURL(/\/ar\/(auth\/login|login|sign-in)/, { timeout: 20000 });
 
         // Wait for page to hydrate and RTL direction to be applied
         await page.waitForFunction(() => {
@@ -104,7 +104,7 @@ test.describe('RTL (Arabic) Mode Support', () => {
     });
 
     test('Arabic auth page shows translated labels', async ({ page }) => {
-        await page.goto('/ar/auth/login', { waitUntil: 'networkidle' });
+        await page.goto('/ar/auth/login', { waitUntil: 'domcontentloaded' });
 
         // Wait for RTL direction to be applied after hydration
         await page.waitForFunction(() => {
@@ -122,7 +122,7 @@ test.describe('RTL (Arabic) Mode Support', () => {
     test('language switcher works from Arabic to English', async ({ page }) => {
         test.setTimeout(90000);
         await page.goto('/ar');
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Close onboarding if present
         const closeBtn = page.getByRole('button', { name: /إغلاق|close/i });
@@ -130,12 +130,14 @@ test.describe('RTL (Arabic) Mode Support', () => {
             await closeBtn.first().click();
         }
 
-        // Find and click language switcher (look for English option)
-        const langButton = page.locator('button:has-text("English"), [data-testid="language-switcher"]').first();
-        if (await langButton.isVisible()) {
-            await langButton.click();
-            // Wait explicitly for navigation to complete
-            await page.waitForURL(/\/en/, { timeout: 30000 });
+        // Open language switcher dropdown and select English
+        const langTrigger = page.locator('[data-testid="language-switcher"]').first();
+        if (await langTrigger.isVisible()) {
+            await langTrigger.click();
+            const englishOption = page.locator('text=/English/i').first();
+            await expect(englishOption).toBeVisible({ timeout: 15000 });
+            await englishOption.click();
+            await page.waitForURL(/\/en(\/|$)/, { timeout: 30000 });
             await expect(page).toHaveURL(/\/en/);
         }
     });

@@ -72,5 +72,8 @@ repo_*.txt
 translation_issues.json
 schema_dump.sql
 
+# Build-generated version stamp (created by prebuild script)
+public/version.json
+
 # Claude Code worktrees
 .claude/worktrees/

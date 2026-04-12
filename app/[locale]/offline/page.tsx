@@ -2,7 +2,7 @@
 
 import { WifiOff, RefreshCw, BookOpen } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { getAllCachedArticles } from '@/lib/offlineStorage'
+import { initOfflineStorage, getAllCachedArticles } from '@/lib/offlineStorage'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -20,9 +20,10 @@ export default function OfflinePage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        getAllCachedArticles()
+        initOfflineStorage()
+            .then(() => getAllCachedArticles())
             .then((articles) => setCachedArticles(articles))
-            .catch(console.error)
+            .catch(() => {}) // DB may not be available (e.g. SSR, private browsing)
             .finally(() => setLoading(false))
     }, [])
 

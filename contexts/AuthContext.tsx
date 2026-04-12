@@ -65,11 +65,20 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
   // ── Fetch profile (role + avatar) from users table ──────────────
   const fetchProfile = useCallback(
     async (userId: string, email?: string, meta?: Record<string, unknown>) => {
-      const { data } = await supabase
-        .from('users')
-        .select('name, avatar_url, role')
-        .eq('id', userId)
-        .maybeSingle()
+      let data = null
+      try {
+        const result = await supabase
+          .from('users')
+          .select('name, avatar_url, role')
+          .eq('id', userId)
+          .maybeSingle()
+        data = result.data
+        if (result.error) {
+          console.warn('[Auth] Profile fetch failed:', result.error.message)
+        }
+      } catch (err) {
+        console.warn('[Auth] Profile fetch error:', err)
+      }
 
       const resolved: AuthUser = {
         id: userId,
@@ -128,8 +137,10 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
           // Fallback: use the server-provided user hint
           await fetchProfile(serverUser.id, serverUser.email)
         }
-      } catch {
-        // Auth unavailable — treat as logged-out
+      } catch (err) {
+        console.warn('[Auth] Session init failed — treating as logged out:', err)
+        setSession(null)
+        setAuthUser(null)
       } finally {
         if (mounted) setIsLoading(false)
       }
