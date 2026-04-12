@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { GitFork, Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useToast } from '@/components/ui/toast'
 
 interface ForkButtonProps {
@@ -19,6 +19,7 @@ interface ForkButtonProps {
 export function ForkButton({ postId, postTitle, postContent, postTags, iconOnly }: ForkButtonProps) {
     const [isForking, setIsForking] = useState(false)
     const router = useRouter()
+    const locale = useLocale()
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('Post')
@@ -30,7 +31,7 @@ export function ForkButton({ postId, postTitle, postContent, postTags, iconOnly 
             const { data: { user } } = await supabase.auth.getUser()
 
             if (!user) {
-                showToast(t('loginRequired'), 'error')
+                router.push(`/${locale}/auth/login`)
                 return
             }
 

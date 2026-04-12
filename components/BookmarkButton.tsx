@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/components/ui/toast'
+import { useLocale } from 'next-intl'
 
 interface BookmarkButtonProps {
     postId: string
@@ -17,6 +19,8 @@ interface BookmarkButtonProps {
 
 export function BookmarkButton({ postId, className, showCount = false }: BookmarkButtonProps) {
     const { user: authUser } = useAuth()
+    const router = useRouter()
+    const locale = useLocale()
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [bookmarkCount, setBookmarkCount] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -81,10 +85,10 @@ export function BookmarkButton({ postId, className, showCount = false }: Bookmar
 
         try {
             if (!authUser?.id) {
-                // Not logged in, revert
+                // Not logged in, revert and redirect to login
                 setIsBookmarked(previousBookmarked)
                 setBookmarkCount(previousCount)
-                showToast('Please sign in to save posts', 'error')
+                router.push(`/${locale}/auth/login`)
                 return
             }
 

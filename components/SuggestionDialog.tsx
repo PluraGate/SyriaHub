@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useToast } from '@/components/ui/toast'
 import { PenSquare, Loader2 } from 'lucide-react'
 
@@ -21,6 +22,8 @@ export function SuggestionDialog({ postId, originalContent }: SuggestionDialogPr
     const [content, setContent] = useState(originalContent)
     const [reason, setReason] = useState('')
 
+    const router = useRouter()
+    const locale = useLocale()
     const supabase = createClient()
     const { showToast } = useToast()
     const t = useTranslations('Post')
@@ -33,7 +36,7 @@ export function SuggestionDialog({ postId, originalContent }: SuggestionDialogPr
             const { data: { user } } = await supabase.auth.getUser()
 
             if (!user) {
-                showToast(t('loginRequired'), 'error')
+                router.push(`/${locale}/auth/login`)
                 return
             }
 

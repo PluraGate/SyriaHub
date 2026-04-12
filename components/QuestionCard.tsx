@@ -1,11 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { MessageSquare, ThumbsUp, ThumbsDown, ArrowRight, CheckCircle } from 'lucide-react'
 import { Post } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { useLocale } from 'next-intl'
 
 interface QuestionCardProps {
     post: Post
@@ -14,12 +17,19 @@ interface QuestionCardProps {
 }
 
 export function QuestionCard({ post, userVote: initialUserVote, onVote: _onVote }: QuestionCardProps) {
+    const { user: authUser } = useAuth()
+    const router = useRouter()
+    const locale = useLocale()
     const [voteCount, setVoteCount] = useState(post.vote_count || 0)
     const [userVote, setUserVote] = useState<number | undefined>(initialUserVote)
     const [isVoting, setIsVoting] = useState(false)
 
     const handleVote = async (value: 1 | -1) => {
         if (isVoting) return
+        if (!authUser) {
+            router.push(`/${locale}/auth/login`)
+            return
+        }
 
         // Optimistic update
         const previousVote = userVote
