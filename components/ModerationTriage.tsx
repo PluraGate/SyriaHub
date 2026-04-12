@@ -110,7 +110,7 @@ export function ModerationTriage({ onReportAction }: ModerationTriageProps) {
             if (error) throw error
 
             // Enrich reports with calculated severity
-            const enrichedReports = (data || []).map(report => ({
+            const enrichedReports = (data || []).map((report: Report) => ({
                 ...report,
                 severity: calculateSeverity(report.reason, report.confidence_score)
             }))

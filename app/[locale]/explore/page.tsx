@@ -63,7 +63,7 @@ function ExplorePageContent() {
 
       if (data) {
         const tagsSet = new Set<string>()
-        data.forEach((post) => {
+        data.forEach((post: { tags?: string[] | null }) => {
           if (post.tags) {
             post.tags.forEach((tag: string) => tagsSet.add(tag))
           }
@@ -108,14 +108,14 @@ function ExplorePageContent() {
             .select('group_id')
             .in('group_id', groupIds)
 
-          const countMap = new Map()
-          counts?.forEach(c => {
+          const countMap = new Map<string, number>()
+          counts?.forEach((c: { group_id: string }) => {
             countMap.set(c.group_id, (countMap.get(c.group_id) || 0) + 1)
           })
 
           const groupsWithCounts = groupsData.map((g: Record<string, unknown>) => ({
             ...g,
-            member_count: countMap.get(g.id) || 0
+            member_count: countMap.get(g.id as string) || 0
           }))
           setRecommendedGroups(groupsWithCounts)
         }

@@ -26,6 +26,12 @@ interface UserSkill {
     endorsers: Endorser[]
 }
 
+interface AvailableSkill {
+    id: string
+    name: string
+    category: string
+    is_recognized: boolean
+}
 interface EndorsementSectionProps {
     userId: string
     isOwnProfile: boolean
@@ -49,7 +55,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
     const [newSkillName, setNewSkillName] = useState('')
     const [newSkillCategory, setNewSkillCategory] = useState(SKILL_CATEGORIES[0])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [availableSkills, setAvailableSkills] = useState<any[]>([])
+    const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [addingSkill, setAddingSkill] = useState(false)
     const [loadingSkills, setLoadingSkills] = useState(false)
@@ -120,7 +126,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
                         .eq('endorsed_user_id', userId)
 
                     if (myEndorsements) {
-                        setEndorsedSkills(new Set(myEndorsements.map(e => e.skill_id)))
+                        setEndorsedSkills(new Set(myEndorsements.map((e: { skill_id: string }) => e.skill_id)))
                     }
                 }
             } catch (error) {
@@ -148,7 +154,7 @@ export function EndorsementSection({ userId, isOwnProfile }: EndorsementSectionP
             if (data) {
                 // Filter out skills user already has
                 const userSkillIds = new Set(skills.map(s => s.skill_id))
-                setAvailableSkills(data.filter(s => !userSkillIds.has(s.id)))
+                setAvailableSkills((data as AvailableSkill[]).filter((s: AvailableSkill) => !userSkillIds.has(s.id)))
             }
             setLoadingSkills(false)
         }

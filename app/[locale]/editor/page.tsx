@@ -180,7 +180,7 @@ export default function EditorPage() {
       if (data) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const values: Record<string, any> = {}
-        data.forEach(item => {
+        data.forEach((item: { field_id: string; value: unknown }) => {
           values[item.field_id] = item.value
         })
         setSchemaValues(values)
@@ -282,7 +282,7 @@ export default function EditorPage() {
         .select('id, name')
         .eq('id', groupIdParam)
         .single()
-        .then(({ data }) => {
+        .then(({ data }: { data: { id: string; name: string } | null }) => {
           if (data) setGroup(data)
         })
     }
@@ -291,7 +291,7 @@ export default function EditorPage() {
   // Handle critique_of param and quote param
   useEffect(() => {
     if (critiqueOfParam) {
-      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name)').eq('id', critiqueOfParam).single().then(({ data }) => {
+      supabase.from('posts').select('id, title, created_at, author:users!posts_author_id_fkey(name)').eq('id', critiqueOfParam).single().then(({ data }: { data: { id: string; title: string; created_at: string; author?: { name?: string } | { name?: string }[] } | null }) => {
         if (data) {
           // Add as internal citation - author may be array from join, extract first
           const authorData = Array.isArray(data.author) ? data.author[0] : data.author
@@ -421,7 +421,7 @@ export default function EditorPage() {
           if (citationsError) {
             console.error('Error loading citations:', citationsError)
           } else if (citationsData && citationsData.length > 0) {
-            const loadedCitations: Citation[] = citationsData.map(cit => ({
+            const loadedCitations: Citation[] = citationsData.map((cit: { type: string; target_post_id?: string; target_post?: unknown; external_url?: string; external_doi?: string; external_title?: string; external_author?: string; external_year?: number; external_source?: string; quote_content?: string }) => ({
               type: cit.type as 'internal' | 'external',
               target_post_id: cit.target_post_id || undefined,
               target_post: cit.target_post ? {

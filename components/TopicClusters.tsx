@@ -173,16 +173,17 @@ export function TopicClusters() {
                 // Count tags and find co-occurring tags
                 const tagMap: Record<string, { count: number; coTags: Set<string> }> = {}
 
-                posts.forEach((post) => {
-                    if (post.tags && post.tags.length > 0) {
-                        post.tags.forEach((tag: string) => {
+                posts.forEach((post: { tags?: string[] | null }) => {
+                    const tags = post.tags
+                    if (tags && tags.length > 0) {
+                        tags.forEach((tag: string) => {
                             if (!tagMap[tag]) {
                                 tagMap[tag] = { count: 0, coTags: new Set() }
                             }
                             tagMap[tag].count++
 
                             // Track co-occurring tags
-                            post.tags.forEach((otherTag: string) => {
+                            tags.forEach((otherTag: string) => {
                                 if (otherTag !== tag) {
                                     tagMap[tag].coTags.add(otherTag)
                                 }
@@ -342,7 +343,7 @@ export function TopicClustersMini() {
 
                 if (posts) {
                     const tagMap: Record<string, number> = {}
-                    posts.forEach((post) => {
+                    posts.forEach((post: { tags?: string[] | null }) => {
                         if (post.tags) {
                             post.tags.forEach((tag: string) => {
                                 tagMap[tag] = (tagMap[tag] || 0) + 1

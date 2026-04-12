@@ -61,7 +61,7 @@ export function useNearbyPosts(
                 setPostCount(posts.length)
 
                 // Check if any posts contain humanitarian keywords
-                const humanitarian = posts.some(post =>
+                const humanitarian = posts.some((post: { title?: string; content?: string }) =>
                     containsHumanitarianKeywords(post.title || '') ||
                     containsHumanitarianKeywords(post.content || '')
                 )

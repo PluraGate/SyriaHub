@@ -274,7 +274,7 @@ export default function AdminTagsPage() {
     const fetchUsedColors = async () => {
         const { data } = await supabase.from('tags').select('color')
         if (data) {
-            setUsedColors(data.map(t => t.color).filter(Boolean))
+            setUsedColors(data.map((t: { color?: string | null }) => t.color).filter(Boolean))
         }
     }
 
@@ -301,7 +301,7 @@ export default function AdminTagsPage() {
                 .select('tags')
 
             const tagCountMap: Record<string, number> = {}
-            posts?.forEach((post) => {
+            posts?.forEach((post: { tags?: string[] | null }) => {
                 if (post.tags) {
                     post.tags.forEach((tag: string) => {
                         tagCountMap[tag] = (tagCountMap[tag] || 0) + 1
@@ -309,7 +309,7 @@ export default function AdminTagsPage() {
                 }
             })
 
-            const tagsWithCounts: ApprovedTag[] = (tags || []).map(tag => ({
+            const tagsWithCounts: ApprovedTag[] = (tags || []).map((tag: ApprovedTag) => ({
                 id: tag.id,
                 label: tag.label,
                 label_ar: tag.label_ar,

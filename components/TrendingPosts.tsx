@@ -71,7 +71,7 @@ export function TrendingPosts() {
 
             if (!error && data) {
                 // Filter out past events
-                const filteredData = data.filter(post => {
+                const filteredData = data.filter((post: { content_type?: string; metadata?: { start_time?: string } }) => {
                     // Exclude past events
                     if (post.content_type === 'event' && post.metadata?.start_time) {
                         const eventDate = new Date(post.metadata.start_time)
@@ -81,7 +81,7 @@ export function TrendingPosts() {
                 })
 
                 // Calculate hot score and transform data
-                const postsWithScore = filteredData.map(post => {
+                const postsWithScore = filteredData.map((post: { id: string; title: string; author?: unknown; created_at: string; vote_count?: number; tags?: string[]; content_type?: string; metadata?: { start_time?: string } }) => {
                     const createdAt = new Date(post.created_at)
                     const ageHours = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60)
                     const gravity = 1.8
@@ -104,7 +104,7 @@ export function TrendingPosts() {
                 })
 
                 // Sort by hot score
-                postsWithScore.sort((a, b) => b.hot_score - a.hot_score)
+                postsWithScore.sort((a: TrendingPost, b: TrendingPost) => b.hot_score - a.hot_score)
                 setPosts(postsWithScore.slice(0, 5))
             }
 

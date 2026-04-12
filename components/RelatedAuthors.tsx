@@ -48,7 +48,7 @@ export function RelatedAuthors({
                 if (users) {
                     // Get post counts for each user
                     const authorsWithCounts = await Promise.all(
-                        users.map(async (user) => {
+                        users.map(async (user: { id: string }) => {
                             const { count } = await supabase
                                 .from('posts')
                                 .select('*', { count: 'exact', head: true })

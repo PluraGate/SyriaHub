@@ -7,6 +7,7 @@ import { Send } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useTranslations } from 'next-intl'
+import type { RealtimePostgresInsertPayload } from '@supabase/realtime-js'
 
 type Message = {
     id: string
@@ -64,7 +65,7 @@ export function GroupChat({ groupId, currentUserId }: { groupId: string, current
                     table: 'group_messages',
                     filter: `group_id=eq.${groupId}`
                 },
-                async (payload) => {
+                async (payload: RealtimePostgresInsertPayload<Message>) => {
                     const newMsg = payload.new as Message
 
                     // Fetch user details for the new message

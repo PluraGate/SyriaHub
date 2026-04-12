@@ -48,7 +48,7 @@ export function TagsCloud({ initialVisibleCount = 3, defaultExpanded = false }: 
           .select('tags')
 
         const tagCountMap: Record<string, number> = {}
-        posts?.forEach((post) => {
+        posts?.forEach((post: { tags?: string[] | null }) => {
           if (post.tags) {
             post.tags.forEach((tag: string) => {
               tagCountMap[tag] = (tagCountMap[tag] || 0) + 1
@@ -59,14 +59,14 @@ export function TagsCloud({ initialVisibleCount = 3, defaultExpanded = false }: 
         // If verified tags exist and no error, use them with colors
         if (!tagsError && verifiedTags && verifiedTags.length > 0) {
           const tagsWithCounts = verifiedTags
-            .map(tag => ({
+            .map((tag: { label: string; label_ar: string | null; color: string | null }) => ({
               label: tag.label,
               label_ar: tag.label_ar || null,
               color: tag.color || null,
               post_count: tagCountMap[tag.label] || 0
             }))
-            .filter(tag => tag.post_count > 0)
-            .sort((a, b) => b.post_count - a.post_count)
+            .filter((tag: VerifiedTag) => tag.post_count > 0)
+            .sort((a: VerifiedTag, b: VerifiedTag) => b.post_count - a.post_count)
             .slice(0, 20)
 
           setTags(tagsWithCounts)
@@ -79,7 +79,7 @@ export function TagsCloud({ initialVisibleCount = 3, defaultExpanded = false }: 
               color: null,
               post_count: count
             }))
-            .sort((a, b) => b.post_count - a.post_count)
+            .sort((a: VerifiedTag, b: VerifiedTag) => b.post_count - a.post_count)
             .slice(0, 20)
 
           setTags(fallbackTags)
@@ -192,7 +192,7 @@ export function TrendingTagsList({ limit = 5 }: { limit?: number }) {
 
         if (posts) {
           const tagMap: Record<string, number> = {}
-          posts.forEach((post) => {
+          posts.forEach((post: { tags?: string[] | null }) => {
             if (post.tags) {
               post.tags.forEach((tag: string) => {
                 tagMap[tag] = (tagMap[tag] || 0) + 1

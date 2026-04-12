@@ -48,7 +48,7 @@ export function TwoFactorSetup({ userId, onEnrollmentComplete }: TwoFactorSetupP
                 }
 
                 // Find verified TOTP factor
-                const totpFactor = data?.totp?.find(f => f.status === 'verified')
+                const totpFactor = data?.totp?.find((f: { status: string; id: string }) => f.status === 'verified')
                 if (totpFactor) {
                     setIsEnrolled(true)
                     setFactorId(totpFactor.id)

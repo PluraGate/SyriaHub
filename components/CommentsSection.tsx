@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { CommentTree } from '@/components/CommentTree'
 import { useTranslations } from 'next-intl'
+import type { RealtimePostgresInsertPayload } from '@supabase/realtime-js'
 
 interface Comment {
   id: string
@@ -86,7 +87,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
           table: 'comments',
           filter: `post_id=eq.${postId}`,
         },
-        async (payload) => {
+        async (payload: RealtimePostgresInsertPayload<{ id: string }>) => {
           // Fetch the full comment with user data
           const { data: newComment } = await supabase
             .from('comments')

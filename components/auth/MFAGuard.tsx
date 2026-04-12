@@ -45,7 +45,7 @@ export function MFAGuard({ children, redirectTo: _redirectTo = '/insights' }: MF
             }
 
             // Check if user has verified TOTP factors
-            const verifiedFactors = factorsData?.totp?.filter(f => f.status === 'verified') || []
+            const verifiedFactors = factorsData?.totp?.filter((f: { status: string }) => f.status === 'verified') || []
 
             if (verifiedFactors.length === 0) {
                 // No MFA factors - user doesn't have 2FA enabled

@@ -23,12 +23,15 @@ import { Post } from '@/types'
 import { ChevronDown, ChevronUp, TrendingUp, Sparkles, PenSquare, FileText, HelpCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useDefaultCover } from '@/lib/coverImages'
+import { withTimeout } from '@/lib/utils'
 
 
 type SortOption = 'new' | 'hot' | 'top-week' | 'top-month' | 'top-all'
 type InsightTab = 'all' | 'following'
 
 import { usePreferences } from '@/contexts/PreferencesContext'
+
+const INSIGHTS_REQUEST_TIMEOUT_MS = 8000
 
 export default function InsightsPage() {
   const { preferences } = usePreferences()
@@ -54,17 +57,23 @@ export default function InsightsPage() {
     if (authUser?.id) {
       const loadFollowing = async () => {
         try {
-          const { data: follows, error } = await supabase
+          const followsRequest = supabase
             .from('follows')
             .select('following_id')
             .eq('follower_id', authUser.id)
+
+          const { data: follows, error }: Awaited<typeof followsRequest> = await withTimeout(
+            followsRequest,
+            INSIGHTS_REQUEST_TIMEOUT_MS,
+            '[Insights] Following request timed out',
+          )
 
           if (error) {
             console.warn('[Insights] Failed to load following:', error.message)
             return
           }
           if (follows && follows.length > 0) {
-            setFollowingIds(follows.map(f => f.following_id))
+            setFollowingIds(follows.map((follow: { following_id: string }) => follow.following_id))
           }
         } catch (err) {
           console.warn('[Insights] Following fetch error:', err)
@@ -76,13 +85,18 @@ export default function InsightsPage() {
     // Fetch official tags
     const loadTags = async () => {
       try {
-        const { data, error } = await supabase.from('tags').select('label').order('label')
+        const tagsRequest = supabase.from('tags').select('label').order('label')
+        const { data, error }: Awaited<typeof tagsRequest> = await withTimeout(
+          tagsRequest,
+          INSIGHTS_REQUEST_TIMEOUT_MS,
+          '[Insights] Tags request timed out',
+        )
         if (error) {
           console.warn('[Insights] Failed to load tags:', error.message)
           return
         }
         if (data) {
-          setOfficialTags(data.map(t => t.label))
+          setOfficialTags(data.map((tag: { label: string }) => tag.label))
         }
       } catch (err) {
         console.warn('[Insights] Tags fetch error:', err)
@@ -141,7 +155,12 @@ export default function InsightsPage() {
             .order('vote_count', { ascending: false, nullsFirst: false })
         }
 
-        const { data: postsData, error } = await query.limit(preferences.display.posts_per_page)
+        const postsRequest = query.limit(preferences.display.posts_per_page)
+        const { data: postsData, error }: Awaited<typeof postsRequest> = await withTimeout(
+          postsRequest,
+          INSIGHTS_REQUEST_TIMEOUT_MS,
+          '[Insights] Posts request timed out',
+        )
 
         if (error) {
           if (error.message || error.code) {

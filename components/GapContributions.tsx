@@ -117,7 +117,7 @@ export function GapContributions({ gapId, gapClaimerId, className }: GapContribu
 
         // Get current user
         const supabase = createClient()
-        supabase.auth.getUser().then(({ data }) => {
+        supabase.auth.getUser().then(({ data }: { data: { user: { id: string } | null } }) => {
             setCurrentUserId(data.user?.id || null)
         })
     }, [fetchContributions])
