@@ -96,7 +96,9 @@ export function useServiceWorker() {
         }
         document.addEventListener('visibilitychange', onVisibilityChange)
 
-        // When a new SW takes control, reload to get fresh assets
+        // When a new SW takes control (after user accepts update),
+        // reload to get fresh assets. This only fires after SKIP_WAITING
+        // is sent from updateServiceWorker(), not automatically on deploy.
         let refreshing = false
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (refreshing) return
@@ -126,12 +128,21 @@ export function useServiceWorker() {
     }, [])
 
     /**
-     * Force update service worker
+     * Apply pending service worker update — clears caches and reloads.
+     * Only call this when the user explicitly accepts the update.
      */
     const updateServiceWorker = async () => {
+        // Clear all SW caches so the reload fetches fresh assets
+        if ('caches' in window) {
+            const keys = await caches.keys()
+            await Promise.all(keys.map(key => caches.delete(key)))
+        }
         const registration = await navigator.serviceWorker.getRegistration()
         if (registration?.waiting) {
+            // This triggers controllerchange → reload above
             registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+        } else {
+            // No waiting worker — just reload
             window.location.reload()
         }
     }
