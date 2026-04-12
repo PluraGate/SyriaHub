@@ -114,16 +114,25 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
     }
     setSession(null)
     setAuthUser(null)
-    // Don't let a slow/failing signOut block the redirect
+
+    // Sign out via the server-side route so httpOnly auth cookies are
+    // cleared reliably.  The previous approach (client-side signOut +
+    // redirect) raced against the Supabase call and could leave stale
+    // cookies, causing a "half signed-in" ghost state on reload.
     try {
-      await Promise.race([
-        supabase.auth.signOut(),
-        new Promise(resolve => setTimeout(resolve, 3000)),
-      ])
+      await supabase.auth.signOut()
     } catch {
-      // Ignore — redirect clears client state anyway
+      // Best-effort client-side cleanup; the server route handles cookies
     }
-    window.location.href = '/'
+
+    // POST to the server-side signout route which clears httpOnly cookies
+    // and redirects to '/'.  Use a form submission for a full navigation.
+    const locale = window.location.pathname.match(/^\/(en|ar)/)?.[1] || 'ar'
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = `/${locale}/auth/signout`
+    document.body.appendChild(form)
+    form.submit()
   }, [supabase])
 
   // ── Bootstrap: get the initial session then listen for changes ──
@@ -144,9 +153,13 @@ export function AuthProvider({ children, serverUser }: AuthProviderProps) {
             currentSession.user.email ?? undefined,
             currentSession.user.user_metadata,
           )
-        } else if (serverUser) {
-          // Fallback: use the server-provided user hint
-          await fetchProfile(serverUser.id, serverUser.email)
+        } else {
+          // No valid client-side session — discard any stale server-provided
+          // hint.  This prevents a "half signed-in" state when the browser
+          // serves a cached page whose serverUser prop is outdated (e.g. after
+          // closing a tab and reopening, or after a failed sign-out).
+          setSession(null)
+          setAuthUser(null)
         }
       } catch (err) {
         console.warn('[Auth] Session init failed — treating as logged out:', err)

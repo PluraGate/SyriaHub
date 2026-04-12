@@ -84,5 +84,5 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
   }
 
-  return finalResponse
+  return { response: finalResponse, user: error || !user ? null : user }
 }
