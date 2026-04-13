@@ -36,7 +36,7 @@ import { Metadata } from 'next'
 import { RejectionBanner } from '@/components/RejectionBanner'
 import { PostHeroBackground } from '@/components/PostHeroBackground'
 import { SchemaFieldDisplay, SchemaFieldValue } from '@/components/post/SchemaFieldDisplay'
-import { buildArticleSchema, buildQAPageSchema, JsonLdScript } from '@/lib/seo'
+import { buildArticleSchema, buildQAPageSchema, buildCitationMeta, JsonLdScript } from '@/lib/seo'
 
 
 
@@ -71,6 +71,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       content,
       tags,
       content_type,
+      created_at,
+      license,
       author: users!posts_author_id_fkey(name, email)
     `)
 
@@ -95,11 +97,22 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syrealize.com'
   const ogImageUrl = `${siteUrl}/api/og?id=${post.id}`
 
+  // Google Scholar citation meta tags
+  const citationMeta = buildCitationMeta(
+    { ...post, author: post.author as { name?: string; email?: string } | null },
+    { siteUrl }
+  )
+  const otherMeta: Record<string, string> = {}
+  for (const tag of citationMeta) {
+    otherMeta[tag.name] = tag.content
+  }
+
   return {
     title: `${post.title} | SyriaHub`,
     description,
     authors: [{ name: authorName }],
     keywords: post.tags || [],
+    other: otherMeta,
     openGraph: {
       title: post.title,
       description,
