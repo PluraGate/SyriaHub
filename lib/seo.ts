@@ -345,6 +345,78 @@ export function buildProfileMetadata(
 }
 
 // =============================================================================
+// Global Schema Builders (for root layout)
+// =============================================================================
+
+/**
+ * Build Organization + WebSite schema for the root layout.
+ * Helps Google understand site identity and enables sitelinks search box.
+ */
+export function buildOrganizationSchema(options: { siteUrl?: string } = {}): object[] {
+    const siteUrl = options.siteUrl || getSiteUrl()
+
+    return [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            'name': 'SyriaHub',
+            'url': siteUrl,
+            'logo': `${siteUrl}/icons/icon-512x512_Dark.png`,
+            'description': 'An open, research-driven platform for architecture, urbanism, data, and post-conflict reconstruction.',
+            'sameAs': [
+                'https://github.com/PluraGate',
+                'https://www.linkedin.com/company/pluragate',
+            ],
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            'name': 'SyriaHub',
+            'url': siteUrl,
+            'description': 'Open Knowledge for Reconstruction',
+            'potentialAction': {
+                '@type': 'SearchAction',
+                'target': {
+                    '@type': 'EntryPoint',
+                    'urlTemplate': `${siteUrl}/en/explore?q={search_term_string}`,
+                },
+                'query-input': 'required name=search_term_string',
+            },
+        },
+    ]
+}
+
+/**
+ * Build Google Scholar citation meta tags for a post.
+ * Returns key-value pairs to be rendered as <meta name="..." content="..." /> tags.
+ */
+export function buildCitationMeta(
+    post: PostForSEO,
+    options: { siteUrl?: string } = {}
+): Array<{ name: string; content: string }> {
+    const siteUrl = options.siteUrl || getSiteUrl()
+    const authorName = getAuthorName(post.author)
+    const meta: Array<{ name: string; content: string }> = []
+
+    meta.push({ name: 'citation_title', content: post.title })
+    meta.push({ name: 'citation_author', content: authorName })
+    meta.push({ name: 'citation_publication_date', content: post.created_at.split('T')[0] })
+    meta.push({ name: 'citation_online_date', content: post.created_at.split('T')[0] })
+    meta.push({ name: 'citation_publisher', content: 'SyriaHub' })
+    meta.push({ name: 'citation_abstract_html_url', content: `${siteUrl}/post/${post.id}` })
+
+    if (post.tags?.length) {
+        meta.push({ name: 'citation_keywords', content: post.tags.join('; ') })
+    }
+
+    if (post.license) {
+        meta.push({ name: 'citation_fulltext_world_readable', content: '' })
+    }
+
+    return meta
+}
+
+// =============================================================================
 // JSON-LD Component Helper
 // =============================================================================
 

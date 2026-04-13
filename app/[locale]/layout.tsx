@@ -16,6 +16,7 @@ import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { Analytics } from '@vercel/analytics/react'
 import { CookieConsent } from '@/components/CookieConsent'
 import { createClient } from '@/lib/supabase/server'
+import { buildOrganizationSchema, JsonLdScript } from '@/lib/seo'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -99,9 +100,15 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
+        {/* RSS Feed */}
+        <link rel="alternate" type="application/rss+xml" title="SyriaHub RSS Feed" href="/feed.xml" />
         {/* iOS Splash Screen Meta Tags */}
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-startup-image" href="/icons/icon-512x512_Dark.png" />
+        {/* Global JSON-LD: Organization + WebSite schema */}
+        {buildOrganizationSchema().map((schema, i) => (
+          <JsonLdScript key={i} data={schema} nonce={nonce} />
+        ))}
         {/* Theme initialization - runs before React hydration to prevent flash */}
         {/* Using native script with suppressHydrationWarning to avoid nonce hydration mismatch */}
         <script
